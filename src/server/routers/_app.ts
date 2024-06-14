@@ -3,8 +3,6 @@ import { procedure, router } from "../trpc";
 
 import { ContactValidators } from "@/lib/validators/ContactFormValidator";
 // import { newsLetter } from "@/Schema/user";
-import dbConnect from "@/Db/db";
-import newsLetter  from "@/Db/models/NewsLetters";
 export const appRouter = router({
   hello: procedure
     .input(
@@ -40,9 +38,6 @@ export const appRouter = router({
       if (data.isNewsLetter === "false") return;
       //implement saving to mongoose database
       try {
-        await dbConnect();
-        const newsLetters = await newsLetter.create({ ...data });
-        console.log(newsLetters);
       } catch (error) {
         console.log(error);
       }

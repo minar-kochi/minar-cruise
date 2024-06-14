@@ -1,4 +1,3 @@
-import dbConnect from "@/Db/db";
 import { appRouter } from "@/server/routers/_app";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
