@@ -11,7 +11,7 @@ const HomeVideo = () => {
         loop
     
       >
-        <source src={'https://cochincruiseline.com/wp-content/uploads/2023/01/MINAR-VIDEO-1.mp4'} type="video/mp4" />
+        <source src={'https://utfs.io/f/ba37775d-f5ec-4efd-add1-44badaa8a7bf-6qfl7u.mp4'} type="video/mp4" />
       </video>
     </>
   );

@@ -13,7 +13,7 @@ const Navbar = () => {
                     <Image src={logo} alt="ship logo" className="w-40"/>
                 </Link>            
             </div>
-            <div className="flex gap-5 font-sans font-medium justify-start">
+            <div className="flex gap-5 font-sans font-medium justify-start max-md:hidden">
                 <h1>Home</h1>
                 <h1>Packages</h1>
                 <h1>Facilities</h1>
