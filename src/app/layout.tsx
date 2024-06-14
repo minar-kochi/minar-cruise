@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter as FontSans, Inter } from "next/font/google"
-import { cn } from "@/lib/utils"
- 
+import { Inter as FontSans, Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
+import Providers from "@/context/TrpcProvider";
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-})
+});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,10 +23,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("min-h-screen bg-background font-sans antialiased",
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
-        )}>
-        {children}
+        )}
+      >
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
