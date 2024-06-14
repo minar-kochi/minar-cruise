@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -17,7 +17,6 @@
     "@trpc/next": "^11.0.0-rc.364",
     "@trpc/react-query": "^11.0.0-rc.364",
     "@trpc/server": "^11.0.0-rc.364",
-
     "lucide-react": "^0.394.0",
     "next": "14.2.4",
     "react": "^18",
@@ -36,5 +35,5 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@9.0.5+sha1.6db99351548f394a1d96aa1de98dec032aef8823"
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
