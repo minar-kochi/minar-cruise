@@ -19,8 +19,8 @@ Users :-
 - Users doesn't not have any login or sign up.
 - User booking confirmation is send through e-mails.
 
+Test
 Admin :-
 - Admin can Prefill seats that are booked offline.
 - Admin can Prevent a date that a user are unable to book.
 - Admin can export data to excel format to share with driver's and chef's to make there workflow's easier.
-
