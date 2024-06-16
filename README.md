@@ -13,12 +13,14 @@ All these products also extends two things:
 - special events which they will also have a DJ party or live events with dinner and time of 4 hr.
 - Dinner which they will provide Food menu's total of 3 hrs
 
-Users :- sasdasdadsa
+Users :-
 - Users can book a seat according to available number of seats and not location of seat.
 - User can book seats in future dates and block seats. 
 - Users doesn't not have any login or sign up.
 - User booking confirmation is send through e-mails.
+
 Admin :-
 - Admin can Prefill seats that are booked offline.
 - Admin can Prevent a date that a user are unable to book.
 - Admin can export data to excel format to share with driver's and chef's to make there workflow's easier.
+
