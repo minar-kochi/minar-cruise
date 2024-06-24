@@ -6,6 +6,10 @@ const nextConfig = {
                 hostname: "cochincruiseline.com",
                 protocol: "https",
                 
+            },
+            {
+                hostname: "drive.google.com",
+                protocol: "https"
             }
          ]
     }

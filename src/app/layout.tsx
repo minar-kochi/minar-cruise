@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
 
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",

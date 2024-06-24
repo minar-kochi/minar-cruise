@@ -6,7 +6,7 @@ type BoundedProps = {
   className?: string;
   children: React.ReactNode;
 };
-
+  
 const Bounded = React.forwardRef<HTMLDivElement, BoundedProps>(
   ({ as: Comp = "section", className, children, ...restProps }, ref) => {
     return (
