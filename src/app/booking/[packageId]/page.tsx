@@ -1,3 +1,4 @@
+import Bounded from "@/components/elements/Bounded";
 import Package from "@/components/packages/Package";
 
 interface BookingPage {
