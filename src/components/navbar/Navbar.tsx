@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Bounded from "../elements/Bounded";
+import PackagesNavList from "./PackagesNavList";
 
 const Navbar = () => {
   return (
@@ -21,7 +22,7 @@ const Navbar = () => {
           <Link href={""}>
             <h1>Home</h1>
           </Link>
-          <h1>Packages</h1>
+          {/* <PackagesNavList/> */}
           <h1>Facilities</h1>
           <h1>About</h1>
           <h1>Gallery</h1>

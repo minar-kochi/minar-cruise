@@ -4,6 +4,7 @@ import PackageCard from "./PackageCard";
 
 const Package = () => {
   return (
+    
     <main>
       <GalleryCard/>
       <PackageCard/>
