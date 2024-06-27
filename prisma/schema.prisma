@@ -13,7 +13,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id String @default(cuid()) @unique
-name String
+model Booking {
+  id            String   @id @default(cuid())
+  userId        String
+  numOfChildren Int
+  numOfAdults   Int
+  packageId     String
+  createdAt     DateTime @default(now())
+  package       Package  @relation(fields: [packageId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id       String    @id @default(cuid())
+  name     String
+  email    String    @unique
+  contact  String
+  bookings Booking[]
+}
+
+model Package {
+  id          String     @id @default(cuid())
+  title       String
+  packageType String
+  description String
+  childPrice  Int
+  adultPrice  Int
+  amenitiesId String
+  duration    Int
+  slug        String     @unique
+  foodMenuId  String
+  startFrom   DateTime
+  endAt       DateTime
+  amenities   Amenities  @relation(fields: [amenitiesId], references: [id])
+  food        FoodMenu   @relation(fields: [foodMenuId], references: [id])
+  Booking     Booking[]
+  Schedule    Schedule[]
+  Image       Image[]
+  createdAt   DateTime   @default(now()) @db.Timestamp()
+}
+
+model FoodMenu {
+  id      String    @id @default(cuid())
+  name    String
+  Package Package[]
+}
+
+model Schedule {
+  id        String   @id @default(cuid())
+  time      DateTime
+  packageId String
+  package   Package  @relation(fields: [packageId], references: [id])
+}
+
+model Amenities {
+  id          String    @id @default(cuid())
+  description String[]
+  Package     Package[]
+}
+
+model Image {
+  id  String @unique @default(cuid())
+  url String
+  alt String
+  packageId String
+  package   Package @relation(fields: [packageId], references: [id])
 }

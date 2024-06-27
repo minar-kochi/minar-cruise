@@ -19,7 +19,7 @@
 # misc
 .DS_Store
 *.pem
-
+# /prisma/migrations
 # debug
 npm-debug.log*
 yarn-debug.log*
