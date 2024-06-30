@@ -2,11 +2,28 @@ import Image from "next/image";
 import Link from "next/link";
 import Bounded from "../elements/Bounded";
 import PackagesNavList from "./PackagesNavList";
+import {
+  Item,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@radix-ui/react-navigation-menu";
+import { Navigation } from "lucide-react";
+import { db } from "@/db";
+import { getPackageNavigation } from "@/db/data/dto/package";
+import NavigationContents from "./NavigationContents";
 
-const Navbar = () => {
+const Navbar = async () => {
+  
   return (
-    <div className="sticky  py-4 top-0 w-full  bg-white z-50">
-      <Bounded as={"nav"} className="w-full flex justify-between">
+    <div className="sticky top-0 w-full  bg-white z-50 ">
+      <Bounded
+        as={"nav"}
+        className="w-full flex justify-between h-16 items-center"
+      >
         <div className="">
           <Link href={"/"}>
             <Image
@@ -16,21 +33,53 @@ const Navbar = () => {
               height={100}
               priority={true}
             />
-          </Link>
+          </Link>  
         </div>
-        <div className="flex gap-5 font-sans font-medium justify-start max-md:hidden">
-          <Link href={""}>
-            <h1>Home</h1>
-          </Link>
-          {/* <PackagesNavList/> */}
-          <h1>Facilities</h1>
-          <h1>About</h1>
-          <h1>Gallery</h1>
-          <h1>Contact</h1>
-        </div>
+        <div className="w-full justify-end items-center hidden md:flex ">
+          <NavigationContents/>
+        </div> 
       </Bounded>
     </div>
   );
 };
 
 export default Navbar;
+
+{
+  /* 
+  <NavigationMenuItem className="">
+    <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
+      <NavigationMenuContent className="">
+      <div className="grid w-[300px]  grid-cols-2  place-content-center gap-3 px-4 py-6">
+         <NavigationMenuLink className="rounded-md p-2 hover:bg-gray-800/55 ">
+        School
+        </NavigationMenuLink>
+        <NavigationMenuLink className="rounded-md p-2 hover:bg-gray-800/55 ">
+          College
+        </NavigationMenuLink>
+        <NavigationMenuLink className="rounded-md p-2 hover:bg-gray-800/55 ">
+          Business
+        </NavigationMenuLink>
+      </div>
+  </NavigationMenuContent>
+</NavigationMenuItem>; */
+}
+
+{
+  /* <NavigationMenu className="border">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Packages</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                    <NavigationMenuLink>
+                      {packageDetails.map((item) => {
+                        return <>{item.title}</>;
+                      })}
+                    </NavigationMenuLink>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu> */
+}

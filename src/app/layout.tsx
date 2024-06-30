@@ -4,7 +4,7 @@ import { Inter as FontSans, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
-
+import Footer from "@/components/home/Footer";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -27,13 +27,14 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen  bg-background font-sans antialiased",
           fontSans.variable
         )}
       >
         <Providers>
-          <Navbar/>
+          <Navbar />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

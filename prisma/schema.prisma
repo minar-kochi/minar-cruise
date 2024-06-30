@@ -71,7 +71,7 @@ model Amenities {
   description String[]
   Package     Package[]
 }
-
+// @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
 model Image {
   id  String @unique @default(cuid())
   url String
