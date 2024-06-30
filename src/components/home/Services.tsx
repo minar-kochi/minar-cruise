@@ -15,16 +15,19 @@ const Services = () => {
             <p className="font-medium text-justify">{item}</p>
           </>
         ))}
-        <div className="flex gap-3 max-sm:flex-col">
-          <Phone />
+        <div className="flex gap-3 flex-wrap">
+          
           {contact.map((item) => (
             <>
-              <p className="font-bold">{item}</p>
+            
+              <a href={`tel:${item}`} className="font-bold flex gap-2 underline">
+                
+              <Phone />{item}</a>
             </>
-          ))}
+          ))} 
         </div>
       </article>
-      <article className="basis-[70%] flex">
+      <article className="basis-[70%] flex gap-5">
         {events.map((item, i) => (
           <>
             <div className="space-y-4" key={i}>

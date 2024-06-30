@@ -13,7 +13,7 @@ import Footer from "@/components/home/Footer";
 export default function Home() {
   return (
     <main className="">
-      <HomeVideo/>
+      {/* <HomeVideo/> */}
       <LandingDescription/>
       <BookingDescription/>
       <Facilities/>

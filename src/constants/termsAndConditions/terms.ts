@@ -1,0 +1,18 @@
+export const terms = [
+  "Pay Parking is opposite our location ",
+  "The customer has to carry Valid Govt approved ID Proof + Trip / Booking ID to collect the Board pass.",
+  "Tickets once sold will not be canceled or refunded.",
+  "Customers have to report to the boarding point 15 minutes before departure so as to avoid missing the cruise and inconvenience on this account.",
+  "The boarding pass should be retained till the end of the cruise.",
+  "The Minar Cruise Cochin management reserves the right, without assigning any reasons to cancel, advance, reschedule, delay the commencement or continuance of the cruise or alter the stopping place/s, to deviate from the journey route or to change the type of ship in use without thereby incurring any liability in damages or otherwise to the passengers & any other person on any grounds whatsoever.",
+  "The Minar Cruise Cochin management reserves the right to refuse to carry any person whom it considers unfit to travel or who in the opinion of the management may constitute a risk to the persons on board.",
+  "Passengers are not allowed to carry any food and beverage items on board.",
+  "Knives, scissors, sharp instruments, tools, heavy baggage, firearms, and ammunition, including toy replicas are prohibited in the passenger’s cabin.",
+  "Rights of admission reserved.",
+  "The management is not liable for any loss or damage.",
+  "Child Ticket is subject to the discretion of the management.",
+  "The decision of management is final.",
+  "No Bags are allowed on the boat – handbags will be checked by security.",
+  "Ticket applicable for a child above 3 years of age.",
+  "All health & safety guidelines, as directed by the Govt. of Kerala on preventive measures to contain the spread of COVID-19 will be strictly followed.",
+];
