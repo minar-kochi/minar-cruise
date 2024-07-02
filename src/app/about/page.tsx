@@ -1,9 +1,13 @@
-import About from "@/components/about/About"
+import AboutContentCard from "@/components/about/AboutContentCard";
+import FacilitiesImageCard from "@/components/facilitites/FacilitiesImageCard";
 
 const page = () => {
   return (
-    <div><About/></div>
-  )
-}
+    <div>
+      <FacilitiesImageCard label="About" />
+      <AboutContentCard />
+    </div>
+  );
+};
 
-export default page
+export default page;

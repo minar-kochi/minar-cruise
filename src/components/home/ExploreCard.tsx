@@ -1,13 +1,17 @@
-const ExploreCard = () => {
+import { cn } from "@/lib/utils";
+
+const ExploreCard = ({ className }:{
+  className: string
+}) => {
   return (
     <section>
-      <ul className="flex flex-col justify-between h-full">
-        <h2 className="text-2xl font-bold">Explore</h2>
-        <li className="text-slate-400">Account</li>
-        <li className="text-slate-400">Privacy Policy</li>
-        <li className="text-slate-400">Terms And Conditions</li>
-        <li className="text-slate-400">Contact Us</li>
-        <li className="text-slate-400">Refund Policy</li>
+      <ul className={cn("flex flex-col gap-8 h-full ", className)}>
+        <h2 className="max-sm:mx-auto text-2xl font-bold">Explore</h2>
+        <li className="max-sm:mx-auto  text-slate-400">Account</li>
+        <li className="max-sm:mx-auto text-slate-400">Privacy Policy</li>
+        <li className="max-sm:mx-auto text-slate-400">Terms And Conditions</li>
+        <li className="max-sm:mx-auto text-slate-400">Contact Us</li>
+        <li className="max-sm:mx-auto text-slate-400">Refund Policy</li>
       </ul>
     </section>
   );

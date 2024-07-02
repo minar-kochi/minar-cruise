@@ -12,7 +12,7 @@ import Link from "next/link";
 
 const NavigationContents = async () => {
   const packageDetails = await getPackageNavigation();
-
+  
   if (!packageDetails) {
     return (
       // TODO: #LOW - Add a alternative to Image Gallery if not found / empty
@@ -54,16 +54,16 @@ const NavigationContents = async () => {
             {/* Todo need styling for gallery dropdown  */}
             <ul className="w-[300px] leading-9 grid place-content-center">
               <ListItem
-                href={"/family-gathering"}
+                href={"/gallery/family-gathering"}
                 title="Family gathering"
                 key={"Family gathering"}
               />
               <ListItem
-                href={"/corporate-gathering"}
+                href={"/gallery/corporate-gathering"}
                 title="Corporate gathering"
               />
               <ListItem
-                href={"/celebration-gathering"}
+                href={"/gallery/celebration-gathering"}
                 title="Celebration gathering"
               />
             </ul>

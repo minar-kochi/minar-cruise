@@ -16,22 +16,30 @@ const Services = () => {
           </>
         ))}
         <div className="flex gap-3 flex-wrap">
-          
           {contact.map((item) => (
             <>
-            
-              <a href={`tel:${item}`} className="font-bold flex gap-2 underline">
-                
-              <Phone />{item}</a>
+              <a
+                href={`tel:${item}`}
+                className="font-bold flex gap-2 underline"
+              >
+                <Phone />
+                {item}
+              </a>
             </>
-          ))} 
+          ))}
         </div>
       </article>
-      <article className="basis-[70%] flex gap-5">
+      <article className="basis-[70%] flex max-md:flex-col gap-5">
         {events.map((item, i) => (
           <>
             <div className="space-y-4" key={i}>
-              <Image src={item.image} alt="" width={1000} height={1000} className="hover:scale-110 duration-300 rounded-md  hover:border-8 border-red-500"/>
+              <Image
+                src={item.image}
+                alt=""
+                width={1000}
+                height={1000}
+                className="hover:scale-110 duration-300 rounded-md  hover:border-8 border-red-500"
+              />
               <h1 className="text-xl font-bold">{item.title}</h1>
               <p className="leading-8 text-lg ">{item.description}</p>
             </div>

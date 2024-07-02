@@ -113,7 +113,7 @@ export const footer = {
   image: "https://cochincruiseline.com/wp-content/uploads/2021/08/logo-light.png",
   contact : [
     "+91 8089021666",
-    "8089061444"
+    "+91 8089061444"
   ],
   email: "info@cochincruiseline.com",
   address: "GF, 40/6185, Swapnil Enclave, Highcourt junction, Marine Drive, Ernakulam, Kerala, India, 682031"

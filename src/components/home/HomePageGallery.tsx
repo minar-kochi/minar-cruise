@@ -2,7 +2,7 @@ import Image from "next/image";
 import Bounded from "../elements/Bounded";
 import { galleryImageUrl } from "@/constants/home/landingData";
 
-const Gallery = () => {
+const HomePageGallery = () => {
   return (
     <section className="relative  h-full w-full flex justify-center items-center py-20 ">
       <Bounded className=" w-full space-y-20">
@@ -19,7 +19,7 @@ const Gallery = () => {
                   alt="gallery image"
                   width={1000}
                   height={400}
-                  className="rounded-xl aspect-square md:max-w-64"
+                  className="hover:border-8 border-primary hover:scale-110 duration-300 rounded-xl aspect-square object-cover md:max-w-64"
                   />
               </div>
             </>
@@ -37,4 +37,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default HomePageGallery;

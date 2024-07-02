@@ -1,25 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import Bounded from "../elements/Bounded";
-import PackagesNavList from "./PackagesNavList";
-import {
-  Item,
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@radix-ui/react-navigation-menu";
-import { Navigation } from "lucide-react";
-import { db } from "@/db";
-import { getPackageNavigation } from "@/db/data/dto/package";
 import NavigationContents from "./NavigationContents";
+import { CloudCog } from "lucide-react";
+import { log } from "console";
 
 const Navbar = async () => {
-  
   return (
-    <div className="sticky top-0 w-full  bg-white z-50 ">
+    <div className="sticky top-0 w-full bg-white z-50 ">
       <Bounded
         as={"nav"}
         className="w-full flex justify-between h-16 items-center"

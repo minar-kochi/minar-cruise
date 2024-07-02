@@ -14,7 +14,7 @@ const FacilitiesImageCard = ({ label }:{
         alt={mainImage.alt}
         width={1920}
         height={1080}
-        className="h-64 object-cover w-full "
+        className="h-96 object-cover w-full "
       />
       <Bounded className="relative -top-16 flex justify-end items-end">
         <div className="flex bottom-0 font-bold bg-white  px-7 py-5 rounded-t-xl">

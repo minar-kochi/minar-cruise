@@ -1,11 +1,8 @@
 import Image from "next/image";
-import { gallery } from "@/constants/gallery/gallery";
 import { cn } from "@/lib/utils";
-
-import { db } from "@/db";
 import { getPackageImages } from "@/db/data/dto/Images";
 
-const GalleryCard = async ({
+const PackageGalleryCard = async ({
   className,
   packageId,
 }: {
@@ -39,4 +36,4 @@ const GalleryCard = async ({
   );
 };
 
-export default GalleryCard;
+export default PackageGalleryCard;

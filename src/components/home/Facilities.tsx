@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Bounded from "../elements/Bounded";
 import { star, facilities } from "@/constants/home/landingData";
-import { Dot } from "lucide-react";
-// import wave from '.'
+
 const Facilities = () => {
   const { heading, description } = facilities;
   return (
@@ -16,25 +15,24 @@ const Facilities = () => {
       />
 
       <Bounded className="">
-        <section className=" my-20 ">
-          <article className="">
+          <article className="flex justify-center flex-col my-20 space-y-4 px-2 mx-2">
             <div className="flex gap-4 font-bold text-2xl items-center">
               <Image src={star.url} alt="star" width={50} height={200} />
               <h3>{heading}</h3>
             </div>
-
-            <ul className="list-disc list-inside  md:grid-cols-2 grid leading-10 text-sm">
-              {description.map((item, i) => (
-                <>
-                  <li className="" key={i}>
-                    {item}
-                  </li>
-                </>
-              ))}
-            </ul>
+            <div className="">
+              <ul className="list-disc grid md:grid-cols-2 gap-3 gap-x-7 text-sm">
+                {description.map((item, i) => (
+                  <>
+                    <li className="text-lg max-w-fit py-2" key={i}>
+                      {item}
+                    </li>
+                  </>
+                ))}
+              </ul>
+            </div>
           </article>
-        </section>
-      </Bounded>
+        </Bounded>
       <Image
         src={"/assets/Wave.svg"}
         alt=""
@@ -48,4 +46,3 @@ const Facilities = () => {
 
 export default Facilities;
 
-// https://cochincruiseline.com/wp-content/uploads/2021/09/bg-line.png)
