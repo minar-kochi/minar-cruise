@@ -4,7 +4,8 @@ import { Inter as FontSans, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
-import Footer from "@/components/home/Footer";
+import Footer from "@/components/footer/Footer";
+import SearchBar from "@/components/searchbar/SearchBar";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({
       >
         <Providers>
           <Navbar />
+          {/* <SearchBar/> */}
           {children}
           <Footer />
         </Providers>

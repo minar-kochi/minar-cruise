@@ -1,4 +1,5 @@
 import { Button } from "../ui/button";
+import ContactForm from "./ContactForm";
 import InputBox from "./InputBox";
 
 const ContactMessageCard = () => {
@@ -10,13 +11,7 @@ const ContactMessageCard = () => {
           We really appreciate you taking the time to get in touch. Please fill
           in the form below.
         </p>
-        <form action="submit">
-          <InputBox label="Your Name *"/>
-          <InputBox label="Your Phone *"/>
-          <InputBox label="Your Email *"/>
-          <InputBox label="Your message (optional)"/>
-          <Button>Submit</Button>
-        </form>
+        <ContactForm/>
       </div>
     </article>
   );

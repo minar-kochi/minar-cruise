@@ -35,13 +35,13 @@ const NavigationContents = async () => {
           <NavigationMenuTrigger>Packages</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid grid-cols-2 w-[500px] leading-9 p-2">
-              {packageDetails.map((item) => (
+              {packageDetails.map((item,i) => (
                 <>
                   <ListItem
                     className=""
                     href={`/booking/${item.slug}`}
                     title={item.title}
-                    key={item.id}
+                    key={item.id+i}
                   />
                 </>
               ))}

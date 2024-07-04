@@ -13,7 +13,7 @@ const HomePageGallery = () => {
         <article className=" flex flex-wrap md:justify-evenly items-center gap-10 justify-center ">
           {galleryImageUrl.map((url, i) => (
             <>
-              <div className="" key={i}>
+              <div className="" key={url+i}>
                 <Image
                   src={url}
                   alt="gallery image"

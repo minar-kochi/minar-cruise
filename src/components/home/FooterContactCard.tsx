@@ -27,8 +27,8 @@ const FooterContactCard = ({
           <Phone color="red" className="" />
             {contact.map((item, i) => (
               <>
-                <a href={`tel:${item}`}>
-                  <p className="pl-2 flex text-slate-400 font-semibold " key={i}>
+                <a href={`tel:${item}`} key={item+i}>
+                  <p className="pl-2 flex text-slate-400 font-semibold " >
                     {item}
                   </p>
                 </a>

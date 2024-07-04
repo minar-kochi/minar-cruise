@@ -43,7 +43,7 @@ const Section1 = () => {
             {about.description.map((item, i) => {
               return (
                 <>
-                  <p className="leading-7 " key={i}>
+                  <p className="leading-7 " key={item+i}>
                     {item}
                   </p>
                 </>

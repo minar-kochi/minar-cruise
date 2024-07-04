@@ -24,7 +24,7 @@ const Facilities = () => {
               <ul className="list-disc grid md:grid-cols-2 gap-3 gap-x-7 text-sm">
                 {description.map((item, i) => (
                   <>
-                    <li className="text-lg max-w-fit py-2" key={i}>
+                    <li className="text-lg max-w-fit py-2" key={item+i}>
                       {item}
                     </li>
                   </>

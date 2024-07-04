@@ -1,7 +1,7 @@
 import Bounded from "../elements/Bounded";
 import CopyRight from "./CopyRight";
-import InfoCard from "./InfoCard";
-import SocialCard from "./SocialCard";
+import InfoCard from "../home/InfoCard";
+import SocialCard from "../home/SocialCard";
 
 const Footer = () => {
   return (

@@ -7,7 +7,7 @@ const ContactCard = ({ className }: { className?: string }) => {
   const { address, phone, email } = contactInfo;
   return (
     <>
-      <section className={cn("flex flex-col   max-md:", className)}>
+      <section className={cn("flex flex-col max-md:", className)}>
         <h3 className="font-bold text-3xl mb-6 max-md:mx-auto">Reach Us at</h3>
         <div className="flex flex-col gap-4">
           <div className="flex gap-3 max-w-max items-center ">
@@ -29,7 +29,7 @@ const ContactCard = ({ className }: { className?: string }) => {
           </div>
           <div className="flex gap-3  ">
             <Mail size={20} stroke="white" fill="red" className="-ml-[2px]"/>
-            <p className="text-slate-500 text-center   ">{email}</p>
+            <p className="text-slate-500 text-center">{email}</p>
           </div>
           <div className="flex items-center  max-md:max-w-[250px] gap-3">
             <div className="">

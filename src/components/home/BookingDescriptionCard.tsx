@@ -22,9 +22,9 @@ const BookingDescriptionCard = () => {
           <p>{subHeading}</p>
         </article>
         <article className="space-y-5">
-          {features.map((item) => (
+          {features.map((item, i) => (
             <>
-              <div className="md:space-y-2">
+              <div className="md:space-y-2" key={item.heading+i}>
                 <h2 className="text-2xl font-bold">{item.heading}</h2>
                 <p className="">{item.description}</p>
               </div>

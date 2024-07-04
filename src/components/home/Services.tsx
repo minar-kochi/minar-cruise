@@ -32,7 +32,7 @@ const Services = () => {
       <article className="basis-[70%] flex max-md:flex-col gap-5">
         {events.map((item, i) => (
           <>
-            <div className="space-y-4" key={i}>
+            <div className="space-y-4" key={item.image+i}>
               <Image
                 src={item.image}
                 alt=""
