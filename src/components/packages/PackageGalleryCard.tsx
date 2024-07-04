@@ -20,7 +20,7 @@ const PackageGalleryCard = async ({
   return (
     <div className={cn("flex p-2 gap-2", className)}>
       {packageImages.map((item, i) => (
-        <article key={item.id} className="">
+        <article key={item.id+i} className="">
           <Image
             key={item.id}
             priority={true}

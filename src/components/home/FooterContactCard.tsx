@@ -3,7 +3,7 @@ import { footer } from "@/constants/home/landingData";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-const ContactCard = ({
+const FooterContactCard = ({
   className,
   logo,
 }: {
@@ -20,24 +20,24 @@ const ContactCard = ({
           width={150}
           height={150}
           className={cn("max-sm:mx-auto", {
-            'hidden': !logo,
+            hidden: !logo,
           })}
         />
-        <div className=" flex justify-between w-full md:max-w-fit ">
+        <div className=" flex  w-full md:max-w- ">
           <Phone color="red" className="" />
-          {contact.map((item, i) => (
-            <>
-              <a href={`tel:${item}`}>
-                <p className=" font-light text-slate-400 " key={i}>
-                  {item}
-                </p>
-              </a>
-            </>
-          ))}
+            {contact.map((item, i) => (
+              <>
+                <a href={`tel:${item}`}>
+                  <p className="pl-2 flex text-slate-400 font-semibold " key={i}>
+                    {item}
+                  </p>
+                </a>
+              </>
+            ))}
         </div>
         <div className=" flex gap-2 w-full justify-between md:max-w-fit">
           <Mail color="red" />
-          <p className="font-light text-center  w-full text-slate-400">
+          <p className=" text-center  w-full text-slate-400 font-semibold">
             {email}
           </p>
         </div>
@@ -45,7 +45,7 @@ const ContactCard = ({
           <div className="">
             <MapPin className="" color="red" />
           </div>
-          <p className="font-light text-justify text-slate-400 max-w-xs">
+          <p className=" text-justify text-slate-400 font-semibold max-w-xs">
             {address}
           </p>
         </div>
@@ -54,4 +54,4 @@ const ContactCard = ({
   );
 };
 
-export default ContactCard;
+export default FooterContactCard;

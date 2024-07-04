@@ -6,7 +6,7 @@ export const bookingNumber = [
 ]
 
 export const contactInfo = {
-    phone: "+91 80890 31666",
+    phone: ["+91 80890 31666"],
     email: "info@cochincruiseline.com",
     address: "GF, 40/6185, Swapnil Enclave, Marine Drive, Ernakulam - 682031"
 }
