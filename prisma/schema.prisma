@@ -32,27 +32,6 @@ model User {
   bookings Booking[]
 }
 
-model Package {
-  id          String     @id @default(cuid())
-  title       String
-  packageType String
-  description String
-  childPrice  Int
-  adultPrice  Int
-  amenitiesId String
-  duration    Int
-  slug        String     @unique
-  foodMenuId  String
-  startFrom   DateTime
-  endAt       DateTime
-  amenities   Amenities  @relation(fields: [amenitiesId], references: [id])
-  food        FoodMenu   @relation(fields: [foodMenuId], references: [id])
-  Booking     Booking[]
-  Schedule    Schedule[]
-  Image       Image[]
-  createdAt   DateTime   @default(now()) @db.Timestamp()
-}
-
 model FoodMenu {
   id      String    @id @default(cuid())
   name    String
@@ -71,11 +50,44 @@ model Amenities {
   description String[]
   Package     Package[]
 }
-// @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
-model Image {
-  id  String @unique @default(cuid())
-  url String
-  alt String
-  packageId String
-  package   Package @relation(fields: [packageId], references: [id])
+
+model Package {
+  id           String         @id @default(cuid())
+  title        String
+  packageType  String
+  description  String
+  childPrice   Int
+  adultPrice   Int
+  amenitiesId  String
+  duration     Int
+  slug         String         @unique
+  foodMenuId   String
+  startFrom    DateTime
+  endAt        DateTime
+  amenities    Amenities      @relation(fields: [amenitiesId], references: [id])
+  food         FoodMenu       @relation(fields: [foodMenuId], references: [id])
+  Booking      Booking[]
+  Schedule     Schedule[]
+  createdAt    DateTime       @default(now()) @db.Timestamp()
+  packageImage PackageImage[]
 }
+
+
+model Image {
+  id           String         @unique @default(cuid())
+  url          String
+  alt          String
+  packageImage PackageImage[]
+}
+
+model PackageImage {
+  id        String @unique @default(cuid())
+  packageId String
+  imageId   String
+
+  package Package @relation(fields: [packageId], references: [id])
+  image   Image   @relation(fields: [imageId], references: [id])
+}
+
+
+// @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  

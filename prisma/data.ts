@@ -6,16 +6,19 @@ import {
   User,
   Image,
   Booking,
+  PackageImage,
 } from "@prisma/client";
 
-type bookingPartialId = (Omit<Booking, "id" | "createdAt"> & {id?: string})[]
-type packagesPartialId = (Omit<Package, "id" | "createdAt"> & {id?: string})[]
-type foodMenuPartialId = (Omit<FoodMenu, "id"> & {id?: string })[]
-type schedulePartialId = (Omit<Schedule, "id"> & {id?: string})[]
-type amenitiesPartialId = (Omit<Amenities, "id"> & {id?: string})[]
-type userPartialId = (Omit<User, "id"> & {id?: string})[]
-type imagesPartialId = (Omit<Image, "id"> & {id?: string})[]
-
+type bookingPartialId = (Omit<Booking, "id" | "createdAt"> & { id?: string })[];
+type packagesPartialId = (Omit<Package, "id" | "createdAt"> & {
+  id?: string;
+})[];
+type foodMenuPartialId = (Omit<FoodMenu, "id"> & { id?: string })[];
+type schedulePartialId = (Omit<Schedule, "id"> & { id?: string })[];
+type amenitiesPartialId = (Omit<Amenities, "id"> & { id?: string })[];
+type userPartialId = (Omit<User, "id"> & { id?: string })[];
+type imagesPartialId = (Omit<Image, "id"> & { id?: string })[];
+type packageImagePartialId = (Omit<PackageImage, "id"> & { id?:string})[]
 
 export const booking: bookingPartialId = [
   {
@@ -27,7 +30,7 @@ export const booking: bookingPartialId = [
 ];
 
 export const packages: packagesPartialId = [
-    {
+  {
     id: "clj9r7rku0000356cql29f672",
     title: "Breakfast cruise",
     packageType: "normal",
@@ -193,41 +196,51 @@ export const users: userPartialId = [
   },
 ];
 
-export const image : imagesPartialId = [
+export const image: imagesPartialId = [ 
   {
+    id: "clq9z4f0b000008l57kqf2fj3",
     url: "https://cochincruiseline.com/wp-content/uploads/2022/12/sunset-cruise-01.jpg",
     alt: "",
-    packageId: "clj9r7rku0000356cql29f672",
-    
-  },
-  {
-    url: "https://cochincruiseline.com/wp-content/uploads/2023/10/sunset-cruise3.jpg",
-    alt: "",
-    packageId: "clj9r7rku0000356cql29f672",
-  },
-  {
-    url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise3.jpg",
-    alt: "",
-    packageId: "clj9r7rku0000356cql29f672",
-  },
-  {
-    url: "https://cochincruiseline.com/wp-content/uploads/2022/12/sunset-cruise-01-600x600.jpeg",
-    alt: "",
-    packageId: "clj9r7rku0000356cql29f672",
-  },
-  {
-    url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise1.jpg",
-    alt: "",
-    packageId: "clj9r7rku0000356cql29f672",
-  },
-  {
-    url: "https://cochincruiseline.com/wp-content/uploads/2022/12/dj-600x600.jpg",
-    alt: "",
-    packageId: "clj9r7rku0000356cql29f672",
-  },
-  {
-    url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise2.jpg",
-    alt: "",
-    packageId: "clj9r7rku0000356cql29f672",
-  },
+  }
+  
 ];
+
+export const packageImage: packageImagePartialId  = [
+  {
+    imageId: "clq9z4f0b000008l57kqf2fj3",
+    packageId: "clj9r7rku0000356cql29f672"
+  }
+];
+
+
+
+// {
+//   url: "https://cochincruiseline.com/wp-content/uploads/2023/10/sunset-cruise3.jpg",
+//   alt: "",
+//   packageId: "clq9z9cru000008jn0vfbb9ov"
+// },
+// {
+//   url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise3.jpg",
+//   alt: "",
+//   packageId: "clq9z9cru000008jn0vfbb9ov"
+// },
+// {
+//   url: "https://cochincruiseline.com/wp-content/uploads/2022/12/sunset-cruise-01-600x600.jpeg",
+//   alt: "",
+//   packageId: "clq9z9cru000008jn0vfbb9ov"
+// },
+// {
+//   url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise1.jpg",
+//   alt: "",
+//   packageId: "clq9z9cru000008jn0vfbb9ov"
+// },
+// {
+//   url: "https://cochincruiseline.com/wp-content/uploads/2022/12/dj-600x600.jpg",
+//   alt: "",
+//   packageId: "clq9z9cru000008jn0vfbb9ov"
+// },
+// {
+//   url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise2.jpg",
+//   alt: "",
+//   packageId: "clq9z9cru000008jn0vfbb9ov"
+// },
