@@ -46,6 +46,7 @@ export const packages: packagesPartialId = [
     endAt: new Date("1970-01-01T11:00:00Z"),
   },
   {
+    id: "clqqx9xhp000108l5frrkhu8h",
     title: "Lunch cruise",
     packageType: "normal",
     description:
@@ -60,6 +61,7 @@ export const packages: packagesPartialId = [
     endAt: new Date("1970-01-01T14:00:00Z"),
   },
   {
+    id:"clqqxa3wq000208l5enk651jd",
     title: "sunset cruise",
     packageType: "normal",
     description:
@@ -74,6 +76,7 @@ export const packages: packagesPartialId = [
     endAt: new Date("1970-01-01T19:30:00Z"),
   },
   {
+    id: "clqqxac8q000308l55rjn5nv8",
     title: "Dinner cruise",
     packageType: "normal",
     description:
@@ -88,6 +91,7 @@ export const packages: packagesPartialId = [
     endAt: new Date("1970-01-01T22:00:00Z"),
   },
   {
+    id: "clqqxaklk000408l5cq6v8xfm",
     title: "Sunset with Dinner cruise",
     packageType: "special",
     description:
@@ -102,6 +106,7 @@ export const packages: packagesPartialId = [
     endAt: new Date("1970-01-01T20:30:00Z"),
   },
   {
+    id:"clqqxasvi000508l59j1z4obt",
     title: "Special 4 Hours Lunch Cruise",
     packageType: "special",
     description:
@@ -116,6 +121,7 @@ export const packages: packagesPartialId = [
     endAt: new Date("1970-01-01T15:00:00Z"),
   },
   {
+    id:"clqqxb1q1000608l5fdxf3lj9",
     title: "Special 4 Hours Dinner Cruise",
     packageType: "special",
     description: "",
@@ -129,6 +135,7 @@ export const packages: packagesPartialId = [
     endAt: new Date("1970-01-01T21:00:00Z"),
   },
   {
+    id:"clqqxbb7r000708l58m9f3ry2",
     title: "Premium Packages",
     packageType: "premium",
     description: "",
@@ -199,9 +206,53 @@ export const users: userPartialId = [
 export const image: imagesPartialId = [ 
   {
     id: "clq9z4f0b000008l57kqf2fj3",
-    url: "https://cochincruiseline.com/wp-content/uploads/2022/12/sunset-cruise-01.jpg",
+    url: "https://cochincruiseline.com/wp-content/uploads/2023/10/lunch-cruise-4-580x450.jpg",
     alt: "",
-  }
+    ImageUse: ["COMMON"]
+    
+  },
+  {
+    id: "clqqxc2ks000808l5dvjh9aub",
+    url:"https://cochincruiseline.com/wp-content/uploads/2023/10/family-gathering-3-580x450.jpg", 
+    alt: "",
+    ImageUse: ["COMMON"]
+  },
+  {
+    id: "clqqxc2ku000908l5gukdgasg",
+    url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise1-580x450.jpg",
+    alt: "",
+    ImageUse: ["COMMON"]
+  },
+  {
+    id: "clqqxc2kv000a08l5esk65wkm",
+    url: "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-3-580x450.jpg",
+    alt: "",
+    ImageUse: ["COMMON"]
+  },
+  {
+    id: "clqqxc2kw000b08l57goz4rk4",
+    url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise2-580x450.jpg",
+    alt: "",
+    ImageUse: ["COMMON"]
+  },
+  {
+    id: "clqqxc2kx000c08l59xip2bk8",
+    url: "https://cochincruiseline.com/wp-content/uploads/2023/09/lunch-cruise-minar-580x450.jpg",
+    alt: "",
+    ImageUse: ["COMMON"]
+  },
+  {
+    id: "clqqxc2ky000d08l57cdt3tz4",
+    url: "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-9-580x450.jpg",
+    alt: "",
+    ImageUse: ["COMMON"]
+  },
+  {
+    id: "clqqxc2kz000e08l5d0v553g4",
+    url: "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-5-580x450.jpg",
+    alt: "",
+    ImageUse: ["COMMON"]
+  },
   
 ];
 
@@ -209,7 +260,35 @@ export const packageImage: packageImagePartialId  = [
   {
     imageId: "clq9z4f0b000008l57kqf2fj3",
     packageId: "clj9r7rku0000356cql29f672"
-  }
+  },
+  {
+    imageId: "clqqxc2ks000808l5dvjh9aub",
+    packageId: "clqqx9xhp000108l5frrkhu8h"
+  },
+  {
+    imageId: "clqqxc2ku000908l5gukdgasg",
+    packageId: "clqqxa3wq000208l5enk651jd"
+  },
+  {
+    imageId: "clqqxc2kv000a08l5esk65wkm",
+    packageId: "clqqxac8q000308l55rjn5nv8"
+  },
+  {
+    imageId: "clqqxc2kw000b08l57goz4rk4",
+    packageId: "clqqxaklk000408l5cq6v8xfm"
+  },
+  {
+    imageId: "clqqxc2kx000c08l59xip2bk8",
+    packageId: "clqqxasvi000508l59j1z4obt"
+  },
+  {
+    imageId: "clqqxc2ky000d08l57cdt3tz4",
+    packageId: "clqqxb1q1000608l5fdxf3lj9"
+  },
+  {
+    imageId: "clqqxc2kz000e08l5d0v553g4",
+    packageId: "clqqxbb7r000708l58m9f3ry2"
+  },
 ];
 
 

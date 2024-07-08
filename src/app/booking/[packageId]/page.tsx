@@ -6,6 +6,7 @@ import TermsAndConditionsCard from "@/components/packages/TermsAndConditionsCard
 import { db } from "@/db";
 import { notFound } from "next/navigation";
 import PackageGalleryCard from "@/components/packages/PackageGalleryCard";
+import { getPackageById } from "@/db/data/dto/package";
 
 interface BookingPage {
   params: {
@@ -13,22 +14,39 @@ interface BookingPage {
   };
 }
 
-export default async function PackagePage({ params }: BookingPage) {
-  const data = await db.package.findUnique({
-    where: {
-      slug: `${params.packageId}`,
-    },
-  });
-  if(!data) notFound()
-    
+export default async function PackagePage({
+  params: { packageId },
+}: BookingPage) {
+  const data = await getPackageById({ id: packageId });
+  console.log("-----",data)
+
   return (
     <main>
-      <PackageGalleryCard packageId={data.id}/>
-      <HeadingCard {...data} />
-      <ContentCard {...data} />
-      <SuggestionCard/>
-      <TermsAndConditionsCard/>
-      <Reviews/>
+      <PackageGalleryCard data={data} />
+      {/* <HeadingCard {...data} /> */}
+      {/* <ContentCard {...data} /> */}
+      <SuggestionCard />
+      <TermsAndConditionsCard />
+      <Reviews />
     </main>
   );
 }
+
+// data: {
+//   id: string;
+//   title: string;
+//   description: string;
+//   adultPrice: number;
+//   packageImage: {
+//       image: {
+//           id: string;
+//           alt: string;
+//           packageImage: {
+//               id: string;
+//               packageId: string;
+//               imageId: string;
+//           }[];
+//           url: string;
+//       };
+//   }[];
+// } | null

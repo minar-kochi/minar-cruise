@@ -52,42 +52,47 @@ model Amenities {
 }
 
 model Package {
-  id           String         @id @default(cuid())
-  title        String
-  packageType  String
-  description  String
-  childPrice   Int
-  adultPrice   Int
-  amenitiesId  String
-  duration     Int
-  slug         String         @unique
-  foodMenuId   String
-  startFrom    DateTime
-  endAt        DateTime
-  amenities    Amenities      @relation(fields: [amenitiesId], references: [id])
-  food         FoodMenu       @relation(fields: [foodMenuId], references: [id])
-  Booking      Booking[]
-  Schedule     Schedule[]
-  createdAt    DateTime       @default(now()) @db.Timestamp()
+  id          String     @id @default(cuid())
+  title       String
+  packageType String
+  description String
+  childPrice  Int
+  adultPrice  Int
+  amenitiesId String
+  duration    Int
+  slug        String     @unique
+  foodMenuId  String
+  startFrom   DateTime
+  endAt       DateTime
+  amenities   Amenities  @relation(fields: [amenitiesId], references: [id])
+  food        FoodMenu   @relation(fields: [foodMenuId], references: [id])
+  Booking     Booking[]
+  Schedule    Schedule[]
+  createdAt   DateTime   @default(now()) @db.Timestamp()
+
   packageImage PackageImage[]
 }
 
+enum IMAGE_USE {
+  PROD_FEATURED
+  PROD_THUMBNAIL
+  COMMON
+}
 
 model Image {
   id           String         @unique @default(cuid())
   url          String
   alt          String
+  ImageUse     IMAGE_USE[]    @default([COMMON])
   packageImage PackageImage[]
 }
 
 model PackageImage {
-  id        String @unique @default(cuid())
+  id        String  @unique @default(cuid())
   packageId String
   imageId   String
-
-  package Package @relation(fields: [packageId], references: [id])
-  image   Image   @relation(fields: [imageId], references: [id])
+  package   Package @relation(fields: [packageId], references: [id])
+  image     Image   @relation(fields: [imageId], references: [id])
 }
-
 
 // @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  

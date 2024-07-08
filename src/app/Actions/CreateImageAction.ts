@@ -14,7 +14,6 @@ export async function handleSubmit({
       data: {
         alt,
         url,
-        packageId,
       },
     });
   } catch (error) {

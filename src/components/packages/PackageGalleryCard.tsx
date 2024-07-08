@@ -4,34 +4,47 @@ import { getPackageImages } from "@/db/data/dto/Images";
 
 const PackageGalleryCard = async ({
   className,
-  packageId,
+  data,
 }: {
   className?: string;
-  packageId: string;
+  data: {
+    id: string;
+    title: string;
+    description: string;
+    adultPrice: number;
+    packageImage: {
+      image: {
+        id: string;
+        alt: string;
+        packageImage: {
+          id: string;
+          packageId: string;
+          imageId: string;
+        }[];
+        url: string;
+      };
+    }[];
+  } | null;
 }) => {
-  const packageImages = await getPackageImages({ packageId });
-  if (!packageImages) {
-    // TODO: #LOW - Add a alternative to Image Gallery if not found / empty
-    return (
-      <>
-      </>
-    );
-  }
+  // const images = await getImagesIdFromPackageId({ packageId })
+
   return (
-    <div className={cn("flex p-2 gap-2", className)}>
-      {packageImages.map((item, i) => (
-        <article key={item.id+i} className="">
+    <div className={cn("flex p-2 gap-2  min-h-[400px]  ", className)}>
+      <article className=" w-full">
+
+        {data?.packageImage.map((item, i) => (
+        <div className="w-[400px] h-full " key={item.image.id}>
           <Image
-            key={item.id}
-            priority={true}
-            src={item.url}
-            alt={item.alt}
-            width={1920}
-            height={1080}
-            className=""
-          />
-        </article>
-      ))}
+              priority={true}
+              src={item.image.url}
+              alt={item.image.alt}
+              width={1920}
+              height={1080}
+              className="object-cover h-full"
+            />
+          </div>
+        ))}
+      </article>
     </div>
   );
 };
