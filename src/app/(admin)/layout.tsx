@@ -6,6 +6,9 @@ import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import { CounterStoreProvider } from "@/providers/counter-store-provider";
+import MenuBar from "@/components/admin/menubar/MenuBar";
+import Header from "@/components/admin/menubar/Header";
+import HeaderNav from "@/components/admin/menubar/HeaderNav";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -28,15 +31,16 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen  bg-background font-sans antialiased",
+          "min-h-screen dark bg-background font-sans antialiased",
           fontSans.variable
         )}
       >
         <Providers>
           <CounterStoreProvider>
-            <Navbar />
-            {children}
-            <Footer />
+            <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+              <MenuBar />
+              <Header>{children}</Header>
+            </div>
           </CounterStoreProvider>
         </Providers>
       </body>

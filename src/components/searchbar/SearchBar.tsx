@@ -65,19 +65,17 @@ const SearchBar = async () => {
             <SetCalender />
           </PopoverContent>
         </Popover>
-        <div className="flex justify-evenly items-center   hover:bg-neutral-200 w-full h-full rounded-full font-semibold hover:text-primary">
-          <Popover>
-            <PopoverTrigger>
-              {/* FIX: not able to apply button inside Popover trigger component, it is causing hydration error */}
-              <div className=" ">Who</div>
-            </PopoverTrigger>
-            <PopoverContent className="outline-none border-0 shadow-2xl mt-4 rounded-3xl w-[500px] bg-white">
-              <GuestLabel label="Adults" desc="Ages 13 or above" />
-              <GuestLabel label="Children" desc="Ages 2–12" />
-            </PopoverContent>
-          </Popover>
-          <Button className="rounded-full py-6 px-14">Search</Button>
-        </div>
+        <Popover>
+          <PopoverTrigger  className="flex justify-evenly items-center   hover:bg-neutral-200 w-full h-full rounded-full font-semibold hover:text-primary">
+            <div className=" ">Who</div>
+            {/* FIX: not able to apply button inside Popover trigger component, it is causing hydration error */}
+            {/* <Button className="rounded-full py-6 px-14">Search</Button> */}
+          </PopoverTrigger>
+          <PopoverContent className="outline-none border-0 shadow-2xl mt-4 rounded-3xl w-[500px] bg-white">
+            <GuestLabel label="Adults" desc="Ages 13 or above" />
+            <GuestLabel label="Children" desc="Ages 2–12" />
+          </PopoverContent>
+        </Popover>
       </section>
     </div>
   );
