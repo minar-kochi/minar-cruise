@@ -5,6 +5,7 @@ import {
   booking,
   foodMenu,
   image,
+  packageImage,
   packages,
   schedule,
   users,
@@ -51,29 +52,35 @@ async function main() {
   const data = await db.$transaction(async (tx) => {
     try {
       // await Promise.all([
-      await tx.amenities.createMany({
-        data: amenities,
-      });
-      await tx.foodMenu.createMany({
-        data: foodMenu,
-      });
 
-      await tx.user.createMany({
-        data: users,
-      });
+        await tx.user.createMany({
+          data: users,
+        });
+        
+        await tx.amenities.createMany({
+          data: amenities,
+        });
+        await tx.foodMenu.createMany({
+          data: foodMenu,
+        });
+        
+        await tx.image.createMany({
+          data: image,
+        });
 
-      await tx.package.createMany({
-        data: packages,
-      });
-      await tx.image.createMany({
-        data: image,
-      });
-      await tx.schedule.createMany({
-        data: schedule,
-      });
-      await tx.booking.createMany({
-        data: booking,
-      });
+        await tx.package.createMany({
+          data: packages,
+        });
+          
+        await tx.packageImage.createMany({
+          data: packageImage,
+        });
+        await tx.schedule.createMany({
+          data: schedule,
+        });
+        await tx.booking.createMany({
+          data: booking,
+        });
       // ]);
     } catch (error) {
       if (error instanceof PrismaClientValidationError) {
@@ -107,6 +114,11 @@ async function main() {
 main();
 
 
+/**The TS Ignore is to represent that the [item] is passed as arguments and the typescript is not not smart enough to understand that 
+ * the count func is not there.
+ * soo make sure to add @ts-ignore to the db[item].count
+ * 
+   */
 async function iterateTable({ tables = dbSchema }: IIterateTable) {
   let data = 
     (//@ts-ignore

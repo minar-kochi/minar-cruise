@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { gallery } from "@/constants/gallery/gallery";
+import { packageCard } from "@/constants/gallery/gallery";
 import {
   ArrowRight,
   ArrowRightSquare,
@@ -12,7 +12,7 @@ import {
 import { Button } from "../ui/button";
 
 const PackageCard = () => {
-  const [image] = gallery;
+  const [image] = packageCard;
   return (
     <div className="mt-5 max-w-[355px] w-full  group ">
       <div className="relative rounded-t-xl overflow-hidden">

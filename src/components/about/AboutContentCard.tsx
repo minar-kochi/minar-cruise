@@ -1,12 +1,20 @@
-import Image from "next/image"
-import Bounded from "../elements/Bounded"
-import { images } from "@/constants/about/images"
+
+import { Poppins } from "next/font/google";
+import Bounded from "../elements/Bounded";
+import Section1 from "./Section1";
+import Section2 from "./Section2";
+import Section3 from "./Section3";
+
+
+
 const AboutContentCard = () => {
   return (
-    <Bounded>
-        <Image src={images.topView.url} alt={images.topView.alt} width={1920} height={1080} className=""/>
+    <Bounded className="">
+        <Section1/>
+        <Section2/>
+        <Section3/>
     </Bounded>
-  )
-}
+  );
+};
 
-export default AboutContentCard
+export default AboutContentCard;

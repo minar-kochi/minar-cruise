@@ -2,7 +2,7 @@ import { Baby, Clock, Hourglass, HourglassIcon, UserRound } from "lucide-react";
 import moment from "moment";
 import Bounded from "../elements/Bounded";
 import { db } from "@/db";
-import { Package } from "@prisma/client";
+import { Package, PackageImage, Image, Amenities } from "@prisma/client";
 import { cn, isProd } from "@/lib/utils";
 import {format } from 'date-fns'
 import { ReactNode } from "react";
@@ -14,9 +14,7 @@ const HeadingCard = async ({
   title,
   adultPrice,
   childPrice,
-  duration,
-  endAt,
-  startFrom,
+  duration
 }: THeadingCard) => {
   
   return (
@@ -26,7 +24,7 @@ const HeadingCard = async ({
           <h2 className="font-bold text-4xl">{title}</h2>
           <div className="inline-flex space-x-3">
             <Hourglass color="red" strokeWidth={2} size={30} />
-            {/* todo fix seeding time data in data.ts file
+            {/* TODO: fix seeding time data in data.ts file
                 fix how to decode time formate here
             */}
             <p className="my-auto">{"time"}</p>

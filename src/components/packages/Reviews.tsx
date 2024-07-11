@@ -31,11 +31,6 @@ const Reviews = () => {
                   </div>
                 </li>
               ))}
-
-              {/* <li className="border">location</li>
-                        <li className="border">Amenities</li>
-                        <li className="border">Services</li>
-                        <li className="border">Price</li> */}
             </ul>
           </div>
         </div>
