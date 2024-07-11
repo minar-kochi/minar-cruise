@@ -6,9 +6,9 @@ import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import { CounterStoreProvider } from "@/providers/counter-store-provider";
-import MenuBar from "@/components/admin/menubar/MenuBar";
-import Header from "@/components/admin/menubar/Header";
-import HeaderNav from "@/components/admin/menubar/HeaderNav";
+import MenuBar from "@/components/admin/navigationLayout/MenuBar";
+import Header from "@/components/admin/navigationLayout/Header";
+import HeaderNav from "@/components/admin/navigationLayout/HeaderNav";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -47,3 +47,9 @@ export default function RootLayout({
     </html>
   );
 }
+
+{/* uncomment add this below <MenuBar/>, if you want to do not want to pass children inside header component */}
+{/* <div className="">
+  <HeaderNav/>
+  {children}
+</div> */}

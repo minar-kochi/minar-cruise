@@ -1,8 +1,6 @@
 import { db } from "@/db";
 import { TPackageNavigation } from "@/db/types/TPackage";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { Package, Image, PrismaClient } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export async function getPackageNavigation(): Promise<
   TPackageNavigation[] | null
@@ -25,19 +23,18 @@ export async function getPackageNavigation(): Promise<
   }
 }
 
-
-export async function getPackageById({ id }:{ id:string }) {
+export async function getPackageById({ id }: { id: string }) {
   try {
     const data = await db.package.findUnique({
       where: {
-        slug: id
+        slug: id,
       },
       select: {
         id: true,
-        adultPrice:true,
-        title:true,
-        description:true,
-        amenitiesId: true,  
+        adultPrice: true,
+        title: true,
+        description: true,
+        amenitiesId: true,
         packageImage: {
           select: {
             image: {
@@ -54,7 +51,7 @@ export async function getPackageById({ id }:{ id:string }) {
     });
 
     if (!data) {
-      console.log('Failed to load package details')
+      console.log("Failed to load package details");
       return null;
     }
     return data;
@@ -63,7 +60,11 @@ export async function getPackageById({ id }:{ id:string }) {
     return null;
   }
 }
-export type TGetPackageById = Exclude<Awaited<ReturnType<typeof getPackageById>>, null>
+
+export type TGetPackageById = Exclude<
+  Awaited<ReturnType<typeof getPackageById>>,
+  null
+>;
 
 export async function getPackageSearchItems() {
   try {
@@ -76,30 +77,32 @@ export async function getPackageSearchItems() {
           where: {
             image: {
               ImageUse: {
-                has: "PROD_FEATURED"
-              }
-            }
+                has: "PROD_FEATURED",
+              },
+            },
           },
           select: {
             image: {
               select: {
                 url: true,
                 alt: true,
-                id: true
-              }
-            }
-          }
-        }
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("Failed to load package details");
       }
-    })
-    
-    if(!data){
-      console.log("Failed to load package details");
       return null;
     }
     return data;
-  }
-  catch(error) {
-    return null
+    
+  } catch (error) {
+    return null;
   }
 }

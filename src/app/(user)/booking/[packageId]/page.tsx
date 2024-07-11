@@ -6,7 +6,7 @@ import TermsAndConditionsCard from "@/components/packages/TermsAndConditionsCard
 import { db } from "@/db";
 import { notFound } from "next/navigation";
 import PackageGalleryCard from "@/components/packages/PackageGalleryCard";
-import { getPackageById } from "@/db/data/dto/package";
+import { getPackageById, TGetPackageById } from "@/db/data/dto/package";
 
 interface BookingPage {
   params: {
@@ -18,7 +18,6 @@ export default async function PackagePage({
   params: { packageId },
 }: BookingPage) {
   const data = await getPackageById({ id: packageId });
-  console.log("-----",data)
 
   return (
     <main>
@@ -31,22 +30,3 @@ export default async function PackagePage({
     </main>
   );
 }
-
-// data: {
-//   id: string;
-//   title: string;
-//   description: string;
-//   adultPrice: number;
-//   packageImage: {
-//       image: {
-//           id: string;
-//           alt: string;
-//           packageImage: {
-//               id: string;
-//               packageId: string;
-//               imageId: string;
-//           }[];
-//           url: string;
-//       };
-//   }[];
-// } | null
