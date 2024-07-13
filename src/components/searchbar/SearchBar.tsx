@@ -8,13 +8,14 @@ import SetCalender from "./SetCalender";
 import {
   getPackageNavigation,
   getPackageSearchItems,
+  TGetPackageSearchItems,
 } from "@/db/data/dto/package";
 import Image from "next/image";
 import { url } from "inspector";
 import { Button } from "../ui/button";
 
 const SearchBar = async () => {
-  const packages = await getPackageSearchItems();
+  const packages = (await getPackageSearchItems())!;
 
   if (!packages) {
     if (process.env.NODE_ENV === "production") {
@@ -22,10 +23,7 @@ const SearchBar = async () => {
     }
     return <>PACKAGE FETCHING FAILED, CHECK: SearchBar.tsx</>;
   }
-  const { title } = packages[0];
-  const {} = packages.map((item) => {
-    item.packageImage.map((c) => c.image);
-  });
+  
   return (
     <div className=" bg-white flex justify-center">
       <section className="shadow-xl outline-1 m-3  w-[900px] min-h-[70px] rounded-full  flex justify-  items-center tracking-wider">

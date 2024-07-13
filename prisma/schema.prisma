@@ -38,11 +38,26 @@ model FoodMenu {
   Package Package[]
 }
 
+enum SCHEDULE_PACKAGE {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+enum SCHEDULE_STATUS {
+  BLOCKED
+  MAINTENANCE
+  EXCLUSIVE
+  AVAILABLE
+}
+
 model Schedule {
-  id        String   @id @default(cuid())
-  time      DateTime
-  packageId String
-  package   Package  @relation(fields: [packageId], references: [id])
+  id              String           @id @default(cuid())
+  day             DateTime
+  packageId       String
+  schedulePackage SCHEDULE_PACKAGE
+  scheduleStatus  SCHEDULE_STATUS
+  package         Package          @relation(fields: [packageId], references: [id])
 }
 
 model Amenities {
@@ -51,26 +66,33 @@ model Amenities {
   Package     Package[]
 }
 
-model Package {
-  id          String     @id @default(cuid())
-  title       String
-  packageType String
-  description String
-  childPrice  Int
-  adultPrice  Int
-  amenitiesId String
-  duration    Int
-  slug        String     @unique
-  foodMenuId  String
-  startFrom   DateTime
-  endAt       DateTime
-  amenities   Amenities  @relation(fields: [amenitiesId], references: [id])
-  food        FoodMenu   @relation(fields: [foodMenuId], references: [id])
-  Booking     Booking[]
-  Schedule    Schedule[]
-  createdAt   DateTime   @default(now()) @db.Timestamp()
+enum PACKAGE_CATEGORY {
+  BREAKFAST
+  LUNCH
+  DINNER
+  EXCLUSIVE
+}
 
-  packageImage PackageImage[]
+model Package {
+  id              String           @id @default(cuid())
+  title           String
+  packageType     String
+  description     String
+  childPrice      Int
+  adultPrice      Int
+  amenitiesId     String
+  duration        Int
+  slug            String           @unique
+  foodMenuId      String
+  startFrom       DateTime
+  endAt           DateTime
+  createdAt       DateTime         @default(now()) @db.Timestamp()
+  amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
+  food            FoodMenu         @relation(fields: [foodMenuId], references: [id])
+  packageCategory PACKAGE_CATEGORY
+  Booking         Booking[]
+  Schedule        Schedule[]
+  packageImage    PackageImage[]
 }
 
 enum IMAGE_USE {
