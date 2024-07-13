@@ -40,4 +40,3 @@ const page = () => {
 
 export default page;
 
-// AIzaSyAUYHzCiOloHsIhgXzzHQad64S60d1j-ns
