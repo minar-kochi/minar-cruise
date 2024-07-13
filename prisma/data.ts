@@ -44,6 +44,8 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T09:00:00Z"),
     endAt: new Date("1970-01-01T11:00:00Z"),
+    packageCategory: "BREAKFAST"
+    
   },
   {
     id: "clqqx9xhp000108l5frrkhu8h",
@@ -59,6 +61,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T12:00:00Z"),
     endAt: new Date("1970-01-01T14:00:00Z"),
+    packageCategory: "LUNCH"
   },
   {
     id:"clqqxa3wq000208l5enk651jd",
@@ -74,6 +77,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T17:30:00Z"),
     endAt: new Date("1970-01-01T19:30:00Z"),
+    packageCategory: "DINNER"
   },
   {
     id: "clqqxac8q000308l55rjn5nv8",
@@ -89,6 +93,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T20:00:00Z"),
     endAt: new Date("1970-01-01T22:00:00Z"),
+    packageCategory: "DINNER"
   },
   {
     id: "clqqxaklk000408l5cq6v8xfm",
@@ -104,6 +109,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T17:00:00Z"),
     endAt: new Date("1970-01-01T20:30:00Z"),
+    packageCategory: "DINNER"
   },
   {
     id:"clqqxasvi000508l59j1z4obt",
@@ -119,6 +125,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T11:00:00Z"),
     endAt: new Date("1970-01-01T15:00:00Z"),
+    packageCategory: "LUNCH"
   },
   {
     id:"clqqxb1q1000608l5fdxf3lj9",
@@ -133,6 +140,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T17:00:00Z"),
     endAt: new Date("1970-01-01T21:00:00Z"),
+    packageCategory: "DINNER"
   },
   {
     id:"clqqxbb7r000708l58m9f3ry2",
@@ -147,6 +155,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clj9r7rku0000356cql29f673",
     startFrom: new Date("1970-01-01T17:00:00Z"),
     endAt: new Date("1970-01-01T21:00:00Z"),
+    packageCategory: "EXCLUSIVE"
   },
 ];
 
@@ -171,7 +180,9 @@ export const foodMenu: foodMenuPartialId = [
 
 export const schedule: schedulePartialId = [
   {
-    time: new Date(),
+    day: new Date(),
+    schedulePackage: "BREAKFAST",
+    scheduleStatus: "AVAILABLE",
     packageId: "clj9r7rku0000356cql29f672",
   },
 ];
@@ -292,34 +303,3 @@ export const packageImage: packageImagePartialId  = [
 ];
 
 
-
-// {
-//   url: "https://cochincruiseline.com/wp-content/uploads/2023/10/sunset-cruise3.jpg",
-//   alt: "",
-//   packageId: "clq9z9cru000008jn0vfbb9ov"
-// },
-// {
-//   url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise3.jpg",
-//   alt: "",
-//   packageId: "clq9z9cru000008jn0vfbb9ov"
-// },
-// {
-//   url: "https://cochincruiseline.com/wp-content/uploads/2022/12/sunset-cruise-01-600x600.jpeg",
-//   alt: "",
-//   packageId: "clq9z9cru000008jn0vfbb9ov"
-// },
-// {
-//   url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise1.jpg",
-//   alt: "",
-//   packageId: "clq9z9cru000008jn0vfbb9ov"
-// },
-// {
-//   url: "https://cochincruiseline.com/wp-content/uploads/2022/12/dj-600x600.jpg",
-//   alt: "",
-//   packageId: "clq9z9cru000008jn0vfbb9ov"
-// },
-// {
-//   url: "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise2.jpg",
-//   alt: "",
-//   packageId: "clq9z9cru000008jn0vfbb9ov"
-// },

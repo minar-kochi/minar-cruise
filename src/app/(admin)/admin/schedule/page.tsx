@@ -1,33 +1,30 @@
-import Link from "next/link";
-import { CalendarIcon } from "lucide-react";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/admin/dashboard/DatePicker";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover } from "@/components/ui/popover";
-import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
-import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
+import { DayPicker } from "react-day-picker";
 
-export default function Dashboard() {
+
+export default function Schedule() {
+  const [ date, setDate ] = useState<Date>()
+  console.log(date)
+  // const [schedule, setSchedule] = useState<TGetSchedule>([]);
+  //   useEffect(()=>{
+  //     async ()=> {
+  //       const data =  await getSchedule();
+  //       if(data){
+  //         setSchedule(data)
+  //       }
+
+  //     }
+  //   },[])
   return (
     <div>
-      <h1 className="font-bold text-2xl text-center border py-4">Schedule</h1>
-        <Calendar className="border w-fit" />
+      <h1 className="font-bold text-2xl text-center border-b py-4">Schedule</h1>
+      {/* <Calendar mode="single" selected={date} onSelect={setDate} captionLayout="dropdown" className="border w-fit"/> */}
+      <DatePicker/>
+      {/* {JSOgit N.stringify(date)} */}
     </div>
   );
-}
-
-{
-  /* <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className={cn("w-[240px] pl-3 text-left font-normal")}
-          >
-            {<span>Pick a date</span>}
-            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="">
-        </PopoverContent>
-      </Popover> */
 }

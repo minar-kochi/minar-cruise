@@ -66,6 +66,8 @@ export type TGetPackageById = Exclude<
   null
 >;
 
+
+export type TGetPackageSearchItems = Exclude<Awaited<ReturnType<typeof getPackageSearchItems>>, null>
 export async function getPackageSearchItems() {
   try {
     const data = await db.package.findMany({
