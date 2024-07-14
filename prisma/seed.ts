@@ -130,13 +130,4 @@ async function main() {
 
 main();
 
-// async function iterateTable({ tables = dbSchema }: IIterateTable) {
-//   let data =
-//   (//@ts-ignore
-//     (await Promise.all([...tables.map((item) => db[item].count())])) as (
-//       | number
-//       | null
-//     )[]
-//   ).filter(Boolean);
-//   return data.length > 0;
-// }
+
