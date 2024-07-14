@@ -102,7 +102,7 @@ enum IMAGE_USE {
 }
 
 model Image {
-  id           String         @unique @default(cuid())
+  id           String         @id @unique @default(cuid())
   url          String
   alt          String
   ImageUse     IMAGE_USE[]    @default([COMMON])
@@ -110,7 +110,7 @@ model Image {
 }
 
 model PackageImage {
-  id        String  @unique @default(cuid())
+  id        String  @id @unique @default(cuid())
   packageId String
   imageId   String
   package   Package @relation(fields: [packageId], references: [id])
@@ -118,3 +118,4 @@ model PackageImage {
 }
 
 // @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
+// pg_dump -U postgres --clean | pg_restore -U postgres

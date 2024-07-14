@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { iterateTable } from "./functions/iterateTables";
 
 import {
   amenities,
@@ -16,27 +17,10 @@ import {
   PrismaClientUnknownRequestError,
   PrismaClientValidationError,
 } from "@prisma/client/runtime/library";
-interface IIterateTable {
-  tables?: TdbSchema[];
-}
-type TdbSchema =
-  | "package"
-  | "amenities"
-  | "booking"
-  | "foodMenu"
-  | "image"
-  | "schedule"
-  | "user";
 
-const dbSchema: TdbSchema[] = [
-  "package",
-  "amenities",
-  "booking",
-  "foodMenu",
-  "image",
-  "schedule",
-  "user",
-];
+import { exit } from "node:process";
+import { ClearDb } from "./functions/utils";
+
 const db = new PrismaClient();
 
 async function main() {
@@ -44,44 +28,71 @@ async function main() {
   const isDataPresent = await iterateTable({});
 
   if (isDataPresent) {
-    throw new Error("Please reset/migrate database before you seed");
+    console.error("There is Existing data Found on the database \n");
+    const isDeleted = await ClearDb();
+    if (!isDeleted) {
+      console.error("You need to reset/migrate database before you seed");
+    }
   }
-
   console.log("Seeding Data");
-
   const data = await db.$transaction(async (tx) => {
+    console.log("Opening Transaction...");
     try {
-      // await Promise.all([
+      console.log("Inserting user...");
 
-        await tx.user.createMany({
-          data: users,
-        });
-        
-        await tx.amenities.createMany({
-          data: amenities,
-        });
-        await tx.foodMenu.createMany({
-          data: foodMenu,
-        });
-        
-        await tx.image.createMany({
-          data: image,
-        });
+      await tx.user.createMany({
+        data: users,
+      });
+      console.log("Completed User \n");
 
-        await tx.package.createMany({
-          data: packages,
-        });
-          
-        await tx.packageImage.createMany({
-          data: packageImage,
-        });
-        await tx.schedule.createMany({
-          data: schedule,
-        });
-        await tx.booking.createMany({
-          data: booking,
-        });
-      // ]);
+      console.log("Inserting amenities...");
+      await tx.amenities.createMany({
+        data: amenities,
+      });
+      console.log("Completed amenities \n");
+
+      console.log("Inserting foodMenu...");
+      await tx.foodMenu.createMany({
+        data: foodMenu,
+      });
+      console.log("Completed foodMenu \n");
+
+      console.log("Inserting image...");
+
+      await tx.image.createMany({
+        data: image,
+      });
+      console.log("Completed image \n");
+
+      console.log("Inserting package...");
+
+      await tx.package.createMany({
+        data: packages,
+      });
+      console.log("Completed package \n");
+
+      console.log("Inserting packageImage...");
+
+      await tx.packageImage.createMany({
+        data: packageImage,
+      });
+      console.log("Completed packageImage \n");
+
+      console.log("Inserting schedule...");
+
+      await tx.schedule.createMany({
+        data: schedule,
+      });
+      console.log("Completed schedule \n");
+
+      console.log("Inserting booking...");
+
+      await tx.booking.createMany({
+        data: booking,
+      });
+      console.log("Completed booking \n");
+
+      console.log("Seeding completed!");
     } catch (error) {
       if (error instanceof PrismaClientValidationError) {
         console.log("Client validation Error");
@@ -108,24 +119,24 @@ async function main() {
     }
     return true;
   });
-  if (!data) console.log("Data failed to load");
+  if (!data) {
+    console.log("Data failed to load");
+    process.exit();
+  }
+  console.log("Transaction Completed");
+  console.log("Data Injected Successfully");
+  process.exit();
 }
 
 main();
 
-
-/**The TS Ignore is to represent that the [item] is passed as arguments and the typescript is not not smart enough to understand that 
- * the count func is not there.
- * soo make sure to add @ts-ignore to the db[item].count
- * 
-   */
-async function iterateTable({ tables = dbSchema }: IIterateTable) {
-  let data = 
-    (//@ts-ignore
-      (await Promise.all([...tables.map((item) => db[item].count())])) as (
-        | number
-        | null
-      )[]
-    ).filter(Boolean);
-  return data.length > 0;
-}
+// async function iterateTable({ tables = dbSchema }: IIterateTable) {
+//   let data =
+//   (//@ts-ignore
+//     (await Promise.all([...tables.map((item) => db[item].count())])) as (
+//       | number
+//       | null
+//     )[]
+//   ).filter(Boolean);
+//   return data.length > 0;
+// }
