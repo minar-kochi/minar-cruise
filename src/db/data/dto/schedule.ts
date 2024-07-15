@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { isProd } from "@/lib/utils";
 
 export type TGetSchedulePAckages = Awaited<
   ReturnType<typeof getSchedulePackages>
@@ -12,7 +13,7 @@ export async function getSchedulePackages() {
     });
 
     if (!data) {
-      if (process.env.NODE_ENV === "development") {
+      if (isProd) {
         console.log("Failed to load schedule details");
       }
       return null;

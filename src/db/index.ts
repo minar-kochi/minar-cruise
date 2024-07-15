@@ -1,3 +1,4 @@
+import { isProd } from "@/lib/utils";
 import { PrismaClient } from "@prisma/client";
 
 declare global {
@@ -6,7 +7,7 @@ declare global {
 }
 
 let prisma: PrismaClient;
-if (process.env.NODE_ENV === "production") {
+if (isProd) {
   prisma = new PrismaClient();
 } else {
   if (!global.cachedPrisma) {

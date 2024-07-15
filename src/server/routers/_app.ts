@@ -2,6 +2,8 @@ import { z } from "zod";
 import { procedure, router } from "../trpc";
 
 import { ContactValidators } from "@/lib/validators/ContactFormValidator";
+import { ScheduleSchema } from "@/lib/validators/ScheduleValidtor";
+import { db } from "@/db";
 // import { newsLetter } from "@/Schema/user";
 export const appRouter = router({
   hello: procedure
@@ -16,15 +18,29 @@ export const appRouter = router({
         greeting: `hello ${opts.input.text}`,
       };
     }),
-  get: procedure
-    .input(
-      z.object({
-        key: z.string(),
-      })
-    )
-    .mutation(({ input }) => {
-      console.log(input);
-      return true;
+  getSchedule: procedure
+    .input(ScheduleSchema.optional())
+    .query(async ({ input }) => {
+      try {
+        /** @TODO Fix the positioning of date */
+        const schedule = await db.schedule.findMany({
+          where: {
+            day: new Date(input?.ScheduleDate ?? Date.now()),
+          },
+        });
+        if (schedule.length < 0) {
+          return null;
+        }
+        return schedule.map((item) => {
+          return {
+            ...item,
+            day: new Date(item.day),
+          };
+        });
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
     }),
   subscribeNewsletter: procedure
     .input(

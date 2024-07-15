@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { TPackageNavigation } from "@/db/types/TPackage";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { isProd } from "@/lib/utils";
 
 export async function getPackageNavigation(): Promise<
   TPackageNavigation[] | null
@@ -96,8 +97,8 @@ export async function getPackageSearchItems() {
       },
     });
 
-    if (!data) {
-      if (process.env.NODE_ENV === "development") {
+    if (!data.length) {
+      if (!isProd) {
         console.log("Failed to load package details");
       }
       return null;
