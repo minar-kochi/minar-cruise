@@ -1,22 +1,26 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import { Calendar } from "@/components/ui/calendar";
-import { getPrevTimeStamp } from "@/lib/utils";
+import { TScheduleOrganizedData } from "@/db/data/dto/schedule";
+import { convertUTCToLocalDate, getPrevTimeStamp } from "@/lib/utils";
 import {
   ScheduleSchema,
   TScheduleSchema,
 } from "@/lib/validators/ScheduleValidtor";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Schedule } from "@prisma/client";
 import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-export type TScheduleData = Omit<Schedule, "day"> & {day : string};
-export default function DateSelector() {
-  const [queryDate, setData] = useState<{ date: number | null }>({
-    date: null,
-  });
-  const [scheduleData, setScheduleData] = useState<TScheduleData[] | null>();
+import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
+import { TScheduleDayReplaceString } from "@/Types/type";
+export default function DateSelector({
+  data,
+}: {
+  data: TScheduleOrganizedData;
+}) {
+  const [scheduleData, setScheduleData] = useState<
+    TScheduleDayReplaceString[] | null
+  >();
   const {
     register,
     handleSubmit,
@@ -24,20 +28,14 @@ export default function DateSelector() {
     watch,
     setValue,
     formState: { errors },
-    getFieldState,
-    control,
-    trigger,
   } = useForm<TScheduleSchema>({
     resolver: zodResolver(ScheduleSchema),
   });
 
+  const { fetch } = trpc.useUtils().admin.getSchedule;
 
-  const { fetch } = trpc.useUtils().getSchedule;
-
-
+  /**@deprecated */
   async function HandleSubmit(queryData: TScheduleSchema) {
-    console.log("submited");
-    setData({ date: queryData.ScheduleDate });
     const data = await fetch({
       ScheduleDate: queryData.ScheduleDate,
     });
@@ -45,19 +43,39 @@ export default function DateSelector() {
   }
 
   watch("ScheduleDate");
+
+  /**
+   * @TODO - AMJAD
+   *
+   * Prettify the Data fetched / create form element that is displayed when schedule data is passed
+   *
+   *
+   *   */
+
   return (
     <div className="flex items-center flex-col justify-center">
       <form action="" onSubmit={handleSubmit(HandleSubmit)}>
         <Calendar
+          components={{
+            DayContent: (props) =>
+              CustomDayContentWithScheduleIndicator(props, data),
+          }}
+          // toDate={}
           mode="single"
           {...register}
           selected={new Date(getValues("ScheduleDate"))}
-          onSelect={(Date) => {
-            if (Date) {
-              setValue("ScheduleDate", Date.getTime(), {
+          onSelect={async (selectedDate) => {
+            if (selectedDate) {
+              setValue("ScheduleDate", selectedDate.getTime(), {
                 shouldValidate: true,
                 shouldDirty: true,
               });
+              const data = await fetch({
+                ScheduleDate: convertUTCToLocalDate(
+                  new Date(selectedDate.getTime())
+                ),
+              });
+              setScheduleData(data);
             }
             return;
           }}
@@ -68,6 +86,8 @@ export default function DateSelector() {
         />
         <button type="submit">Submit!</button>
       </form>
+
+      {/* @TODO - AMJAD Display the form here and create the elements and default states.  */}
       <div>
         {JSON.stringify(scheduleData)}
         {/* <p>Data Received from Query...</p> */}

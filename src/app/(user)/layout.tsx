@@ -6,6 +6,7 @@ import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import { CounterStoreProvider } from "@/providers/counter-store-provider";
+import { YourStateProvider } from "@/providers/name-store-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -34,9 +35,9 @@ export default function RootLayout({
       >
         <Providers>
           <CounterStoreProvider>
-            <Navbar />
-            {children}
-            <Footer />
+              <Navbar />
+              {children}
+              <Footer />
           </CounterStoreProvider>
         </Providers>
       </body>

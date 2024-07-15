@@ -8,5 +8,27 @@ import { initTRPC } from "@trpc/server";
 const t = initTRPC.create();
 
 export const router = t.router;
-// Base router and procedure helpers
+// Base router and procedure
 export const procedure = t.procedure;
+
+export const middleware = t.middleware;
+
+/**
+ * @TODO - AMJAD
+ * Refactor middlware to avoid Hoisting issues.
+ */
+
+export const isAdmin = middleware(async (opts) => {
+  /** @TODO Admin Authorization */
+
+  /** Pass-in Data that is needed for all the admin routes
+   * @example
+   * role,
+   * name, etc...
+   */
+  return opts.next({
+    ctx: {},
+  });
+});
+
+export const AdminProcedure = t.procedure.use(isAdmin);

@@ -1,3 +1,5 @@
+import { Schedule } from "@prisma/client";
+
 export type TGallery = {
   Text: {
     bannerHeading: string;
@@ -21,3 +23,6 @@ export const Galleries = [
 ] as const;
 
 export type TGalleries = (typeof Galleries)[number];
+
+
+export type TScheduleDayReplaceString = Omit<Schedule, "day"> & { day: string };

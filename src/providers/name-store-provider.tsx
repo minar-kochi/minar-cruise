@@ -34,8 +34,8 @@ export const YourStateProvider = ({
   )
 }
 
-export const useCounterStore = <T,>(
-  selector: (store: TYourState) => T,
+export const useProductStore = <T,>(
+  selector: (store: YourFullStateFunc) => T,
 ): T => {
   const YourContextProvider = useContext(YourStateContext)
 

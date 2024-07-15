@@ -30,5 +30,23 @@ export function getPrevTimeStamp(timestamp: number) {
   const date = new Date(timestamp);
   const oneDayBefore = new Date(date.getTime() - 24 * 60 * 60 * 1000);
   const newTimestamp = oneDayBefore.getTime();
-  return newTimestamp
+  return newTimestamp;
+}
+
+export function isSameDay(date: Date, fromDate: Date) {
+  return (
+    date.getDate() === fromDate.getDate() &&
+    date.getMonth() === fromDate.getMonth() &&
+    date.getFullYear() === fromDate.getFullYear()
+  );
+}
+export function convertUTCToLocalDate(date: Date) {
+  if (!date) {
+    return date;
+  }
+  date = new Date(date);
+  date = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
+  return date;
 }
