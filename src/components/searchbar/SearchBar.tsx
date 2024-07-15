@@ -13,17 +13,18 @@ import {
 import Image from "next/image";
 import { url } from "inspector";
 import { Button } from "../ui/button";
+import { isProd } from "@/lib/utils";
 
 const SearchBar = async () => {
-  const packages = (await getPackageSearchItems())!;
+  const packages = await getPackageSearchItems();
 
   if (!packages) {
-    if (process.env.NODE_ENV === "production") {
+    if (isProd) {
       return <></>;
     }
     return <>PACKAGE FETCHING FAILED, CHECK: SearchBar.tsx</>;
   }
-  
+
   return (
     <div className=" bg-white flex justify-center">
       <section className="shadow-xl outline-1 m-3  w-[900px] min-h-[70px] rounded-full  flex justify-  items-center tracking-wider">
@@ -41,8 +42,8 @@ const SearchBar = async () => {
                         key={item.id + i}
                       >
                         <Image
-                          src={item.packageImage[0].image.url}
-                          alt={item.packageImage[0].image.alt}
+                          src={item?.packageImage[0]?.image.url ?? "/assets/nightPhoto.jpg"}
+                          alt={item?.packageImage[0]?.image.alt ?? "Night Photo"}
                           height={1920}
                           width={1080}
                           className="shadow-2xl rounded-xl object-cover max-h-[100px] max-w"
@@ -64,7 +65,7 @@ const SearchBar = async () => {
           </PopoverContent>
         </Popover>
         <Popover>
-          <PopoverTrigger  className="flex justify-evenly items-center   hover:bg-neutral-200 w-full h-full rounded-full font-semibold hover:text-primary">
+          <PopoverTrigger className="flex justify-evenly items-center   hover:bg-neutral-200 w-full h-full rounded-full font-semibold hover:text-primary">
             <div className=" ">Who</div>
             {/* FIX: not able to apply button inside Popover trigger component, it is causing hydration error */}
             {/* <Button className="rounded-full py-6 px-14">Search</Button> */}

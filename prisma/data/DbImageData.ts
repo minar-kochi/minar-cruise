@@ -5,7 +5,7 @@ export const image: imagesPartialId = [
       id: "clq9z4f0b000008l57kqf2fj3",
       url: "https://cochincruiseline.com/wp-content/uploads/2023/10/lunch-cruise-4-580x450.jpg",
       alt: "",
-      ImageUse: ["COMMON"]
+      ImageUse: ["PROD_FEATURED"]
       
     },
     {
