@@ -11,15 +11,13 @@ import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
 
 export type TS = keyof Exclude<TgetPackageScheduleDatas, null>;
 export type TScheduleSelect = {
-  //   placeholder: string;
   packages: PackageSelect[];
   selected: TScheduleDayReplaceString | null | undefined;
 };
 export default function ScheduleSelect({
   selected,
   packages,
-}: //   placeholder = "breakfast",
-TScheduleSelect) {
+}: TScheduleSelect) {
   return (
     <Select
       defaultValue={selected?.packageId ?? undefined}
@@ -33,18 +31,10 @@ TScheduleSelect) {
           placeholder={"Select a Package"}
         />
       </SelectTrigger>
-      <SelectContent
-        onChange={(e) => {
-          // console.log(e.target)
-        }}
-      >
+      <SelectContent onChange={(e) => {}}>
         {packages.map((item) => {
           return (
-            <SelectItem
-              // check={selected?.packageId === item.id}
-              key={item.id}
-              value={item.id}
-            >
+            <SelectItem key={item.id} value={item.id}>
               {item.title}
             </SelectItem>
           );
