@@ -134,7 +134,6 @@ export default function DateSelector({
           <div className="flex gap-2">
             <ScheduleSelect
               key={organizedScheduleData?.dinner?.id ?? Math.random()}
-              // placeholder="Dinner"
               selected={organizedScheduleData?.dinner}
               packages={packages.Dinner}
             />
