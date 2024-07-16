@@ -54,10 +54,10 @@ enum SCHEDULE_STATUS {
 model Schedule {
   id              String           @id @default(cuid())
   day             DateTime         @db.Date()
-  packageId       String
+  packageId       String?
   schedulePackage SCHEDULE_PACKAGE
   scheduleStatus  SCHEDULE_STATUS
-  package         Package          @relation(fields: [packageId], references: [id])
+  Package         Package?         @relation(fields: [packageId], references: [id])
 }
 
 model Amenities {

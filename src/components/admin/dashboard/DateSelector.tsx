@@ -1,5 +1,7 @@
 "use client";
+// import { IoMdRefresh } from "react-icons/io";
 import { trpc } from "@/app/_trpc/client";
+
 import { Calendar } from "@/components/ui/calendar";
 import { TScheduleOrganizedData } from "@/db/data/dto/schedule";
 import { convertUTCToLocalDate, getPrevTimeStamp } from "@/lib/utils";
@@ -13,11 +15,19 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
 import { TScheduleDayReplaceString } from "@/Types/type";
+import { organizedData, TOrganizedData } from "@/lib/helpers/organizedData";
+import ScheduleSelect from "./ScheduleSelect";
+import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
+import { Check, CheckCheckIcon, RefreshCw } from "lucide-react";
 export default function DateSelector({
   data,
+  packages,
 }: {
+  packages: Exclude<TgetPackageScheduleDatas, null>;
   data: TScheduleOrganizedData;
 }) {
+  const [organizedScheduleData, setOrganizedScheduleData] =
+    useState<TOrganizedData | null>(null);
   const [scheduleData, setScheduleData] = useState<
     TScheduleDayReplaceString[] | null
   >();
@@ -53,14 +63,14 @@ export default function DateSelector({
    *   */
 
   return (
-    <div className="flex items-center flex-col justify-center">
-      <form action="" onSubmit={handleSubmit(HandleSubmit)}>
+    <div className="flex items-center w-full flex-col justify-center">
+      <form action="" className="w-full" onSubmit={handleSubmit(HandleSubmit)}>
         <Calendar
           components={{
             DayContent: (props) =>
               CustomDayContentWithScheduleIndicator(props, data),
           }}
-          // toDate={}
+          className="min-w-96 min-h-96 w-full h-full border-2"
           mode="single"
           {...register}
           selected={new Date(getValues("ScheduleDate"))}
@@ -75,6 +85,8 @@ export default function DateSelector({
                   new Date(selectedDate.getTime())
                 ),
               });
+              const organizeScheduleData = organizedData({ data });
+              setOrganizedScheduleData(organizeScheduleData);
               setScheduleData(data);
             }
             return;
@@ -88,23 +100,49 @@ export default function DateSelector({
       </form>
 
       {/* @TODO - AMJAD Display the form here and create the elements and default states.  */}
-      <div>
-        {JSON.stringify(scheduleData)}
-        {/* <p>Data Received from Query...</p> */}
-        {/* <p>Package Id : {query.data[0].}</p> */}
-        {scheduleData && scheduleData?.length > 0
-          ? scheduleData.map((item) => {
-              return (
-                <div key={`${item.id}-${item.packageId}`}>
-                  <p>Schedule Id : {item.id}</p>
-                  <p>Date : {format(item.day, "dd MM yyy")}</p>
-                  <p>PackageID : {item.packageId}</p>
-                  <p>Scheduled Package : {item.schedulePackage}</p>
-                  <p>Scheduled Status : {item.scheduleStatus}</p>
-                </div>
-              );
-            })
-          : null}
+      <div className="flex flex-col gap-y-12 w-full items-center justify-center mt-12">
+        <div className="flex gap-2 justify-between w-full max-w-sm">
+          <p className="text-2xl font-medium">Break fast</p>
+          <div className="flex gap-2">
+            <ScheduleSelect
+              key={organizedScheduleData?.breakfast?.id}
+              // placeholder="Breakfast"
+              selected={organizedScheduleData?.breakfast}
+              packages={packages.BreakFast}
+            />
+            <button>
+              {organizedScheduleData?.breakfast?.id ? <RefreshCw /> : <Check />}
+            </button>
+          </div>
+        </div>
+        <div className="flex gap-2 justify-between w-full max-w-sm">
+          <p className="text-2xl ">Lunch </p>
+          <div className="flex gap-2">
+            <ScheduleSelect
+              key={organizedScheduleData?.lunch?.id}
+              // placeholder="Lunch"
+              selected={organizedScheduleData?.lunch}
+              packages={packages.Lunch}
+            />
+            <button>
+              {organizedScheduleData?.lunch?.id ? <RefreshCw /> : <Check />}
+            </button>
+          </div>
+        </div>
+        <div className="flex gap-2 justify-between w-full max-w-sm">
+          <p className="text-2xl ">Dinner </p>
+          <div className="flex gap-2">
+            <ScheduleSelect
+              key={organizedScheduleData?.dinner?.id ?? Math.random()}
+              // placeholder="Dinner"
+              selected={organizedScheduleData?.dinner}
+              packages={packages.Dinner}
+            />
+            <button>
+              {organizedScheduleData?.dinner?.id ? <RefreshCw /> : <Check />}
+            </button>
+          </div>
+        </div>
       </div>
       {/* console.log(') */}
     </div>

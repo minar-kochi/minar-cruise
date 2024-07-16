@@ -19,11 +19,11 @@ const Navbar = async () => {
               height={100}
               priority={true}
             />
-          </Link>  
+          </Link>
         </div>
         <div className="w-full justify-end items-center hidden md:flex ">
-          <NavigationContents/>
-        </div> 
+          <NavigationContents />
+        </div>
       </Bounded>
     </div>
   );

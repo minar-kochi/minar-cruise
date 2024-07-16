@@ -2,6 +2,8 @@ import { db } from "@/db";
 import { TPackageNavigation } from "@/db/types/TPackage";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { isProd } from "@/lib/utils";
+import { $Enums } from "@prisma/client";
+import assert from "assert";
 
 export async function getPackageNavigation(): Promise<
   TPackageNavigation[] | null
@@ -67,8 +69,10 @@ export type TGetPackageById = Exclude<
   null
 >;
 
-
-export type TGetPackageSearchItems = Exclude<Awaited<ReturnType<typeof getPackageSearchItems>>, null>
+export type TGetPackageSearchItems = Exclude<
+  Awaited<ReturnType<typeof getPackageSearchItems>>,
+  null
+>;
 export async function getPackageSearchItems() {
   try {
     const data = await db.package.findMany({
@@ -104,8 +108,69 @@ export async function getPackageSearchItems() {
       return null;
     }
     return data;
-    
   } catch (error) {
     return null;
   }
 }
+
+export type PackageSelect = {
+  slug: string;
+  id: string;
+  title: string;
+  packageCategory: $Enums.PACKAGE_CATEGORY;
+};
+export async function getPackageScheduleDatas() {
+  try {
+    const data = await db.package.findMany({
+      select: {
+        slug: true,
+        title: true,
+        id: true,
+        packageCategory: true,
+      },
+    });
+    if (!data.length) {
+      return null;
+    }
+
+    let Lunch: PackageSelect[] = [];
+    let Dinner: PackageSelect[] = [];
+    let BreakFast: PackageSelect[] = [];
+
+    for (const PackageData of data) {
+      if (
+        PackageData.packageCategory === "LUNCH" ||
+        PackageData.packageCategory === "EXCLUSIVE"
+      ) {
+        Lunch.push(PackageData);
+      }
+      if (
+        PackageData.packageCategory === "BREAKFAST" ||
+        PackageData.packageCategory === "EXCLUSIVE"
+      ) {
+        BreakFast.push(PackageData);
+      }
+      if (
+        PackageData.packageCategory === "DINNER" ||
+        PackageData.packageCategory === "EXCLUSIVE"
+      ) {
+        Dinner.push(PackageData);
+      }
+    }
+    if (Lunch?.length < 0 && Dinner?.length < 0 && BreakFast?.length < 0) {
+      return null;
+    }
+    return {
+      Lunch,
+      Dinner,
+      BreakFast,
+    };
+  } catch (error) {
+    ErrorLogger(error);
+    return null;
+  }
+}
+
+export type TgetPackageScheduleDatas = Awaited<
+  ReturnType<typeof getPackageScheduleDatas>
+>;
