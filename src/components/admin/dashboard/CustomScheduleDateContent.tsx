@@ -6,7 +6,7 @@ export function CustomDayContentWithScheduleIndicator(
   props: DayContentProps,
   data: TScheduleOrganizedData
 ) {
-  const { date, displayMonth } = props;
+  const { date, displayMonth, } = props;
   const isLunchFound = data.Lunch.filter((item) => isSameDay(item, date));
   const isBreakfastFound = data.BreakFast.filter((item) =>
     isSameDay(item, date)

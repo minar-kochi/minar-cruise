@@ -20,10 +20,12 @@ export default async function Schedule() {
   return (
     <div>
       <h1 className="font-bold text-2xl text-center border-b py-4">Schedule</h1>
-      <DateSelector
-        packages={packages}
-        data={schedules ?? { BreakFast: [], Dinner: [], Lunch: [] }}
-      />
+      <div className="border-2 max-w-md   p-4 mb-12  mt-6 rounded-2xl mx-auto bg-primary-foreground">
+        <DateSelector
+          packages={packages}
+          data={schedules ?? { BreakFast: [], Dinner: [], Lunch: [] }}
+        />
+      </div>
     </div>
   );
 }

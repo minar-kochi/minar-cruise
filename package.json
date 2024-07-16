@@ -43,6 +43,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
     "react-hook-form": "^7.52.1",
+    "react-hot-toast": "^2.4.1",
     "server-only": "^0.0.1",
     "shadcn-ui": "^0.8.0",
     "sharp": "^0.33.4",

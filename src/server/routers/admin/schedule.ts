@@ -1,11 +1,15 @@
 import { db } from "@/db";
-import { ScheduleSchema } from "@/lib/validators/ScheduleValidtor";
+import {
+  ScheduleCreateSchema,
+  ScheduleSchema,
+} from "@/lib/validators/ScheduleValidtor";
 import { AdminProcedure, procedure, router } from "@/server/trpc";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const schedule = router({
-  getSchedule: AdminProcedure
-    .input(ScheduleSchema.optional())
-    .query(async ({ input }) => {
+  getSchedule: AdminProcedure.input(ScheduleSchema.optional()).query(
+    async ({ input }) => {
       /**
        * ctx -> admin check is available from the Admin middlware.
        *
@@ -25,5 +29,38 @@ export const schedule = router({
         console.log(error);
         return null;
       }
-    }),
+    }
+  ),
+  createNewSchedule: AdminProcedure.input(ScheduleCreateSchema).mutation(
+    async ({ ctx, input: { packageId, ScheduleDate, ScheduleTime } }) => {
+      try {
+        const isScheduled = await db.schedule.findFirst({
+          where: {
+            AND: [
+              {
+                day: new Date(ScheduleDate),
+                OR: [
+                  {
+                    packageId,
+                  },
+                  {
+                    schedulePackage: ScheduleTime,
+                  },
+                ],
+              },
+            ],
+          },
+        });
+        if (isScheduled?.id) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Schedule already In-Place, Please use Update Method",
+          });
+        }
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+  ),
 });

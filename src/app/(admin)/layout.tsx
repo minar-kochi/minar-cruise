@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { Inter as FontSans, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -39,7 +40,10 @@ export default function RootLayout({
           <CounterStoreProvider>
             <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
               <MenuBar />
-              <Header>{children}</Header>
+              <Header>
+                <Toaster />
+                {children}
+              </Header>
             </div>
           </CounterStoreProvider>
         </Providers>
@@ -48,8 +52,12 @@ export default function RootLayout({
   );
 }
 
-{/* uncomment add this below <MenuBar/>, if you want to do not want to pass children inside header component */}
-{/* <div className="">
+{
+  /* uncomment add this below <MenuBar/>, if you want to do not want to pass children inside header component */
+}
+{
+  /* <div className="">
   <HeaderNav/>
   {children}
-</div> */}
+</div> */
+}
