@@ -12,13 +12,14 @@ import Link from "next/link";
 
 const NavigationContents = async () => {
   const packageDetails = await getPackageNavigation();
-  
+
   if (!packageDetails) {
     return (
       // TODO: #LOW - Add a alternative to Image Gallery if not found / empty
       <></>
     );
   }
+ // TODO: enhance this navigation
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -35,13 +36,13 @@ const NavigationContents = async () => {
           <NavigationMenuTrigger>Packages</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid grid-cols-2 w-[500px] leading-9 p-2">
-              {packageDetails.map((item,i) => (
+              {packageDetails.map((item, i) => (
                 <>
                   <ListItem
                     className=""
                     href={`/booking/${item.slug}`}
                     title={item.title}
-                    key={item.id+i}
+                    key={item.id + i}
                   />
                 </>
               ))}
