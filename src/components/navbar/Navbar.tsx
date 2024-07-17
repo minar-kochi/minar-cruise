@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Bounded from "../elements/Bounded";
-import NavigationContents2 from "./NavigationContent2";
+import NavigationContents from "./NavigationContents";
 
 const Navbar = async () => {
   return (
@@ -22,7 +22,7 @@ const Navbar = async () => {
           </Link>
         </div>
         <div className="w-full justify-end items-center hidden md:flex ">
-          <NavigationContents2 />
+          <NavigationContents />
         </div>
       </Bounded>
     </div>

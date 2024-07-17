@@ -1,102 +1,72 @@
-// import {
-//   NavigationMenu,
-//   NavigationMenuContent,
-//   NavigationMenuItem,
-//   NavigationMenuLink,
-//   NavigationMenuList,
-//   NavigationMenuTrigger,
-// } from "@/components/ui/navigation-menu";
-// import { getPackageNavigation } from "@/db/data/dto/package";
+import { getPackageNavigation } from "@/db/data/dto/package";
+import { cn } from "@/lib/utils";
 
-// import Link from "next/link";
+import Link from "next/link";
 
-// const NavigationContents = async () => {
-//   const packageDetails = await getPackageNavigation();
+const NavigationContents = async () => {
+  const packageDetails = await getPackageNavigation();
 
-//   if (!packageDetails) {
-//     return (
-//       // TODO: #LOW - Add a alternative to Image Gallery if not found / empty
-//       <></>
-//     );
-//   }
-//  // TODO: enhance this navigation
-//   return (
-//     <NavigationMenu >
-//       <NavigationMenuList className="flex justify-between gap-3 w-full">
-//         <NavigationMenuItem>
-//           <ListItem href="/" title="Home" className="" />
-//         </NavigationMenuItem>
-//         <NavigationMenuItem>
-//           <ListItem href="/facilities" title="Facilities" />
-//         </NavigationMenuItem>
-//         <NavigationMenuItem>
-//           <ListItem href={"/about"} title="About" key={"about-0102"} />
-//         </NavigationMenuItem>
-//         <NavigationMenuItem>
-//           <NavigationMenuTrigger>Packages</NavigationMenuTrigger>
-//           <NavigationMenuContent>
-//             <ul className="w-[300px] items-center	">
-//               {packageDetails.map((item, i) => (
-//                 <>
-//                   <ListItem
-//                     className=""
-//                     href={`/booking/${item.slug}`}
-//                     title={item.title}
-//                     key={item.id + i}
-//                   />
-//                 </>
-//               ))}
-//             </ul>
-//           </NavigationMenuContent>
-//         </NavigationMenuItem>
-//         <NavigationMenuItem>
-//           <NavigationMenuTrigger>Gallery</NavigationMenuTrigger>
-//           <NavigationMenuContent>
-//             {/* Todo need styling for gallery dropdown  */}
-//             <ul className="w-[300px] leading-9 grid place-content-center">
-//               <ListItem
-//                 href={"/gallery/family-gathering"}
-//                 title="Family gathering"
-//                 key={"Family gathering"}
-//               />
-//               <ListItem
-//                 href={"/gallery/corporate-gathering"}
-//                 title="Corporate gathering"
-//               />
-//               <ListItem
-//                 href={"/gallery/celebration-gathering"}
-//                 title="Celebration gathering"
-//               />
-//             </ul>
-//           </NavigationMenuContent>
-//         </NavigationMenuItem>
-//         <NavigationMenuItem>
-//           <ListItem href="/contact" key={"contact"} title="Contact" />
-//         </NavigationMenuItem>
-//       </NavigationMenuList>
-//     </NavigationMenu>
-//   );
-// };
+  console.log(packageDetails);
+  if (!packageDetails) {
+    return (
+      // TODO: #LOW - Add a alternative to Image Gallery if not found / empty
+      <></>
+    );
+  }
+  // TODO: enhance this navigation
+  return (
+    <div className="flex gap-9">
+      <Link href="/" className="cursor-pointer  hover:text-red-500">
+        Home
+      </Link>
 
-// function ListItem({
-//   href,
-//   children,
-//   className,
-//   title,
-//   ...props
-// }: {
-//   href: string;
-//   title: string;
-//   className?: string;
-//   children?: React.ReactNode;
-// }) {
-//   return (
-//     <NavigationMenuLink asChild>
-//       <Link href={href}>
-//         <p className="">{title}</p>
-//       </Link>
-//     </NavigationMenuLink>
-//   );
-// }
+      <div className="relative group">
+        <Link href="/" className="cursor-pointer  hover:text-red-500">
+          Packages
+        </Link>
+        <div className="absolute pt-6 pb-3 px-5 rounded-lg hidden w-[250px] bg-white  shadow-lg z-10 group-hover:block">
+          {packageDetails.map((item, i) => (
+            <Link className="" key={item.id} href={`/booking/${item.slug}`}>
+              <p className="hover:text-red-500 text-sm py-3">{item.title}</p>
+             <hr className={cn("border-gray-200 group-last-of-type:hidden", {
+              "hidden" : i === packageDetails.length-1 
+             })}  />
+            </Link>
+          ))}
+        </div>
+      </div>
 
-// export default NavigationContents;
+      <Link href="/" className="cursor-pointer  hover:text-red-500">
+        Facilities
+      </Link>
+      <Link href="/" className="cursor-pointer  hover:text-red-500">
+        About
+      </Link>
+
+      <div className="relative group">
+        <Link href="/" className="cursor-pointer  hover:text-red-500">
+          Gallery
+        </Link>
+        <div className="absolute  py-3 px-5 rounded-lg hidden bg-white w-[250px] shadow-lg z-10 group-hover:block">
+          <Link href="/gallery/family-gathering">
+            <p className="hover:text-red-500 text-sm py-3">Family Gathering</p>
+          </Link>
+          <hr className="border-gray-200" />
+          <Link href="/gallery/celebration-gathering">
+            <p className="hover:text-red-500 text-sm py-3">Celebration Events</p>
+          </Link>
+          <hr className="border-gray-200" />
+          <Link href="/gallery/corporate-gathering">
+            <p className="hover:text-red-500 text-sm py-3">Corporate Events </p>
+          </Link>
+        </div>
+      </div>
+
+      <Link href="/" className="cursor-pointer  hover:text-red-500">
+        Contact
+      </Link>
+    </div>
+  );
+};
+
+export default NavigationContents;
