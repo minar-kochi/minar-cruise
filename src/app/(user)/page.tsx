@@ -5,12 +5,13 @@ import Entertainments from "@/components/home/Entertainments";
 import Services from "@/components/home/Services";
 import HomePageGallery from "@/components/home/HomePageGallery";
 import SearchBar from "@/components/searchbar/SearchBar";
+import HomeVideo from "@/components/home/HomeVideo";
 
 export default function Home() {
   return (
     <main className="">
       <SearchBar />
-      {/* <HomeVideo/> */}
+      <HomeVideo />
       <LandingDescription />
       <BookingDescription />
       <Facilities />

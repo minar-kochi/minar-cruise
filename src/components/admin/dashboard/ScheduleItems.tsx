@@ -12,7 +12,6 @@ import {
 import { useState } from "react";
 
 const ScheduleItems = () => {
-  
   return (
     <section className="flex flex-col justify-between border w-[600px]">
       <article className="flex justify-between">

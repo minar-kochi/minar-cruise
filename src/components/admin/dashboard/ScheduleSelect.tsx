@@ -11,7 +11,7 @@ import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import { TselectDate } from "./ScheduleSelector";
 import toast from "react-hot-toast";
 
-export type TS = keyof Exclude<TgetPackageScheduleDatas, null>;
+// export type TS = keyof Exclude<TgetPackageScheduleDatas, null>;
 export type TScheduleSelect = {
   packages: PackageSelect[];
   type: keyof TselectDate;

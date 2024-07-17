@@ -25,6 +25,7 @@ export default function DateSelector({
   data: TScheduleOrganizedData;
 }) {
   const [isLoadingQuery, setIsLoadingQuery] = useState(false);
+
   const [organizedScheduleData, setOrganizedScheduleData] =
     useState<TOrganizedData | null>(null);
   const [scheduleData, setScheduleData] = useState<
@@ -111,3 +112,27 @@ export default function DateSelector({
     </div>
   );
 }
+
+/**
+ *
+ * React Query
+ * TRPC
+ * Zod
+ * Schema Validation
+ * Git
+ * Client Side / SSR
+ * Project Structure.
+ * Database Query
+ * DTO -> Clean Architecture.
+ * Security in Next.js
+ * Next-Auth -> For admin Login:
+ *  - 2hr -> 8hr / 20 - 30 hr
+ *  - forgot-password
+ *  - change password
+ *  - email verification
+ *  - Automatic linking
+ *  - session management
+ *
+ *
+ *
+ */

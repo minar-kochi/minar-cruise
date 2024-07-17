@@ -73,6 +73,16 @@ enum PACKAGE_CATEGORY {
   EXCLUSIVE
 }
 
+model routes {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+
+  packageId String?
+  Package   Package? @relation(fields: [packageId], references: [id])
+
+  @@unique([slug, packageId])
+}
+
 model Package {
   id              String           @id @default(cuid())
   title           String
@@ -93,6 +103,7 @@ model Package {
   Booking         Booking[]
   Schedule        Schedule[]
   packageImage    PackageImage[]
+  routes          routes[]
 }
 
 enum IMAGE_USE {

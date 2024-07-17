@@ -14,5 +14,5 @@ export default async function Admin() {
         </Link>
       </article>
     </section>
-  );
+);
 }

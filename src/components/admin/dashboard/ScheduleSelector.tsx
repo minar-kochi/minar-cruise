@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
+import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import { TOrganizedData } from "@/lib/helpers/organizedData";
 import ScheduleSelect from "./ScheduleSelect";
 import { Check, Info, RefreshCw } from "lucide-react";
@@ -104,6 +104,22 @@ export default function ScheduleSelector({
     });
   }
 
+  function isIdExclusive(Package: PackageSelect[], id: string | null) {
+    if (!id) return null;
+
+    const ExclusivePackage = Package.find(
+      (item) => item.packageCategory === "EXCLUSIVE"
+    );
+
+    console.log(ExclusivePackage);
+
+    if (ExclusivePackage?.id === id) {
+      return true;
+    }
+
+    return false;
+  }
+
   return (
     <div className="w-full max-w-sm">
       <Card className="">
@@ -130,13 +146,23 @@ export default function ScheduleSelector({
             <div>
               <Label className="text-lg">Breakfast</Label>
               <div className="flex justify-between gap-2">
-                <ScheduleSelect
-                  type="breakfast"
-                  setSelectedDate={setSelectedPackageId}
-                  key={organizedScheduleData?.breakfast?.id}
-                  selected={organizedScheduleData?.breakfast}
-                  packages={packages.BreakFast}
-                />
+                <div>
+                  <ScheduleSelect
+                    type="breakfast"
+                    setSelectedDate={setSelectedPackageId}
+                    key={organizedScheduleData?.breakfast?.id}
+                    selected={organizedScheduleData?.breakfast}
+                    packages={packages.BreakFast}
+                  />
+                  {isIdExclusive(
+                    packages.BreakFast,
+                    selectedPackage?.breakfast ?? ""
+                  ) ? (
+                    <>hello</>
+                  ) : (
+                    "bye"
+                  )}
+                </div>
                 {organizedScheduleData?.breakfast?.id ? (
                   <button className="p-2 border rounded-xl hover:bg-secondary">
                     <RefreshCw className="h-5  w-5" />
@@ -161,13 +187,19 @@ export default function ScheduleSelector({
             <div>
               <Label className="text-lg">Lunch</Label>
               <div className="flex justify-between gap-2">
-                <ScheduleSelect
-                  type="lunch"
-                  setSelectedDate={setSelectedPackageId}
-                  key={organizedScheduleData?.lunch?.id}
-                  selected={organizedScheduleData?.lunch}
-                  packages={packages.Lunch}
-                />
+                <div>
+                  <ScheduleSelect
+                    type="lunch"
+                    setSelectedDate={setSelectedPackageId}
+                    key={organizedScheduleData?.lunch?.id}
+                    selected={organizedScheduleData?.lunch}
+                    packages={packages.Lunch}
+                  />
+                  {isIdExclusive(
+                    packages.BreakFast,
+                    selectedPackage?.breakfast ?? ""
+                  )}
+                </div>
                 {organizedScheduleData?.lunch?.id ? (
                   <button className="p-2 border rounded-xl hover:bg-secondary">
                     <RefreshCw className="h-5  w-5" />
@@ -192,13 +224,19 @@ export default function ScheduleSelector({
             <div>
               <Label className="text-lg">Dinner</Label>
               <div className="flex justify-between gap-2">
-                <ScheduleSelect
-                  type="dinner"
-                  setSelectedDate={setSelectedPackageId}
-                  key={organizedScheduleData?.dinner?.id}
-                  selected={organizedScheduleData?.dinner}
-                  packages={packages.Dinner}
-                />
+                <div>
+                  <ScheduleSelect
+                    type="dinner"
+                    setSelectedDate={setSelectedPackageId}
+                    key={organizedScheduleData?.dinner?.id}
+                    selected={organizedScheduleData?.dinner}
+                    packages={packages.Dinner}
+                  />
+                  {isIdExclusive(
+                    packages.BreakFast,
+                    selectedPackage?.breakfast ?? ""
+                  )}
+                </div>
                 {organizedScheduleData?.dinner?.id ? (
                   <button className="p-2 border rounded-xl hover:bg-secondary">
                     <RefreshCw className="h-5  w-5" />

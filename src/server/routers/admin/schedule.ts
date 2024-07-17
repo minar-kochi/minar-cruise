@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { getScheduleByDayOrStatus } from "@/db/data/dto/schedule";
 import {
   ScheduleCreateSchema,
   ScheduleSchema,
@@ -34,22 +35,10 @@ export const schedule = router({
   createNewSchedule: AdminProcedure.input(ScheduleCreateSchema).mutation(
     async ({ ctx, input: { packageId, ScheduleDate, ScheduleTime } }) => {
       try {
-        const isScheduled = await db.schedule.findFirst({
-          where: {
-            AND: [
-              {
-                day: new Date(ScheduleDate),
-                OR: [
-                  {
-                    packageId,
-                  },
-                  {
-                    schedulePackage: ScheduleTime,
-                  },
-                ],
-              },
-            ],
-          },
+        const isScheduled = await getScheduleByDayOrStatus({
+          packageId,
+          ScheduleDate,
+          ScheduleTime,
         });
         if (isScheduled?.id) {
           throw new TRPCError({

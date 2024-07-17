@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { isProd } from "@/lib/utils";
+import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
 import { Schedule } from "@prisma/client";
 
 export type TGetSchedulePAckages = Awaited<
@@ -89,4 +90,28 @@ export const getScheduleData = async () => {
     scheduledDate.Lunch.push(item.day);
   }
   return scheduledDate;
+};
+
+export const getScheduleByDayOrStatus = async ({
+  ScheduleDate,
+  ScheduleTime,
+  packageId,
+}: TScheduleCreateSchema) => {
+  return await db.schedule.findFirst({
+    where: {
+      AND: [
+        {
+          day: new Date(ScheduleDate),
+          OR: [
+            {
+              packageId,
+            },
+            {
+              schedulePackage: ScheduleTime,
+            },
+          ],
+        },
+      ],
+    },
+  });
 };
