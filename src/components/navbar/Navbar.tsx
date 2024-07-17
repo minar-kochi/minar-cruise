@@ -8,7 +8,7 @@ const Navbar = async () => {
     <div className="sticky top-0 w-full bg-white z-50 ">
       <Bounded
         as={"nav"}
-        className="w-full flex justify-between h-16 items-center"
+        className="w-full flex justify-around h-16 items-center"
       >
         <div className="">
           <Link href={"/"}>
