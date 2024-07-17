@@ -20,9 +20,9 @@ const NavigationContents = async () => {
     );
   }
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
+    <NavigationMenu className=" px-4 ">
+      <NavigationMenuList className="gap-4 font-semibold ">
+        <NavigationMenuItem className="">
           <ListItem href="/" title="Home" />
         </NavigationMenuItem>
         <NavigationMenuItem>
@@ -32,7 +32,7 @@ const NavigationContents = async () => {
           <ListItem href={"/about"} title="About" key={"about-0102"} />
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Packages</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="font-semibold">Packages</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid grid-cols-2 w-[500px] leading-9 p-2">
               {packageDetails.map((item,i) => (
@@ -49,8 +49,8 @@ const NavigationContents = async () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Gallery</NavigationMenuTrigger>
-          <NavigationMenuContent>
+          <NavigationMenuTrigger className="font-semibold">Gallery</NavigationMenuTrigger>
+          <NavigationMenuContent className="" >
             {/* Todo need styling for gallery dropdown  */}
             <ul className="w-[300px] leading-9 grid place-content-center">
               <ListItem
