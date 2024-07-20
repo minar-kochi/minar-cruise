@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { ScheduleSchema } from "@/lib/validators/ScheduleValidtor";
-import { AdminProcedure, procedure, router } from "@/server/trpc";
+import { AdminProcedure, router } from "@/server/trpc";
 
 export const schedule = router({
   getSchedule: AdminProcedure

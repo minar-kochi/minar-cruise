@@ -1,18 +1,21 @@
+import { cn } from "@/lib/utils";
 
-const SearchLabel = ({ label, placeholder }: {
-    label: string
-    placeholder?: string
+const SearchLabel = ({
+  label,
+  data,
+  className,
+}: {
+  label: string;
+  data?: string;
+  className?: string;
 }) => {
   return (
-    <div className="flex flex-col  pl-8">
-      <h5 className="text-xs font-semibold  text-left w-fit">{label}</h5>
-      <input
-        type="text"
-        placeholder={placeholder}
-        className="w-[200px]  bg-inherit placeholder:text-xs outline-none placeholder:text-gray-600"
-      />
+    <div
+      className={cn("flex flex-col px-8 text-left w-full max-sm:px-4 ", className)}
+    >
+      <h5 className=" text-xs font-semibold  ">{label}</h5>
+      <p className=" bg-inherit md:text-xs text-[0.6rem] outline-none text-gray-600 overflow-hidden">{data}</p>
     </div>
-    
   );
 };
 
