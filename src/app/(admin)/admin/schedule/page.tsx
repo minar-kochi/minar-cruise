@@ -1,7 +1,9 @@
 import { DatePicker } from "@/components/admin/dashboard/DatePicker";
 import DateSelector from "@/components/admin/dashboard/DateSelector";
+import { DataTableDemo } from "@/components/admin/dashboard/Schedule/ScheduleTable";
 import { getPackageScheduleDatas } from "@/db/data/dto/package";
 import { getSchedule, getScheduleData } from "@/db/data/dto/schedule";
+import { ScheduleStoreProvider } from "@/providers/admin/schedule-store-provider";
 
 export default async function Schedule() {
   const schedules = await getScheduleData();
@@ -18,13 +20,26 @@ export default async function Schedule() {
    * */
 
   return (
-    <div>
+    <div className="">
       <h1 className="font-bold text-2xl text-center border-b py-4">Schedule</h1>
-      <div className="border-2 max-w-md   p-4 mb-12  mt-6 rounded-2xl mx-auto bg-primary-foreground">
-        <DateSelector
-          packages={packages}
-          data={schedules ?? { BreakFast: [], Dinner: [], Lunch: [] }}
-        />
+      <div className="grid grid-cols-[70%_30%] ">
+        <div className="px-2">
+          <h1>Schedule Table</h1>
+          {/* <h1>@TODO : Data table here</h1> */}
+          <div className="pl-4 relative z-10">
+            <DataTableDemo />
+          </div>
+        </div>
+        <div className="py-12 min-h-[calc(100vh-4rem)] border-l">
+          <div className="sticky lg:top-[70px]">
+            <ScheduleStoreProvider
+              packages={packages}
+              schedules={schedules ?? { BreakFast: [], Dinner: [], Lunch: [] }}
+            >
+              <DateSelector />
+            </ScheduleStoreProvider>
+          </div>
+        </div>
       </div>
     </div>
   );

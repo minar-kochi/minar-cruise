@@ -42,6 +42,7 @@ enum SCHEDULE_PACKAGE {
   BREAKFAST
   LUNCH
   DINNER
+  CUSTOM
 }
 
 enum SCHEDULE_STATUS {
@@ -52,12 +53,15 @@ enum SCHEDULE_STATUS {
 }
 
 model Schedule {
+
   id              String           @id @default(cuid())
   day             DateTime         @db.Date()
+  time            DateTime?         @db.Time()
   packageId       String?
   schedulePackage SCHEDULE_PACKAGE
   scheduleStatus  SCHEDULE_STATUS
   Package         Package?         @relation(fields: [packageId], references: [id])
+
 }
 
 model Amenities {
@@ -71,16 +75,6 @@ enum PACKAGE_CATEGORY {
   LUNCH
   DINNER
   EXCLUSIVE
-}
-
-model routes {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-
-  packageId String?
-  Package   Package? @relation(fields: [packageId], references: [id])
-
-  @@unique([slug, packageId])
 }
 
 model Package {
@@ -103,7 +97,6 @@ model Package {
   Booking         Booking[]
   Schedule        Schedule[]
   packageImage    PackageImage[]
-  routes          routes[]
 }
 
 enum IMAGE_USE {

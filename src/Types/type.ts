@@ -25,4 +25,4 @@ export const Galleries = [
 export type TGalleries = (typeof Galleries)[number];
 
 
-export type TScheduleDayReplaceString = Omit<Schedule, "day"> & { day: string };
+export type TScheduleDayReplaceString = Omit<Schedule, "day" | "time"> & { day: string , time:string | null };

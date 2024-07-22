@@ -114,11 +114,12 @@ export async function getPackageSearchItems() {
 }
 
 export type PackageSelect = {
-  slug: string;
   id: string;
+  slug: string;
   title: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
 };
+
 export async function getPackageScheduleDatas() {
   try {
     const data = await db.package.findMany({

@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { formatISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -40,13 +41,24 @@ export function isSameDay(date: Date, fromDate: Date) {
     date.getFullYear() === fromDate.getFullYear()
   );
 }
-export function convertUTCToLocalDate(date: Date) {
+
+export function convertLocalDateToUTC(date: Date | string) {
   if (!date) {
     return date;
   }
-  date = new Date(date);
-  date = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  let formatedDate;
+  let ParsedInputDate;
+  ParsedInputDate = new Date(date);
+  formatedDate = new Date(
+    Date.UTC(
+      ParsedInputDate.getFullYear(),
+      ParsedInputDate.getMonth(),
+      ParsedInputDate.getDate()
+    )
   );
-  return date;
+  return formatISO(formatedDate);
+}
+
+export function RemoveTimeStampFromDate(date: Date) {
+  return formatISO(date).split("T")[0];
 }

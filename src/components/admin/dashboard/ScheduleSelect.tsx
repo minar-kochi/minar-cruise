@@ -36,7 +36,51 @@ export default function ScheduleSelect({
         });
       }}
     >
-      <SelectTrigger className="max-w-[300px]">
+      <SelectTrigger className="w-full">
+        <SelectValue
+          defaultValue={selected?.id ?? ""}
+          placeholder={"Select a Package"}
+        />
+      </SelectTrigger>
+      <SelectContent>
+        {packages.map((item) => {
+          return (
+            <SelectItem key={item.id} value={item.id}>
+              {item.title}
+            </SelectItem>
+          );
+        })}
+      </SelectContent>
+    </Select>
+  );
+}
+
+export type TSchedulesSelect = {
+  packages: PackageSelect[];
+  type: keyof TselectDate;
+  selected: TScheduleDayReplaceString | null | undefined;
+  setSelectedDate: Dispatch<SetStateAction<TselectDate | null>>;
+};
+
+export function SchedulesSelect({
+  selected,
+  packages,
+  setSelectedDate,
+  type,
+}: TScheduleSelect) {
+  return (
+    <Select
+      defaultValue={selected?.packageId ?? undefined}
+      onValueChange={(value) => {
+        setSelectedDate((prev) => {
+          return {
+            ...prev,
+            [type]: value,
+          };
+        });
+      }}
+    >
+      <SelectTrigger className="w-full">
         <SelectValue
           defaultValue={selected?.id ?? ""}
           placeholder={"Select a Package"}

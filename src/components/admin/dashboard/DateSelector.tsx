@@ -1,9 +1,23 @@
 "use client";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 import { trpc } from "@/app/_trpc/client";
 import { toast } from "react-hot-toast";
 import { Calendar } from "@/components/ui/calendar";
 import { TScheduleOrganizedData } from "@/db/data/dto/schedule";
-import { cn, convertUTCToLocalDate, getPrevTimeStamp } from "@/lib/utils";
+import {
+  cn,
+  convertLocalDateToUTC,
+  getPrevTimeStamp,
+  RemoveTimeStampFromDate,
+} from "@/lib/utils";
 import {
   ScheduleSchema,
   TScheduleSchema,
@@ -13,24 +27,26 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
 import { TScheduleDayReplaceString } from "@/Types/type";
-import { organizedData, TOrganizedData } from "@/lib/helpers/organizedData";
+// import { organizedData, TOrganizedData } from "@/lib/helpers/organizedData";
 import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import ScheduleSelector from "./ScheduleSelector";
 import ScheduleSelectorLoader from "./ScheduleSelectorLoader";
-export default function DateSelector({
-  data,
-  packages,
-}: {
-  packages: Exclude<TgetPackageScheduleDatas, null>;
-  data: TScheduleOrganizedData;
-}) {
-  const [isLoadingQuery, setIsLoadingQuery] = useState(false);
+import Bounded from "@/components/elements/Bounded";
+import { PopOverDatePicker } from "./PopOverScheduleDate";
+import { Check, RefreshCw } from "lucide-react";
 
+import ScheduleSelector2 from "./ScheduleSelector2";
+import { formatISO } from "date-fns";
+import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
+import { organizeScheduleData } from "@/lib/helpers/organizedData";
+import ScheduleSelectContainer from "./ScheduleSelectContainer";
+import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
+// import { useScheduleStore, useScheduleStore } from "@/providers/admin/schedule-store-provider";
+export default function DateSelector() {
+  const [isLoadingQuery, setIsLoadingQuery] = useState(false);
+  const ScheduleData = useScheduleStore((state) => state.schedules);
   const [organizedScheduleData, setOrganizedScheduleData] =
-    useState<TOrganizedData | null>(null);
-  const [scheduleData, setScheduleData] = useState<
-    TScheduleDayReplaceString[] | null
-  >();
+    useState<TOrganizedScheduleData | null>(null);
 
   const {
     register,
@@ -43,96 +59,94 @@ export default function DateSelector({
     resolver: zodResolver(ScheduleSchema),
   });
 
-  const { fetch } = trpc.useUtils().admin.getSchedule;
+  const { fetch } = trpc.useUtils().admin.getSchedulesByDateOrNow;
 
   watch("ScheduleDate");
   return (
-    <div className="flex items-center w-full flex-col justify-center">
-      <Calendar
-        components={{
-          DayContent: (props) =>
-            CustomDayContentWithScheduleIndicator(props, data),
-        }}
-        mode="single"
-        {...register}
-        selected={new Date(getValues("ScheduleDate"))}
-        onSelect={async (selectedDate) => {
-          try {
-            setIsLoadingQuery(true);
-            if (selectedDate) {
-              setValue("ScheduleDate", selectedDate.getTime(), {
-                shouldValidate: true,
-                shouldDirty: true,
-              });
+    <Bounded className="">
+      <div className="max-w-sm w-full">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Schedule&apos;s</CardTitle>
+            <CardDescription>Update or add new schedules</CardDescription>
+          </CardHeader>
+          <CardContent className="w-full">
+            <PopOverDatePicker
+              calenderProps={{
+                components: {
+                  DayContent: (props) =>
+                    CustomDayContentWithScheduleIndicator(props, ScheduleData),
+                },
+                sizeMode: "lg",
+                mode: "single",
+                selected: new Date(watch("ScheduleDate")),
+                onSelect: async (selectedDate) => {
+                  if (!selectedDate) {
+                    return toast(`Please select a valid Date.`);
+                  }
 
-              const data = await fetch({
-                ScheduleDate: convertUTCToLocalDate(
-                  new Date(selectedDate.getTime())
-                ),
-              });
-              const organizeScheduleData = organizedData({ data });
-              setOrganizedScheduleData(organizeScheduleData);
-              setScheduleData(data);
-            }
-          } catch (error) {
-            toast.error("Something went wrong while loading..");
-          } finally {
-            setIsLoadingQuery(false);
-          }
-          return;
-        }}
-        disabled={(date) => {
-          let currDate = getPrevTimeStamp(Date.now());
-          return date < new Date(currDate);
-        }}
-      />
-      <div className="w-full bottom-0 items-center justify-center my-4 flex gap-2">
-        <div className="flex items-center justify-center gap-2">
-          <div className="w-1 h-1 bg-cyan-400  rounded-full" />
-          <p className="text-xs text-muted-foreground">Breakfast</p>
-        </div>
-        <div className="flex items-center justify-center gap-2">
-          <div className="w-1 h-1 bg-lime-500  rounded-full" />
-          <p className="text-xs text-muted-foreground">Lunch</p>
-        </div>
-        <div className="flex items-center justify-center gap-2">
-          <div className="w-1 h-1 bg-orange-600  rounded-full" />
-          <p className="text-xs text-muted-foreground">Dinner / Sunset</p>
-        </div>
+                  let DateStringFormated =
+                    RemoveTimeStampFromDate(selectedDate);
+
+                  try {
+                    setIsLoadingQuery(true);
+                    if (selectedDate) {
+                      setValue("ScheduleDate", selectedDate.toString(), {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+
+                      const data = await fetch({
+                        ScheduleDate: DateStringFormated,
+                      });
+
+                      if (!data) return;
+
+                      const OrgData = organizeScheduleData({ data });
+
+                      setOrganizedScheduleData(OrgData);
+                    }
+                  } catch (error) {
+                    console.log(error);
+                    toast.error("Something went wrong while loading..");
+                  } finally {
+                    setIsLoadingQuery(false);
+                  }
+                  return;
+                },
+                disabled: (date) => {
+                  let currDate = getPrevTimeStamp(Date.now());
+                  return date < new Date(currDate);
+                },
+                ...register,
+              }}
+            />
+            <div className="flex mb-4 mt-4 gap-2 flex-wrap">
+              <div className="flex items-center gap-2 ">
+                <RefreshCw className="h-4  w-4" />
+                <p className="text-xs text-muted-foreground">
+                  Update Existing Schedule
+                </p>
+              </div>
+              <div className="flex items-center gap-2 ">
+                <Check className="h-4  w-4" />
+                <p className="text-xs text-muted-foreground">
+                  Create New Schedule
+                </p>
+              </div>
+            </div>
+            {!isLoadingQuery ? (
+              <>
+                <ScheduleSelectContainer
+                  organizedScheduleData={organizedScheduleData}
+                />{" "}
+              </>
+            ) : (
+              <ScheduleSelectorLoader />
+            )}
+          </CardContent>
+        </Card>
       </div>
-      {!isLoadingQuery ? (
-        <ScheduleSelector
-          selectedDate={getValues("ScheduleDate")}
-          organizedScheduleData={organizedScheduleData}
-          packages={packages}
-        />
-      ) : (
-        <ScheduleSelectorLoader />
-      )}
-    </div>
+    </Bounded>
   );
 }
-
-/**
- *
- * React Query
- * TRPC
- * Zod
- * Schema Validation
- * Git
- * Client Side / SSR
- * Project Structure.
- * Database Query
- * DTO -> Clean Architecture.
- * Security in Next.js
- * Next-Auth -> For admin Login:
- *  - 2hr -> 8hr / 20 - 30 hr
- *  - forgot-password
- *  - change password
- *  - email verification
- *  - Automatic linking
- *  - session management
- *
- *
- *
- */

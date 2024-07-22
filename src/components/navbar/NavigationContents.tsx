@@ -28,9 +28,11 @@ const NavigationContents = async () => {
           {packageDetails.map((item, i) => (
             <Link className="" key={item.id} href={`/booking/${item.slug}`}>
               <p className="hover:text-red-500 text-sm py-3">{item.title}</p>
-             <hr className={cn("border-gray-200 group-last-of-type:hidden", {
-              "hidden" : i === packageDetails.length-1 
-             })}  />
+              <hr
+                className={cn("border-gray-200 group-last-of-type:hidden", {
+                  hidden: i === packageDetails.length - 1,
+                })}
+              />
             </Link>
           ))}
         </div>
@@ -53,7 +55,9 @@ const NavigationContents = async () => {
           </Link>
           <hr className="border-gray-200" />
           <Link href="/gallery/celebration-gathering">
-            <p className="hover:text-red-500 text-sm py-3">Celebration Events</p>
+            <p className="hover:text-red-500 text-sm py-3">
+              Celebration Events
+            </p>
           </Link>
           <hr className="border-gray-200" />
           <Link href="/gallery/corporate-gathering">
