@@ -6,8 +6,7 @@ import Link from "next/link";
 const NavigationContents = async () => {
   const packageDetails = await getPackageNavigation();
 
-  console.log(packageDetails);
-  if (!packageDetails) {
+    if (!packageDetails) {
     return (
       // TODO: #LOW - Add a alternative to Image Gallery if not found / empty
       <></>

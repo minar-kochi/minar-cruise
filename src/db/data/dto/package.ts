@@ -94,7 +94,9 @@ export async function getPackageSearchItems() {
                 url: true,
                 alt: true,
                 id: true,
+                ImageUse: true
               },
+
             },
           },
         },

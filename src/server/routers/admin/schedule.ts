@@ -4,7 +4,7 @@ import {
   ScheduleCreateSchema,
   ScheduleSchema,
 } from "@/lib/validators/ScheduleValidtor";
-import { AdminProcedure, procedure, router } from "@/server/trpc";
+import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
