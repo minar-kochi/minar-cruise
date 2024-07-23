@@ -8,34 +8,27 @@ import {
 import { PackageSelect } from "@/db/data/dto/package";
 import React, { Dispatch, SetStateAction } from "react";
 import { TselectDate } from "../ScheduleSelector";
-import { TScheduleDayReplaceString } from "@/Types/type";
+import { TScheduleDataDayReplaceString } from "@/Types/type";
+import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
 
 export type FC_TScheduleSelect = {
-  //   index?: number | null,
   packages: PackageSelect[];
   type: keyof TselectDate;
-  selected: TScheduleDayReplaceString | null | undefined;
-  setSelectedPackageId: Dispatch<SetStateAction<TselectDate | null>>;
 };
 
-export default function ScheduleSelect({
-  packages,
-  setSelectedPackageId,
-  type,
-  selected,
-}: FC_TScheduleSelect) {
+export default function ScheduleSelect({ packages, type }: FC_TScheduleSelect) {
+  const { organizedSchedule, updateSelectedSchedulePackageId } = useScheduleStore(
+    (state) => state
+  );
+  
   return (
     <Select
-      defaultValue={selected?.packageId ?? undefined}
-      
       onValueChange={(value) => {
-        setSelectedPackageId((prev) => {
-          return {
-            ...prev,
-            [type]: value,
-          };
-        });
+        updateSelectedSchedulePackageId(type, value);
       }}
+      defaultValue={
+        (organizedSchedule && organizedSchedule[type]?.packageId) ?? undefined
+      }
     >
       <SelectTrigger className="w-full">
         <SelectValue placeholder={"Select a Package"} />

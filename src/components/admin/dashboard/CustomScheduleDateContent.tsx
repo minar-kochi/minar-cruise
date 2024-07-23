@@ -1,13 +1,16 @@
-import { TScheduleOrganizedData } from "@/db/data/dto/schedule";
 import { isSameDay } from "@/lib/utils";
+import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
 import { DayContentProps } from "react-day-picker";
 
 export function CustomDayContentWithScheduleIndicator(
   props: DayContentProps,
-  data: TScheduleOrganizedData
 ) {
+  const data = useScheduleStore((state) => state.UpcommingScheduleDates);
+  
   const { date, displayMonth, activeModifiers } = props;
+  
   const isLunchFound = data.Lunch.filter((item) => isSameDay(item, date));
+
   const isBreakfastFound = data.BreakFast.filter((item) =>
     isSameDay(item, date)
   );

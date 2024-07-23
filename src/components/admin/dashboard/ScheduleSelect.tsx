@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TScheduleDayReplaceString } from "@/Types/type";
+import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import { TselectDate } from "./ScheduleSelector";
 import toast from "react-hot-toast";
@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 export type TScheduleSelect = {
   packages: PackageSelect[];
   type: keyof TselectDate;
-  selected: TScheduleDayReplaceString | null | undefined;
+  selected: TScheduleDataDayReplaceString | null | undefined;
   setSelectedDate: Dispatch<SetStateAction<TselectDate | null>>;
 };
 export default function ScheduleSelect({
@@ -58,7 +58,7 @@ export default function ScheduleSelect({
 export type TSchedulesSelect = {
   packages: PackageSelect[];
   type: keyof TselectDate;
-  selected: TScheduleDayReplaceString | null | undefined;
+  selected: TScheduleDataDayReplaceString | null | undefined;
   setSelectedDate: Dispatch<SetStateAction<TselectDate | null>>;
 };
 

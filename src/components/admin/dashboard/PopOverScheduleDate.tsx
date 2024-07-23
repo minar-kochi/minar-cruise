@@ -16,10 +16,11 @@ import { CalendarRange } from "lucide-react";
 
 export function PopOverDatePicker({
   calenderProps,
+  date,
 }: {
   calenderProps: CalendarProps;
+  date?:string
 }) {
-  const [date, setDate] = React.useState<Date>();
   return (
     <Popover>
       <PopoverTrigger asChild>

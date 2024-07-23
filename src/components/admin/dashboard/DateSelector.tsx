@@ -10,14 +10,7 @@ import {
 
 import { trpc } from "@/app/_trpc/client";
 import { toast } from "react-hot-toast";
-import { Calendar } from "@/components/ui/calendar";
-import { TScheduleOrganizedData } from "@/db/data/dto/schedule";
-import {
-  cn,
-  convertLocalDateToUTC,
-  getPrevTimeStamp,
-  RemoveTimeStampFromDate,
-} from "@/lib/utils";
+import { getPrevTimeStamp, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   ScheduleSchema,
   TScheduleSchema,
@@ -26,32 +19,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
-import { TScheduleDayReplaceString } from "@/Types/type";
-// import { organizedData, TOrganizedData } from "@/lib/helpers/organizedData";
-import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
-import ScheduleSelector from "./ScheduleSelector";
 import ScheduleSelectorLoader from "./ScheduleSelectorLoader";
 import Bounded from "@/components/elements/Bounded";
 import { PopOverDatePicker } from "./PopOverScheduleDate";
 import { Check, RefreshCw } from "lucide-react";
 
-import ScheduleSelector2 from "./ScheduleSelector2";
-import { formatISO } from "date-fns";
 import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
 import ScheduleSelectContainer from "./ScheduleSelectContainer";
 import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
-// import { useScheduleStore, useScheduleStore } from "@/providers/admin/schedule-store-provider";
+
 export default function DateSelector() {
   const [isLoadingQuery, setIsLoadingQuery] = useState(false);
-  const ScheduleData = useScheduleStore((state) => state.schedules);
-  const [organizedScheduleData, setOrganizedScheduleData] =
-    useState<TOrganizedScheduleData | null>(null);
+
+  const { setOrganizedData,setDate, selectedSchedulePackageId,date } = useScheduleStore(
+    (state) => state
+  );
 
   const {
     register,
-    handleSubmit,
-    getValues,
     watch,
     setValue,
     formState: { errors },
@@ -59,7 +45,8 @@ export default function DateSelector() {
     resolver: zodResolver(ScheduleSchema),
   });
 
-  const { fetch } = trpc.useUtils().admin.getSchedulesByDateOrNow;
+  const { fetch, cancel, invalidate } =
+    trpc.useUtils().admin.getSchedulesByDateOrNow;
 
   watch("ScheduleDate");
   return (
@@ -72,10 +59,11 @@ export default function DateSelector() {
           </CardHeader>
           <CardContent className="w-full">
             <PopOverDatePicker
+              date={date}
               calenderProps={{
                 components: {
                   DayContent: (props) =>
-                    CustomDayContentWithScheduleIndicator(props, ScheduleData),
+                    CustomDayContentWithScheduleIndicator(props),
                 },
                 sizeMode: "lg",
                 mode: "single",
@@ -95,16 +83,12 @@ export default function DateSelector() {
                         shouldValidate: true,
                         shouldDirty: true,
                       });
-
+                      setDate(DateStringFormated)
                       const data = await fetch({
                         ScheduleDate: DateStringFormated,
                       });
-
                       if (!data) return;
-
-                      const OrgData = organizeScheduleData({ data });
-
-                      setOrganizedScheduleData(OrgData);
+                      setOrganizedData(data);
                     }
                   } catch (error) {
                     console.log(error);
@@ -137,13 +121,18 @@ export default function DateSelector() {
             </div>
             {!isLoadingQuery ? (
               <>
-                <ScheduleSelectContainer
-                  organizedScheduleData={organizedScheduleData}
-                />{" "}
+                <ScheduleSelectContainer />{" "}
               </>
             ) : (
               <ScheduleSelectorLoader />
             )}
+            <button
+              onClick={() => {
+                toast(JSON.stringify(selectedSchedulePackageId));
+              }}
+            >
+              show schedules.
+            </button>
           </CardContent>
         </Card>
       </div>

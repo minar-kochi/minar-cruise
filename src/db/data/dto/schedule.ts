@@ -51,13 +51,13 @@ export const getSchedule = async () => {
 // export type TScheduleData = Omit<Schedule, "day"> & { day: string | Date };
 export type TScheduleData = Schedule;
 
-export type TScheduleOrganizedData = {
+export type TgetUpcommingScheduleDates = {
   BreakFast: Date[];
   Lunch: Date[];
   Dinner: Date[];
 };
 
-export const getScheduleData = async () => {
+export const getUpcommingScheduleDates = async () => {
   const data = await db.schedule.findMany({
     where: {
       day: {
@@ -67,7 +67,7 @@ export const getScheduleData = async () => {
     take: 15,
   });
 
-  let scheduledDate: TScheduleOrganizedData = {
+  let scheduledDate: TgetUpcommingScheduleDates = {
     BreakFast: [],
     Dinner: [],
     Lunch: [],

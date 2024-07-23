@@ -8,7 +8,8 @@ import {
   createScheduleStore,
 } from "@/stores/admin/Schedule-store";
 import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
-import { TScheduleOrganizedData } from "@/db/data/dto/schedule";
+import { TgetUpcommingScheduleDates } from "@/db/data/dto/schedule";
+import { RemoveTimeStampFromDate } from "@/lib/utils";
 
 export type ScheduleStoreApi = ReturnType<typeof createScheduleStore>;
 
@@ -19,17 +20,24 @@ export const ScheduleStoreContext = createContext<ScheduleStoreApi | undefined>(
 export interface IScheduleStoreProviderProps {
   children: ReactNode;
   packages: Exclude<TgetPackageScheduleDatas, null>;
-  schedules: TScheduleOrganizedData;
+  UpcommingScheduleDates: TgetUpcommingScheduleDates;
 }
 
 export const ScheduleStoreProvider = ({
   children,
   packages,
-  schedules,
+  UpcommingScheduleDates,
 }: IScheduleStoreProviderProps) => {
   const storeRef = useRef<ScheduleStoreApi>();
   if (!storeRef.current) {
-    storeRef.current = createScheduleStore({ packages, schedules });
+    storeRef.current = createScheduleStore({
+      packages,
+      UpcommingScheduleDates,
+      date: (() => {
+        let DateStringFormated = RemoveTimeStampFromDate(new Date(Date.now()));
+        return DateStringFormated;
+      })(),
+    });
   }
 
   return (
@@ -45,7 +53,9 @@ export const useScheduleStore = <T,>(
   const scheduleStoreContext = useContext(ScheduleStoreContext);
 
   if (!scheduleStoreContext) {
-    throw new Error(`useCounterStore must be used within CounterStoreProvider`);
+    throw new Error(
+      `useScheduleStore must be used within CounterStoreProvider`
+    );
   }
 
   return useStore(scheduleStoreContext, selector);

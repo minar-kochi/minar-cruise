@@ -7,43 +7,41 @@ import { Label } from "@/components/ui/label";
 import { isIdExclusive } from "@/lib/helpers/ExclusivePackage";
 import { Input } from "@/components/ui/input";
 import { Check } from "lucide-react";
-import { TScheduleDayReplaceString } from "@/Types/type";
+import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { TselectDate } from "./ScheduleSelector";
+import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
 
 interface IScheduleSelector {
-  //   organizedScheduleData: TOrganizedScheduleData | null;
   id?: string | null;
-  packages: PackageSelect[];
   label: string;
+  packageKey?: keyof Exclude<TgetPackageScheduleDatas, null>;
   type: keyof TselectDate;
-  selected: TScheduleDayReplaceString | null | undefined;
-  //   selectedDate: TScheduleSchema["ScheduleDate"];
-  setSelectedPackageId: Dispatch<SetStateAction<TselectDate | null>>;
 }
 
 export default function ScheduleSelectorDynamic({
   id,
-  packages,
   label,
-  selected,
   type,
-  setSelectedPackageId,
+  packageKey,
 }: IScheduleSelector) {
-  console.log(selected);
+  const packages = useScheduleStore((state) => state.packages);
   return (
     <div className="w-full ">
       <Label className="text-lg">{label}</Label>
       <div className="flex w-full  justify-between gap-2">
         <div className="w-full flex flex-col gap-2">
           <ScheduleSelect
-            key={`ScheduleSelect-${Math.random()}`}
-            selected={selected}
             type={type}
-            setSelectedPackageId={setSelectedPackageId}
-            packages={packages}
+            packages={
+              packageKey
+                ? packages[packageKey]
+                : packages.BreakFast.filter(
+                    (item) => item.packageCategory === "EXCLUSIVE"
+                  )
+            }
           />
           <div>
-            {isIdExclusive(packages, id ?? "null") ? (
+            {isIdExclusive(packages[packageKey ?? "BreakFast"], id ?? "null") ? (
               <>
                 <Input type="time" />
               </>

@@ -1,5 +1,5 @@
 import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
-import { TScheduleDayReplaceString } from "@/Types/type";
+import { TScheduleDataDayReplaceString } from "@/Types/type";
 import {
   isStatusBreakfast,
   isStatusDinner,
@@ -9,7 +9,7 @@ import {
 export function organizeScheduleData({
   data,
 }: {
-  data: TScheduleDayReplaceString[] | null;
+  data: TScheduleDataDayReplaceString[] | null;
 }): TOrganizedScheduleData | null {
   let organizedData: TOrganizedScheduleData | null = {
     breakfast: null,
