@@ -1,8 +1,6 @@
 import Image from "next/image";
-import { packageCard } from "@/constants/gallery/gallery";
 import {
   ArrowRight,
-  ArrowRightSquare,
   CameraIcon,
   Clock,
   Heart,
@@ -10,11 +8,27 @@ import {
   UserRound,
 } from "lucide-react";
 import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
-const PackageCard = () => {
-  const [image] = packageCard;
+interface IPackageCard {
+  url: string,
+  alt: string,
+  title: string,
+  adultPrice: number,
+  duration: number,
+  className?: string
+  
+}
+const PackageCard = async ({ adultPrice, alt, duration, title, url, className }: IPackageCard) => {
+  
+  /**
+   * 
+   * @TODO Add image galley related to the package name on camera button with notification count as number of images
+   *
+   */
+
   return (
-    <div className="mt-5 max-w-[355px] w-full  group ">
+    <div  className={cn("mt-5 max-w-[355px] w-full group ",className)} >
       <div className="relative rounded-t-xl overflow-hidden">
         <div className="absolute right-4 top-4">
           <Heart
@@ -23,11 +37,11 @@ const PackageCard = () => {
           />
         </div>
         <Image
-          src={image}
+          src={url}
           width={500}
           height={600}
           className="object-cover aspect-[4/3]"
-          alt="{give-package-title-here }"
+          alt={alt}
         />
       </div>
       <div className="relative -mt-12  py-4 px-4 rounded-t-2xl rounded-b-lg bg-white min-h-[150px] shadow-md hover:shadow-xl ">
@@ -52,14 +66,18 @@ const PackageCard = () => {
         <div className="flex flex-col gap-2">
           <div className="flex">
             <h6 className="text-xl text-wrap flex flex-wrap font-semibold">
-              Special Sunset 4 Hour cruise
+              {title} 
             </h6>
           </div>
-          <p className="text-muted-foreground font-medium">For Adult <span className="text-red-400">₹900</span></p>
+          <p className="text-muted-foreground font-medium">
+            For Adult <span className="text-red-400">{adultPrice}</span>
+          </p>
           <div className="flex items-center justify-between  bg-orange-50 p-2 rounded-lg">
             <div className="flex gap-2 items-center justify-center">
               <Clock size={18} className="stroke-primary" />
-              <p className="text-sm text-gray-500 font-medium">2 hours</p>
+              <p className="text-sm text-gray-500 font-medium">
+                {duration} hours
+              </p>
             </div>
             <div className="flex gap-2 items-center justify-center">
               <UserRound size={17} className="stroke-primary" />
