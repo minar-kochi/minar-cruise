@@ -19,7 +19,12 @@ export default function ScheduleSelectContainer({}: IScheduleSelector) {
         packageKey={"BreakFast"}
         label="Breakfast"
       />
-      <ScheduleSelectorDynamic type="lunch" id={selectedPackage?.lunch?.packageId} packageKey="Lunch" label="Lunch" />
+      <ScheduleSelectorDynamic
+        type="lunch"
+        id={selectedPackage?.lunch?.packageId}
+        packageKey="Lunch"
+        label="Lunch"
+      />
       <ScheduleSelectorDynamic
         type="dinner"
         id={selectedPackage?.dinner?.packageId}
@@ -28,8 +33,8 @@ export default function ScheduleSelectContainer({}: IScheduleSelector) {
       />
       <ScheduleSelectorDynamic
         type="custom"
+        packageKey="Custom"
         id={selectedPackage?.custom?.packageId}
-        // packageKey="Dinner"
         label="Custom"
       />
     </div>

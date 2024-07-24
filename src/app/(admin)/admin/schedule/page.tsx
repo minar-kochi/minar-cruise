@@ -38,9 +38,10 @@ export default async function Schedule() {
               packages={packages}
               UpcommingScheduleDates={
                 UpcommingScheduleDates ?? {
-                  BreakFast: [],
-                  Dinner: [],
-                  Lunch: [],
+                  breakfast: [],
+                  dinner: [],
+                  lunch: [],
+                  custom: []
                 }
               }
             >

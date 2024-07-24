@@ -7,10 +7,14 @@ export const ScheduleSchema = z.object({
   }),
 });
 
+// export const ScheduleTime = z.object();
+
 export const ScheduleCreateSchema = ScheduleSchema.extend({
-  packageId: z.string({
-    message: "Package Id is required",
-  }),
+  packageId: z
+    .string({
+      message: "Package Id is required",
+    })
+    .optional(),
   ScheduleTime: z.enum(["LUNCH", "DINNER", "BREAKFAST", "CUSTOM"]),
 });
 

@@ -1,6 +1,9 @@
+import { TSplitedFormatedDate } from "@/Types/type";
 import { type ClassValue, clsx } from "clsx";
-import { formatISO } from "date-fns";
+import { formatISO, isValid } from "date-fns";
+import moment from "moment";
 import { twMerge } from "tailwind-merge";
+import { object } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -61,4 +64,38 @@ export function convertLocalDateToUTC(date: Date | string) {
 
 export function RemoveTimeStampFromDate(date: Date) {
   return formatISO(date).split("T")[0];
+}
+
+export function ParseStringToNumber(x: string) {
+  return isNaN(parseInt(x)) ? null : parseInt(x);
+}
+
+export function parseDateFormatYYYMMDDToNumber(
+  date: string
+): TSplitedFormatedDate | null {
+  const splitValue = date.split("-");
+  if (!splitValue || splitValue.length !== 3) return null;
+  let validatedDate = {
+    year: ParseStringToNumber(splitValue[0]),
+    month: ParseStringToNumber(splitValue[1]),
+    day: ParseStringToNumber(splitValue[2]),
+  };
+
+  if (
+    validatedDate.year === null ||
+    validatedDate.month === null ||
+    validatedDate.day === null
+  ) {
+    return null;
+  }
+
+  return {
+    year: validatedDate.year,
+    day: validatedDate.day,
+    month: validatedDate.month,
+  };
+}
+
+export function isDateValid(date: TSplitedFormatedDate) {
+  return moment([date.year, date.month - 1, date.day]).isValid();
 }

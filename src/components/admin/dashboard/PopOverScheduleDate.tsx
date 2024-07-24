@@ -17,13 +17,22 @@ import { CalendarRange } from "lucide-react";
 export function PopOverDatePicker({
   calenderProps,
   date,
+  isPopoverOpened,
+  setIsPopoverOpened,
 }: {
   calenderProps: CalendarProps;
-  date?:string
+  date?: string;
+  isPopoverOpened: boolean;
+  setIsPopoverOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <Popover
+      open={isPopoverOpened}
+      onOpenChange={(open) => {
+        setIsPopoverOpened(open);
+      }}
+    >
+      <PopoverTrigger onClick={() => setIsPopoverOpened(true)} asChild>
         <Button
           variant={"outline"}
           className={cn(

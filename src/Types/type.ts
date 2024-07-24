@@ -1,5 +1,11 @@
 import { Schedule } from "@prisma/client";
 
+export type TSplitedFormatedDate = {
+  year: number;
+  day: number;
+  month: number;
+}
+
 export type TGallery = {
   Text: {
     bannerHeading: string;

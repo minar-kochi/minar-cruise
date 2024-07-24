@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -16,25 +15,40 @@ import {
   TScheduleSchema,
 } from "@/lib/validators/ScheduleValidtor";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
 import ScheduleSelectorLoader from "./ScheduleSelectorLoader";
 import Bounded from "@/components/elements/Bounded";
 import { PopOverDatePicker } from "./PopOverScheduleDate";
 import { Check, RefreshCw } from "lucide-react";
-
-import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
-import { organizeScheduleData } from "@/lib/helpers/organizedData";
 import ScheduleSelectContainer from "./ScheduleSelectContainer";
 import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
+import { Button } from "@/components/ui/button";
 
 export default function DateSelector() {
   const [isLoadingQuery, setIsLoadingQuery] = useState(false);
+  const [isPopoverOpened, setIsPopoverOpened] = useState(false);
+  const {
+    setOrganizedData,
+    organizedSchedule,
+    setDate,
+    selectedSchedulePackageId,
+    date,
+  } = useScheduleStore((state) => state);
 
-  const { setOrganizedData,setDate, selectedSchedulePackageId,date } = useScheduleStore(
-    (state) => state
-  );
+  const { data } = trpc.admin.getSchedulesByDateOrNow.useQuery({
+    ScheduleDate: date,
+  });
+  const { getData  } = trpc.useUtils().admin.getSchedulesByDateOrNow;
+  useEffect(() => {
+    const sdata = getData({
+      ScheduleDate: date,
+    });
+    if(!sdata) return
+    setOrganizedData(sdata)
+    console.log(sdata)
+  }, [data]);
 
   const {
     register,
@@ -45,10 +59,6 @@ export default function DateSelector() {
     resolver: zodResolver(ScheduleSchema),
   });
 
-  const { fetch, cancel, invalidate } =
-    trpc.useUtils().admin.getSchedulesByDateOrNow;
-
-  watch("ScheduleDate");
   return (
     <Bounded className="">
       <div className="max-w-sm w-full">
@@ -59,6 +69,8 @@ export default function DateSelector() {
           </CardHeader>
           <CardContent className="w-full">
             <PopOverDatePicker
+              isPopoverOpened={isPopoverOpened}
+              setIsPopoverOpened={setIsPopoverOpened}
               date={date}
               calenderProps={{
                 components: {
@@ -67,10 +79,11 @@ export default function DateSelector() {
                 },
                 sizeMode: "lg",
                 mode: "single",
-                selected: new Date(watch("ScheduleDate")),
+                selected: new Date(date),
                 onSelect: async (selectedDate) => {
+                  setIsPopoverOpened(false);
                   if (!selectedDate) {
-                    return toast(`Please select a valid Date.`);
+                    return;
                   }
 
                   let DateStringFormated =
@@ -83,12 +96,8 @@ export default function DateSelector() {
                         shouldValidate: true,
                         shouldDirty: true,
                       });
-                      setDate(DateStringFormated)
-                      const data = await fetch({
-                        ScheduleDate: DateStringFormated,
-                      });
-                      if (!data) return;
-                      setOrganizedData(data);
+                      setDate(DateStringFormated);
+                      setIsPopoverOpened(false);
                     }
                   } catch (error) {
                     console.log(error);
@@ -102,7 +111,6 @@ export default function DateSelector() {
                   let currDate = getPrevTimeStamp(Date.now());
                   return date < new Date(currDate);
                 },
-                ...register,
               }}
             />
             <div className="flex mb-4 mt-4 gap-2 flex-wrap">
@@ -120,19 +128,18 @@ export default function DateSelector() {
               </div>
             </div>
             {!isLoadingQuery ? (
-              <>
-                <ScheduleSelectContainer />{" "}
-              </>
+              <ScheduleSelectContainer />
             ) : (
               <ScheduleSelectorLoader />
             )}
-            <button
+            <Button
+              className="font-medium mt-2"
               onClick={() => {
                 toast(JSON.stringify(selectedSchedulePackageId));
               }}
             >
               show schedules.
-            </button>
+            </Button>
           </CardContent>
         </Card>
       </div>

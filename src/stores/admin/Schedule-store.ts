@@ -1,8 +1,11 @@
-import { TselectDate } from "@/components/admin/dashboard/ScheduleSelector";
+// import { TselectDate } from "@/components/admin/dashboard/ScheduleSelector";
 import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import { TgetUpcommingScheduleDates } from "@/db/data/dto/schedule";
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
-import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
+import {
+  TOrganizedScheduleData,
+  TSelectedPackageIdsAndScheduleEnum,
+} from "@/Types/Schedule/ScheduleSelect";
 import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { createStore } from "zustand/vanilla";
 
@@ -10,15 +13,21 @@ export type ScheduleState = {
   packages: Exclude<TgetPackageScheduleDatas, null>;
   UpcommingScheduleDates: TgetUpcommingScheduleDates;
   organizedSchedule?: TOrganizedScheduleData;
-  selectedSchedulePackageId?: TselectDate;
+  selectedSchedulePackageId?: TSelectedPackageIdsAndScheduleEnum;
   date: string;
 };
 
 export type ScheduleActions = {
   setOrganizedData: (param: TScheduleDataDayReplaceString[]) => void;
-  updateSelectedSchedulePackageId: (
-    param: keyof TselectDate,
-    packageId: string
+  updateUpcommingScheduleDates: (
+    param: keyof TgetUpcommingScheduleDates,
+    data: Date[]
+  ) => void;
+  updateSelectedSchedulePackageId: <
+    S extends keyof TSelectedPackageIdsAndScheduleEnum
+  >(
+    param: keyof TSelectedPackageIdsAndScheduleEnum,
+    selectedPackage: TSelectedPackageIdsAndScheduleEnum[S]
   ) => void;
   setDate: (param: string) => void;
 };
@@ -37,25 +46,51 @@ export const createScheduleStore = (initScheduleStore: ScheduleState) => {
       if (!OrgData) return;
       set((state) => {
         return {
-          ...state,
           organizedSchedule: OrgData,
           selectedSchedulePackageId: {
-            breakfast: OrgData.breakfast?.packageId,
-            custom: OrgData.custom?.packageId,
-            dinner: OrgData.dinner?.packageId,
-            lunch: OrgData.dinner?.packageId,
+            breakfast: {
+              id: OrgData.breakfast?.packageId,
+              scheduleTime: "BREAKFAST",
+            },
+            custom: {
+              id: OrgData.custom?.packageId,
+              scheduleTime: "CUSTOM",
+            },
+            dinner: {
+              id: OrgData.dinner?.packageId,
+              scheduleTime: "DINNER",
+            },
+            lunch: {
+              id: OrgData.lunch?.packageId,
+              scheduleTime: "LUNCH",
+            },
           },
         };
       });
     },
-    updateSelectedSchedulePackageId: (param, packageId) => {
+    updateUpcommingScheduleDates: (param, data) => {
       set((state) => {
-        console.log(state);
+        let newData = [...state.UpcommingScheduleDates[param], ...data];
+        let uniqueData = Array.from(new Set(newData));
         return {
-          ...state,
+          UpcommingScheduleDates: {
+            ...state.UpcommingScheduleDates,
+            [param]: uniqueData,
+          },
+        };
+      });
+    },
+    /**
+     *
+     * @param param Params as a key of lunch | breakfast | dinner | custom
+     * @param selectedPackage  as ENUM or the type
+     */
+    updateSelectedSchedulePackageId: (param, selectedPackage) => {
+      set((state) => {
+        return {
           selectedSchedulePackageId: {
             ...state.selectedSchedulePackageId,
-            [param]: packageId,
+            [param]: selectedPackage,
           },
         };
       });

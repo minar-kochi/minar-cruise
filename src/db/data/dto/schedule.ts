@@ -1,6 +1,12 @@
 import { db } from "@/db";
 import { isProd } from "@/lib/utils";
 import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
+import {
+  isStatusBreakfast,
+  isStatusCustom,
+  isStatusDinner,
+  isStatusLunch,
+} from "@/lib/validators/ScheudulePackage";
 import { Schedule } from "@prisma/client";
 
 export type TGetSchedulePAckages = Awaited<
@@ -52,9 +58,10 @@ export const getSchedule = async () => {
 export type TScheduleData = Schedule;
 
 export type TgetUpcommingScheduleDates = {
-  BreakFast: Date[];
-  Lunch: Date[];
-  Dinner: Date[];
+  breakfast: Date[];
+  lunch: Date[];
+  dinner: Date[];
+  custom: Date[];
 };
 
 export const getUpcommingScheduleDates = async () => {
@@ -64,13 +71,14 @@ export const getUpcommingScheduleDates = async () => {
         gte: new Date(Date.now()),
       },
     },
-    take: 15,
+    take: 60,
   });
 
   let scheduledDate: TgetUpcommingScheduleDates = {
-    BreakFast: [],
-    Dinner: [],
-    Lunch: [],
+    breakfast: [],
+    dinner: [],
+    lunch: [],
+    custom: [],
   };
 
   if (!data) {
@@ -79,15 +87,19 @@ export const getUpcommingScheduleDates = async () => {
   }
 
   for (const item of data) {
-    if (item.schedulePackage === "LUNCH") {
-      scheduledDate.Lunch.push(item.day);
+    if (isStatusLunch(item.schedulePackage)) {
+      scheduledDate.lunch.push(item.day);
       continue;
     }
-    if (item.schedulePackage === "DINNER") {
-      scheduledDate.Dinner.push(item.day);
+    if (isStatusDinner(item.schedulePackage)) {
+      scheduledDate.dinner.push(item.day);
       continue;
     }
-    scheduledDate.Lunch.push(item.day);
+    if (isStatusBreakfast(item.schedulePackage)) {
+      scheduledDate.breakfast.push(item.day);
+      continue;
+    }
+    scheduledDate.custom.push(item.day);
   }
   return scheduledDate;
 };
