@@ -47,17 +47,18 @@ const SearchBar = ({ packages }: { packages: TGetPackageSearchItems }) => {
   return (
     <form className="max-sm:hidden  bg-inherit flex justify-center items-center">
       <div className="bg-white shadow-[0px_1px_2px_0px_rgba(60,64,67,0.3),0px_2px_6px_2px_rgba(60,64,67,0.15)] my-5 m-3  w-[700px] h-[70px] rounded-full  flex  items-center tracking-wider">
-        <Popover >
-          <PopoverTrigger className="w-full h-full rounded-full">
+        <Popover>
+          <PopoverTrigger className="outline-none w-full h-full rounded-full">
             <div className=" h-full flex items-center">
               <SearchLabel
                 label="Where"
                 key={1}
                 data={title || "Search packages"}
-              />|
+              />
+              |
             </div>
           </PopoverTrigger>
-          <PopoverContent className="outline-none border-0 shadow-2xl my-4 rounded-3xl w-[500px] bg-white">
+          <PopoverContent className="z-10 outline-none border-0 shadow-2xl my-4 rounded-3xl w-[500px] bg-white">
             <div className="grid grid-cols-3 h-full gap-3">
               {packages?.map((item, i) => {
                 return (
@@ -87,7 +88,7 @@ const SearchBar = ({ packages }: { packages: TGetPackageSearchItems }) => {
           </PopoverContent>
         </Popover>
         <Popover>
-          <PopoverTrigger className="w-full h-full rounded-full">
+          <PopoverTrigger className="outline-none w-full h-full rounded-full">
             <div className="h-full flex items-center">
               <SearchLabel
                 label="Date"
@@ -96,10 +97,11 @@ const SearchBar = ({ packages }: { packages: TGetPackageSearchItems }) => {
                   format(new Date(getValues("date")), "MMM dd, yyyy") ||
                   "Add dates"
                 }
-              />|
+              />
+              |
             </div>
           </PopoverTrigger>
-          <PopoverContent className="bg-white rounded-3xl border-0 my-4">
+          <PopoverContent className="z-10 bg-white rounded-3xl border-0 my-4">
             <Calendar
               mode="single"
               className="pl-0"
@@ -121,13 +123,13 @@ const SearchBar = ({ packages }: { packages: TGetPackageSearchItems }) => {
           </PopoverContent>
         </Popover>
         <Popover>
-          <PopoverTrigger className="w-full h-full rounded-full">
+          <PopoverTrigger className="outline-none w-full h-full rounded-full">
             <div className="h-full flex items-center  relative">
               <SearchLabel label="Who" key={3} data="Add guests" className="" />
               <PassengerCount watch={watch} className="absolute right-5" />
             </div>
           </PopoverTrigger>
-          <PopoverContent className="outline-none border-0 shadow-2xl my-4 rounded-3xl w-[500px] bg-white">
+          <PopoverContent className="z-10  outline-none border-0 shadow-2xl my-4 rounded-3xl w-[500px] bg-white">
             <GuestLabel
               label="Adults"
               desc="Ages 13 or above"
@@ -159,15 +161,14 @@ const SearchBar = ({ packages }: { packages: TGetPackageSearchItems }) => {
         </Popover>
       </div>
       <div className="">
-      <Button
-        type="submit"
-        className="mr-5 active:bg-red-600 active:ring-2 ring-primary shadow-[0px_1px_2px_0px_rgba(60,64,67,0.3),0px_2px_6px_2px_rgba(60,64,67,0.15)] hover:shadow-xl  max-w-[150px] w- p-8 rounded-full  justify-between"
-      >
-        <Search strokeWidth={3} className="max-md: w-fit" />
-        <p className="max-md:hidden block font-bold text-base">Search</p>
-      </Button>
+        <Button
+          type="submit"
+          className="mr-5 active:bg-red-600 active:ring-2 ring-primary shadow-[0px_1px_2px_0px_rgba(60,64,67,0.3),0px_2px_6px_2px_rgba(60,64,67,0.15)] hover:shadow-xl  max-w-[150px] w- p-8 rounded-full  justify-between"
+        >
+          <Search strokeWidth={3} className="max-md: w-fit" />
+          <p className="max-md:hidden block font-bold text-base">Search</p>
+        </Button>
       </div>
-      
     </form>
   );
 };

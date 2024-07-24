@@ -57,3 +57,42 @@
     @apply bg-background text-foreground;
   }
 }
+
+.embla__viewport {
+  overflow: hidden;
+}
+
+.embla {
+  max-width: 100%;
+  margin: auto;
+  --slide-spacing: 1rem;
+}
+
+
+.embla__container {
+  backface-visibility: hidden;
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* .embla__container {
+  display: flex;
+  height: 100%;
+  margin-left: calc(var(--slide-spacing) * -1);
+} */
+
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scroll-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

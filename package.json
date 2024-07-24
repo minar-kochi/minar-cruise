@@ -34,6 +34,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "embla-carousel-autoplay": "^8.1.7",
     "embla-carousel-react": "^8.1.5",
     "label": "^0.2.2",
     "lucide-react": "^0.395.0",

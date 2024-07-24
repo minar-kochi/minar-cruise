@@ -4,6 +4,7 @@ import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { isProd } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
+import { afterEach } from "node:test";
 
 export async function getPackageNavigation(): Promise<
   TPackageNavigation[] | null
@@ -200,3 +201,53 @@ export async function getPackageScheduleDatas() {
 export type TgetPackageScheduleDatas = Awaited<
   ReturnType<typeof getPackageScheduleDatas>
 >;
+
+
+export type TGetPackageCardDetails = Exclude<
+  Awaited<ReturnType<typeof getPackageCardDetails>>,
+  null
+>;
+
+export async function getPackageCardDetails() {
+  try {
+    const data = await db.package.findMany({
+      select: {
+        id: true,
+        adultPrice: true,
+        title: true,
+        duration: true,
+        packageImage: {
+          take:1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },          
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true, 
+              }
+            }
+          }
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getPackageCardDetails fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
