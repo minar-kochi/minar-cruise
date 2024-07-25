@@ -15,18 +15,18 @@ export async function TruncateTable() {
   }
 
   const { stdout: deleteDb, stderr } = await execs(
-    `bunx prisma db execute --file='./prisma/functions/dbReset.sql'`
+    `npx prisma db execute --file='./prisma/functions/dbReset.sql'`
   );
   if (stderr) {
     console.error("STACK:", process.cwd());
     console.error(
-      "Failed to run 'bunx prisma db execute' please check ./prisma/functions/dbReset.sql"
+      "Failed to run 'npx prisma db execute' please check ./prisma/functions/dbReset.sql"
     );
     throw new Error(stderr);
   }
   console.log(deleteDb, "\n");
   const { stdout: generate, stderr: generateErr } = await execs(
-    `bunx prisma db push`
+    `npx prisma db push`
   );
   console.log(generate, "\n\n", stderr);
   return true;
