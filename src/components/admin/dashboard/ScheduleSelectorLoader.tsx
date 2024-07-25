@@ -1,17 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
-import { TOrganizedData } from "@/lib/helpers/organizedData";
-import ScheduleSelect from "./ScheduleSelect";
 import { Check, Info, RefreshCw } from "lucide-react";
 import {
   Popover,
@@ -20,11 +9,8 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { CardFooter } from "@/components/ui/card";
 
-interface IScheduleSelector {
-  organizedScheduleData: TOrganizedData | null;
-  packages: Exclude<TgetPackageScheduleDatas, null>;
-}
 
 const ScheduleSelectorLoader = () => {
   return (

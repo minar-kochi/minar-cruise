@@ -79,7 +79,6 @@ export async function getPackageById({ id }: { id: string }) {
     }
     return data;
   } catch (error) {
-    // ErrorLogger(error);
     return null;
   }
 }
@@ -166,6 +165,7 @@ export async function getPackageScheduleDatas() {
         PackageData.packageCategory === "EXCLUSIVE"
       ) {
         Lunch.push(PackageData);
+        
       }
       if (
         PackageData.packageCategory === "BREAKFAST" ||
@@ -183,9 +183,11 @@ export async function getPackageScheduleDatas() {
         Custom.push(PackageData);
       }
     }
-    if (Lunch?.length < 0 && Dinner?.length < 0 && BreakFast?.length < 0) {
+
+    if (Lunch?.length < 0 || Dinner?.length < 0 || BreakFast?.length < 0) {
       return null;
     }
+    
     return {
       Lunch,
       Dinner,

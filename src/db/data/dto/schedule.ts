@@ -65,6 +65,8 @@ export type TgetUpcommingScheduleDates = {
 };
 
 export const getUpcommingScheduleDates = async () => {
+
+  // convert This date with IST format from UTC.
   const data = await db.schedule.findMany({
     where: {
       day: {
@@ -73,7 +75,6 @@ export const getUpcommingScheduleDates = async () => {
     },
     take: 60,
   });
-
   let scheduledDate: TgetUpcommingScheduleDates = {
     breakfast: [],
     dinner: [],

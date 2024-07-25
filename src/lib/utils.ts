@@ -61,8 +61,8 @@ export function convertLocalDateToUTC(date: Date | string) {
   );
   return formatISO(formatedDate);
 }
-
-export function RemoveTimeStampFromDate(date: Date) {
+/** Convert Date Object to YYYY-MM-DD format */
+export function RemoveTimeStampFromDate(date: Date):string {
   return formatISO(date).split("T")[0];
 }
 

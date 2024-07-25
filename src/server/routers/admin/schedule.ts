@@ -86,7 +86,9 @@ export const schedule = router({
         });
       }
       //________________Validate Input ends _____________
+      // Testout the date that is recieved (UTC format.) 
       let SafelyParsedDate = new Date(ScheduleDate);
+
       const Schedule = await db.schedule.findFirst({
         where: {
           AND: [
@@ -99,6 +101,7 @@ export const schedule = router({
           ],
         },
       });
+      
       if (Schedule?.id) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -110,7 +113,7 @@ export const schedule = router({
         data: {
           day: SafelyParsedDate,
           packageId,
-          schedulePackage: "BREAKFAST",
+          schedulePackage: ScheduleTime,
           scheduleStatus: "AVAILABLE",
         },
       });

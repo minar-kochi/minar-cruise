@@ -6,7 +6,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
-import React, { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import React, {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useMemo,
+  useState,
+} from "react";
 import { TselectDate } from "../ScheduleSelector";
 import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
@@ -28,8 +34,8 @@ export default function ScheduleSelect({
     packages,
     organizedSchedule,
   } = useScheduleStore((state) => state);
-  const [state, setState] = useState();
-  function handleChange(value: string) {
+
+  function CnhandleChange(value: string) {
     updateSelectedSchedulePackageId(type, {
       id: value,
       scheduleTime: selectedPackageIdsAndScheduleMapToEnum[type],
@@ -40,21 +46,45 @@ export default function ScheduleSelect({
     e.preventDefault();
     let value = e.target.value;
     if (!value) return;
+
     updateSelectedSchedulePackageId(type, {
       id: value,
       scheduleTime: selectedPackageIdsAndScheduleMapToEnum[type],
     });
   }
 
-  let shad = true;
+  
+  const OriginSetPackage = useMemo(() => {
+    return packages[packageKey].find(
+      (value) =>
+        value.id === (organizedSchedule && organizedSchedule[type]?.packageId)
+    );
+  }, [organizedSchedule]);
+
+  
+  let defaultOrSelect = useMemo(() => {
+    return selectedSchedulePackageId && selectedSchedulePackageId[type]?.id
+      ? selectedSchedulePackageId[type]?.id
+      : organizedSchedule && organizedSchedule[type]?.packageId
+      ? organizedSchedule[type]?.packageId
+      : "";
+  }, [selectedSchedulePackageId, organizedSchedule]);
+  
+  let shad = false;
+
+
   return shad ? (
-    <select onChange={ReacthandleChange} className="bg-black p-2 text-white">
+    <select
+      onChange={ReacthandleChange}
+      value={defaultOrSelect}
+      className="bg-black p-2 text-white"
+    >
       <option
         value={organizedSchedule ? organizedSchedule[type]?.id : undefined}
       >
-        {organizedSchedule && organizedSchedule[type]?.id
-          ? organizedSchedule[type]?.id
-          : "This Package"}
+        {OriginSetPackage && OriginSetPackage.title
+          ? OriginSetPackage.title
+          : "Select a Package"}
       </option>
       {packages[packageKey].map((item) => {
         return (
@@ -66,7 +96,8 @@ export default function ScheduleSelect({
     </select>
   ) : (
     <Select
-      onValueChange={handleChange}
+      value={defaultOrSelect}
+      onValueChange={CnhandleChange}
       defaultValue={
         organizedSchedule && organizedSchedule[type]?.id
           ? organizedSchedule[type]?.id

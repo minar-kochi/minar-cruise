@@ -17,15 +17,15 @@ export default function ScheduleUpdateButton() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     e.preventDefault();
-    if (!selectedSchedulePackageId) {
+    if (!selectedSchedulePackageId || !selectedSchedulePackageId["breakfast"]) {
       return toast.error("Package has not selected. Please select a package");
     }
-    if (!selectedSchedulePackageId["breakfast"]) {
+    if (!selectedSchedulePackageId["breakfast"].id) {
       return toast.error(`Could not Found the package for {breakfast}`);
     }
     createNewSchedule({
-      packageId: selectedSchedulePackageId["breakfast"],
-      ScheduleDate: "",
+      packageId: selectedSchedulePackageId["breakfast"].id,
+      ScheduleDate: date,
       ScheduleTime: "BREAKFAST",
     });
   }

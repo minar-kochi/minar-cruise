@@ -27,6 +27,7 @@ export default function ScheduleSelectorDynamic({
   packageKey,
 }: IScheduleSelector) {
   const { packages, organizedSchedule } = useScheduleStore((state) => state);
+
   return (
     <div className="w-full ">
       <Label className="text-lg">{label}</Label>

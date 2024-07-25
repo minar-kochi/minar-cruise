@@ -14,24 +14,28 @@ export default function ScheduleSelectContainer({}: IScheduleSelector) {
   return (
     <div>
       <ScheduleSelectorDynamic
+        key={`breakfast-01-${Math.random()}`}
         type="breakfast"
         id={selectedPackage?.breakfast?.packageId}
         packageKey={"BreakFast"}
         label="Breakfast"
       />
       <ScheduleSelectorDynamic
+        key={`lunch-01-${Math.random()}`}
         type="lunch"
         id={selectedPackage?.lunch?.packageId}
         packageKey="Lunch"
         label="Lunch"
       />
       <ScheduleSelectorDynamic
+        key={`dinner-01-${Math.random()}`}
         type="dinner"
         id={selectedPackage?.dinner?.packageId}
         packageKey="Dinner"
         label="Dinner"
       />
       <ScheduleSelectorDynamic
+        key={`custom-01-${Math.random()}`}
         type="custom"
         packageKey="Custom"
         id={selectedPackage?.custom?.packageId}

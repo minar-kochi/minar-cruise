@@ -13,6 +13,7 @@ export default function ScheduleAddButton({
   type: keyof TselectDate;
 }) {
   const { invalidate, reset } = trpc.useUtils().admin.getSchedulesByDateOrNow;
+
   const {
     date,
     selectedSchedulePackageId,
@@ -30,6 +31,7 @@ export default function ScheduleAddButton({
         toast.success("Schedule set successfully ");
       },
     });
+    
   function handleCreateSchedule(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {

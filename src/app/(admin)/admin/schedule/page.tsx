@@ -9,6 +9,7 @@ export default async function Schedule() {
   const UpcommingScheduleDates = await getUpcommingScheduleDates();
 
   const packages = await getPackageScheduleDatas();
+ 
   if (!packages) {
     return null;
   }
@@ -22,17 +23,17 @@ export default async function Schedule() {
 
   return (
     <main className="">
-      <div className="grid grid-cols-[70%_30%] ">
+      <div className="grid md:grid-cols-[70%_30%] place-content-center ">
         <div className="px-2">
           <div className="flex items-center justify-center">
             <h1 className="text-2xl font-bold mt-12">Recent Schedules</h1>
           </div>
           {/* <h1>@TODO : Data table here</h1> */}
-          <div className="pl-4 relative z-10">
+          <div className=" relative z-10 ">
             <DataTableDemo />
           </div>
         </div>
-        <div className="py-12 min-h-[calc(100vh-4rem)] border-l">
+        <div className="py-12 min-h-[calc(100vh-4rem)] md:border-l">
           <div className="sticky lg:top-[70px]">
             <ScheduleStoreProvider
               packages={packages}
