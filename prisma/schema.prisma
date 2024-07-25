@@ -6,11 +6,14 @@
 
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+
 }
 
 model Booking {
@@ -42,6 +45,7 @@ enum SCHEDULE_PACKAGE {
   BREAKFAST
   LUNCH
   DINNER
+  CUSTOM
 }
 
 enum SCHEDULE_STATUS {
@@ -54,6 +58,7 @@ enum SCHEDULE_STATUS {
 model Schedule {
   id              String           @id @default(cuid())
   day             DateTime         @db.Date()
+  time            DateTime?        @db.Time()
   packageId       String?
   schedulePackage SCHEDULE_PACKAGE
   scheduleStatus  SCHEDULE_STATUS

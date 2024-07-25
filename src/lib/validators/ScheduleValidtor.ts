@@ -1,17 +1,22 @@
+import { isDate, isValid } from "date-fns";
 import { z } from "zod";
 
 export const ScheduleSchema = z.object({
-  ScheduleDate: z.union([
-    z.number({
-      required_error: "schedule date is required",
-    }),
-    z.string({
-      required_error: "Schedule date is required",
-    }),
-    z.date({
-      required_error: "Schedule date is required",
-    }),
-  ]),
+  ScheduleDate: z.string({
+    required_error: "Schedule date is required",
+  }),
+});
+
+// export const ScheduleTime = z.object();
+
+export const ScheduleCreateSchema = ScheduleSchema.extend({
+  packageId: z
+    .string({
+      message: "Package Id is required",
+    })
+    .optional(),
+  ScheduleTime: z.enum(["LUNCH", "DINNER", "BREAKFAST", "CUSTOM"]),
 });
 
 export type TScheduleSchema = z.infer<typeof ScheduleSchema>;
+export type TScheduleCreateSchema = z.infer<typeof ScheduleCreateSchema>;

@@ -4,8 +4,12 @@ import { initTRPC } from "@trpc/server";
 // since it's not very descriptive.
 // For instance, the use of a t variable
 // is common in i18n libraries.
+import superjson from 'superjson';
 
-const t = initTRPC.create();
+const t = initTRPC.create({
+  // transformer: superjson,
+  // allowOutsideOfServer: true,
+});
 
 export const router = t.router;
 // Base router and procedure

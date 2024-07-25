@@ -1,5 +1,11 @@
 import { Schedule } from "@prisma/client";
 
+export type TSplitedFormatedDate = {
+  year: number;
+  day: number;
+  month: number;
+}
+
 export type TGallery = {
   Text: {
     bannerHeading: string;
@@ -25,4 +31,4 @@ export const Galleries = [
 export type TGalleries = (typeof Galleries)[number];
 
 
-export type TScheduleDayReplaceString = Omit<Schedule, "day"> & { day: string };
+export type TScheduleDataDayReplaceString = Omit<Schedule, "day" | "time"> & { day: string , time:string | null };

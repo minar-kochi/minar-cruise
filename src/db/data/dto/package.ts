@@ -27,6 +27,25 @@ export async function getPackageNavigation(): Promise<
   }
 }
 
+export async function getPackageByIdWithStatusAndCount(id: string) {
+  try {
+    const data = await db.package.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        packageCategory: true,
+      },
+    });
+    if (!data) return null;
+    return data;
+  } catch (error) {
+    console.log("Something went Wrong", error);
+    return null;
+  }
+}
+
 export async function getPackageById({ id }: { id: string }) {
   try {
     const data = await db.package.findUnique({
@@ -60,7 +79,6 @@ export async function getPackageById({ id }: { id: string }) {
     }
     return data;
   } catch (error) {
-    // ErrorLogger(error);
     return null;
   }
 }
@@ -116,11 +134,12 @@ export async function getPackageSearchItems() {
 }
 
 export type PackageSelect = {
-  slug: string;
   id: string;
+  slug: string;
   title: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
 };
+
 export async function getPackageScheduleDatas() {
   try {
     const data = await db.package.findMany({
@@ -138,6 +157,7 @@ export async function getPackageScheduleDatas() {
     let Lunch: PackageSelect[] = [];
     let Dinner: PackageSelect[] = [];
     let BreakFast: PackageSelect[] = [];
+    let Custom: PackageSelect[] = [];
 
     for (const PackageData of data) {
       if (
@@ -145,6 +165,7 @@ export async function getPackageScheduleDatas() {
         PackageData.packageCategory === "EXCLUSIVE"
       ) {
         Lunch.push(PackageData);
+        
       }
       if (
         PackageData.packageCategory === "BREAKFAST" ||
@@ -158,14 +179,20 @@ export async function getPackageScheduleDatas() {
       ) {
         Dinner.push(PackageData);
       }
+      if (PackageData.packageCategory === "EXCLUSIVE") {
+        Custom.push(PackageData);
+      }
     }
-    if (Lunch?.length < 0 && Dinner?.length < 0 && BreakFast?.length < 0) {
+
+    if (Lunch?.length < 0 || Dinner?.length < 0 || BreakFast?.length < 0) {
       return null;
     }
+    
     return {
       Lunch,
       Dinner,
       BreakFast,
+      Custom,
     };
   } catch (error) {
     ErrorLogger(error);
