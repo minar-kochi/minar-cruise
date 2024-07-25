@@ -1,10 +1,11 @@
-import { cn } from "@/lib/utils"
 
-const BookingCard = ({ className }:{
-  className?: string; 
-}) => {
+const BookingCard = () => {
   return (
-    <section className={cn("", className)}>Bookingcard</section>
+    <div className="bg-white shadow-xl h-full rounded-lg  ">
+        <form action="">
+            <h3 className="font-medium text-2xl text-center pt-5">Book Now</h3>
+        </form>
+    </div>
   )
 }
 

@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+
+}
+
+model Booking {
+  id            String   @id @default(cuid())
+  userId        String
+  numOfChildren Int
+  numOfAdults   Int
+  packageId     String
+  createdAt     DateTime @default(now())
+  package       Package  @relation(fields: [packageId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id       String    @id @default(cuid())
+  name     String
+  email    String    @unique
+  contact  String
+  bookings Booking[]
+}
+
+model FoodMenu {
+  id      String    @id @default(cuid())
+  name    String
+  Package Package[]
+}
+
+enum SCHEDULE_PACKAGE {
+  BREAKFAST
+  LUNCH
+  DINNER
+  CUSTOM
+}
+
+enum SCHEDULE_STATUS {
+  BLOCKED
+  MAINTENANCE
+  EXCLUSIVE
+  AVAILABLE
+}
+
+model Schedule {
+  id              String           @id @default(cuid())
+  day             DateTime         @db.Date()
+  time            DateTime?        @db.Time()
+  packageId       String?
+  schedulePackage SCHEDULE_PACKAGE
+  scheduleStatus  SCHEDULE_STATUS
+  Package         Package?         @relation(fields: [packageId], references: [id])
+}
+
+model Amenities {
+  id          String    @id @default(cuid())
+  description String[]
+  Package     Package[]
+}
+
+enum PACKAGE_CATEGORY {
+  BREAKFAST
+  LUNCH
+  DINNER
+  EXCLUSIVE
+}
+
+model Package {
+  id              String           @id @default(cuid())
+  title           String
+  packageType     String
+  description     String
+  childPrice      Int
+  adultPrice      Int
+  amenitiesId     String
+  duration        Int
+  slug            String           @unique
+  foodMenuId      String
+  startFrom       DateTime
+  endAt           DateTime
+  createdAt       DateTime         @default(now()) @db.Timestamp()
+  amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
+  food            FoodMenu         @relation(fields: [foodMenuId], references: [id])
+  packageCategory PACKAGE_CATEGORY
+  Booking         Booking[]
+  Schedule        Schedule[]
+  packageImage    PackageImage[]
+}
+
+enum IMAGE_USE {
+  PROD_FEATURED
+  PROD_THUMBNAIL
+  COMMON
+}
+
+model Image {
+  id           String         @id @unique @default(cuid())
+  url          String
+  alt          String
+  ImageUse     IMAGE_USE[]    @default([COMMON])
+  packageImage PackageImage[]
+}
+
+model PackageImage {
+  id        String  @id @unique @default(cuid())
+  packageId String
+  imageId   String
+  package   Package @relation(fields: [packageId], references: [id])
+  image     Image   @relation(fields: [imageId], references: [id])
+}
+
+// @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
+// pg_dump -U postgres --clean | pg_restore -U postgres

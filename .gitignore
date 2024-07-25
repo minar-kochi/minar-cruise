@@ -5,21 +5,21 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
-
+.vscode
 # testing
 /coverage
 
 # next.js
 /.next/
 /out/
-
+**/.fuse_hidden* 
 # production
 /build
 
 # misc
 .DS_Store
 *.pem
-
+# /prisma/migrations
 # debug
 npm-debug.log*
 yarn-debug.log*

@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 
 const SocialCard = () => {
   return <>
-    <div className="flex justify-end space-x-3 py-5">
+    <div className="flex justify-end max-sm:justify-evenly space-x-3 py-5">
       <Button>
         <Facebook/>
       </Button>

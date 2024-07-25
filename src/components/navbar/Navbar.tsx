@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import Bounded from "../elements/Bounded";
+import NavigationContents from "./NavigationContents";
 
-const Navbar = () => {
+const Navbar = async () => {
   return (
-    <div className="sticky  py-4 top-0 w-full  bg-white z-50">
-      <Bounded as={"nav"} className="w-full flex justify-between">
+    <div className="sticky top-0 w-full bg-white z-50 ">
+      <Bounded
+        as={"nav"}
+        className="w-full flex justify-around h-16 items-center"
+      >
         <div className="">
           <Link href={"/"}>
             <Image
@@ -17,15 +21,8 @@ const Navbar = () => {
             />
           </Link>
         </div>
-        <div className="flex gap-5 font-sans font-medium justify-start max-md:hidden">
-          <Link href={""}>
-            <h1>Home</h1>
-          </Link>
-          <h1>Packages</h1>
-          <h1>Facilities</h1>
-          <h1>About</h1>
-          <h1>Gallery</h1>
-          <h1>Contact</h1>
+        <div className="w-full justify-end items-center hidden md:flex ">
+          <NavigationContents />
         </div>
       </Bounded>
     </div>
