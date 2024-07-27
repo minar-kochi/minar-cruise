@@ -4,19 +4,18 @@ import Bounded from "../elements/Bounded";
 import { db } from "@/db";
 import { Package, PackageImage, Image, Amenities } from "@prisma/client";
 import { cn, isProd } from "@/lib/utils";
-import {format } from 'date-fns'
+import { format } from "date-fns";
 import { ReactNode } from "react";
+import { TGetPackageById } from "@/db/data/dto/package";
 
-type THeadingCard = Package & {
-  className?: string;
-};
-const HeadingCard = async ({
-  title,
-  adultPrice,
-  childPrice,
-  duration
-}: THeadingCard) => {
-  
+interface IHeadingCard {
+  title: string
+  duration: number
+  adultPrice: number
+  childPrice : number
+} 
+
+const HeadingCard = async ({ title, duration, adultPrice, childPrice }: IHeadingCard) => {
   return (
     <div className="bg-orange-100 ">
       <Bounded className="flex max-sm:flex-col max-md:gap-3 justify-between py-10">
@@ -32,19 +31,13 @@ const HeadingCard = async ({
         </article>
         <article className="flex max-md:items-center max-md:flex-col my-auto  space-x-11">
           <AsideInfo label="Duration" icon={<Clock size={35} color="red" />}>
-            {`${duration/60} hours`}
+            {`${duration / 60} hours`}
           </AsideInfo>
-          <AsideInfo
-            label={"adult"}
-            icon={<UserRound size={35} color="red" />}
-          >
-            {`₹${adultPrice/100}`}
+          <AsideInfo label={"adult"} icon={<UserRound size={35} color="red" />}>
+            {`₹${adultPrice / 100}`}
           </AsideInfo>
-          <AsideInfo
-            label={"child"}
-            icon={<Baby size={35} color="red" />}
-          >
-            {`₹${childPrice/100}`}
+          <AsideInfo label={"child"} icon={<Baby size={35} color="red" />}>
+            {`₹${childPrice / 100}`}
           </AsideInfo>
         </article>
       </Bounded>
@@ -53,25 +46,25 @@ const HeadingCard = async ({
 };
 
 function AsideInfo({
-    className,
-    children,
-    label,
-    icon,
-  }: {
-    className?: string;
-    children?: React.ReactNode;
-    label?: string;
-    icon?: ReactNode;
-  }) {
-    return (
-      <div className={cn("inline-flex space-x-3", className)}>
-        <div className="my-auto">{icon}</div>
-        <div className="">
-          <h6 className="font-semibold text-gray-500">{label}</h6>
-          <p>{children}</p>
-        </div>
+  className,
+  children,
+  label,
+  icon,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+  label?: string;
+  icon?: ReactNode;
+}) {
+  return (
+    <div className={cn("inline-flex space-x-3", className)}>
+      <div className="my-auto">{icon}</div>
+      <div className="">
+        <h6 className="font-semibold text-gray-500">{label}</h6>
+        <p>{children}</p>
       </div>
-    );
-  }
-  
+    </div>
+  );
+}
+
 export default HeadingCard;

@@ -1,25 +1,28 @@
-import { Package } from "@prisma/client";
 import Bounded from "../elements/Bounded";
 import { cn } from "@/lib/utils";
 import { Amenities } from "./Amenities";
 import BookingCard from "./BookingCard";
+import { TGetPackageById } from "@/db/data/dto/package";
+import { MDXRemote } from "next-mdx-remote/rsc";
 
-type TContentCard = Package & {
+type TContentCard = {
   className?: string;
+  description: string;
+  amenitiesId: string;
 };
 
 const ContentCard = ({ className, description, amenitiesId }: TContentCard) => {
   return (
     <Bounded className={cn("", className)}>
-       <section className="flex my-9">
-        <article className="basis-[70%]">
-          <p className="leading-10">{description}</p>
+      <div className="flex my-9">
+        <article className="">
+          <MDXRemote source={description} />
           <Amenities amenitiesId={amenitiesId} />
         </article>
-        <aside className="basis-[30%] p-2">
+        {/* <div className="basis-[30%] p-2">
           <BookingCard />
-        </aside>
-      </section>
+        </div> */}
+      </div>
     </Bounded>
   );
 };
