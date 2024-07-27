@@ -58,6 +58,8 @@ export async function getPackageById({ id }: { id: string }) {
         title: true,
         description: true,
         amenitiesId: true,
+        duration: true,
+        childPrice: true,
         packageImage: {
           select: {
             image: {
