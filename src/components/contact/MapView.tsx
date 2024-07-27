@@ -8,8 +8,7 @@ const MapView = () => {
         height={600}
         width="100%"
         mode="place"
-        q="Minar+Cruise+Cochin,cochin"
-        
+        q="Minar+Cruise+Cochin,cochin"   
       />
     </div>
   );
