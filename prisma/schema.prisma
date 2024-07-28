@@ -40,7 +40,7 @@ model FoodMenu {
   Package Package[]
 }
 
-enum SCHEDULE_PACKAGE {
+enum SCHEDULED_TIME {
   BREAKFAST
   LUNCH
   DINNER
@@ -59,7 +59,7 @@ model Schedule {
   day             DateTime         @db.Date()
   time            DateTime?        @db.Time()
   packageId       String?
-  schedulePackage SCHEDULE_PACKAGE
+  schedulePackage SCHEDULED_TIME
   scheduleStatus  SCHEDULE_STATUS
   Package         Package?         @relation(fields: [packageId], references: [id])
 }

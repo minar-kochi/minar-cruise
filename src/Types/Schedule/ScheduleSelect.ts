@@ -6,25 +6,25 @@ import { $Enums } from "@prisma/client";
 export type TSelectedPackageIdsAndScheduleEnum = {
   breakfast?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.BREAKFAST;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.BREAKFAST;
   };
   lunch?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.LUNCH;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
   };
   dinner?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.DINNER;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.DINNER;
   };
   custom?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.CUSTOM;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
   };
 };
 
 export type TselectedPackageIdsAndScheduleMapToEnum = Record<
   keyof TSelectedPackageIdsAndScheduleEnum,
-  $Enums.SCHEDULE_PACKAGE
+  $Enums.SCHEDULED_TIME
 >;
 
 export const selectedPackageIdsAndScheduleMapToEnum: TselectedPackageIdsAndScheduleMapToEnum =

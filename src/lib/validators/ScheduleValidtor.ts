@@ -16,6 +16,7 @@ export const ScheduleCreateSchema = ScheduleSchema.extend({
     })
     .optional(),
   ScheduleTime: z.enum(["LUNCH", "DINNER", "BREAKFAST", "CUSTOM"]),
+  ScheduleDateTime: z.string().optional()
 });
 
 export type TScheduleSchema = z.infer<typeof ScheduleSchema>;
