@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
 import { isDateValid, parseDateFormatYYYMMDDToNumber } from "@/lib/utils";
 import {
   ScheduleCreateSchema,
@@ -46,8 +47,13 @@ export const schedule = router({
     }
   ),
   // getUpcommingScheduleDates: AdminProcedure.input().query()
-  createNewSchedule: AdminProcedure.input(ScheduleCreateSchema).mutation(
-    async ({ ctx, input: { packageId, ScheduleDate, ScheduleTime } }) => {
+  createNewSchedule: AdminProcedure.input(ScheduleCreateSchema.required({
+    packageId: true
+  })).mutation(
+    async ({
+      ctx,
+      input: { packageId, ScheduleDate, ScheduleTime, ScheduleDateTime },
+    }) => {
       /**
        * Check to do before creating a schedule.
        *  - There shouldn't be multiple schedule placed at the same Schedule time [multiple breakfast cruise].
@@ -73,20 +79,17 @@ export const schedule = router({
           message: "Requested date is invalid",
         });
       }
-
-      const isPackageFound = await db.package.count({
-        where: {
-          id: packageId,
-        },
-      });
+     
+      const isPackageFound = await getPackageByIdWithStatusAndCount(packageId)
       if (!isPackageFound) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Selected Package is not found on our database.",
         });
       }
+      // if(isexcl)
       //________________Validate Input ends _____________
-      // Testout the date that is recieved (UTC format.) 
+      // Testout the date that is recieved (UTC format.)
       let SafelyParsedDate = new Date(ScheduleDate);
 
       const Schedule = await db.schedule.findFirst({
@@ -101,7 +104,7 @@ export const schedule = router({
           ],
         },
       });
-      
+
       if (Schedule?.id) {
         throw new TRPCError({
           code: "BAD_REQUEST",

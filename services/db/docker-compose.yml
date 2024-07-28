@@ -3,6 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
+    restart: "always"
     environment:
       POSTGRES_DB: myapp
       POSTGRES_USER: myuser
@@ -14,6 +15,7 @@ services:
 
   pgbouncer:
     image: edoburu/pgbouncer:1.18.0
+    restart: "always"
     environment:
       - DB_USER=myuser
       - DB_PASSWORD=mypassword

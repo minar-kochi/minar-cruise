@@ -36,25 +36,21 @@ export default function DateSelector() {
     selectedSchedulePackageId,
     date,
   } = useScheduleStore((state) => state);
-  
+
   const { data } = trpc.admin.getSchedulesByDateOrNow.useQuery({
     ScheduleDate: date,
   });
 
-  const { getData  } = trpc.useUtils().admin.getSchedulesByDateOrNow;
-
+  const { getData } = trpc.useUtils().admin.getSchedulesByDateOrNow;
 
   useEffect(() => {
     const sdata = getData({
       ScheduleDate: date,
     });
 
+    if (!sdata) return;
 
-    if(!sdata) return
-
-    setOrganizedData(sdata)
-
-
+    setOrganizedData(sdata);
   }, [data]);
 
   const {
@@ -104,7 +100,6 @@ export default function DateSelector() {
                         shouldDirty: true,
                       });
                       setDate(DateStringFormated);
-
                     }
                   } catch (error) {
                     console.log(error);
@@ -112,7 +107,6 @@ export default function DateSelector() {
                   } finally {
                     setIsLoadingQuery(false);
                   }
-
                 },
                 disabled: (date) => {
                   let currDate = getPrevTimeStamp(Date.now());

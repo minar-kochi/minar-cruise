@@ -99,3 +99,6 @@ export function parseDateFormatYYYMMDDToNumber(
 export function isDateValid(date: TSplitedFormatedDate) {
   return moment([date.year, date.month - 1, date.day]).isValid();
 }
+
+
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
