@@ -1,25 +1,26 @@
-import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
+import {
+  TOrganizedScheduleData,
+  TSelectedPackageIdsAndScheduleEnum,
+} from "@/Types/Schedule/ScheduleSelect";
 import { TScheduleDataDayReplaceString } from "@/Types/type";
 import {
   isStatusBreakfast,
   isStatusDinner,
   isStatusLunch,
 } from "../validators/ScheudulePackage";
+import { randomUUID } from "crypto";
 
 export function organizeScheduleData({
   data,
 }: {
-  data: TScheduleDataDayReplaceString[] | null;
-}): TOrganizedScheduleData | null {
-  let organizedData: TOrganizedScheduleData | null = {
+  data: TScheduleDataDayReplaceString[];
+}): TOrganizedScheduleData {
+  let organizedData: TOrganizedScheduleData = {
     breakfast: null,
     dinner: null,
     lunch: null,
     custom: null,
   };
-  if (!data) {
-    return null;
-  }
 
   for (const Schedules of data) {
     if (!Schedules.id) continue;
@@ -40,4 +41,31 @@ export function organizeScheduleData({
   }
 
   return organizedData;
+}
+
+export function placeOrganizedDataIntoPackageIdAndScheduleTime(
+  OrgData: TOrganizedScheduleData
+): TSelectedPackageIdsAndScheduleEnum {
+  return {
+    breakfast: {
+      id: OrgData.breakfast?.packageId,
+      time: OrgData.breakfast?.time,
+      scheduleTime: "BREAKFAST",
+    },
+    custom: {
+      id: OrgData.custom?.packageId,
+      time: OrgData.breakfast?.time,
+      scheduleTime: "CUSTOM",
+    },
+    dinner: {
+      id: OrgData.dinner?.packageId,
+      time: OrgData.breakfast?.time,
+      scheduleTime: "DINNER",
+    },
+    lunch: {
+      id: OrgData.lunch?.packageId,
+      time: OrgData.breakfast?.time,
+      scheduleTime: "LUNCH",
+    },
+  };
 }

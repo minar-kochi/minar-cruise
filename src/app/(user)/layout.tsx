@@ -35,9 +35,9 @@ export default function RootLayout({
       >
         <Providers>
           <CounterStoreProvider>
-              <Navbar />
-              {children}
-              <Footer />
+            <Navbar />
+            {children}
+            <Footer />
           </CounterStoreProvider>
         </Providers>
       </body>

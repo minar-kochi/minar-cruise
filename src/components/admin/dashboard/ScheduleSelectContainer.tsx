@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ScheduleSelect from "./Schedule/ScheduleSelect";
+import ScheduleSelect from "./Schedule/_ScheduleSelect";
 import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
 import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import { TScheduleSchema } from "@/lib/validators/ScheduleValidtor";
@@ -10,7 +10,6 @@ import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
 interface IScheduleSelector {}
 
 export default function ScheduleSelectContainer({}: IScheduleSelector) {
-  const selectedPackage = useScheduleStore((state) => state.organizedSchedule);
   return (
     <div>
       <ScheduleSelectorDynamic

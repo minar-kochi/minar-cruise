@@ -1,21 +1,25 @@
+import { useAppSelector } from "@/hooks/adminStore/reducer";
 import { isSameDay } from "@/lib/utils";
-import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
 import { DayContentProps } from "react-day-picker";
 
-export function CustomDayContentWithScheduleIndicator(
-  props: DayContentProps,
-) {
-  const data = useScheduleStore((state) => state.UpcommingScheduleDates);
-  
-  const { date, displayMonth, activeModifiers } = props;
-  
-  const isLunchFound = data.lunch.filter((item) => isSameDay(item, date));
+export function CustomDayContentWithScheduleIndicator(props: DayContentProps) {
+  const data = useAppSelector((state) => state.schedule.upCommingSchedules);
+
+  const { date } = props;
+
+  const isLunchFound = data.lunch.filter((item) =>
+    isSameDay(new Date(item), date)
+  );
 
   const isBreakfastFound = data.breakfast.filter((item) =>
-    isSameDay(item, date)
+    isSameDay(new Date(item), date)
   );
-  const isDinner = data.dinner.filter((item) => isSameDay(item, date));
-  const isCustom = data.custom.filter((item) => isSameDay(item, date));
+  const isDinner = data.dinner.filter((item) =>
+    isSameDay(new Date(item), date)
+  );
+  const isCustom = data.custom.filter((item) =>
+    isSameDay(new Date(item), date)
+  );
 
   return (
     <span className="">

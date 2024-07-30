@@ -1,9 +1,11 @@
+import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
 import { db } from "@/db";
 import { TPackageNavigation } from "@/db/types/TPackage";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { isProd } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
+import { unstable_cache } from "next/cache";
 import { afterEach } from "node:test";
 
 export async function getPackageNavigation(): Promise<
@@ -142,7 +144,7 @@ export type PackageSelect = {
   packageCategory: $Enums.PACKAGE_CATEGORY;
 };
 
-export async function getPackageScheduleDatas() {
+export const getOrganizedPackages = unstable_cache(async () => {
   try {
     const data = await db.package.findMany({
       select: {
@@ -156,56 +158,50 @@ export async function getPackageScheduleDatas() {
       return null;
     }
 
-    let Lunch: PackageSelect[] = [];
-    let Dinner: PackageSelect[] = [];
-    let BreakFast: PackageSelect[] = [];
-    let Custom: PackageSelect[] = [];
+    let lunch: PackageSelect[] = [];
+    let dinner: PackageSelect[] = [];
+    let breakfast: PackageSelect[] = [];
+    let custom: PackageSelect[] = [];
 
     for (const PackageData of data) {
       if (
         PackageData.packageCategory === "LUNCH" ||
         PackageData.packageCategory === "EXCLUSIVE"
       ) {
-        Lunch.push(PackageData);
-        
+        lunch.push(PackageData);
       }
       if (
         PackageData.packageCategory === "BREAKFAST" ||
         PackageData.packageCategory === "EXCLUSIVE"
       ) {
-        BreakFast.push(PackageData);
+        breakfast.push(PackageData);
       }
       if (
         PackageData.packageCategory === "DINNER" ||
         PackageData.packageCategory === "EXCLUSIVE"
       ) {
-        Dinner.push(PackageData);
+        dinner.push(PackageData);
       }
       if (PackageData.packageCategory === "EXCLUSIVE") {
-        Custom.push(PackageData);
+        custom.push(PackageData);
       }
     }
 
-    if (Lunch?.length < 0 || Dinner?.length < 0 || BreakFast?.length < 0) {
+    if (lunch?.length < 0 || dinner?.length < 0 || breakfast?.length < 0) {
       return null;
     }
-    
+
     return {
-      Lunch,
-      Dinner,
-      BreakFast,
-      Custom,
+      lunch,
+      dinner,
+      breakfast,
+      custom,
     };
   } catch (error) {
     ErrorLogger(error);
     return null;
   }
-}
-
-export type TgetPackageScheduleDatas = Awaited<
-  ReturnType<typeof getPackageScheduleDatas>
->;
-
+}, ORGANIZED_PACKAGE_KEY);
 
 export type TGetPackageCardDetails = Exclude<
   Awaited<ReturnType<typeof getPackageCardDetails>>,
@@ -221,22 +217,22 @@ export async function getPackageCardDetails() {
         title: true,
         duration: true,
         packageImage: {
-          take:1,
+          take: 1,
           where: {
             image: {
               ImageUse: {
                 has: "PROD_FEATURED",
               },
             },
-          },          
+          },
           select: {
             image: {
               select: {
                 url: true,
-                alt: true, 
-              }
-            }
-          }
+                alt: true,
+              },
+            },
+          },
         },
       },
     });
@@ -254,4 +250,3 @@ export async function getPackageCardDetails() {
     return null;
   }
 }
-

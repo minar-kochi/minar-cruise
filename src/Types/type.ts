@@ -1,3 +1,4 @@
+import { TKeyOrganized } from "@/components/admin/dashboard/_Schedule/ScheduleSelector";
 import { Schedule } from "@prisma/client";
 
 export type TSplitedFormatedDate = {
@@ -32,3 +33,8 @@ export type TGalleries = (typeof Galleries)[number];
 
 
 export type TScheduleDataDayReplaceString = Omit<Schedule, "day" | "time"> & { day: string , time:string | null };
+
+
+export type TScheduleSelector = {
+  type: TKeyOrganized;
+};

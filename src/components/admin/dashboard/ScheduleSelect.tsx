@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TScheduleDataDayReplaceString } from "@/Types/type";
-import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
+import { PackageSelect } from "@/db/data/dto/package";
 import { TselectDate } from "./ScheduleSelector";
 import toast from "react-hot-toast";
 

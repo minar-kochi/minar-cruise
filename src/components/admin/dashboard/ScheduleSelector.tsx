@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
+import { PackageSelect } from "@/db/data/dto/package";
 // import { TOrganizedData } from "@/lib/helpers/organizedData";
 import ScheduleSelect from "./ScheduleSelect";
 import { Check, Info, RefreshCw } from "lucide-react";
@@ -27,12 +27,11 @@ import { trpc } from "@/app/_trpc/client";
 import { MouseEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
+import { TOrganizedPackageData } from "@/Types/packages/package";
 import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
-// import { MouseEvent } from "react";
-// type t =
 interface IScheduleSelector {
   organizedScheduleData: TOrganizedScheduleData | null;
-  packages: Exclude<TgetPackageScheduleDatas, null>;
+  packages: Exclude<TOrganizedPackageData, null>;
   selectedDate: TScheduleSchema["ScheduleDate"];
 }
 export type THandleNewSchedule = {
@@ -46,7 +45,7 @@ export type TselectDate = {
   breakfast?: string | null;
   lunch?: string | null;
   dinner?: string | null;
-  custom?: string  | null;
+  custom?: string | null;
 };
 
 export default function ScheduleSelector({
@@ -136,10 +135,10 @@ export default function ScheduleSelector({
                 type="breakfast"
                 setSelectedDate={setSelectedPackageId}
                 selected={organizedScheduleData?.breakfast}
-                packages={packages.BreakFast}
+                packages={packages.breakfast}
               />
               {isIdExclusive(
-                packages.BreakFast,
+                packages.breakfast,
                 selectedPackage?.breakfast ?? ""
               ) ? (
                 <>
