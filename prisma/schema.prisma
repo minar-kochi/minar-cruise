@@ -48,16 +48,16 @@ enum SCHEDULED_TIME {
 }
 
 enum SCHEDULE_STATUS {
-  BLOCKED
-  MAINTENANCE
-  EXCLUSIVE
-  AVAILABLE
+  BLOCKED //single button value change
+  MAINTENANCE // removed.
+  EXCLUSIVE // if the package is exclusive
+  AVAILABLE // if common package and online user's are searchable.
 }
 
 model Schedule {
   id              String           @id @default(cuid())
   day             DateTime         @db.Date()
-  time            DateTime?        @db.Time()
+  time            DateTime?        @db.Time() //will be provided at a time.
   packageId       String?
   schedulePackage SCHEDULED_TIME
   scheduleStatus  SCHEDULE_STATUS

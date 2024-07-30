@@ -25,10 +25,13 @@ import { Check, RefreshCw } from "lucide-react";
 import ScheduleSelectContainer from "./ScheduleSelectContainer";
 import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
 import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
+// import { increment } from "@/lib/features/schedule/ScheduleSlice";
 
 export default function DateSelector() {
   const [isLoadingQuery, setIsLoadingQuery] = useState(false);
   const [isPopoverOpened, setIsPopoverOpened] = useState(false);
+
   const {
     setOrganizedData,
     organizedSchedule,
@@ -71,7 +74,7 @@ export default function DateSelector() {
             <CardDescription>Update or add new schedules</CardDescription>
           </CardHeader>
           <CardContent className="w-full">
-            <PopOverDatePicker
+            {/* <PopOverDatePicker
               isPopoverOpened={isPopoverOpened}
               setIsPopoverOpened={setIsPopoverOpened}
               date={date}
@@ -113,7 +116,7 @@ export default function DateSelector() {
                   return date < new Date(currDate);
                 },
               }}
-            />
+            /> */}
             <div className="flex mb-4 mt-4 gap-2 flex-wrap">
               <div className="flex items-center gap-2 ">
                 <RefreshCw className="h-4  w-4" />

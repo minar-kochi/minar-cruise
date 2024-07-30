@@ -1,26 +1,18 @@
-import { DatePicker } from "@/components/admin/dashboard/DatePicker";
-import DateSelector from "@/components/admin/dashboard/DateSelector";
 import { DataTableDemo } from "@/components/admin/dashboard/Schedule/ScheduleTable";
-import { getPackageScheduleDatas } from "@/db/data/dto/package";
-import { getUpcommingScheduleDates } from "@/db/data/dto/schedule";
-import { ScheduleStoreProvider } from "@/providers/admin/schedule-store-provider";
+import ScheduleBar from "@/container/admin/schedule/ScheduleContainer";
+import {
+  getUpcommingScheduleDates,
+  TgetUpcommingScheduleDates,
+} from "@/db/data/dto/schedule";
 
 export default async function Schedule() {
-  const UpcommingScheduleDates = await getUpcommingScheduleDates();
-
-  const packages = await getPackageScheduleDatas();
- 
-  if (!packages) {
-    return null;
-  }
-  /**
-   * @TODO - AMJAD  Add Schedule Table you can either restructure @see {@link getScheduleData}
-   *     to be compatible with the Table and Date Selector, either format it on the server in both and pass into table and DateSelectorF
-   *
-   * @TODO - AMJAD Fetch initial data for the DateSelector from server and passdown to client to get initial speed.
-   *        and avoid waterfall [multiple async codes on current file you will write on future ;) ]
-   * */
-
+  const data = await getUpcommingScheduleDates();
+  let UpcommingSchedule: TgetUpcommingScheduleDates = data ?? {
+    breakfast: [],
+    custom: [],
+    dinner: [],
+    lunch: [],
+  };
   return (
     <main className="">
       <div className="grid md:grid-cols-[70%_30%] place-content-center ">
@@ -35,19 +27,7 @@ export default async function Schedule() {
         </div>
         <div className="py-12 min-h-[calc(100vh-4rem)] md:border-l">
           <div className="sticky lg:top-[70px]">
-            <ScheduleStoreProvider
-              packages={packages}
-              UpcommingScheduleDates={
-                UpcommingScheduleDates ?? {
-                  breakfast: [],
-                  dinner: [],
-                  lunch: [],
-                  custom: []
-                }
-              }
-            >
-              <DateSelector />
-            </ScheduleStoreProvider>
+            <ScheduleBar upCommingSchedules={UpcommingSchedule} />
           </div>
         </div>
       </div>

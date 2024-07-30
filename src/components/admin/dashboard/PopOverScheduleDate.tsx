@@ -13,26 +13,27 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CalendarRange } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
+import { useDispatch } from "react-redux";
+import { setPopOverDateToggle } from "@/lib/features/schedule/ScheduleSlice";
 
 export function PopOverDatePicker({
   calenderProps,
   date,
-  isPopoverOpened,
-  setIsPopoverOpened,
 }: {
   calenderProps: CalendarProps;
   date?: string;
-  isPopoverOpened: boolean;
-  setIsPopoverOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { isPopOverDateOpened } = useAppSelector((state) => state.schedule);
+  const dispatch = useAppDispatch()
   return (
     <Popover
-      open={isPopoverOpened}
+      open={isPopOverDateOpened}
       onOpenChange={(open) => {
-        setIsPopoverOpened(open);
+        dispatch(setPopOverDateToggle(open))
       }}
     >
-      <PopoverTrigger onClick={() => setIsPopoverOpened(true)} asChild>
+      <PopoverTrigger onClick={() => dispatch(setPopOverDateToggle(true))} asChild>
         <Button
           variant={"outline"}
           className={cn(
@@ -41,12 +42,12 @@ export function PopOverDatePicker({
           )}
         >
           {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
-          <CalendarRange className="mr-2 h-4 w-4" />
+          <CalendarRange  className="mr-2 h-4 w-4" />
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="center">
-        <Calendar {...calenderProps} />
+        <Calendar  {...calenderProps} />
         <div className="w-full bottom-0 items-center justify-center my-4 flex gap-2">
           <div className="flex items-center justify-center gap-2">
             <div className="w-1 h-1 bg-cyan-400  rounded-full" />

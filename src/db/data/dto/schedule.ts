@@ -58,51 +58,62 @@ export const getSchedule = async () => {
 export type TScheduleData = Schedule;
 
 export type TgetUpcommingScheduleDates = {
-  breakfast: Date[];
-  lunch: Date[];
-  dinner: Date[];
-  custom: Date[];
+  breakfast: string[];
+  lunch: string[];
+  dinner: string[];
+  custom: string[];
 };
 
 export const getUpcommingScheduleDates = async () => {
-
-  // convert This date with IST format from UTC.
-  const data = await db.schedule.findMany({
-    where: {
-      day: {
-        gte: new Date(Date.now()),
+  try {
+    const data = await db.schedule.findMany({
+      where: {
+        day: {
+          gte: new Date(Date.now()),
+        },
       },
-    },
-    take: 60,
-  });
-  let scheduledDate: TgetUpcommingScheduleDates = {
-    breakfast: [],
-    dinner: [],
-    lunch: [],
-    custom: [],
-  };
+      take: 60,
+    });
 
-  if (!data) {
-    console.log("failed to fetch schedule");
+    let scheduledDate: TgetUpcommingScheduleDates = {
+      breakfast: [],
+      dinner: [],
+      lunch: [],
+      custom: [],
+    };
+
+    if (!data) {
+      return null;
+    }
+
+    for (const item of data) {
+      if (isStatusLunch(item.schedulePackage)) {
+        scheduledDate.lunch.push(
+          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+        );
+        continue;
+      }
+      if (isStatusDinner(item.schedulePackage)) {
+        scheduledDate.dinner.push(
+          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+        );
+        continue;
+      }
+      if (isStatusBreakfast(item.schedulePackage)) {
+        scheduledDate.breakfast.push(
+          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+        );
+        continue;
+      }
+      scheduledDate.custom.push(
+        item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+      );
+    }
+    return scheduledDate;
+  } catch (error) {
+    console.log("ERROR TRACE-: schedule.ts", "\n", error);
     return null;
   }
-
-  for (const item of data) {
-    if (isStatusLunch(item.schedulePackage)) {
-      scheduledDate.lunch.push(item.day);
-      continue;
-    }
-    if (isStatusDinner(item.schedulePackage)) {
-      scheduledDate.dinner.push(item.day);
-      continue;
-    }
-    if (isStatusBreakfast(item.schedulePackage)) {
-      scheduledDate.breakfast.push(item.day);
-      continue;
-    }
-    scheduledDate.custom.push(item.day);
-  }
-  return scheduledDate;
 };
 
 export const getScheduleByDayOrStatus = async ({

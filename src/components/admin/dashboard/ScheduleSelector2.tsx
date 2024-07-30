@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useMemo } from "react";
-import ScheduleSelect from "./Schedule/ScheduleSelect";
+import ScheduleSelect from "./Schedule/_ScheduleSelect";
 import { TOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
 import { PackageSelect, TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import { TScheduleSchema } from "@/lib/validators/ScheduleValidtor";
@@ -51,8 +51,7 @@ export default function ScheduleSelectorDynamic({
             isIdExclusive(packages[packageKey], defaultOrSelect) ? (
               <Input type="time" />
             ) : null}
-            <div className="w-full">
-            </div>
+            <div className="w-full"></div>
           </div>
         </div>
         <div className="">
