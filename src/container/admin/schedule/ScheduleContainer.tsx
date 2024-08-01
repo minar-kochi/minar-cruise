@@ -8,9 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ScheduleDatePicker from "@/components/admin/dashboard/_Schedule/ScheduleDatePicker";
-import ScheduleSelectors from "@/components/admin/dashboard/_Schedule/ScheduleSelectors";
-import ScheduleButtonInfo from "@/components/admin/dashboard/_Schedule/ScheduleButtonInfo";
+import ScheduleDatePicker from "@/components/admin/dashboard/Schedule/ScheduleDatePicker";
+import ScheduleSelectors from "@/components/admin/dashboard/Schedule/ScheduleSelectors";
+import ScheduleButtonInfo from "@/components/admin/dashboard/Schedule/ScheduleButtonInfo";
 import { useAppSelector, useAppStore } from "@/hooks/adminStore/reducer";
 import { TExcludedOrganizedUpcommingSchedule } from "@/Types/Schedule/ScheduleSelect";
 import {

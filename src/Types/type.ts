@@ -1,4 +1,4 @@
-import { TKeyOrganized } from "@/components/admin/dashboard/_Schedule/ScheduleSelector";
+import { TKeyOrganized } from "@/components/admin/dashboard/Schedule/ScheduleSelector";
 import { Schedule } from "@prisma/client";
 
 export type TSplitedFormatedDate = {
