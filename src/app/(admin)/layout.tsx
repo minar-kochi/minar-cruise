@@ -56,12 +56,3 @@ export default async function RootLayout({
   );
 }
 
-{
-  /* uncomment add this below <MenuBar/>, if you want to do not want to pass children inside header component */
-}
-{
-  /* <div className="">
-  <HeaderNav/>
-  {children}
-</div> */
-}

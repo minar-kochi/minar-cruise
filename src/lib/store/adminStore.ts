@@ -7,7 +7,7 @@ export const makeStore = () => {
     devTools: true,
     reducer: {
       schedule: ScheduleSlice,
-      package: PackageSlice,
+      packages: PackageSlice,
     },
   });
 };

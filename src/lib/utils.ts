@@ -102,3 +102,16 @@ export function isDateValid(date: TSplitedFormatedDate) {
 
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export const getUTCDate = (dateStr: string): number => {
+  const date = new Date(dateStr);
+  return Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds(),
+    date.getUTCMilliseconds()
+  );
+};

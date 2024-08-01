@@ -11,24 +11,39 @@ import {
 import ScheduleDatePicker from "@/components/admin/dashboard/_Schedule/ScheduleDatePicker";
 import ScheduleSelectors from "@/components/admin/dashboard/_Schedule/ScheduleSelectors";
 import ScheduleButtonInfo from "@/components/admin/dashboard/_Schedule/ScheduleButtonInfo";
-import { useAppStore } from "@/hooks/adminStore/reducer";
+import { useAppSelector, useAppStore } from "@/hooks/adminStore/reducer";
 import { TExcludedOrganizedUpcommingSchedule } from "@/Types/Schedule/ScheduleSelect";
-import { setInitialOrganizedScheduleDates } from "@/lib/features/schedule/ScheduleSlice";
+import {
+  setCurrentScheduleDate,
+  setDate,
+  setInitialOrganizedScheduleDates,
+} from "@/lib/features/schedule/ScheduleSlice";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import { Schedule } from "@prisma/client";
+import { TScheduleDataDayReplaceString } from "@/Types/type";
+import { trpc } from "@/app/_trpc/client";
 
 export default function ScheduleBar({
   upCommingSchedules,
+  initialSchedule,
+  initialDate,
 }: {
+  initialDate: string;
+  initialSchedule: TScheduleDataDayReplaceString[] | null;
   upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
 }) {
   const store = useAppStore();
+
   const initialized = useRef(false);
   if (!initialized.current) {
-    // Runs on server
     store.dispatch(setInitialOrganizedScheduleDates(upCommingSchedules));
+    store.dispatch(setCurrentScheduleDate(initialSchedule));
+    store.dispatch(setDate(initialDate));
     initialized.current = true;
   }
+  const date = useAppSelector((state) => state.schedule.date);
+
   return (
     <Bounded className="">
       <Card className="w-full">

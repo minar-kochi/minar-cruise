@@ -89,24 +89,24 @@ export const getUpcommingScheduleDates = async () => {
     for (const item of data) {
       if (isStatusLunch(item.schedulePackage)) {
         scheduledDate.lunch.push(
-          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
         );
         continue;
       }
       if (isStatusDinner(item.schedulePackage)) {
         scheduledDate.dinner.push(
-          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
         );
         continue;
       }
       if (isStatusBreakfast(item.schedulePackage)) {
         scheduledDate.breakfast.push(
-          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
         );
         continue;
       }
       scheduledDate.custom.push(
-        item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" })
+        item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
       );
     }
     return scheduledDate;
@@ -138,4 +138,17 @@ export const getScheduleByDayOrStatus = async ({
       ],
     },
   });
+};
+
+export const getSchedulesByDateOrNow = async (ScheduleDate: string) => {
+  const schedule = await db.schedule.findMany({
+    where: {
+      day: new Date(ScheduleDate),
+    },
+  });
+
+  if (schedule.length < 0) {
+    return null;
+  }
+  return schedule;
 };

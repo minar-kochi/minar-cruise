@@ -8,7 +8,7 @@ export type TPackageState = {
   OrganizedPackage: TExcludedOrganizedPackageData;
 };
 
-const scheduleSlice = createSlice({
+const packageSlice = createSlice({
   name: "package",
   initialState: {} as TPackageState,
   reducers: {
@@ -21,5 +21,5 @@ const scheduleSlice = createSlice({
   },
 });
 
-export const { setOrganizedPackage } = scheduleSlice.actions;
-export default scheduleSlice.reducer;
+export const { setOrganizedPackage } = packageSlice.actions;
+export default packageSlice.reducer;

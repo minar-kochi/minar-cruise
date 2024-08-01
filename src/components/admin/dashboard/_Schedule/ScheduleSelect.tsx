@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { TScheduleSelector } from "@/Types/type";
 import { Check } from "lucide-react";
 export default function ScheduleSelect({ type }: TScheduleSelector) {
-  const { OrganizedPackage } = useAppSelector((state) => state.package);
+  const { OrganizedPackage } = useAppSelector((state) => state.packages);
   const { currentDateSchedule, updatedDateSchedule } = useAppSelector(
     (state) => state.schedule
   );

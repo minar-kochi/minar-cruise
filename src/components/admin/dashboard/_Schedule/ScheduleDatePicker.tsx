@@ -26,14 +26,6 @@ export default function ScheduleDatePicker() {
         },
         sizeMode: "lg",
         mode: "single",
-        onNextClick: (date) => {
-          /**
-           * @TODO [Neil/Amjad/Muad]
-           *  Fetch new Schedule for this month and update it into the... upCommingSchedules
-           *
-           */
-        },
-
         selected: new Date(date),
         onSelect: async (selectedDate) => {
           if (!selectedDate) {
@@ -41,15 +33,13 @@ export default function ScheduleDatePicker() {
           }
           dispatch(setPopOverDateToggle(false));
           let DateStringFormated = RemoveTimeStampFromDate(selectedDate);
-
           try {
             if (selectedDate) {
               dispatch(setDate(DateStringFormated));
               const data = await fetch({
                 ScheduleDate: DateStringFormated,
               });
-              // if (!data?.length) return;
-              
+
               dispatch(setCurrentScheduleDate(data));
             }
           } catch (error) {
