@@ -10,7 +10,7 @@ import {
   setUpdatableScheduleDate,
   setUpdatedDateSchedule,
 } from "@/lib/features/schedule/ScheduleSlice";
-import { useDefaultMergedSchedule } from "@/lib/features/schedule/selector";
+import { DefaultMergedSchedule } from "@/lib/features/schedule/selector";
 import { cn } from "@/lib/utils";
 import { TScheduleSelector } from "@/Types/type";
 import { Check } from "lucide-react";
@@ -20,7 +20,7 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
     (state) => state.schedule
   );
   const defaultSelect = useAppSelector((state) =>
-    useDefaultMergedSchedule(state, type)
+    DefaultMergedSchedule(state, type)
   );
   const dispatch = useAppDispatch();
   return (

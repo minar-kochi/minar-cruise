@@ -5,7 +5,7 @@ import { Fascinate } from "next/font/google";
 
 export const Item = (state: RootState) => state.schedule;
 
-export const useUpdatedSchedule = createSelector(
+export const UpdatedSchedule = createSelector(
   [Item, (item, type: TKeyOrganizedScheduleData) => type],
   ({ currentDateSchedule, updatedDateSchedule }, type): boolean => {
     let currentState = updatedDateSchedule && updatedDateSchedule[type];
@@ -17,7 +17,7 @@ export const useUpdatedSchedule = createSelector(
 
 export const Merged = (state: RootState) => state.schedule;
 
-export const useDefaultMergedSchedule = createSelector(
+export const DefaultMergedSchedule = createSelector(
   [Merged, (_, type: TKeyOrganizedScheduleData) => type],
   (
     { currentDateSchedule, updatedDateSchedule, date },
@@ -40,7 +40,7 @@ export const useDefaultMergedSchedule = createSelector(
   },
 );
 
-export const useDefaultMergedDateTime = createSelector(
+export const DefaultMergedDateTime = createSelector(
   [Merged, (_, type: TKeyOrganizedScheduleData) => type],
   (
     { currentDateSchedule, updatedDateSchedule, date },
