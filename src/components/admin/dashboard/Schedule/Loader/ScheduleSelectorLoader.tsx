@@ -16,8 +16,7 @@ export default function ScheduleSelectorLoader({ title }: { title: string }) {
           <Loader2 className="h-5 w-5 animate-spin" />
         </button>
       </div>
-      <div className="my-2">
-      </div>
+      <div className="my-2"></div>
     </div>
   );
 }

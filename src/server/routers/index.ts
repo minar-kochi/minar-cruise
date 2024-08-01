@@ -16,7 +16,7 @@ export const appRouter = router({
       z.object({
         data: ContactValidators,
         type: z.enum(["normal", "whatsapp"]),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { data, type } = input;

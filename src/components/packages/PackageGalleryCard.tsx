@@ -24,12 +24,16 @@ const PackageGalleryCard = async ({
   className,
   ImageData,
 }: TPackageGalleryCard) => {
-
   return (
-    <div className={cn("flex p-2 gap-2  min-h-[400px] overflow-hidden", className)}>
-      <EmblaCarouselProvider >
+    <div
+      className={cn("flex p-2 gap-2  min-h-[400px] overflow-hidden", className)}
+    >
+      <EmblaCarouselProvider>
         {ImageData?.map((item, i) => (
-          <div className="embla__slide select-none first-of-type:ml-2 max-w-fit" key={item.image.id}>
+          <div
+            className="embla__slide select-none first-of-type:ml-2 max-w-fit"
+            key={item.image.id}
+          >
             <Image
               priority={true}
               src={item.image.url}

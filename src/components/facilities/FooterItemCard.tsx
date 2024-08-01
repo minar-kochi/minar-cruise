@@ -1,8 +1,7 @@
-
 const companyInfo = {
-    heading: "Company",
-    list: ["About Us", "Packages", "Facilities", "News and Blogs"],
-  };
+  heading: "Company",
+  list: ["About Us", "Packages", "Facilities", "News and Blogs"],
+};
 
 const FooterItemCard = () => {
   return (

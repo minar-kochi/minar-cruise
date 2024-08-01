@@ -11,7 +11,7 @@ const ContactMessageCard = () => {
           We really appreciate you taking the time to get in touch. Please fill
           in the form below.
         </p>
-        <ContactForm/>
+        <ContactForm />
       </div>
     </article>
   );

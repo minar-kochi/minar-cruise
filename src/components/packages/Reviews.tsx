@@ -18,17 +18,21 @@ const Reviews = () => {
           </div>
           <div className="p-8 basis-[60%]">
             <ul className="flex flex-col justify-between h-full">
-              {RatingMock.map(({rating,title}, i ) => (
-                <li className="pt-1 first-of-type:pt-0 " key={`${rating}-${title}-${i}`}>
+              {RatingMock.map(({ rating, title }, i) => (
+                <li
+                  className="pt-1 first-of-type:pt-0 "
+                  key={`${rating}-${title}-${i}`}
+                >
                   <div className="flex justify-between ">
                     <div className="">{title}</div>
                     <div className="">{rating}/5</div>
                   </div>
-                  <div style={{
-                    width: `${rating * 2 * 10}%`
-                  }} className="h-3 mt-1 bg-orange-200 rounded-full">
-
-                  </div>
+                  <div
+                    style={{
+                      width: `${rating * 2 * 10}%`,
+                    }}
+                    className="h-3 mt-1 bg-orange-200 rounded-full"
+                  ></div>
                 </li>
               ))}
             </ul>

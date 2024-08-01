@@ -18,7 +18,7 @@ const Section2 = () => {
         <div
           className={cn(
             "text-justify  text-sm text-slate-600 tracking-widest",
-            pop.className
+            pop.className,
           )}
         >
           <p className="leading-7">{operation.description}</p>

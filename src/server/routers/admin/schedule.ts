@@ -1,6 +1,10 @@
 import { db } from "@/db";
 import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
-import { isDateValid, parseDateFormatYYYMMDDToNumber, RemoveTimeStampFromDate } from "@/lib/utils";
+import {
+  isDateValid,
+  parseDateFormatYYYMMDDToNumber,
+  RemoveTimeStampFromDate,
+} from "@/lib/utils";
 import {
   ScheduleCreateSchema,
   ScheduleSchema,
@@ -53,13 +57,13 @@ export const schedule = router({
         console.log(error);
         return null;
       }
-    }
+    },
   ),
   // getUpcommingScheduleDates: AdminProcedure.input().query()
   createNewSchedule: AdminProcedure.input(
     ScheduleCreateSchema.required({
       packageId: true,
-    })
+    }),
   ).mutation(
     async ({
       ctx,
@@ -76,7 +80,7 @@ export const schedule = router({
       //________________Validate Input Starts _____________
       /** */
       const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
-      
+
       if (!date) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -135,6 +139,6 @@ export const schedule = router({
       });
 
       return createdSchedule;
-    }
+    },
   ),
 });

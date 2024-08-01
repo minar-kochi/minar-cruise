@@ -6,13 +6,13 @@ type InputProps = {
   label: string;
   placeholder?: string;
   className?: string;
-  props?: React.InputHTMLAttributes<HTMLInputElement>
+  props?: React.InputHTMLAttributes<HTMLInputElement>;
 };
 
 const InputBox = React.forwardRef<HTMLDivElement, InputProps>(
   (
     { as: Comp = "input", label, placeholder, className, ...restProps },
-    ref
+    ref,
   ) => {
     return (
       <>
@@ -24,7 +24,7 @@ const InputBox = React.forwardRef<HTMLDivElement, InputProps>(
             type="text"
             className={cn(
               "w-full h-10 bg-gray-200 hover:bg-gray-300",
-              className
+              className,
             )}
             placeholder={placeholder}
             {...restProps}
@@ -32,7 +32,7 @@ const InputBox = React.forwardRef<HTMLDivElement, InputProps>(
         </div>
       </>
     );
-  }
+  },
 );
 
 InputBox.displayName = "InputBox";

@@ -9,13 +9,18 @@ import { ReactNode } from "react";
 import { TGetPackageById } from "@/db/data/dto/package";
 
 interface IHeadingCard {
-  title: string
-  duration: number
-  adultPrice: number
-  childPrice : number
-} 
+  title: string;
+  duration: number;
+  adultPrice: number;
+  childPrice: number;
+}
 
-const HeadingCard = async ({ title, duration, adultPrice, childPrice }: IHeadingCard) => {
+const HeadingCard = async ({
+  title,
+  duration,
+  adultPrice,
+  childPrice,
+}: IHeadingCard) => {
   return (
     <div className="bg-orange-100 ">
       <Bounded className="flex max-sm:flex-col max-md:gap-3 justify-between py-10">

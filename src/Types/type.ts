@@ -5,7 +5,7 @@ export type TSplitedFormatedDate = {
   year: number;
   day: number;
   month: number;
-}
+};
 
 export type TGallery = {
   Text: {
@@ -31,9 +31,10 @@ export const Galleries = [
 
 export type TGalleries = (typeof Galleries)[number];
 
-
-export type TScheduleDataDayReplaceString = Omit<Schedule, "day" | "time"> & { day: string , time:string | null };
-
+export type TScheduleDataDayReplaceString = Omit<Schedule, "day" | "time"> & {
+  day: string;
+  time: string | null;
+};
 
 export type TScheduleSelector = {
   type: TKeyOrganized;

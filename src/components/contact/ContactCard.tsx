@@ -28,7 +28,7 @@ const ContactCard = ({ className }: { className?: string }) => {
             ))}
           </div>
           <div className="flex gap-3  ">
-            <Mail size={20} stroke="white" fill="red" className="-ml-[2px]"/>
+            <Mail size={20} stroke="white" fill="red" className="-ml-[2px]" />
             <p className="text-slate-500 text-center">{email}</p>
           </div>
           <div className="flex items-center  max-md:max-w-[250px] gap-3">

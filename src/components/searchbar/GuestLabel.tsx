@@ -46,7 +46,7 @@ function GuestLabel({
                   let x = getValue(type);
                   console.log(x);
                   return x + 1;
-                })()
+                })(),
               );
             }}
             // onClick={() => {
@@ -72,7 +72,7 @@ function GuestLabel({
                   let x = getValue(type);
                   console.log(x);
                   return Math.max(0, x - 1);
-                })()
+                })(),
               );
             }}
           >

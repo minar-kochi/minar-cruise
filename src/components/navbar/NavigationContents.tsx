@@ -7,7 +7,7 @@ import Link from "next/link";
 const NavigationContents = async () => {
   const packageDetails = await getPackageNavigation();
 
-    if (!packageDetails) {
+  if (!packageDetails) {
     return (
       // TODO: #LOW - Add a alternative to Image Gallery if not found / empty
       <></>
@@ -21,9 +21,12 @@ const NavigationContents = async () => {
       </Link>
 
       <div className="relative group">
-        <Link href="/" className="cursor-pointer flex items-center hover:text-red-500 ">
+        <Link
+          href="/"
+          className="cursor-pointer flex items-center hover:text-red-500 "
+        >
           Packages
-          <ChevronDown className="h-4 w-4 shrink-0  duration-200 " /> 
+          <ChevronDown className="h-4 w-4 shrink-0  duration-200 " />
         </Link>
         <div className="absolute pt-6 pb-3 px-5 rounded-lg hidden w-[250px] bg-white  shadow-lg z-10 group-hover:block">
           {packageDetails.map((item, i) => (
@@ -47,9 +50,12 @@ const NavigationContents = async () => {
       </Link>
 
       <div className="relative group">
-        <Link href="/" className="cursor-pointer flex items-center  hover:text-red-500">
+        <Link
+          href="/"
+          className="cursor-pointer flex items-center  hover:text-red-500"
+        >
           Gallery
-          <ChevronDown className="h-4 w-4 shrink-0  duration-200 " /> 
+          <ChevronDown className="h-4 w-4 shrink-0  duration-200 " />
         </Link>
         <div className="absolute  py-3 px-5 rounded-lg hidden bg-white w-[250px] shadow-lg z-10 group-hover:block">
           <Link href="/gallery/family-gathering">

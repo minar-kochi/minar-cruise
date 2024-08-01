@@ -4,7 +4,7 @@ export function isIdExclusive(Package: PackageSelect[], id: string | null) {
   if (!id) return null;
   // if(!Package.length)
   const ExclusivePackage = Package.find(
-    (item) => item.packageCategory === "EXCLUSIVE"
+    (item) => item.packageCategory === "EXCLUSIVE",
   );
 
   if (ExclusivePackage?.id === id) {

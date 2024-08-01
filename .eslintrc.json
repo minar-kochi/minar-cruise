@@ -1,5 +1,5 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": ["next/core-web-vitals"],
   "overrides": [
     {
       // feel free to replace with your preferred file pattern - eg. 'src/**/*Slice.ts'

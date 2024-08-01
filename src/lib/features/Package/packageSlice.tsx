@@ -14,7 +14,7 @@ const packageSlice = createSlice({
   reducers: {
     setOrganizedPackage(
       state,
-      action: PayloadAction<TExcludedOrganizedPackageData>
+      action: PayloadAction<TExcludedOrganizedPackageData>,
     ) {
       state.OrganizedPackage = action.payload;
     },

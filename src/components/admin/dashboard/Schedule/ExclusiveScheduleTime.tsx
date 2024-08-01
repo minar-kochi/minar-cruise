@@ -10,12 +10,16 @@ export default function ExclusiveScheduleTime({ type }: TScheduleSelector) {
   const defaultSelect = useAppSelector((state) =>
     DefaultMergedSchedule(state, type),
   );
-  const {updatedDateSchedule,currentDateSchedule} = useAppSelector((state) => state.schedule);
+  const { updatedDateSchedule, currentDateSchedule } = useAppSelector(
+    (state) => state.schedule,
+  );
 
   const isExclusive = useAppSelector((state) =>
     IsIdExclusive(state, defaultSelect.packageId),
   );
   if (!isExclusive) return null;
 
-  return <Input type="time" value={currentDateSchedule[type]?.time ?? undefined} />;
+  return (
+    <Input type="time" value={currentDateSchedule[type]?.time ?? undefined} />
+  );
 }

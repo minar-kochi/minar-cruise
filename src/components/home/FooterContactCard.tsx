@@ -25,15 +25,15 @@ const FooterContactCard = ({
         />
         <div className=" flex  w-full md:max-w- ">
           <Phone color="red" className="" />
-            {contact.map((item, i) => (
-              <>
-                <a href={`tel:${item}`} key={item+i}>
-                  <p className="pl-2 flex text-slate-400 font-semibold " >
-                    {item}
-                  </p>
-                </a>
-              </>
-            ))}
+          {contact.map((item, i) => (
+            <>
+              <a href={`tel:${item}`} key={item + i}>
+                <p className="pl-2 flex text-slate-400 font-semibold ">
+                  {item}
+                </p>
+              </a>
+            </>
+          ))}
         </div>
         <div className=" flex gap-2 w-full justify-between md:max-w-fit">
           <Mail color="red" />

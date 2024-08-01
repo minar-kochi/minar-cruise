@@ -3,9 +3,7 @@ import { facilitiesImages } from "@/constants/facilities/images";
 import Bounded from "../elements/Bounded";
 import Link from "next/link";
 
-const FacilitiesImageCard = ({ label }:{
-    label: string
-}) => {
+const FacilitiesImageCard = ({ label }: { label: string }) => {
   const { mainImage } = facilitiesImages;
   return (
     <div className=" ">

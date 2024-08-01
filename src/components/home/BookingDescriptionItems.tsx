@@ -7,10 +7,10 @@ export const BookingDescriptionItems = () => {
     <>
       {features.map((item, i) => (
         <BookingLabel
-          key={i+item.heading}
+          key={i + item.heading}
           desc={item.description}
           heading={item.heading}
-          Logo={<item.icon size={74} className={item.iconClass} stroke="red"/>}
+          Logo={<item.icon size={74} className={item.iconClass} stroke="red" />}
         />
       ))}
     </>

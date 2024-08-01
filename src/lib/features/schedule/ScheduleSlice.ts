@@ -176,7 +176,7 @@ export const {
   setCurrentScheduleDate,
   setUpdatedDateSchedule,
   setUpdatableScheduleDate,
-  setSyncDatabaseUpdatesScheduleCreation
+  setSyncDatabaseUpdatesScheduleCreation,
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;

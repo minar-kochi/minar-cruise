@@ -2,34 +2,20 @@
   "name": "minar-cruise",
   "version": "0.1.0",
   "private": true,
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "import-sort-cli --write",
-      "prettier --write"
-    ],
-    "*.{json,md}": ["prettier --write"],
-    "*.hbs": ["prettier --write"]
-  },
   "prettier": {
     "trailingComma": "all"
   },
-  "importSort": {
-    ".ts, .tsx": {
-      "style": "renke"
-    }
-  },
+ 
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "seed": "tsx ./prisma/seed.ts",
     "postinstall": "npx prisma generate",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext ts --ext tsx",
+    "type-check": "tsc --pretty --noEmit",
+    "format": "prettier --write \"**/*.{js,ts,tsx}\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -63,6 +49,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-autoplay": "^8.1.7",
     "embla-carousel-react": "^8.1.5",
+    "husky": "^9.1.4",
     "label": "^0.2.2",
     "lint-staged": "^15.2.7",
     "lucide-react": "^0.395.0",

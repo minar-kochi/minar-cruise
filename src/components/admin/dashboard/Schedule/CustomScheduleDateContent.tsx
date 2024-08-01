@@ -8,17 +8,17 @@ export function CustomDayContentWithScheduleIndicator(props: DayContentProps) {
   const { date } = props;
 
   const isLunchFound = data.lunch.filter((item) =>
-    isSameDay(new Date(item), date)
+    isSameDay(new Date(item), date),
   );
 
   const isBreakfastFound = data.breakfast.filter((item) =>
-    isSameDay(new Date(item), date)
+    isSameDay(new Date(item), date),
   );
   const isDinner = data.dinner.filter((item) =>
-    isSameDay(new Date(item), date)
+    isSameDay(new Date(item), date),
   );
   const isCustom = data.custom.filter((item) =>
-    isSameDay(new Date(item), date)
+    isSameDay(new Date(item), date),
   );
 
   return (

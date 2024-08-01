@@ -1,6 +1,9 @@
 import { trpc } from "@/app/_trpc/client";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
-import { setCurrentScheduleDate, setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
+import {
+  setCurrentScheduleDate,
+  setSyncDatabaseUpdatesScheduleCreation,
+} from "@/lib/features/schedule/ScheduleSlice";
 import { RemoveTimeStampFromDate, sleep } from "@/lib/utils";
 import { TScheduleSelector } from "@/Types/type";
 import { format } from "date-fns";
@@ -13,22 +16,21 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
   const { updatedDateSchedule, date, currentDateSchedule } = useAppSelector(
     (state) => state.schedule,
   );
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const { mutate: createNewSchedule, isPending: isLoading } =
     trpc.admin.createNewSchedule.useMutation({
       async onMutate(variables) {
-        
         toast.loading(
           `Confirming Schedule at ${format(variables.ScheduleDate, "do 'of' LLL")}`,
         );
-        await sleep(4000)
+        await sleep(4000);
       },
       async onSuccess(data, variables, context) {
         toast.dismiss();
         await invalidate({
           ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
         });
-        dispatch(setSyncDatabaseUpdatesScheduleCreation(data,type))
+        dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
         toast.success("Schedule set successfully ");
       },
       onError(error, variables, context) {

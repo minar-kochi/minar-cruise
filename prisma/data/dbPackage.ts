@@ -126,5 +126,5 @@ export const packages: packagesPartialId = [
     startFrom: new Date("1970-01-01T17:00:00Z"),
     endAt: new Date("1970-01-01T21:00:00Z"),
     packageCategory: "EXCLUSIVE",
-  }
+  },
 ];

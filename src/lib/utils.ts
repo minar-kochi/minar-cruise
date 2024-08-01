@@ -56,13 +56,13 @@ export function convertLocalDateToUTC(date: Date | string) {
     Date.UTC(
       ParsedInputDate.getFullYear(),
       ParsedInputDate.getMonth(),
-      ParsedInputDate.getDate()
-    )
+      ParsedInputDate.getDate(),
+    ),
   );
   return formatISO(formatedDate);
 }
 /** Convert Date Object to YYYY-MM-DD format */
-export function RemoveTimeStampFromDate(date: Date):string {
+export function RemoveTimeStampFromDate(date: Date): string {
   return formatISO(date).split("T")[0];
 }
 
@@ -71,7 +71,7 @@ export function ParseStringToNumber(x: string) {
 }
 
 export function parseDateFormatYYYMMDDToNumber(
-  date: string
+  date: string,
 ): TSplitedFormatedDate | null {
   const splitValue = date.split("-");
   if (!splitValue || splitValue.length !== 3) return null;
@@ -100,7 +100,6 @@ export function isDateValid(date: TSplitedFormatedDate) {
   return moment([date.year, date.month - 1, date.day]).isValid();
 }
 
-
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export const getUTCDate = (dateStr: string): number => {
@@ -112,6 +111,6 @@ export const getUTCDate = (dateStr: string): number => {
     date.getUTCHours(),
     date.getUTCMinutes(),
     date.getUTCSeconds(),
-    date.getUTCMilliseconds()
+    date.getUTCMilliseconds(),
   );
 };

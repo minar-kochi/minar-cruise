@@ -39,10 +39,7 @@ export default async function MobileNavbar() {
           <DrawerHeader>
             <DrawerTitle className="text-center m-2">Navigations</DrawerTitle>
             <DrawerDescription className="py-5">
-              <Link
-                href="/"
-                className="cursor-pointer hover:text-red-500 "
-              >
+              <Link href="/" className="cursor-pointer hover:text-red-500 ">
                 Home
               </Link>
 
@@ -59,7 +56,7 @@ export default async function MobileNavbar() {
                         Packages
                       </Link>
                     </AccordionTrigger>
-                    <AccordionContent >
+                    <AccordionContent>
                       {packageDetails.map((item, i) => (
                         <Link key={item.id} href={`/booking/${item.slug}`}>
                           <p className="hover:text-red-500  py-2">
@@ -74,19 +71,13 @@ export default async function MobileNavbar() {
 
               <hr className="border-gray-300 my-4" />
 
-              <Link
-                href="/"
-                className="cursor-pointer  hover:text-red-500 "
-              >
+              <Link href="/" className="cursor-pointer  hover:text-red-500 ">
                 Facilities
               </Link>
 
               <hr className="border-gray-300 my-4" />
 
-              <Link
-                href="/"
-                className="cursor-pointer  hover:text-red-500 "
-              >
+              <Link href="/" className="cursor-pointer  hover:text-red-500 ">
                 About
               </Link>
 
@@ -103,7 +94,7 @@ export default async function MobileNavbar() {
                         Gallery
                       </Link>
                     </AccordionTrigger>
-                    <AccordionContent >
+                    <AccordionContent>
                       <Link href="/gallery/family-gathering">
                         <p className="hover:text-red-500 py-2">
                           Family Gathering

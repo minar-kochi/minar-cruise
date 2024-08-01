@@ -23,7 +23,6 @@ export default async function PackagePage({
     return <>Failed to fetch package details</>;
   }
 
-  
   return (
     <main>
       <PackageGalleryCard ImageData={data.packageImage} />

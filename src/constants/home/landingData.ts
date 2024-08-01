@@ -1,4 +1,13 @@
-import { BookCheck,  Handshake, Ship, Disc2, MicVocal, SmilePlus, WandSparkles, Laugh } from "lucide-react";
+import {
+  BookCheck,
+  Handshake,
+  Ship,
+  Disc2,
+  MicVocal,
+  SmilePlus,
+  WandSparkles,
+  Laugh,
+} from "lucide-react";
 
 export const landingData = {
   heading: "MINAR CRUISE",
@@ -79,8 +88,8 @@ export const entertainment = {
     { description: "Live DJ performance", icon: Disc2 },
     { description: "Live Karaoke singers", icon: MicVocal },
     { description: "Mimicry show", icon: SmilePlus },
-    { description: "Magic Show", icon: WandSparkles},
-    { description: "Fun filled programs", icon: Laugh},
+    { description: "Magic Show", icon: WandSparkles },
+    { description: "Fun filled programs", icon: Laugh },
   ],
 };
 

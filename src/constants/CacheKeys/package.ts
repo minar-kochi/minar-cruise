@@ -1,1 +1,1 @@
-export const ORGANIZED_PACKAGE_KEY = ['organized-package-schedule']
+export const ORGANIZED_PACKAGE_KEY = ["organized-package-schedule"];
