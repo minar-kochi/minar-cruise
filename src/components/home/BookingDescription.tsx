@@ -6,7 +6,7 @@ import BookingDescriptionCard from "./BookingDescriptionCard";
 const BookingDescription = () => {
   const { image1, image2 } = BookingData;
   return (
-    <section  className="relative flex min-h-[80vh] ">
+    <section className="relative flex min-h-[80vh] ">
       <div className="w-full basis-[45%] max-md:hidden ">
         <Image
           width={1280}
@@ -25,7 +25,7 @@ const BookingDescription = () => {
           alt={image2.alt}
         />
       </div>
-      <BookingDescriptionCard/>
+      <BookingDescriptionCard />
     </section>
   );
 };
@@ -33,6 +33,6 @@ const BookingDescription = () => {
 export default BookingDescription;
 
 // <div className="p-12 h-full flex flex-col justify-evenly">
-            
+
 //             <Button>Book Now</Button>
 //           </div>

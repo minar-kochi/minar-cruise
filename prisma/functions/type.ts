@@ -9,7 +9,7 @@ export type TdbSchema =
   | "image"
   | "schedule"
   | "user"
-  | "packageImage"
+  | "packageImage";
 
 export const dbSchema: TdbSchema[] = [
   "package",
@@ -19,5 +19,5 @@ export const dbSchema: TdbSchema[] = [
   "image",
   "schedule",
   "user",
-  "packageImage"
+  "packageImage",
 ];

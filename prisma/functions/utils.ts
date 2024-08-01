@@ -16,4 +16,3 @@ export async function ClearDb() {
     return false;
   }
 }
-

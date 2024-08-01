@@ -22,7 +22,7 @@ const LandingDescription = () => {
         <h1
           className={cn(
             "border-l-4 border-l-red-500 pl-2 text-4xl font-[Montserrat,sans-serif] font-bold ",
-            mont.className
+            mont.className,
           )}
         >
           {title}

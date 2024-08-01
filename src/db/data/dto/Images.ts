@@ -8,28 +8,28 @@ export async function getPackageImages({
   packageId,
 }: {
   packageId: string;
-}): Promise< null> {
-  return null
+}): Promise<null> {
+  return null;
   // try {
-    // const data = await db.packageImage.findMany({
-    //   where: {
-    //     packageId: packageId,
-    //   },
-    //   select: {
-    //     package: {
-    //       select: {
-    //         title: true,
-    //       },
-    //     },
-    //     image: {
-    //       select: {
-    //         url: true,
-    //         alt: true,
-    //         id: true,
-    //       },
-    //     },
-    //   },
-    // });
+  // const data = await db.packageImage.findMany({
+  //   where: {
+  //     packageId: packageId,
+  //   },
+  //   select: {
+  //     package: {
+  //       select: {
+  //         title: true,
+  //       },
+  //     },
+  //     image: {
+  //       select: {
+  //         url: true,
+  //         alt: true,
+  //         id: true,
+  //       },
+  //     },
+  //   },
+  // });
 
   //   if (!data.length) {
   //     return null;

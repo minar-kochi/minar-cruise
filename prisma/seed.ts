@@ -34,9 +34,9 @@ async function main() {
       console.error("You need to reset/migrate database before you seed");
     }
   }
-  const isData = await db.booking.findMany()
+  const isData = await db.booking.findMany();
   console.log("Seeding Data");
-  console.log("Is there data ?",isData)
+  console.log("Is there data ?", isData);
   const data = await db.$transaction(async (tx) => {
     console.log("Opening Transaction...");
     try {

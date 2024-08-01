@@ -19,5 +19,4 @@ export const RatingMock = [
     title: "Price",
     rating: 5,
   },
-  
 ];

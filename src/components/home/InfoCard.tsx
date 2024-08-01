@@ -12,12 +12,17 @@ import { cn } from "@/lib/utils";
 const InfoCard = ({ className }: { className?: string }) => {
   return (
     <>
-      <div className={cn("flex flex-wrap max-sm:flex-col max-sm:items-center max-sm:gap-10 items-start justify-between py-12 mt-2", className)}>
+      <div
+        className={cn(
+          "flex flex-wrap max-sm:flex-col max-sm:items-center max-sm:gap-10 items-start justify-between py-12 mt-2",
+          className,
+        )}
+      >
         {/* <FooterItemCard/>         */}
-        <ContactCard logo={true}/>
-        <CompanyInfoCard className=""/>
-        <ExploreCard className=""/>
-        <SubscribeCard className=""/>
+        <ContactCard logo={true} />
+        <CompanyInfoCard className="" />
+        <ExploreCard className="" />
+        <SubscribeCard className="" />
       </div>
     </>
   );

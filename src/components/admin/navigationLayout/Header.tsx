@@ -32,9 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
 
-const Header = ({ children }: {
-  children: React.ReactNode
-}) => {
+const Header = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <header className="flex h-14  top-0 sticky items-center gap-4 border-b bg-black px-4 lg:h-[60px] lg:px-6">
@@ -97,9 +95,7 @@ const Header = ({ children }: {
                 Analytics
               </Link>
             </nav>
-            <div className="mt-auto">
-              
-            </div>
+            <div className="mt-auto"></div>
           </SheetContent>
         </Sheet>
         <div className="w-full flex-1">

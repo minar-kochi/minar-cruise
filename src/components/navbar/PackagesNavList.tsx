@@ -42,7 +42,8 @@ const PackagesNavList = async () => {
 
 export default PackagesNavList;
 
-{/* <NavigationMenuItem className="">
+{
+  /* <NavigationMenuItem className="">
   <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
   <NavigationMenuContent className="">
     <div className="grid w-[300px]  grid-cols-2  place-content-center gap-3 px-4 py-6">
@@ -57,4 +58,5 @@ export default PackagesNavList;
       </NavigationMenuLink>
     </div>
   </NavigationMenuContent>
-</NavigationMenuItem>; */}
+</NavigationMenuItem>; */
+}

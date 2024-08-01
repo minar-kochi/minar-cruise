@@ -17,10 +17,10 @@ import { Check } from "lucide-react";
 export default function ScheduleSelect({ type }: TScheduleSelector) {
   const { OrganizedPackage } = useAppSelector((state) => state.packages);
   const { currentDateSchedule, updatedDateSchedule } = useAppSelector(
-    (state) => state.schedule
+    (state) => state.schedule,
   );
   const defaultSelect = useAppSelector((state) =>
-    DefaultMergedSchedule(state, type)
+    DefaultMergedSchedule(state, type),
   );
   const dispatch = useAppDispatch();
   return (
@@ -48,7 +48,7 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
               value={item.id}
               key={`select-item-${item.id}`}
             >
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 {item.title}
                 <div
                   className={cn(
@@ -57,7 +57,7 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
                       block:
                         currentDateSchedule &&
                         currentDateSchedule[type]?.packageId === item.id,
-                    }
+                    },
                   )}
                 />
               </div>

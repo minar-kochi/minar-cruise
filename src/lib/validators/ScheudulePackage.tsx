@@ -1,6 +1,5 @@
 import { $Enums } from "@prisma/client";
 
-
 export function isStatusBreakfast(SchedulePackage: string) {
   return SchedulePackage === $Enums.SCHEDULED_TIME.BREAKFAST;
 }

@@ -8,7 +8,7 @@ import Services from "@/components/home/Services";
 const page = () => {
   return (
     <main>
-      <FacilitiesImageCard label="Facilities"/>
+      <FacilitiesImageCard label="Facilities" />
       <Services />
       <Bounded>
         <Entertainments />

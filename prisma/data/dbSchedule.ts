@@ -1,5 +1,5 @@
 import { schedulePartialId } from "../data";
-export const _schedule = []
+export const _schedule = [];
 export const schedule: schedulePartialId = [
   {
     day: new Date(Date.now()),

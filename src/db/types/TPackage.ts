@@ -1,3 +1,3 @@
-import { Package } from "@prisma/client"
+import { Package } from "@prisma/client";
 
-export type TPackageNavigation =  Pick<Package, 'slug' | 'id' | 'title'>    
+export type TPackageNavigation = Pick<Package, "slug" | "id" | "title">;

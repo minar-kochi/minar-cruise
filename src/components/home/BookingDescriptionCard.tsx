@@ -14,8 +14,7 @@ const out = Outfit({
   weight: ["800"],
   style: "normal",
   subsets: ["latin"],
-
-})
+});
 
 const BookingDescriptionCard = () => {
   const { mainHeading, subHeading } = BookingData;
@@ -26,15 +25,18 @@ const BookingDescriptionCard = () => {
           <h2 className={cn("text-2xl", badScript.className)}>
             Our benefits list
           </h2>
-          <h1 className={cn("text-4xl text-primary", out.className)}>{mainHeading}</h1>
+          <h1 className={cn("text-4xl text-primary", out.className)}>
+            {mainHeading}
+          </h1>
           <p>{subHeading}</p>
         </article>
-        <BookingDescriptionItems/>
-        <Button className="w-full bg-primary hover:bg-white hover:text-primary tracking-widest font-semibold">BOOK NOW</Button>
+        <BookingDescriptionItems />
+        <Button className="w-full bg-primary hover:bg-white hover:text-primary tracking-widest font-semibold">
+          BOOK NOW
+        </Button>
       </div>
     </section>
   );
 };
 
 export default BookingDescriptionCard;
-
