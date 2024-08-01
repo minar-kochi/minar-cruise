@@ -1,5 +1,4 @@
 import { trpc } from "@/app/_trpc/client";
-import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
 import { Ban } from "lucide-react";
 import React from "react";
 import {
@@ -12,9 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { useAppSelector } from "@/hooks/adminStore/reducer";
 
 export default function ScheduleBlockButton() {
-  const date = useScheduleStore((state) => state.date);
+  const date = useAppSelector((state) => state.schedule.date);
   return (
     <Dialog>
       <DialogTrigger className="rounded-xl border bg-destructive p-2">

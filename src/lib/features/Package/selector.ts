@@ -5,7 +5,7 @@ import { createSelector } from "@reduxjs/toolkit";
 
 export const Packages = (state: RootState) => state.packages.OrganizedPackage;
 
-export const useIsIdExclusive = createSelector(
+export const IsIdExclusive = createSelector(
   [Packages, (_, id:string | null)=> id],
   ({breakfast},  id): boolean => {
     if (!id) return false;

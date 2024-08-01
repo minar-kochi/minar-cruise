@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import { CounterStoreProvider } from "@/providers/counter-store-provider";
 import MenuBar from "@/components/admin/navigationLayout/MenuBar";
 import Header from "@/components/admin/navigationLayout/Header";
 import HeaderNav from "@/components/admin/navigationLayout/HeaderNav";
@@ -36,8 +35,8 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen dark bg-background font-sans antialiased",
-          fontSans.variable
+          "dark min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
         )}
       >
         <StoreProvider Packages={packages}>
@@ -55,4 +54,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
