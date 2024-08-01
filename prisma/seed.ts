@@ -25,9 +25,9 @@ const db = new PrismaClient();
 
 async function main() {
   console.log("Checking seed");
-  // const isDataPresent = await iterateTable({});
+  const isDataPresent = await iterateTable({});
 
-  if (false) {
+  if (isDataPresent) {
     console.error("There is Existing data Found on the database \n");
     const isDeleted = await ClearDb();
     if (!isDeleted) {
