@@ -1,8 +1,7 @@
+import ScheduleSelectors from "@/components/admin/dashboard/Schedule/ScheduleSelectors";
 
-const page = () => {
-  return (
-    <div>Booking page</div>
-  )
-}
+const AdminBookingPage = () => {
+  return <div></div>;
+};
 
-export default page
+export default AdminBookingPage;

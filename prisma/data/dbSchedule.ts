@@ -1,6 +1,6 @@
 import { schedulePartialId } from "../data";
-export const schedule = []
-export const _schedule: schedulePartialId = [
+export const _schedule = []
+export const schedule: schedulePartialId = [
   {
     day: new Date(Date.now()),
     time: null,

@@ -25,16 +25,18 @@ const db = new PrismaClient();
 
 async function main() {
   console.log("Checking seed");
-  const isDataPresent = await iterateTable({});
+  // const isDataPresent = await iterateTable({});
 
-  if (isDataPresent) {
+  if (false) {
     console.error("There is Existing data Found on the database \n");
     const isDeleted = await ClearDb();
     if (!isDeleted) {
       console.error("You need to reset/migrate database before you seed");
     }
   }
+  const isData = await db.booking.findMany()
   console.log("Seeding Data");
+  console.log("Is there data ?",isData)
   const data = await db.$transaction(async (tx) => {
     console.log("Opening Transaction...");
     try {
