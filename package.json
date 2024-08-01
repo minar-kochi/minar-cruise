@@ -2,6 +2,27 @@
   "name": "minar-cruise",
   "version": "0.1.0",
   "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "import-sort-cli --write",
+      "prettier --write"
+    ],
+    "*.{json,md}": ["prettier --write"],
+    "*.hbs": ["prettier --write"]
+  },
+  "prettier": {
+    "trailingComma": "all"
+  },
+  "importSort": {
+    ".ts, .tsx": {
+      "style": "renke"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -43,6 +64,7 @@
     "embla-carousel-autoplay": "^8.1.7",
     "embla-carousel-react": "^8.1.5",
     "label": "^0.2.2",
+    "lint-staged": "^15.2.7",
     "lucide-react": "^0.395.0",
     "moment": "^2.30.1",
     "next": "^14.2.4",
@@ -72,6 +94,8 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
+    "import-sort-cli": "^6.0.0",
+    "import-sort-style-renke": "^6.0.0",
     "postcss": "^8",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
