@@ -12,23 +12,17 @@ export const useUpdatedSchedule = createSelector(
     let dbState = currentDateSchedule && currentDateSchedule[type];
     if (currentState?.packageId !== dbState?.id) return false;
     return true;
-  }
+  },
 );
 
-export const Merged = (state: RootState) => ({
-  currentDateSchedule: state.schedule.currentDateSchedule,
-  updatedDateSchedule: state.schedule.updatedDateSchedule,
-  date: state.schedule.date,
-});
+export const Merged = (state: RootState) => state.schedule;
 
 export const useDefaultMergedSchedule = createSelector(
   [Merged, (_, type: TKeyOrganizedScheduleData) => type],
   (
     { currentDateSchedule, updatedDateSchedule, date },
-    type
+    type,
   ): { packageId: string | null; changed: boolean } => {
-
-    console.log(updatedDateSchedule.breakfast.packageId)
     if (
       updatedDateSchedule[type].packageId &&
       typeof updatedDateSchedule[type].packageId === "string"
@@ -43,9 +37,31 @@ export const useDefaultMergedSchedule = createSelector(
       packageId: currentDateSchedule[type]?.packageId ?? null,
       changed: true,
     };
-  }
+  },
 );
 
+export const useDefaultMergedDateTime = createSelector(
+  [Merged, (_, type: TKeyOrganizedScheduleData) => type],
+  (
+    { currentDateSchedule, updatedDateSchedule, date },
+    type,
+  ): { packageId: string | null; changed: boolean; time?: string } => {
+    if (
+      updatedDateSchedule[type].packageId &&
+      typeof updatedDateSchedule[type].packageId === "string"
+    ) {
+      return {
+        packageId: updatedDateSchedule[type].packageId,
+        changed: true,
+      };
+    }
+
+    return {
+      packageId: currentDateSchedule[type]?.packageId ?? null,
+      changed: true,
+    };
+  },
+);
 /**
  * if nothing on database then its a new state
  * if there is something on database then its updating state.

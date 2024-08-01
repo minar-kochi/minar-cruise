@@ -17,7 +17,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
+import { CustomDayContentWithScheduleIndicator } from "./_Schedule/CustomScheduleDateContent";
 import ScheduleSelectorLoader from "./ScheduleSelectorLoader";
 import Bounded from "@/components/elements/Bounded";
 import { PopOverDatePicker } from "./PopOverScheduleDate";

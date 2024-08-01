@@ -9,6 +9,9 @@ import {
   isStatusLunch,
 } from "../validators/ScheudulePackage";
 import { randomUUID } from "crypto";
+import { Schedule } from "@prisma/client";
+import { TExcludedOrganizedPackageData } from "@/Types/packages/package";
+import { RemoveTimeStampFromDate } from "../utils";
 
 export function organizeScheduleData({
   data,
@@ -44,7 +47,7 @@ export function organizeScheduleData({
 }
 
 export function placeOrganizedDataIntoPackageIdAndScheduleTime(
-  OrgData: TOrganizedScheduleData
+  OrgData: TOrganizedScheduleData,
 ): TSelectedPackageIdsAndScheduleEnum {
   return {
     breakfast: {
@@ -67,5 +70,15 @@ export function placeOrganizedDataIntoPackageIdAndScheduleTime(
       time: OrgData.breakfast?.time,
       scheduleTime: "LUNCH",
     },
+  };
+}
+
+export function convertScheduleDataDateToDateString(
+  Schedule: Schedule,
+): TScheduleDataDayReplaceString {
+  return {
+    ...Schedule,
+    day: RemoveTimeStampFromDate(Schedule.day),
+    time: Schedule.time ? RemoveTimeStampFromDate(Schedule.time) : null,
   };
 }

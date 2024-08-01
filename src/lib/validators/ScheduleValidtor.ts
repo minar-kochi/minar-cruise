@@ -7,7 +7,6 @@ export const ScheduleSchema = z.object({
   }),
 });
 
-// export const ScheduleTime = z.object();
 
 export const ScheduleCreateSchema = ScheduleSchema.extend({
   packageId: z

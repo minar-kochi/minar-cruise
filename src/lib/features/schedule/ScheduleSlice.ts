@@ -8,8 +8,9 @@ import {
   TUpdatedDateSchedulePackageId,
 } from "@/Types/Schedule/ScheduleSelect";
 import { TScheduleDataDayReplaceString } from "@/Types/type";
-import {  createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
+import { RemoveTimeStampFromDate } from "@/lib/utils";
 export type TScheduleUtilsState = {
   /**
    * Popover state variable
@@ -27,7 +28,7 @@ export type TScheduleState = {
    */
   upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
   /**
-   * Current date schedule that is synced with database. (do not change is value.)
+   * Current date schedule that is synced with database. (do not change is value.) but you can sync it with database.
    */
   currentDateSchedule: TOrganizedScheduleData;
   /**
@@ -52,6 +53,69 @@ const scheduleSlice = createSlice({
       state.date = action.payload;
     },
     /**
+     * set the Current Schedule according to the selected Date.
+     * @param action
+     */
+
+    setCurrentScheduleDate: {
+      /**
+       * Special type how this works is return of prepare will get back into reducer.
+       * @param state
+       * @param action
+       */
+      reducer(state, action: PayloadAction<TOrganizedScheduleData>) {
+        state.currentDateSchedule = action.payload;
+        state.updatedDateSchedule = initialState.updatedDateSchedule;
+      },
+      /**
+       * return data of the prepare is given back to the reducer to change the state,
+       * do not calculate complex stuff in reducer it should be calculated in prepare func.
+       * @param data TScheduleDataDayReplaceString
+       * @returns
+       */
+      prepare(data: TScheduleDataDayReplaceString[] | null) {
+        if (!data) return { payload: initialState.currentDateSchedule };
+        const OrgData = organizeScheduleData({ data });
+        return {
+          payload: OrgData,
+        };
+      },
+    },
+
+    setSyncDatabaseUpdatesScheduleCreation: {
+      reducer(
+        state,
+        action: PayloadAction<{
+          updatingDate: string;
+          currentDateSchedule: TScheduleDataDayReplaceString;
+          type: TKeyOrganizedScheduleData;
+        }>,
+      ) {
+        //if dates are eq then add to the current date schedule.
+        if (state.date === action.payload.updatingDate) {
+          state.currentDateSchedule[action.payload.type] =
+            action.payload.currentDateSchedule;
+        }
+
+        state.upCommingSchedules[action.payload.type].push(
+          action.payload.updatingDate,
+        );
+      },
+      prepare(
+        data: TScheduleDataDayReplaceString,
+        type: TKeyOrganizedScheduleData,
+      ) {
+        const date = RemoveTimeStampFromDate(new Date(data.day));
+        return {
+          payload: {
+            updatingDate: date,
+            currentDateSchedule: data,
+            type,
+          },
+        };
+      },
+    },
+    /**
      * if there is boolean then it will set the boolean or else it will toggle the previous state.
      * @param action boolean | null
      * @returns
@@ -71,38 +135,11 @@ const scheduleSlice = createSlice({
      */
     setInitialOrganizedScheduleDates(
       state,
-      action: PayloadAction<TExcludedOrganizedUpcommingSchedule>
+      action: PayloadAction<TExcludedOrganizedUpcommingSchedule>,
     ) {
       state.upCommingSchedules = action.payload;
     },
-    /**
-     * set the Current Schedule according to the selected Date.
-     * @param action
-     */
-    setCurrentScheduleDate: {
-      /**
-       * Special type how this works is return of prepare will get back into reducer.
-       * @param state
-       * @param action
-       */
-      reducer(state, action: PayloadAction<TOrganizedScheduleData >) {
-        state.currentDateSchedule = action.payload;
-        state.updatedDateSchedule = initialState.updatedDateSchedule
-      },
-      /**
-       * return data of the prepare is given back to the reducer to change the state,
-       * do not calculate complex stuff in reducer it should be calculated in prepare func.
-       * @param data TScheduleDataDayReplaceString 
-       * @returns 
-       */
-      prepare(data: TScheduleDataDayReplaceString[] | null) {
-        if(!data) return {payload: initialState.currentDateSchedule}
-        const OrgData = organizeScheduleData({ data });
-        return {
-          payload: OrgData,
-        };
-      },
-    },
+
     /**
      * This will change the locally selected package's according to their id and type.
      * @param state
@@ -113,7 +150,7 @@ const scheduleSlice = createSlice({
       action: PayloadAction<{
         type: TKeyOrganizedScheduleData;
         packageId: string;
-      }>
+      }>,
     ) {
       const { payload } = action;
       state.updatedDateSchedule[payload.type].packageId = payload.packageId;
@@ -124,7 +161,7 @@ const scheduleSlice = createSlice({
      */
     setUpdatedDateSchedule(
       state,
-      action: PayloadAction<{ type: TKeyOrganizedScheduleData }>
+      action: PayloadAction<{ type: TKeyOrganizedScheduleData }>,
     ) {
       let { type } = action.payload;
       state.isChangedUpdated[type] = false;
@@ -139,6 +176,7 @@ export const {
   setCurrentScheduleDate,
   setUpdatedDateSchedule,
   setUpdatableScheduleDate,
+  setSyncDatabaseUpdatesScheduleCreation
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;

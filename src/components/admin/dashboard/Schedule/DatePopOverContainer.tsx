@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
 import { PopOverDatePicker } from "../PopOverScheduleDate";
-import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
-import { CustomDayContentWithScheduleIndicator } from "../CustomScheduleDateContent";
+import { useAppDispatch, useAppSelector, useAppStore } from "@/hooks/adminStore/reducer";
+import { CustomDayContentWithScheduleIndicator } from "../_Schedule/CustomScheduleDateContent";
 import {
   setDate,
   setPopOverDateToggle,
@@ -12,6 +12,13 @@ import toast from "react-hot-toast";
 export default function ScheduleDatePicker() {
   const { date } = useAppSelector((state) => state.schedule);
   const dispatch = useAppDispatch();
+  const store = useAppStore();
+  const initialized = useRef(false);
+  if (!initialized.current) {
+    // Runs on server
+    store.dispatch(setInitialOrganizedScheduleDates(upCommingSchedules));
+    initialized.current = true;
+  }
 
   return (
     <PopOverDatePicker
