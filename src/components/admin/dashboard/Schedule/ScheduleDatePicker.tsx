@@ -8,8 +8,8 @@ import {
 } from "@/lib/features/schedule/ScheduleSlice";
 import { getPrevTimeStamp, RemoveTimeStampFromDate } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { PopOverDatePicker } from "@/components/admin/dashboard/PopOverScheduleDate";
-import { CustomDayContentWithScheduleIndicator } from "@/components/admin/dashboard/CustomScheduleDateContent";
+import { PopOverDatePicker } from "./PopOverScheduleDate";
+import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
 import { trpc } from "@/app/_trpc/client";
 
 export default function ScheduleDatePicker() {

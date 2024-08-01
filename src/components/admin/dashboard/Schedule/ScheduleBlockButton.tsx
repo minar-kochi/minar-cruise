@@ -1,16 +1,13 @@
 import { trpc } from "@/app/_trpc/client";
 import { useScheduleStore } from "@/providers/admin/schedule-store-provider";
-import { Ban, RefreshCw } from "lucide-react";
+import { Ban } from "lucide-react";
 import React from "react";
-import toast from "react-hot-toast";
-import { TselectDate } from "./ScheduleSelector";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
@@ -20,7 +17,7 @@ export default function ScheduleBlockButton() {
   const date = useScheduleStore((state) => state.date);
   return (
     <Dialog>
-      <DialogTrigger className="p-2   bg-destructive border rounded-xl">
+      <DialogTrigger className="rounded-xl border bg-destructive p-2">
         <Ban className="h-5 w-5" />
       </DialogTrigger>
 

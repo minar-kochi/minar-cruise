@@ -1,4 +1,4 @@
-import ScheduleSelectors from "@/components/admin/dashboard/_Schedule/ScheduleSelectors";
+import ScheduleSelectors from "@/components/admin/dashboard/Schedule/ScheduleSelectors";
 import { DataTableDemo } from "@/components/admin/dashboard/Schedule/ScheduleTable";
 import ScheduleBar from "@/container/admin/schedule/ScheduleContainer";
 import {
@@ -11,8 +11,9 @@ import { getUTCDate, RemoveTimeStampFromDate } from "@/lib/utils";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import ScheduleBarWrapper from "@/container/admin/schedule/ScheduleBarWrapper";
-import ScheduleSelectorLoader from "@/components/admin/dashboard/_Schedule/Loader/ScheduleSelectorLoader";
-export default async function Schedule() {
+import ScheduleSelectorLoader from "@/components/admin/dashboard/Schedule/Loader/ScheduleSelectorLoader";
+
+export default async function ScheduleAdminPage() {
   return (
     <main className="">
       <div className="grid place-content-center md:grid-cols-[70%_30%]">
