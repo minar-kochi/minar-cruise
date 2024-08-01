@@ -12,7 +12,9 @@ export default function ScheduleSelector({
 }: TScheduleSelector & { label: string }) {
   return (
     <div className="my-2 transition-all duration-500 ease-in-out">
-      <label htmlFor="" className="my-0.5">
+      <label htmlFor=
+      ""
+       className="my-0.5">
         {label}
       </label>
       <div className="flex gap-2">
