@@ -152,3 +152,34 @@ export const getSchedulesByDateOrNow = async (ScheduleDate: string) => {
   }
   return schedule;
 };
+
+export type TGetAllSchedules = Awaited<ReturnType<typeof getAllSchedules>>;
+
+export const getAllSchedules = async () => {
+  try {
+    const schedules = await db.schedule.findMany({
+      where: {
+        day: {
+          gte: new Date(Date.now()),
+        },
+      },
+      select: {
+        Booking: {
+          select: {
+            id: true,
+          }
+        },
+        day: true,
+        schedulePackage: true,
+        scheduleStatus: true,
+      },
+    });
+
+    if (!schedules) return null;
+
+    return schedules;
+  } catch (error) {
+    console.log("failed to fetch all schedules", error);
+    return null;
+  }
+};

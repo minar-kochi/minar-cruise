@@ -9,8 +9,8 @@ export default async function Admin() {
         <Link href={"/admin/schedule"}>
           <Button>Schedule</Button>
         </Link>
-        <Link href={"/admin/schedule"}>
-          <Button>Bookings</Button>
+        <Link href={"/admin/booking"}>
+          <Button>Booking</Button>
         </Link>
       </article>
     </section>
