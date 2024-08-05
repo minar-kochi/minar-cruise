@@ -7,6 +7,7 @@ import {
   isStatusDinner,
   isStatusLunch,
 } from "@/lib/validators/ScheudulePackage";
+import { TScheduleWithBookingCountWithId } from "@/Types/Schedule/ScheduleSelect";
 import { Schedule } from "@prisma/client";
 
 export type TGetSchedulePAckages = Awaited<
@@ -156,27 +157,50 @@ export type TGetAllSchedules = Awaited<ReturnType<typeof getAllSchedules>>;
 
 export const getAllSchedules = async () => {
   try {
-    const schedules = await db.schedule.findMany({
-      where: {
-        day: {
-          gte: new Date(Date.now()),
-        },
-      },
-      select: {
-        Booking: {
-          select: {
-            id: true,
-          }
-        },
-        day: true,
-        schedulePackage: true,
-        scheduleStatus: true,
-      },
-    });
+    // const schedules = await db.schedule.findMany({
+    //   where: {
+    //     day: {
+    //       gte: new Date(Date.now()),
+    //     },
+    //   },
+    //   select: {
+    //     Booking: {
+    //       select: {
+    //         id: true,
+    //       },
+    //     },
+    //     day: true,
+    //     schedulePackage: true,
+    //     scheduleStatus: true,
+    //     id: true,
+    //   },
+    // });
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
 
-    if (!schedules) return null;
+    const schedules : TScheduleWithBookingCountWithId | null = await db.$queryRaw`
+        SELECT 
+          s.id,
+          s.day,
+          s."schedulePackage",
+          s."scheduleStatus",
+          json_agg(json_build_object('id', b.id)) FILTER (WHERE b.id IS NOT NULL) AS "Booking",
+          COALESCE(SUM(b."numOfChildren" + b."numOfAdults" + b."numOfBaby"), 0) AS "totalBookings"
+        FROM 
+          "Schedule" s
+        LEFT JOIN 
+          "Booking" b ON s.id = b."scheduleId"
+        WHERE 
+          s.day >= ${today}::date
+        GROUP BY 
+          s.id, s.day, s."schedulePackage", s."scheduleStatus"
+        ORDER BY
+          s.day ASC
+    `;    console.log(schedules);
+  
+    
+    if (!schedules ) return null;
 
-    return schedules;
+    return schedules
   } catch (error) {
     console.log("failed to fetch all schedules", error);
     return null;

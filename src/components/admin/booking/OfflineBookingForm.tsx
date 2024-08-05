@@ -12,8 +12,22 @@ import { trpc } from "@/app/_trpc/client";
 import { Toast } from "@/components/ui/toast";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+type TOfflineBookingForm = {
+  // remove "?"  after fixing on other pages.
+  scheduleId: string;
+};
 
-export default function OfflineBookingForm() {
+/**
+ * accept a type prop which will be notified as update / add ENUM
+ * if the type is update then show update button 
+ * abstract the button to be a independed.
+ * if the type us add then show the update button
+ * and do update button logic.
+ * @returns 
+ */
+export default function OfflineBookingForm({
+  scheduleId,
+}: TOfflineBookingForm) {
   const {
     handleSubmit,
     register,
@@ -21,6 +35,10 @@ export default function OfflineBookingForm() {
     reset,
   } = useForm<TOfflineBookingSchema>({
     resolver: zodResolver(offlineBookingSchema),
+    defaultValues: {
+      /**allow to use the value to be included on the server send id */
+      schedule: scheduleId,
+    },
   });
 
   const { mutate: createOfflineBooking, isPending: isLoading } =
@@ -36,7 +54,6 @@ export default function OfflineBookingForm() {
       onError(error, variables, context) {
         toast.dismiss();
         toast.error(error.message);
-        
       },
       // onError() {
       //   toast.error("Something went wrong");
@@ -47,11 +64,13 @@ export default function OfflineBookingForm() {
     try {
       createOfflineBooking(data);
     } catch (error) {
+      toast.error("Error submitting form:");
       console.error("Error submitting form:", error);
     }
   };
 
   return (
+    // type === "ADD"
     <form onSubmit={handleSubmit(onSubmit)} className="p-10 ">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
         <InputLabel
@@ -73,6 +92,7 @@ export default function OfflineBookingForm() {
           errorMessage={errors.phone ? `${errors.phone.message}` : null}
         />
         <InputLabel
+          containerClassName="hidden"
           label="Email"
           InputProps={{
             type: "email",
@@ -84,12 +104,18 @@ export default function OfflineBookingForm() {
           }
         />
         <InputLabel
+        containerClassName="hidden"
           label="Schedule"
           InputProps={{
+            
             type: "text",
+            className: "hidden",
             placeholder: "Select a schedule",
             required: true,
-            ...register("schedule"),
+            ...register("schedule", {
+              value: scheduleId,
+            }),
+            
           }}
           errorMessage={
             errors.schedule?.message ? `${errors.schedule.message}` : null

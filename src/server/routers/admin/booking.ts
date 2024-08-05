@@ -32,6 +32,7 @@ export const booking = router({
        *
        *
        */
+      console.log(scheduleId)
       try {
         const schedule = await db.schedule.findUnique({
           where: {

@@ -29,8 +29,8 @@ export default async function UpdateBookingCard({
   className,
 }: IUpdateBookingCardProps) {
   const schedules: TGetAllSchedules = await getAllSchedules();
-  if (!schedules || schedules === null) return;
-
+  if (!schedules) return;
+  const { } = schedules[0]
   // function fetchBooking(e: HTMLButtonElement){
 
   // }
@@ -45,14 +45,14 @@ export default async function UpdateBookingCard({
         <Table className="border ">
           <TableHeader>
             <TableRow className="text-center">
-              <TableHead className="text-center">Date</TableHead>
-              <TableHead className="text-center">Package</TableHead>
-              <TableHead className="text-center">Booking Count</TableHead>
+              <TableHead className="text-center border w-[500px]">Date</TableHead>
+              <TableHead className="text-center border w-[500px]">Package</TableHead>
+              <TableHead className="text-center border">Seats</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {schedules.map((item, i) => {
-              const { day, schedulePackage, Booking } = item;
+              const { day, schedulePackage, Booking, id,totalBookings } = item;
               const formattedDate = format(day, "MM/dd/yyyy");
               //@HOTFIX modify key prop in a better way
               return (
@@ -60,11 +60,16 @@ export default async function UpdateBookingCard({
                   <TableRow key={i} className="text-center">
                     <TableCell>{formattedDate}</TableCell>
                     <TableCell>{schedulePackage}</TableCell>
-                    <TableCell className="relative">
-                      {Booking.length}
+                    <TableCell className="flex justify-center relative">
+                    {totalBookings.toString()}
+                        <Link href={`/admin/booking/offlineBooking/${id}`}>
                         <Badge className="absolute right-10">
-                        <CustomBookingBadge label="View Booking" bookingId={""}/>
+                          <CustomBookingBadge
+                            label="Add Booking"
+                            bookingId={""}
+                          />
                         </Badge>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 </>
@@ -72,7 +77,7 @@ export default async function UpdateBookingCard({
             })}
           </TableBody>
         </Table>
-        <div className="">
+        {/* <div className="">
           <h2 className="font-bold text-xl pl-10">Booking data</h2>
 
           <CustomTable
@@ -90,7 +95,7 @@ export default async function UpdateBookingCard({
               "Total amount",
             ]}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
