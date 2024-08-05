@@ -7,7 +7,7 @@ export const resetUpdates = {
   custom: false,
 };
 
-export const initialState: TScheduleState = {
+export const initialState: Required<TScheduleState> = {
   currentDateSchedule: {
     breakfast: null,
     custom: null,
@@ -25,19 +25,27 @@ export const initialState: TScheduleState = {
   },
   updatedDateSchedule: {
     breakfast: {
-      packageId: null,
+      packageId: undefined,
+      fromTime: undefined,
+      toTime: undefined,
       scheduleTime: "BREAKFAST",
     },
     custom: {
-      packageId: null,
+      packageId: undefined,
+      fromTime: undefined,
+      toTime: undefined,
       scheduleTime: "CUSTOM",
     },
     dinner: {
-      packageId: null,
+      packageId: undefined,
+      fromTime: undefined,
+      toTime: undefined,
       scheduleTime: "DINNER",
     },
     lunch: {
-      packageId: null,
+      packageId: undefined,
+      fromTime: undefined,
+      toTime: undefined,
       scheduleTime: "LUNCH",
     },
   },

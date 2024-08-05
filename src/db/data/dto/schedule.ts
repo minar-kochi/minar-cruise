@@ -54,7 +54,6 @@ export const getSchedule = async () => {
   return data;
 };
 
-// export type TScheduleData = Omit<Schedule, "day"> & { day: string | Date };
 export type TScheduleData = Schedule;
 
 export type TgetUpcommingScheduleDates = {

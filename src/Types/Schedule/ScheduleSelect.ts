@@ -7,22 +7,26 @@ import { getUpcommingScheduleDates } from "@/db/data/dto/schedule";
 export type TSelectedPackageIdsAndScheduleEnum = {
   breakfast?: {
     id?: string | null;
-    time?: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.BREAKFAST;
   };
   lunch?: {
     id?: string | null;
-    time?: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
   };
   dinner?: {
     id?: string | null;
-    time?: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.DINNER;
   };
   custom?: {
     id?: string | null;
-    time?: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
   };
 };
@@ -62,19 +66,27 @@ export type TIsScheduleChange = {
 };
 export type TUpdatedDateSchedulePackageId = {
   breakfast: {
-    packageId: string | null;
+    packageId?: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.BREAKFAST;
   };
   lunch: {
-    packageId: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
+    packageId?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
   };
   dinner: {
-    packageId: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
+    packageId?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.DINNER;
   };
   custom: {
-    packageId: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
+    packageId?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
   };
 };

@@ -13,6 +13,6 @@ export default function ScheduleButtonWrapper({ type }: TScheduleSelector) {
   return !data[type]?.id ? (
     <ScheduleAddButton type={type} />
   ) : (
-    <ScheduleUpdateButton />
+    <ScheduleUpdateButton type={type} />
   );
 }

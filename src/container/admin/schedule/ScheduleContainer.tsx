@@ -34,7 +34,6 @@ export default function ScheduleBar({
   upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
 }) {
   const store = useAppStore();
-
   const initialized = useRef(false);
   if (!initialized.current) {
     store.dispatch(setInitialOrganizedScheduleDates(upCommingSchedules));
@@ -42,11 +41,17 @@ export default function ScheduleBar({
     store.dispatch(setDate(initialDate));
     initialized.current = true;
   }
-  const date = useAppSelector((state) => state.schedule.date);
-
+  const { mutate: deleteSchedules } = trpc.admin.clearSchedule.useMutation({
+    onSuccess(data, variables, context) {
+      toast.success("Cleared Database");
+    },
+    onError(error, variables, context) {
+      toast.error("SOmethign went wrong");
+    },
+  });
   return (
     <Bounded className="">
-      <Card className="w-full">
+      <Card className="w-full   ">
         <CardHeader>
           <CardTitle>Schedule&apos;s</CardTitle>
           <CardDescription>Update or add new schedules</CardDescription>
@@ -56,11 +61,12 @@ export default function ScheduleBar({
           <ScheduleButtonInfo />
           <ScheduleSelectors />
           <Button
+            className="w-full"
             onClick={() => {
-              toast.success("Good Morning!");
+              deleteSchedules();
             }}
           >
-            Show Date
+            delete Schedule
           </Button>
         </CardContent>
       </Card>
