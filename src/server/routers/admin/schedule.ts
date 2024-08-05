@@ -1,14 +1,20 @@
+import { defaultEmptyTrigger } from "@/constants/data/timer";
 import { db } from "@/db";
 import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
 import {
   isDateValid,
+  isProd,
+  mergeTimeCycle,
   parseDateFormatYYYMMDDToNumber,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import {
+  CompleteScheduleUpdateSchema,
   ScheduleCreateSchema,
   ScheduleSchema,
+  UpdatedDateScheduleSchema,
 } from "@/lib/validators/ScheduleValidtor";
+import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { booking } from "./booking";
@@ -81,66 +87,181 @@ export const schedule = router({
 
       //________________Validate Input Starts _____________
       /** */
-      const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
+      try {
+        const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
 
-      if (!date) {
+        if (!date) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Date Format is not valid YYYY-MM-DD",
+          });
+        }
+
+        const validatedDate = isDateValid(date);
+
+        if (!validatedDate) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Requested date is invalid",
+          });
+        }
+
+        const isPackageFound =
+          await getPackageByIdWithStatusAndCount(packageId);
+        if (!isPackageFound) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Selected Package is not found on our database.",
+          });
+        }
+        //________________Validate Input ends _____________
+        // Testout the date that is recieved (UTC format.)
+        let SafelyParsedDate = new Date(ScheduleDate);
+        let fromTime =
+          mergeTimeCycle(ScheduleDateTime?.fromTime ?? defaultEmptyTrigger) ??
+          null;
+
+        let toTime =
+          mergeTimeCycle(ScheduleDateTime?.toTime ?? defaultEmptyTrigger) ??
+          null;
+        if (isStatusCustom(ScheduleTime) && (!toTime || !fromTime)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Time is Required for ${ScheduleTime} Packages.`,
+          });
+        }
+        const Schedule = await db.schedule.findFirst({
+          where: {
+            AND: [
+              {
+                schedulePackage: ScheduleTime,
+              },
+              {
+                day: SafelyParsedDate,
+              },
+            ],
+          },
+        });
+
+        if (Schedule?.id) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Schedule has been already set for this date.",
+          });
+        }
+
+        const createdSchedule = await db.schedule.create({
+          data: {
+            day: SafelyParsedDate,
+            packageId,
+            fromTime,
+            toTime,
+            schedulePackage: ScheduleTime,
+            scheduleStatus: "AVAILABLE",
+          },
+        });
+
+        return createdSchedule;
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+          });
+        }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Date Format is not valid YYYY-MM-DD",
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "Something went wrong, Please try again. and report to developer.",
         });
       }
-
-      const validatedDate = isDateValid(date);
-
-      if (!validatedDate) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Requested date is invalid",
-        });
-      }
-
-      const isPackageFound = await getPackageByIdWithStatusAndCount(packageId);
-      if (!isPackageFound) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Selected Package is not found on our database.",
-        });
-      }
-      // if(isexcl)
-      //________________Validate Input ends _____________
-      // Testout the date that is recieved (UTC format.)
-      let SafelyParsedDate = new Date(ScheduleDate);
-
-      const Schedule = await db.schedule.findFirst({
-        where: {
-          AND: [
-            {
-              schedulePackage: ScheduleTime,
-            },
-            {
-              day: SafelyParsedDate,
-            },
-          ],
-        },
-      });
-
-      if (Schedule?.id) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Schedule has been already set for this date.",
-        });
-      }
-
-      const createdSchedule = await db.schedule.create({
-        data: {
-          day: SafelyParsedDate,
-          packageId,
-          schedulePackage: ScheduleTime,
-          scheduleStatus: "AVAILABLE",
-        },
-      });
-
-      return createdSchedule;
     },
   ),
+  updateSchedule: AdminProcedure.input(CompleteScheduleUpdateSchema).mutation(
+    async ({
+      ctx,
+      input: {
+        date: ScheduleDate,
+        schedule: { fromTime, packageId, scheduleTime, toTime },
+      },
+    }) => {
+      try {
+        /**
+         * Do something!
+         */
+        const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
+
+        if (!date) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Date Format is not valid YYYY-MM-DD",
+          });
+        }
+
+        const validatedDate = isDateValid(date);
+
+        if (!validatedDate) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Requested date is invalid",
+          });
+        }
+
+        const isPackageFound =
+          await getPackageByIdWithStatusAndCount(packageId);
+        if (!isPackageFound) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Selected Package is not found on our database.",
+          });
+        }
+        // if(isexcl)
+        //________________Validate Input ends _____________
+        // Testout the date that is recieved (UTC format.)
+        let SafelyParsedDate = new Date(ScheduleDate);
+        const Schedule = await db.schedule.findFirst({
+          where: {
+            AND: [
+              {
+                schedulePackage: scheduleTime,
+              },
+              {
+                day: SafelyParsedDate,
+              },
+            ],
+          },
+        });
+        console.log(Schedule);
+        return { message: "updated Sucessfully" };
+      } catch (error) {
+        console.log(error);
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong!",
+        });
+      }
+    },
+  ),
+  clearSchedule: AdminProcedure.mutation(async () => {
+    try {
+      if (isProd) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "You are on production cannot cascade all the schedules.",
+        });
+      }
+      const clearSchedule = await db.schedule.deleteMany({});
+      console.log(clearSchedule);
+      return true;
+    } catch (error) {
+      console.log(error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "SOmehting went wrong",
+      });
+    }
+  }),
 });

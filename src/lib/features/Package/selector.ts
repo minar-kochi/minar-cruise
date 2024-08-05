@@ -20,3 +20,16 @@ export const IsIdExclusive = createSelector(
     return true;
   },
 );
+
+export const SelectPackageById = createSelector(
+  [
+    Packages,
+    (__, id: string) => id,
+    (_, __, type: TKeyOrganizedScheduleData) => type,
+  ],
+  (packages, id, type) => {
+    const ExclusivePackage = packages[type].find((item) => item.id === id);
+    if (!ExclusivePackage) return null;
+    return ExclusivePackage;
+  },
+);

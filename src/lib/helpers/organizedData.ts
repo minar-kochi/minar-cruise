@@ -52,22 +52,26 @@ export function placeOrganizedDataIntoPackageIdAndScheduleTime(
   return {
     breakfast: {
       id: OrgData.breakfast?.packageId,
-      time: OrgData.breakfast?.time,
+      fromTime: OrgData.breakfast?.fromTime,
+      toTime: OrgData.breakfast?.toTime,
       scheduleTime: "BREAKFAST",
     },
     custom: {
       id: OrgData.custom?.packageId,
-      time: OrgData.breakfast?.time,
+      fromTime: OrgData.custom?.fromTime,
+      toTime: OrgData.custom?.toTime,
       scheduleTime: "CUSTOM",
     },
     dinner: {
       id: OrgData.dinner?.packageId,
-      time: OrgData.breakfast?.time,
+      fromTime: OrgData.dinner?.fromTime,
+      toTime: OrgData.custom?.toTime,
       scheduleTime: "DINNER",
     },
     lunch: {
       id: OrgData.lunch?.packageId,
-      time: OrgData.breakfast?.time,
+      fromTime: OrgData.breakfast?.fromTime,
+      toTime: OrgData.breakfast?.scheduleStatus,
       scheduleTime: "LUNCH",
     },
   };
@@ -79,6 +83,5 @@ export function convertScheduleDataDateToDateString(
   return {
     ...Schedule,
     day: RemoveTimeStampFromDate(Schedule.day),
-    time: Schedule.time ? RemoveTimeStampFromDate(Schedule.time) : null,
   };
 }

@@ -36,13 +36,15 @@ model Booking {
   paymentsId String
   payment    Payments @relation(fields: [paymentsId], references: [id])
 
-  scheduleId String
-  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
+
+  scheduleId String
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -76,13 +78,13 @@ enum SCHEDULE_STATUS {
 model Schedule {
   id              String          @id @default(cuid())
   day             DateTime        @db.Date()
-  time            DateTime?       @db.Time() //will be provided at a time.
+  fromTime        String?
+  toTime          String?
+  packageId       String?
   schedulePackage SCHEDULED_TIME
   scheduleStatus  SCHEDULE_STATUS
-
-  packageId String?
-  Package   Package?  @relation(fields: [packageId], references: [id])
-  Booking   Booking[]
+  Package         Package?        @relation(fields: [packageId], references: [id])
+  Booking         Booking[]
 }
 
 model Amenities {
