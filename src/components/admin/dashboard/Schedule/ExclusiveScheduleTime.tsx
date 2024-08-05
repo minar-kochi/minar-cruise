@@ -1,25 +1,162 @@
 import { Input } from "@/components/ui/input";
-import { useAppSelector } from "@/hooks/adminStore/reducer";
+import { Label } from "@/components/ui/label";
+import { differenceInMinutes } from "date-fns";
+import {} from "moment";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { IsIdExclusive } from "@/lib/features/Package/selector";
-import { DefaultMergedSchedule } from "@/lib/features/schedule/selector";
+import {
+  currentScheduleTimer,
+  DefaultMergedSchedule,
+  DefaultMergedScheduleTimer,
+} from "@/lib/features/schedule/selector";
+import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
 import { TKeyOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
-import { TScheduleSelector } from "@/Types/type";
-import React from "react";
+import { TkeyDbTime, TScheduleSelector, TTimeCycle } from "@/Types/type";
+import React, { useEffect, useState } from "react";
+import HourSelector from "./HourSelector";
+import MinuteSelector from "./minuteSelector";
+import TimeCycleSelector from "./TimeCycleSelector";
+import toast from "react-hot-toast";
+import { isTimeCycleValid, mergeTimeCycle, splitTimeColon } from "@/lib/utils";
+import { setUpdatableScheduleTime } from "@/lib/features/schedule/ScheduleSlice";
 
+export type TTimeSelector = {
+  onChange: (
+    event: TkeyDbTime,
+    param: Partial<TTimeCycle>,
+    target: keyof TTimeCycle,
+  ) => void;
+  eventType: TkeyDbTime;
+};
 export default function ExclusiveScheduleTime({ type }: TScheduleSelector) {
+  const dispatch = useAppDispatch();
   const defaultSelect = useAppSelector((state) =>
     DefaultMergedSchedule(state, type),
   );
-  const { updatedDateSchedule, currentDateSchedule } = useAppSelector(
-    (state) => state.schedule,
+  const defaultSelectTimer = useAppSelector((state) =>
+    currentScheduleTimer(state, type),
   );
+
+  const [fromTime, setFromTime] = useState<TTimeCycle>({
+    hours: defaultSelectTimer?.value.fromTime.hours ?? "",
+    min: defaultSelectTimer?.value.fromTime.min ?? "",
+    Cycle: defaultSelectTimer?.value.fromTime.Cycle ?? "AM",
+  });
+  const [toTime, setToTime] = useState<TTimeCycle>({
+    hours: defaultSelectTimer?.value.toTime.hours ?? "",
+    min: defaultSelectTimer?.value.toTime.min ?? "",
+    Cycle: defaultSelectTimer?.value.toTime.Cycle ?? "AM",
+  });
+
+  useEffect(() => {
+    if (isTimeCycleValid(fromTime)) {
+      let parsedTime = mergeTimeCycle(fromTime);
+      if (parsedTime) {
+        dispatch(
+          setUpdatableScheduleTime({
+            eventType: "fromTime",
+            time: parsedTime,
+            type,
+          }),
+        );
+      }
+    }
+  }, [fromTime, type, dispatch]);
+
+  useEffect(() => {
+    if (isTimeCycleValid(toTime)) {
+      let parsedTime = mergeTimeCycle(toTime);
+      if (parsedTime) {
+        dispatch(
+          setUpdatableScheduleTime({
+            eventType: "toTime",
+            time: parsedTime,
+            type,
+          }),
+        );
+      }
+    }
+  }, [toTime, type, dispatch]);
+
+  function handleTimeChange(
+    event: TkeyDbTime,
+    param: Partial<TTimeCycle>,
+    target: keyof TTimeCycle,
+  ) {
+    if (event === "fromTime") {
+      setFromTime((prev) => {
+        return {
+          ...prev,
+          [target]: param[target],
+        };
+      });
+    }
+    if (event === "toTime") {
+      setToTime((prev) => {
+        return {
+          ...prev,
+          [target]: param[target],
+        };
+      });
+    }
+  }
 
   const isExclusive = useAppSelector((state) =>
     IsIdExclusive(state, defaultSelect.packageId),
   );
+
   if (!isExclusive) return null;
 
   return (
-    <Input type="time" value={currentDateSchedule[type]?.time ?? undefined} />
+    <div className="">
+      <div className="indent-1">
+        <Label htmlFor="from-date-id">From:</Label>
+        <div className="flex w-full  gap-x-4">
+          <HourSelector
+            type={type}
+            eventType="fromTime"
+            onChange={handleTimeChange}
+          />
+          <MinuteSelector
+            type={type}
+            eventType="fromTime"
+            onChange={handleTimeChange}
+          />
+          <TimeCycleSelector
+            type={type}
+            eventType="fromTime"
+            onChange={handleTimeChange}
+          />
+        </div>
+      </div>
+      <div className="indent-1">
+        <Label htmlFor="from-date-id">To:</Label>
+        <div className="flex w-full  gap-x-4">
+          <HourSelector
+            type={type}
+            eventType="toTime"
+            onChange={handleTimeChange}
+          />
+          <MinuteSelector
+            type={type}
+            eventType="toTime"
+            onChange={handleTimeChange}
+          />
+          <TimeCycleSelector
+            type={type}
+            eventType="toTime"
+            onChange={handleTimeChange}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

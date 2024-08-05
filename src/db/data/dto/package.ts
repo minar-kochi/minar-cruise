@@ -5,7 +5,7 @@ import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { isProd } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
-import { unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { afterEach } from "node:test";
 
 export async function getPackageNavigation(): Promise<

@@ -28,7 +28,7 @@ const HeadingCard = async ({
           <h2 className="font-bold text-4xl">{title}</h2>
           <div className="inline-flex space-x-3">
             <Hourglass color="red" strokeWidth={2} size={30} />
-            {/* TODO: fix seeding time data in data.ts file
+            {/* @TODO : fix seeding time data in data.ts file
                 fix how to decode time formate here
             */}
             <p className="my-auto">{"time"}</p>

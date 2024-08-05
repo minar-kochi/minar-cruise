@@ -6,19 +6,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
-import {
-  setUpdatableScheduleDate,
-  setUpdatedDateSchedule,
-} from "@/lib/features/schedule/ScheduleSlice";
+import { setUpdatableScheduleDate } from "@/lib/features/schedule/ScheduleSlice";
 import { DefaultMergedSchedule } from "@/lib/features/schedule/selector";
 import { cn } from "@/lib/utils";
 import { TScheduleSelector } from "@/Types/type";
-import { Check } from "lucide-react";
 export default function ScheduleSelect({ type }: TScheduleSelector) {
   const { OrganizedPackage } = useAppSelector((state) => state.packages);
-  const { currentDateSchedule, updatedDateSchedule } = useAppSelector(
-    (state) => state.schedule,
-  );
+  const { currentDateSchedule } = useAppSelector((state) => state.schedule);
   const defaultSelect = useAppSelector((state) =>
     DefaultMergedSchedule(state, type),
   );

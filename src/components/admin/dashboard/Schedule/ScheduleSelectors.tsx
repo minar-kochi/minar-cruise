@@ -1,9 +1,5 @@
 import React from "react";
 import ScheduleSelector from "./ScheduleSelector";
-import { trpc } from "@/app/_trpc/client";
-import { useAppSelector } from "@/hooks/adminStore/reducer";
-import ScheduleSelectorLoader from "./Loader/ScheduleSelectorLoader";
-import { getSchedulesByDateOrNow } from "@/db/data/dto/schedule";
 
 export default function ScheduleSelectors() {
   /**
@@ -24,26 +20,42 @@ export default function ScheduleSelectors() {
   // }
   return (
     <div>
-      <ScheduleSelector
-        label="Breakfast"
-        key={`ScheduleSelector-type-breakfast`}
-        type="breakfast"
-      />
-      <ScheduleSelector
-        label="Lunch"
-        key={`ScheduleSelector-type-lunch`}
-        type="lunch"
-      />
-      <ScheduleSelector
-        label="Dinner"
-        key={`ScheduleSelector-type-dinner`}
-        type="dinner"
-      />
-      <ScheduleSelector
-        label="Custom"
-        key={`ScheduleSelector-type-custom`}
-        type="custom"
-      />
+      <div className="border-y   py-2">
+        <div className="">
+          <ScheduleSelector
+            label="Breakfast"
+            key={`ScheduleSelector-type-breakfast`}
+            type="breakfast"
+          />
+        </div>
+      </div>{" "}
+      <div className="border-b   py-2">
+        <div className="">
+          <ScheduleSelector
+            label="Lunch"
+            key={`ScheduleSelector-type-lunch`}
+            type="lunch"
+          />{" "}
+        </div>
+      </div>
+      <div className="border-b   py-2">
+        <div className="">
+          <ScheduleSelector
+            label="Dinner"
+            key={`ScheduleSelector-type-dinner`}
+            type="dinner"
+          />{" "}
+        </div>
+      </div>
+      <div className="border-b   py-2">
+        <div className="">
+          <ScheduleSelector
+            label="Custom"
+            key={`ScheduleSelector-type-custom`}
+            type="custom"
+          />{" "}
+        </div>
+      </div>
     </div>
   );
 }

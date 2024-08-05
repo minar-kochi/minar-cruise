@@ -5,6 +5,7 @@ import React from "react";
 import ScheduleSelect from "./ScheduleSelect";
 import { TScheduleSelector } from "@/Types/type";
 import ExclusiveScheduleTime from "./ExclusiveScheduleTime";
+import { Button } from "@/components/ui/button";
 export type TKeyOrganized = keyof TExcludedOrganizedPackageData;
 export default function ScheduleSelector({
   type,
@@ -20,11 +21,11 @@ export default function ScheduleSelector({
           key={`ScheduleSelect-select-box-type-${type}-`}
           type={type}
         />
-        <ScheduleButtonWrapper type={type} />
       </div>
       <div className="my-2">
         <ExclusiveScheduleTime type={type} />
       </div>
+      <ScheduleButtonWrapper type={type} />
     </div>
   );
 }

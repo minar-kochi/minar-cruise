@@ -1,5 +1,4 @@
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
-import { weakMapMemoize } from "reselect";
 import {
   TExcludedOrganizedUpcommingSchedule,
   TIsScheduleChange,
@@ -7,7 +6,7 @@ import {
   TOrganizedScheduleData,
   TUpdatedDateSchedulePackageId,
 } from "@/Types/Schedule/ScheduleSelect";
-import { TScheduleDataDayReplaceString } from "@/Types/type";
+import { TkeyDbTime, TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
@@ -156,6 +155,25 @@ const scheduleSlice = createSlice({
       state.updatedDateSchedule[payload.type].packageId = payload.packageId;
     },
     /**
+     * Set the Schedule Hour for specific time (fromTime / toTime)
+     * @param state
+     * @param action
+     */
+    setUpdatableScheduleTime(
+      state,
+      action: PayloadAction<{
+        type: TKeyOrganizedScheduleData;
+        time: string;
+        eventType: TkeyDbTime;
+      }>,
+    ) {
+      const {
+        payload: { time, type, eventType },
+      } = action;
+      state.updatedDateSchedule[type][eventType] = time;
+    },
+
+    /**
      * turn up incase if a schedule is set to be changed.
      * @param action
      */
@@ -176,6 +194,7 @@ export const {
   setCurrentScheduleDate,
   setUpdatedDateSchedule,
   setUpdatableScheduleDate,
+  setUpdatableScheduleTime,
   setSyncDatabaseUpdatesScheduleCreation,
 } = scheduleSlice.actions;
 

@@ -1,12 +1,18 @@
+// import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
 import { RootState } from "@/lib/store/adminStore";
+import { splitTimeColon } from "@/lib/utils";
 import { TKeyOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
+import { TTimeCycle } from "@/Types/type";
 import { createSelector } from "@reduxjs/toolkit";
 import { Fascinate } from "next/font/google";
+import toast from "react-hot-toast";
 
-export const Item = (state: RootState) => state.schedule;
+export const Schedule = (state: RootState) => state.schedule;
+export const CurrentSchedule = (state: RootState) =>
+  state.schedule.currentDateSchedule;
 
 export const UpdatedSchedule = createSelector(
-  [Item, (item, type: TKeyOrganizedScheduleData) => type],
+  [Schedule, (item, type: TKeyOrganizedScheduleData) => type],
   ({ currentDateSchedule, updatedDateSchedule }, type): boolean => {
     let currentState = updatedDateSchedule && updatedDateSchedule[type];
     let dbState = currentDateSchedule && currentDateSchedule[type];
@@ -15,15 +21,16 @@ export const UpdatedSchedule = createSelector(
   },
 );
 
-export const Merged = (state: RootState) => state.schedule;
+// export const Merged = (state: RootState) => state.schedule;
 
 export const DefaultMergedSchedule = createSelector(
-  [Merged, (_, type: TKeyOrganizedScheduleData) => type],
+  [Schedule, (_, type: TKeyOrganizedScheduleData) => type],
   (
     { currentDateSchedule, updatedDateSchedule, date },
     type,
   ): { packageId: string | null; changed: boolean } => {
     if (
+      updatedDateSchedule[type] &&
       updatedDateSchedule[type].packageId &&
       typeof updatedDateSchedule[type].packageId === "string"
     ) {
@@ -39,27 +46,83 @@ export const DefaultMergedSchedule = createSelector(
     };
   },
 );
-
-export const DefaultMergedDateTime = createSelector(
-  [Merged, (_, type: TKeyOrganizedScheduleData) => type],
+export const currentScheduleTimer = createSelector(
+  [CurrentSchedule, (_, type: TKeyOrganizedScheduleData) => type],
+  (
+    currentDateSchedule,
+    type,
+  ): {
+    changed: boolean;
+    value: {
+      fromTime: TTimeCycle;
+      toTime: TTimeCycle;
+    };
+  } | null => {
+    if (currentDateSchedule[type]) {
+      let fromTime = currentDateSchedule[type]?.fromTime;
+      let toTime = currentDateSchedule[type]?.toTime;
+      if (typeof toTime !== "string" || typeof fromTime !== "string")
+        return null;
+      const from = splitTimeColon(fromTime);
+      const to = splitTimeColon(toTime);
+      if (!from || !to) return null;
+      return {
+        value: {
+          fromTime: from,
+          toTime: to,
+        },
+        changed: false,
+      };
+    }
+    return null;
+  },
+);
+export const DefaultMergedScheduleTimer = createSelector(
+  [Schedule, (_, type: TKeyOrganizedScheduleData) => type],
   (
     { currentDateSchedule, updatedDateSchedule, date },
     type,
-  ): { packageId: string | null; changed: boolean; time?: string } => {
-    if (
-      updatedDateSchedule[type].packageId &&
-      typeof updatedDateSchedule[type].packageId === "string"
-    ) {
+  ): {
+    changed: boolean;
+    value: {
+      fromTime: TTimeCycle;
+      toTime: TTimeCycle;
+    };
+  } | null => {
+    if (currentDateSchedule[type]) {
+      let fromTime = currentDateSchedule[type]?.fromTime;
+      let toTime = currentDateSchedule[type]?.toTime;
+      if (typeof toTime !== "string" || typeof fromTime !== "string")
+        return null;
+      const from = splitTimeColon(fromTime);
+      const to = splitTimeColon(toTime);
+      if (!from || !to) return null;
       return {
-        packageId: updatedDateSchedule[type].packageId,
-        changed: true,
+        value: {
+          fromTime: from,
+          toTime: to,
+        },
+        changed: false,
+      };
+    }
+    if (updatedDateSchedule[type].packageId) {
+      let fromTime = updatedDateSchedule[type]?.fromTime;
+      let toTime = updatedDateSchedule[type]?.toTime;
+      if (typeof toTime !== "string" || typeof fromTime !== "string")
+        return null;
+      const from = splitTimeColon(fromTime);
+      const to = splitTimeColon(toTime);
+      if (!from || !to) return null;
+      return {
+        value: {
+          fromTime: from,
+          toTime: to,
+        },
+        changed: false,
       };
     }
 
-    return {
-      packageId: currentDateSchedule[type]?.packageId ?? null,
-      changed: true,
-    };
+    return null;
   },
 );
 /**
