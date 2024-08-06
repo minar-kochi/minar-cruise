@@ -17,6 +17,7 @@ import {
 import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
+import { booking } from "./booking";
 
 export const schedule = router({
   /**
@@ -26,6 +27,7 @@ export const schedule = router({
    * if not passed in any then it will get the Current Date and fetch it.
    *
    *  */
+  booking,
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
     async ({ input: { ScheduleDate } }) => {
       // string that will receive is in the format YYYY-MM-DD
