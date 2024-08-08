@@ -6,11 +6,11 @@ export interface TInputLabel {
   errorMessage?: string | null;
   label?: string;
   InputProps?: InputProps;
-  containerClassName?: string
+  containerClassName?: string;
 }
 
 const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
-  ({ label, errorMessage, InputProps,containerClassName, ...props }, ref) => {
+  ({ label, errorMessage, InputProps, containerClassName, ...props }, ref) => {
     return (
       <div className={cn("space-y-2 py-2", containerClassName)}>
         <label

@@ -6,7 +6,7 @@ interface IBookOfflineScheduleProps {
     scheduleId: string;
   };
 }
-export default function BookOfflineSchedule({
+export default function OfflineBooking({
   params: { scheduleId },
 }: IBookOfflineScheduleProps) {
   if (!scheduleId) {
@@ -15,8 +15,8 @@ export default function BookOfflineSchedule({
   }
   return (
     <div>
-        {/* add type as ADD_BOOING */}
-      <OfflineBookingForm  scheduleId={scheduleId}/>
+      {/* add type as ADD_BOOING */}
+      <OfflineBookingForm scheduleId={scheduleId} type="ADD" />
     </div>
   );
 }

@@ -21,6 +21,7 @@ import { revalidateTag } from "next/cache";
 import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
 import { Suspense } from "react";
 import InitialStateDispatcher from "@/wrapper/admin/Schedule/initial-state-dispatcher";
+import CustomAlertDialog from "@/components/custom/CustomAlertDialog";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default async function RootLayout({
           <MenuBar />
           <Header>
             <Toaster />
+            {/* <CustomAlertDialog alertProps="gte"/> */}
             <Providers>
               <Suspense fallback={"Loading.... stuff"}>
                 <InitialStateDispatcher>{children}</InitialStateDispatcher>

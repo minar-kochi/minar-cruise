@@ -4,7 +4,7 @@ import { DetailedHTMLProps, HTMLAttributes } from "react";
 interface ICustomCard {
   className?: string;
   label?: string;
-  props?: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>
+  props?: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
 }
 
 export default function CustomCard({ label, className, ...rest }: ICustomCard) {

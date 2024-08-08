@@ -101,14 +101,13 @@ export type TExcludedOrganizedUpcommingSchedule = Exclude<
   null
 >;
 
-export type TScheduleWithBookingCountWithId =  {
-  id: string
-  day: string
-  schedulePackage: string
-  scheduleStatus: string
-  Booking:  {
-    id: string
-  }[],
-  totalBookings: number
-}[]
-
+export type TScheduleWithBookingCountWithId = {
+  id: string;
+  day: string;
+  schedulePackage: string;
+  scheduleStatus: string;
+  Booking: {
+    id: string;
+  }[];
+  totalBookings: number;
+}[];

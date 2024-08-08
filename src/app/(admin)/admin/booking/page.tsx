@@ -1,29 +1,15 @@
-"use client";
+import AllSchedules from "@/components/admin/booking/AllSchedules";
 
-import CustomCard from "@/components/custom/CustomCard";
-import { useAppSelector } from "@/hooks/adminStore/reducer";
-import Link from "next/link";
-
-const AdminBookingPage = () => {
-  const data = useAppSelector((state) => state.schedule.date);
+export default function page() {
   return (
-    <div className="w-full  min-h-[calc(100dvh-4rem)] bg-stone-800">
-      <h1 className="font-bold text-3xl py-10  flex justify-center ">
-        Welcome to Booking Section
-      </h1>
-      <div className="p-10 flex flex-wrap ">
-        <Link href={"/admin/booking/offlineBooking"}>
-          <CustomCard label="Add Offline Booking" className="" />
-        </Link>
-        <Link href={"/admin/booking/updateBooking"}>
-          <CustomCard label="Update Booking" className="" />
-        </Link>
-        <Link href={"/admin/booking/changeBooking"}>
-          <CustomCard label="Change Booking" className="" />
-        </Link>
+    <div className="">
+      <h2 className="text-xl md:text-3xl font-bold border  flex justify-center py-8 border-b">
+        Select a schedule
+      </h2>
+      <div className="">
+        {/* //add something else */}
+        <AllSchedules />
       </div>
     </div>
   );
-};
-
-export default AdminBookingPage;
+}

@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { TScheduleBooking } from "@/db/types/TBookingSchedule";
 import { isProd } from "@/lib/utils";
 import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
 import {
@@ -157,52 +158,167 @@ export type TGetAllSchedules = Awaited<ReturnType<typeof getAllSchedules>>;
 
 export const getAllSchedules = async () => {
   try {
-    // const schedules = await db.schedule.findMany({
-    //   where: {
-    //     day: {
-    //       gte: new Date(Date.now()),
-    //     },
-    //   },
-    //   select: {
-    //     Booking: {
-    //       select: {
-    //         id: true,
-    //       },
-    //     },
-    //     day: true,
-    //     schedulePackage: true,
-    //     scheduleStatus: true,
-    //     id: true,
-    //   },
-    // });
-    const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+    const schedules = await db.schedule.findMany({
+      where: {
+        day: {
+          gte: new Date(Date.now()),
+        },
+      },
+      select: {
+        id: true,
+        day: true,
+        toTime: true,
+        fromTime: true,
+        schedulePackage: true,
+        scheduleStatus: true,
+        Package: {
+          select: {
+            title: true,
+          },
+        },
+        Booking: {
+          select: {
+            id: true,
+            numOfAdults: true,
+            numOfBaby: true,
+            numOfChildren: true,
+          },
+        },
+      },
+    });
 
-    const schedules : TScheduleWithBookingCountWithId | null = await db.$queryRaw`
-        SELECT 
-          s.id,
-          s.day,
-          s."schedulePackage",
-          s."scheduleStatus",
-          json_agg(json_build_object('id', b.id)) FILTER (WHERE b.id IS NOT NULL) AS "Booking",
-          COALESCE(SUM(b."numOfChildren" + b."numOfAdults" + b."numOfBaby"), 0) AS "totalBookings"
-        FROM 
-          "Schedule" s
-        LEFT JOIN 
-          "Booking" b ON s.id = b."scheduleId"
-        WHERE 
-          s.day >= ${today}::date
-        GROUP BY 
-          s.id, s.day, s."schedulePackage", s."scheduleStatus"
-        ORDER BY
-          s.day ASC
-    `;    console.log(schedules);
-  
-    
-    if (!schedules ) return null;
+    // type TFormattedSchedules ={
+    //   fromTime: string | null;
+    //   toTime: string | null;
+    //   id: string;
+    //   day: Date;
+    //   schedulePackage: string;
+    //   scheduleStatus: string;
+    //   Package: {
+    //       id: string,
+    //       description: string
+    //   } | null;
+    //   childCount: number
+    //   adultCount: number
+    //   babyCount: number
+    // }[]
 
-    return schedules
+    // const formattedSchedules: TFormattedSchedules = [];
+    // for(let i = 0 ; i < schedules.length; i++){
+    //   let formattedCount = 0;
+    //   for(let j = 0; j< schedules[i].Booking.length; j++ ){
+    //     const temp = schedules[i].Booking[j].numOfAdults + schedules[i].Booking[j].numOfChildren + schedules[i].Booking[j].numOfBaby;
+    //     formattedCount += temp
+    //     j++
+    //   }
+    //   formattedSchedules.push({
+
+    //   })
+    //   i++
+    // }
+
+    if (!schedules) return null;
+    return schedules;
   } catch (error) {
     console.log("failed to fetch all schedules", error);
     return null;
   }
 };
+
+export const getSchedulesAndBookingByDate = async () => {
+  const schedules = await db.schedule.findMany({
+    where: {
+      day: {
+        gte: new Date(Date.now()),
+      },
+    },
+    select: {
+      day: true,
+      toTime: true,
+      schedulePackage: true,
+      scheduleStatus: true,
+      id: true,
+
+      fromTime: true,
+      Package: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+      Booking: {
+        select: {
+          numOfAdults: true,
+          numOfBaby: true,
+          numOfChildren: true,
+        },
+      },
+    },
+  });
+  if (!schedules) {
+    return null;
+  }
+  const formattedData: TScheduleBooking[] = [];
+  for (const schedule of schedules) {
+    let bookedSeats = 0;
+    let { Booking, ...rest } = schedule;
+    Booking.forEach((value) => {
+      bookedSeats = value.numOfAdults + value.numOfBaby + value.numOfChildren;
+    });
+    formattedData.push({
+      ...rest,
+      bookedSeats: bookedSeats,
+    });
+  }
+  return formattedData;
+};
+export type TGetBookingsByScheduleId = Awaited<
+  ReturnType<typeof getBookingsByScheduleId>
+>;
+
+export async function getBookingsByScheduleId(id: string) {
+  try {
+    const data = await db.booking.findMany({
+      where: {
+        scheduleId: id,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        description: true,
+        numOfAdults: true,
+        numOfBaby: true,
+        numOfChildren: true,
+        user: {
+          select: {
+            id: true,
+            contact: true,
+            email: true,
+            name: true,
+          },
+        },
+        schedule: {
+          select: {
+            schedulePackage: true,
+          },
+        },
+        payment: {
+          select: {
+            advancePaid: true,
+            discount: true,
+            totalAmount: true,
+            modeOfPayment: true,
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.log("failed to fetch all booking of specific id", error);
+    return null;
+  }
+}
