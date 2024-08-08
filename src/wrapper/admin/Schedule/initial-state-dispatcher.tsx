@@ -25,6 +25,7 @@ export default async function InitialStateDispatcher({
   );
 
   const schedules = await getSchedulesByDateOrNow(date);
+
   const initialSchedule =
     schedules && schedules.map(convertScheduleDataDateToDateString);
   let UpcommingSchedule: TgetUpcommingScheduleDates = data ?? {

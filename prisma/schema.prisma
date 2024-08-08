@@ -14,26 +14,44 @@ datasource db {
   directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
+// add description 
+//
+model Payments {
+  id            String    @id @default(cuid())
+  totalAmount   Int
+  advancePaid   Int
+  discount      Int
+  modeOfPayment String
+  Booking       Booking[]
+}
+
 model Booking {
-  id            String   @id @default(cuid())
+  id            String @id @default(cuid())
   numOfChildren Int
   numOfAdults   Int
-  createdAt     DateTime @default(now())
+  numOfBaby     Int
+  description   String @db.Text()
+
+  //Change this to schedule (Schedules are tied up with the Booking.)
+  paymentsId String
+  payment    Payments @relation(fields: [paymentsId], references: [id])
+
+
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
+  createdAt DateTime @default(now())
+
   scheduleId String
   schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-  Package    Package? @relation(fields: [packageId], references: [id])
-  packageId  String?
 }
 
 model User {
   id       String    @id @default(cuid())
   name     String
-  email    String    @unique
-  contact  String
+  email    String?
+  contact  String?
   bookings Booking[]
 }
 
@@ -99,7 +117,6 @@ model Package {
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id])
   packageCategory PACKAGE_CATEGORY
-  Booking         Booking[]
   Schedule        Schedule[]
   packageImage    PackageImage[]
 }

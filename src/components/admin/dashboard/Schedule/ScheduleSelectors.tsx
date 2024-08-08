@@ -7,7 +7,6 @@ export default function ScheduleSelectors() {
    * Understand a bit more about react query and TRPC and impliment a Loading state.
    *
    */
-
   // const date = useAppSelector((state) => state.schedule.date);
   // if (isLoading || isFetching) {
   //   return (

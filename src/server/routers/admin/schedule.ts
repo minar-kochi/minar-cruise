@@ -20,6 +20,7 @@ import {
 import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
+import { booking } from "./booking";
 import { z } from "zod";
 
 export const schedule = router({
@@ -30,6 +31,7 @@ export const schedule = router({
    * if not passed in any then it will get the Current Date and fetch it.
    *
    *  */
+  booking,
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
     async ({ input: { ScheduleDate } }) => {
       // string that will receive is in the format YYYY-MM-DD
@@ -280,7 +282,6 @@ export const schedule = router({
             ],
           },
         });
-        console.log(Schedule);
         return { message: "updated Sucessfully" };
       } catch (error) {
         console.log(error);
@@ -303,7 +304,6 @@ export const schedule = router({
         });
       }
       const clearSchedule = await db.schedule.deleteMany({});
-      console.log(clearSchedule);
       return true;
     } catch (error) {
       console.log(error);

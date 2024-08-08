@@ -21,7 +21,7 @@ import { revalidateTag } from "next/cache";
 import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
 import { Suspense } from "react";
 import InitialStateDispatcher from "@/wrapper/admin/Schedule/initial-state-dispatcher";
-import { Skeleton } from "@/components/ui/skeleton";
+import CustomAlertDialog from "@/components/custom/CustomAlertDialog";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -41,6 +41,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const packages = await getOrganizedPackages();
+  if (!packages) return null;
   return (
     <html lang="en">
       <body
@@ -53,6 +55,7 @@ export default async function RootLayout({
           <MenuBar />
           <Header>
             <Toaster />
+            {/* <CustomAlertDialog alertProps="gte"/> */}
             <Providers>
               {/* @TODO [ neil ] Add proper loading state */}
               <Suspense fallback={<Skeleton className="h-96 w-full" />}>
