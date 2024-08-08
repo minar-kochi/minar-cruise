@@ -24,23 +24,7 @@ import { Schedule } from "@prisma/client";
 import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { trpc } from "@/app/_trpc/client";
 
-export default function ScheduleBar({
-  upCommingSchedules,
-  initialSchedule,
-  initialDate,
-}: {
-  initialDate: string;
-  initialSchedule: TScheduleDataDayReplaceString[] | null;
-  upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
-}) {
-  const store = useAppStore();
-  const initialized = useRef(false);
-  if (!initialized.current) {
-    store.dispatch(setInitialOrganizedScheduleDates(upCommingSchedules));
-    store.dispatch(setCurrentScheduleDate(initialSchedule));
-    store.dispatch(setDate(initialDate));
-    initialized.current = true;
-  }
+export default function ScheduleBar() {
   const { mutate: deleteSchedules } = trpc.admin.clearSchedule.useMutation({
     onSuccess(data, variables, context) {
       toast.success("Cleared Database");
@@ -63,7 +47,7 @@ export default function ScheduleBar({
           <Button
             className="w-full"
             onClick={() => {
-              deleteSchedules();
+              // deleteSc3hedules();
             }}
           >
             delete Schedule

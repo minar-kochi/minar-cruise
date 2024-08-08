@@ -1,6 +1,5 @@
 import { trpc } from "@/app/_trpc/client";
 import { Button, buttonVariants } from "@/components/ui/button";
-
 import {
   Dialog,
   DialogContent,
@@ -9,30 +8,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-import {
-  setCurrentScheduleDate,
-  setSyncDatabaseUpdatesScheduleCreation,
-} from "@/lib/features/schedule/ScheduleSlice";
-import {
-  cn,
-  mergeTimeCycle,
-  RemoveTimeStampFromDate,
-  sleep,
-  splitTimeColon,
-} from "@/lib/utils";
+import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
+import { cn, RemoveTimeStampFromDate, splitTimeColon } from "@/lib/utils";
 import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
 import { TScheduleSelector } from "@/Types/type";
 import { format } from "date-fns";
-import { Check, Loader2 } from "lucide-react";
-import React, { useEffect, useRef } from "react";
+import { Check } from "lucide-react";
+import React from "react";
 import toast from "react-hot-toast";
 import { SelectPackageById } from "@/lib/features/Package/selector";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
-import moment from "moment";
 
 export default function ScheduleAddButton({ type }: TScheduleSelector) {
-  const { invalidate, reset } = trpc.useUtils().admin.getSchedulesByDateOrNow;
+  const { invalidate } = trpc.useUtils().admin.getSchedulesByDateOrNow;
   const { updatedDateSchedule, date, currentDateSchedule } = useAppSelector(
     (state) => state.schedule,
   );
@@ -49,12 +37,14 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
           { duration: 3000 },
         );
       },
-      async onSuccess(data, variables, context) {
+      async onSuccess(data) {
         toast.dismiss();
-        await invalidate({
-          ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
-        });
-        dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
+        if (data) {
+          await invalidate({
+            ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
+          });
+          dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
+        }
         toast.success("Schedule set successfully ");
       },
       onError(error, variables, context) {
@@ -118,9 +108,6 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
       return toast.error(`Something went wrong!. Please try again.`);
     }
   }
-  const handleFuc = () => {
-    alert("Hello dude!");
-  };
 
   return (
     <Dialog>

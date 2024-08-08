@@ -63,6 +63,17 @@ export type TgetUpcommingScheduleDates = {
   custom: string[];
 };
 
+export const getManySchedulesAndTotalBookingCount = async () => {
+  const schedules = await db.schedule.findMany({
+    where: {
+      day: {
+        gte: new Date(Date.now()),
+      },
+    },
+    select: {},
+  });
+};
+
 export const getUpcommingScheduleDates = async () => {
   try {
     const data = await db.schedule.findMany({

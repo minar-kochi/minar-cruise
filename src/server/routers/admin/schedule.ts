@@ -1,12 +1,15 @@
+import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { defaultEmptyTrigger } from "@/constants/data/timer";
 import { db } from "@/db";
 import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
 import {
   isDateValid,
   isProd,
+  isValidMergeTimeCycle,
   mergeTimeCycle,
   parseDateFormatYYYMMDDToNumber,
   RemoveTimeStampFromDate,
+  sleep,
 } from "@/lib/utils";
 import {
   CompleteScheduleUpdateSchema,
@@ -17,6 +20,7 @@ import {
 import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const schedule = router({
   /**
@@ -65,6 +69,52 @@ export const schedule = router({
       }
     },
   ),
+  getSchedulesInfinity: AdminProcedure.input(
+    z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(),
+    }),
+  ).query(async ({ ctx, input }) => {
+    await sleep(2000)
+    const { cursor } = input;
+    const limit = input.limit ?? INFINITE_QUERY_LIMIT;
+
+    const data = await db.schedule.findMany({
+      select: {
+        day: true,
+        fromTime: true,
+        id: true,
+        packageId: true,
+        schedulePackage: true,
+        scheduleStatus: true,
+        toTime: true,
+        Package: {
+          select: {
+            title: true,
+          },
+        },
+      },
+      where: {
+        day: {
+          gte: new Date(Date.now()),
+        },
+      },
+      cursor: cursor ? { id: cursor } : undefined,
+      take: limit + 1,
+      orderBy: {
+        day: "asc",
+      },
+    });
+    let nextCursor: typeof cursor | undefined = undefined;
+    if (data.length > limit) {
+      const nextItem = data.pop();
+      nextCursor = nextItem?.id;
+    }
+    return {
+      response: data,
+      nextCursor,
+    };
+  }),
   // getUpcommingScheduleDates: AdminProcedure.input().query()
   createNewSchedule: AdminProcedure.input(
     ScheduleCreateSchema.required({
@@ -115,13 +165,15 @@ export const schedule = router({
         //________________Validate Input ends _____________
         // Testout the date that is recieved (UTC format.)
         let SafelyParsedDate = new Date(ScheduleDate);
-        let fromTime =
+        let fromTimeObj =
           mergeTimeCycle(ScheduleDateTime?.fromTime ?? defaultEmptyTrigger) ??
           null;
 
-        let toTime =
+        let toTimeObjParsed =
           mergeTimeCycle(ScheduleDateTime?.toTime ?? defaultEmptyTrigger) ??
           null;
+        let toTime = isValidMergeTimeCycle(toTimeObjParsed ?? "");
+        let fromTime = isValidMergeTimeCycle(fromTimeObj ?? "");
         if (isStatusCustom(ScheduleTime) && (!toTime || !fromTime)) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -147,13 +199,12 @@ export const schedule = router({
             message: "Schedule has been already set for this date.",
           });
         }
-
         const createdSchedule = await db.schedule.create({
           data: {
             day: SafelyParsedDate,
             packageId,
-            fromTime,
-            toTime,
+            fromTime: fromTime ? fromTimeObj : null,
+            toTime: toTime ? toTimeObjParsed : null,
             schedulePackage: ScheduleTime,
             scheduleStatus: "AVAILABLE",
           },

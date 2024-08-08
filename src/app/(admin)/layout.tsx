@@ -21,6 +21,7 @@ import { revalidateTag } from "next/cache";
 import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
 import { Suspense } from "react";
 import InitialStateDispatcher from "@/wrapper/admin/Schedule/initial-state-dispatcher";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -53,7 +54,8 @@ export default async function RootLayout({
           <Header>
             <Toaster />
             <Providers>
-              <Suspense fallback={"Loading.... stuff"}>
+              {/* @TODO [ neil ] Add proper loading state */}
+              <Suspense fallback={<Skeleton className="h-96 w-full" />}>
                 <InitialStateDispatcher>{children}</InitialStateDispatcher>
               </Suspense>
             </Providers>

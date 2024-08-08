@@ -35,7 +35,6 @@ export default function StoreProvider({
     );
     storeRef.current.dispatch(setCurrentScheduleDate(initialSchedule));
     storeRef.current.dispatch(setDate(initialDate));
-    storeRef.current.dispatch(setDate(date));
     if (Packages) {
       storeRef.current.dispatch(setOrganizedPackage(Packages));
     }

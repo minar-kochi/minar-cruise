@@ -30,6 +30,7 @@ export type TScheduleState = {
    * Current date schedule that is synced with database. (do not change is value.) but you can sync it with database.
    */
   currentDateSchedule: TOrganizedScheduleData;
+  ScheduleDataRaw: TScheduleDataDayReplaceString[] | [];
   /**
    * Locally Store and Changable Date schedule.
    */

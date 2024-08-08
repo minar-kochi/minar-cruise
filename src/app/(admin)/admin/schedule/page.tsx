@@ -1,7 +1,10 @@
+"use client";
 import { DataTableDemo } from "@/components/admin/dashboard/Schedule/ScheduleTable";
 import { Suspense } from "react";
 import ScheduleBarWrapper from "@/container/admin/schedule/ScheduleBarWrapper";
 import ScheduleSelectorLoader from "@/components/admin/dashboard/Schedule/Loader/ScheduleSelectorLoader";
+import ScheduleTable from "@/components/admin/dashboard/Schedule/scheduleTable/schedule-table";
+import { trpc } from "@/app/_trpc/client";
 
 export default async function ScheduleAdminPage() {
   return (
@@ -13,9 +16,7 @@ export default async function ScheduleAdminPage() {
           </div>
 
           <div className="relative z-10">
-            <Suspense fallback={<>Loading...</>}>
-              <DataTableDemo />
-            </Suspense>
+            <ScheduleTable />
           </div>
         </div>
         <div className="min-h-[calc(100vh-4rem)] py-12 md:border-l">
