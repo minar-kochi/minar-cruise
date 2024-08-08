@@ -9,38 +9,39 @@ import {
   TOfflineBookingSchema,
 } from "@/lib/validators/offlineBookingValidator";
 import { trpc } from "@/app/_trpc/client";
-import { Toast } from "@/components/ui/toast";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
-type TOfflineBookingForm = {
-  // remove "?"  after fixing on other pages.
-  scheduleId: string;
-};
+import { TGetBookedDetails } from "@/db/data/dto/booking";
+import { useRouter } from "next/navigation";
+import { sleep } from "@/lib/utils";
 
 /**
  * accept a type prop which will be notified as update / add ENUM
- * if the type is update then show update button 
+ *
+ * if the type is update then show update button
  * abstract the button to be a independed.
- * if the type us add then show the update button
+ *
+ * if the type is UPDATE then show the update button
  * and do update button logic.
- * @returns 
+ *
+ * if the type is ADD then show the add button
+ * and do add button logic.
+ * @returns
  */
+
+type TOfflineBookingForm = {
+  // remove "?"  after fixing on other pages.
+  type: "ADD" | "UPDATE";
+  scheduleId: string;
+  // accept a booking data
+  prefillData?: TGetBookedDetails;
+};
+
 export default function OfflineBookingForm({
   scheduleId,
+  type,
+  prefillData,
 }: TOfflineBookingForm) {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<TOfflineBookingSchema>({
-    resolver: zodResolver(offlineBookingSchema),
-    defaultValues: {
-      /**allow to use the value to be included on the server send id */
-      schedule: scheduleId,
-    },
-  });
-
   const { mutate: createOfflineBooking, isPending: isLoading } =
     trpc.admin.booking.createNewOfflineBooking.useMutation({
       onMutate() {
@@ -49,25 +50,76 @@ export default function OfflineBookingForm({
       onSuccess() {
         toast.dismiss();
         reset();
+        router.push(`/admin/booking/viewBookings/${scheduleId}`);
         toast.success("Successfully added booking data");
       },
-      onError(error, variables, context) {
+      onError(error) {
         toast.dismiss();
         toast.error(error.message);
       },
-      // onError() {
-      //   toast.error("Something went wrong");
-      // },
+    });
+  const router = useRouter();
+  const { mutate: mutateUpdatedBooking, isPending: isUpdatingLoading } =
+    trpc.admin.booking.updateOfflineBooking.useMutation({
+      onMutate() {
+        toast.loading(`Adding booking data`);
+      },
+      async onSuccess(data) {
+        toast.dismiss();
+        toast.success("Successfully added booking data");
+        router.prefetch(`/admin/booking/viewBookings/${data?.scheduleId}`);
+        await sleep(2000);
+        router.push(`/admin/booking/viewBookings/${data?.scheduleId}`);
+      },
+      onError(error) {
+        toast.dismiss();
+        toast.error(error.message);
+      },
     });
 
-  const onSubmit = async (data: TOfflineBookingSchema) => {
-    try {
+  const onSubmit = (data: TOfflineBookingSchema) => {
+    if (type === "ADD") {
       createOfflineBooking(data);
-    } catch (error) {
-      toast.error("Error submitting form:");
-      console.error("Error submitting form:", error);
+      return;
     }
+    if (!prefillData?.id) {
+      toast.error("Please refresh the page, or go to correct booking id page.");
+      return;
+    }
+    if (!isDirty) {
+      toast.error("Please Change any values to be updated.");
+      return;
+    }
+    console.log("reached mutaion");
+    mutateUpdatedBooking({
+      bookingId: prefillData.id,
+      ...data,
+    });
   };
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting, isDirty },
+    reset,
+  } = useForm<TOfflineBookingSchema>({
+    resolver: zodResolver(offlineBookingSchema),
+    defaultValues: {
+      /**allow to use the value to be included on the server send id */
+      schedule: scheduleId,
+      // prefill the data that is passed
+      adultCount: prefillData?.numOfAdults,
+      childCount: prefillData?.numOfChildren,
+      description: prefillData?.description,
+      discount: prefillData?.payment.discount,
+      advanceAmount: prefillData?.payment.advancePaid,
+      babyCount: prefillData?.numOfBaby,
+      billAmount: prefillData?.payment.totalAmount,
+      paymentMode: prefillData?.payment.modeOfPayment,
+      email: prefillData?.user.email,
+      name: prefillData?.user.name,
+      phone: prefillData?.user.contact ?? undefined,
+    },
+  });
 
   return (
     // type === "ADD"
@@ -92,7 +144,7 @@ export default function OfflineBookingForm({
           errorMessage={errors.phone ? `${errors.phone.message}` : null}
         />
         <InputLabel
-          containerClassName="hidden"
+          containerClassName=""
           label="Email"
           InputProps={{
             type: "email",
@@ -103,11 +155,10 @@ export default function OfflineBookingForm({
             errors.email?.message ? `${errors.email.message}` : null
           }
         />
-        <InputLabel
-        containerClassName="hidden"
+        {/* <InputLabel
+          containerClassName="hidden"
           label="Schedule"
           InputProps={{
-            
             type: "text",
             className: "hidden",
             placeholder: "Select a schedule",
@@ -115,12 +166,11 @@ export default function OfflineBookingForm({
             ...register("schedule", {
               value: scheduleId,
             }),
-            
           }}
           errorMessage={
             errors.schedule?.message ? `${errors.schedule.message}` : null
           }
-        />
+        /> */}
         <InputLabel
           label="Adult Count"
           InputProps={{
@@ -220,16 +270,22 @@ export default function OfflineBookingForm({
         />
       </div>
       <div className="py-5">
-        <Button disabled={isSubmitting} type="submit" className="w-full">
-          {isLoading ? (
-            <>
-              <Loader2 />
-            </>
-          ) : (
-            "Add booking"
-          )}
-        </Button>
+        {type === "ADD" ? (
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isLoading ? <Loader2 /> : "Add"}
+          </Button>
+        ) : (
+          <Button type="submit" className="w-full" disabled={!isDirty}>
+            {isUpdatingLoading ? <Loader2 /> : "Update"}
+          </Button>
+        )}
       </div>
     </form>
   );
 }
+
+// const AddButton = () => {
+//   return <Button disabled={}>
+//     Add
+//   </Button>
+// }

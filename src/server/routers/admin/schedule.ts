@@ -231,7 +231,6 @@ export const schedule = router({
             ],
           },
         });
-        console.log(Schedule);
         return { message: "updated Sucessfully" };
       } catch (error) {
         console.log(error);
@@ -254,7 +253,6 @@ export const schedule = router({
         });
       }
       const clearSchedule = await db.schedule.deleteMany({});
-      console.log(clearSchedule);
       return true;
     } catch (error) {
       console.log(error);

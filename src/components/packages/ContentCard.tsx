@@ -16,7 +16,7 @@ const ContentCard = ({ className, description, amenitiesId }: TContentCard) => {
     <Bounded className={cn("", className)}>
       <div className="flex my-9">
         <article className="">
-          <MDXRemote source={description}/>
+          <MDXRemote source={description} />
           <Amenities amenitiesId={amenitiesId} />
         </article>
         {/* <div className="basis-[30%] p-2">

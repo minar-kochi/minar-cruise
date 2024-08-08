@@ -12,8 +12,9 @@ export const offlineBookingSchema = z.object({
     })
     .refine((num) => num === "" || indianPhoneRegex.test(num), {
       message: "Should be a valid Phone number, only indian number are allowed",
-    }).optional(),
-  email: z.string().email().or(z.literal('')) ,
+    })
+    .optional(),
+  email: z.string().email().or(z.literal("")),
   schedule: z.string(),
   adultCount: z
     .number({ message: "Please provide a valid number" })
@@ -37,5 +38,11 @@ export const offlineBookingSchema = z.object({
   description: z.string().min(3).max(50),
 });
 
+export const updateOfflineBookingSchema = z
+  .object({
+    bookingId: z.string(),
+  })
+  .merge(offlineBookingSchema);
 
+export type TUpdateBookingSchema = z.infer<typeof updateOfflineBookingSchema>;
 export type TOfflineBookingSchema = z.infer<typeof offlineBookingSchema>;
