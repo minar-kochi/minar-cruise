@@ -3,7 +3,7 @@ import { getManySchedulesAndTotalBookingCount } from "@/db/data/dto/schedule";
 import Link from "next/link";
 
 export default async function Admin() {
-  const data = await getManySchedulesAndTotalBookingCount()
+  const data = await getManySchedulesAndTotalBookingCount();
   return (
     <section className="">
       <h1 className="py-5 text-center font-bold">Welcome to Admin dashboard</h1>

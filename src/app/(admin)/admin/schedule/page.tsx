@@ -1,4 +1,3 @@
-"use client";
 import { DataTableDemo } from "@/components/admin/dashboard/Schedule/ScheduleTable";
 import { Suspense } from "react";
 import ScheduleBarWrapper from "@/container/admin/schedule/ScheduleBarWrapper";

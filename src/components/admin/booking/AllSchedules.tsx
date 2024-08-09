@@ -9,7 +9,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { getSchedulesAndBookingByDate } from "@/db/data/dto/schedule";
+import {
+  getManySchedulesAndTotalBookingCount,
+  getSchedulesAndBookingByDate,
+} from "@/db/data/dto/schedule";
 import CustomBookingBadge from "@/components/custom/CustomBookingBadge";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -19,9 +22,9 @@ interface IAllSchedules {
 }
 
 export default async function AllSchedules({ className }: IAllSchedules) {
-  const schedules = await getSchedulesAndBookingByDate();
+  const schedules = await getManySchedulesAndTotalBookingCount();
   if (!schedules?.length) return <>No schedules found</>;
-  console.log(schedules);
+
   return (
     <div>
       <div className="">
@@ -56,8 +59,8 @@ export default async function AllSchedules({ className }: IAllSchedules) {
                       {item.fromTime} - {item.toTime}
                     </TableCell>
                     <TableCell>{item.Package?.title}</TableCell>
-                    <TableCell>{item.bookedSeats}</TableCell>
-                    <TableCell>{150 - item.bookedSeats}</TableCell>
+                    <TableCell>{item.Booking}</TableCell>
+                    <TableCell>{150 - item.Booking}</TableCell>
                     <TableCell>
                       <Link href={`/admin/booking/viewBookings/${item.id}`}>
                         <Badge className="">

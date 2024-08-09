@@ -5,16 +5,22 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogClose,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
-import { cn, RemoveTimeStampFromDate, splitTimeColon } from "@/lib/utils";
-import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
+import {
+  cn,
+  RemoveTimeStampFromDate,
+  sleep,
+  splitTimeColon,
+} from "@/lib/utils";
+import { isStatusCustom } from "@/lib/validators/Schedules";
 import { TScheduleSelector } from "@/Types/type";
 import { format } from "date-fns";
 import { Check } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { SelectPackageById } from "@/lib/features/Package/selector";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
@@ -24,10 +30,12 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
   const { updatedDateSchedule, date, currentDateSchedule } = useAppSelector(
     (state) => state.schedule,
   );
+  const [isOpen, setIsOpen] = useState(false);
   const PackageDetails = useAppSelector((state) =>
     SelectPackageById(state, updatedDateSchedule[type].packageId, type),
   );
-
+  const { invalidate: InvalidateScheduleInfinity } =
+    trpc.useUtils().admin.getSchedulesInfinity;
   const dispatch = useAppDispatch();
   const { mutate: createNewSchedule, isPending: isLoading } =
     trpc.admin.createNewSchedule.useMutation({
@@ -36,16 +44,20 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
           `Confirming Schedule at ${format(variables.ScheduleDate, "do 'of' LLL")}`,
           { duration: 3000 },
         );
+        setIsOpen(false);
       },
       async onSuccess(data) {
         toast.dismiss();
         if (data) {
+          toast.success("Schedule set successfully ");
+          await InvalidateScheduleInfinity(undefined, {
+            type: "all",
+          });
           await invalidate({
             ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
           });
           dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
         }
-        toast.success("Schedule set successfully ");
       },
       onError(error, variables, context) {
         toast.dismiss();
@@ -110,7 +122,12 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(value) => {
+        setIsOpen(value);
+      }}
+    >
       <DialogTrigger
         className={buttonVariants({
           variant: "outline",
@@ -167,9 +184,11 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
         </DialogHeader>
         <div>
           <div className="flex gap-1">
-            <Button className="" variant={"ghost"}>
-              Cancel
-            </Button>
+            <DialogClose>
+              <Button className="" variant={"ghost"}>
+                Cancel
+              </Button>
+            </DialogClose>
             <Button
               onClick={handleCreateSchedule}
               disabled={!PackageDetails}
