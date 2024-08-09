@@ -14,6 +14,7 @@ export const initialState: Required<TScheduleState> = {
     dinner: null,
     lunch: null,
   },
+  ScheduleDataRaw: [],
   date: RemoveTimeStampFromDate(new Date(Date.now())),
   isPopOverDateOpened: false,
   isChangedUpdated: resetUpdates,

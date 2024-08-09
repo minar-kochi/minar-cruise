@@ -7,7 +7,7 @@ import {
   isStatusCustom,
   isStatusDinner,
   isStatusLunch,
-} from "@/lib/validators/ScheudulePackage";
+} from "@/lib/validators/Schedules";
 import { TScheduleWithBookingCountWithId } from "@/Types/Schedule/ScheduleSelect";
 import { Schedule } from "@prisma/client";
 
@@ -66,14 +66,39 @@ export type TgetUpcommingScheduleDates = {
 };
 
 export const getManySchedulesAndTotalBookingCount = async () => {
-  const schedules = await db.schedule.findMany({
-    where: {
-      day: {
-        gte: new Date(Date.now()),
+  try {
+    const data = await db.schedule.findMany({
+      select: {
+        id: true,
+        day: true,
+        fromTime: true,
+        schedulePackage: true,
+        scheduleStatus: true,
+        toTime: true,
+        Package: {
+          select: {
+            title: true,
+          },
+        },
+        Booking: {
+          select: {
+            totalBooking: true,
+          },
+        },
       },
-    },
-    select: {},
-  });
+    });
+
+    let scheduleBookingData = data.map((item) => ({
+      ...item,
+      Booking: item.Booking.reduce(
+        (total, booking) => total + booking.totalBooking,
+        0,
+      ),
+    }));
+    return scheduleBookingData;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const getUpcommingScheduleDates = async () => {

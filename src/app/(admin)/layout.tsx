@@ -22,6 +22,7 @@ import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
 import { Suspense } from "react";
 import InitialStateDispatcher from "@/wrapper/admin/Schedule/initial-state-dispatcher";
 import CustomAlertDialog from "@/components/custom/CustomAlertDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fontSans = FontSans({
   subsets: ["latin"],

@@ -1,4 +1,5 @@
 import { trpc } from "@/app/_trpc/client";
+import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
 import {
   offlineBookingSchema,
@@ -83,6 +84,10 @@ export const booking = router({
       });
     }
   }),
+  /**
+   * @TODO [Amjad / Muad]
+   *  -
+   */
   createNewOfflineBooking: AdminProcedure.input(offlineBookingSchema).mutation(
     async ({
       input: {
@@ -107,23 +112,50 @@ export const booking = router({
        *
        *
        */
-      // console.log(scheduleId)
       try {
+        if (!adultCount) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Couldnt find any schedule",
+          });
+        }
         const schedule = await db.schedule.findUnique({
           where: {
             id: scheduleId,
           },
         });
-        // console.log("reached 1");
         if (!schedule) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Couldnt find any schedule",
           });
         }
-        // console.log("reached 2");
+        const aggregateBooking = await db.booking.aggregate({
+          where: {
+            scheduleId: schedule.id,
+          },
+          _sum: {
+            numOfAdults: true,
+            numOfBaby: true,
+            numOfChildren: true,
+          },
+        });
 
-        // console.log("pushing booking info");
+        let AggadultCount: number = aggregateBooking._sum.numOfAdults ?? 0;
+        let AggbabyCount: number = aggregateBooking._sum.numOfBaby ?? 0;
+        let AggchildCount: number = aggregateBooking._sum.numOfChildren ?? 0;
+        let CurrentBookingTotalSeats: number =
+          adultCount + babyCount + childCount;
+        let aggregateBookingSum = AggadultCount + AggbabyCount + AggchildCount;
+
+        let sumBooking = CurrentBookingTotalSeats + aggregateBookingSum;
+
+        if (sumBooking >= MAX_BOAT_SEAT) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Booking for total seat is filled. Extra :${sumBooking - MAX_BOAT_SEAT}`,
+          });
+        }
         const data = await db.booking.create({
           data: {
             schedule: {
@@ -159,7 +191,7 @@ export const booking = router({
         }
         // console.log("completed pushing");
 
-        return data;
+        return { success: true };
       } catch (error) {
         console.log(error);
         if (error instanceof TRPCError) {

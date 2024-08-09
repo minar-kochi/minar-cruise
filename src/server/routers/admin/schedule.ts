@@ -17,11 +17,12 @@ import {
   ScheduleSchema,
   UpdatedDateScheduleSchema,
 } from "@/lib/validators/ScheduleValidtor";
-import { isStatusCustom } from "@/lib/validators/ScheudulePackage";
+import { isStatusCustom } from "@/lib/validators/Schedules";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { booking } from "./booking";
 import { z } from "zod";
+import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
 
 export const schedule = router({
   /**
@@ -77,7 +78,7 @@ export const schedule = router({
       cursor: z.string().nullish(),
     }),
   ).query(async ({ ctx, input }) => {
-    await sleep(2000)
+    await sleep(2000);
     const { cursor } = input;
     const limit = input.limit ?? INFINITE_QUERY_LIMIT;
 
@@ -164,6 +165,7 @@ export const schedule = router({
             message: "Selected Package is not found on our database.",
           });
         }
+
         //________________Validate Input ends _____________
         // Testout the date that is recieved (UTC format.)
         let SafelyParsedDate = new Date(ScheduleDate);
@@ -194,13 +196,17 @@ export const schedule = router({
             ],
           },
         });
-
         if (Schedule?.id) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Schedule has been already set for this date.",
           });
         }
+        let scheduleStatus = ShouldStatusBeAvaiablePublicWithPackage({
+          packageCategory: isPackageFound.packageCategory,
+          scheduleTime: ScheduleTime,
+        });
+
         const createdSchedule = await db.schedule.create({
           data: {
             day: SafelyParsedDate,
@@ -208,7 +214,7 @@ export const schedule = router({
             fromTime: fromTime ? fromTimeObj : null,
             toTime: toTime ? toTimeObjParsed : null,
             schedulePackage: ScheduleTime,
-            scheduleStatus: "AVAILABLE",
+            scheduleStatus: scheduleStatus,
           },
         });
 
@@ -228,6 +234,7 @@ export const schedule = router({
       }
     },
   ),
+  /** @TODO incomplete */
   updateSchedule: AdminProcedure.input(CompleteScheduleUpdateSchema).mutation(
     async ({
       ctx,

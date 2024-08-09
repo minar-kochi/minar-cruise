@@ -7,7 +7,7 @@ import {
   isStatusBreakfast,
   isStatusDinner,
   isStatusLunch,
-} from "../validators/ScheudulePackage";
+} from "../validators/Schedules";
 import { randomUUID } from "crypto";
 import { Schedule } from "@prisma/client";
 import { TExcludedOrganizedPackageData } from "@/Types/packages/package";

@@ -115,7 +115,7 @@ export default function OfflineBookingForm({
       babyCount: prefillData?.numOfBaby,
       billAmount: prefillData?.payment.totalAmount,
       paymentMode: prefillData?.payment.modeOfPayment,
-      email: prefillData?.user.email,
+      email: prefillData?.user.email ?? undefined,
       name: prefillData?.user.name,
       phone: prefillData?.user.contact ?? undefined,
     },

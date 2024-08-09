@@ -150,6 +150,6 @@ export function mergeTimeCycle(value: TTimeCycle): string | null {
   return `${hours}:${min}:${Cycle}`;
 }
 
-export const isValidMergeTimeCycle = (timeString:string) => {
-  return moment(timeString, 'hh:mm:A', true).isValid();
+export const isValidMergeTimeCycle = (timeString: string) => {
+  return moment(timeString, "hh:mm:A", true).isValid();
 };

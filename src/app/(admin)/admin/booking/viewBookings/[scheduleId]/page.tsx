@@ -20,6 +20,7 @@ import {
 import { EllipsisVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
 
 interface IViewBooking {
   params: {
@@ -46,6 +47,7 @@ export default async function ViewBooking({
         <Link href={`/admin/booking/offlineBooking/${scheduleId}`}>
           <Button className="mx-10">Add Booking</Button>
         </Link>
+        <RouterRefreshButton />
       </div>
       <Table>
         <TableHeader>
@@ -67,42 +69,41 @@ export default async function ViewBooking({
           {bookings.map((booking, i) => {
             const formattedDate = format(booking.createdAt, "P");
             return (
-              <>
-                <TableRow className="text-center cursor-pointer">
-                  <TableCell className="">{i + 1}</TableCell>
-                  <TableCell className="">{booking.user.name}</TableCell>
-                  <TableCell className="">{formattedDate}</TableCell>
-                  <TableCell>{booking.schedule.schedulePackage}</TableCell>
-                  <TableCell className="">
-                    {booking.payment.advancePaid}
-                  </TableCell>
-                  <TableCell className="">
-                    {booking.payment.totalAmount}
-                  </TableCell>
-                  <TableCell className="">{booking.user.contact}</TableCell>
-                  <TableCell className="">{booking.numOfAdults}</TableCell>
-                  <TableCell className="">{booking.numOfChildren}</TableCell>
-                  <TableCell className="">{booking.numOfBaby}</TableCell>
-                  <TableCell className="">{booking.description}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <EllipsisVertical size={16} />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="">
-                        <Link
-                          href={`/admin/booking/updateBooking/${booking.id}`}
-                        >
-                          <DropdownMenuItem>Update</DropdownMenuItem>
-                        </Link>
-                        <Link href={"#"}>
-                          <DropdownMenuItem>Change Schedule</DropdownMenuItem>
-                        </Link>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              </>
+              <TableRow
+                key={`aa-${booking.id}-view-booking-table-row-${i}`}
+                className="text-center cursor-pointer"
+              >
+                <TableCell className="">{i + 1}</TableCell>
+                <TableCell className="">{booking.user.name}</TableCell>
+                <TableCell className="">{formattedDate}</TableCell>
+                <TableCell>{booking.schedule.schedulePackage}</TableCell>
+                <TableCell className="">
+                  {booking.payment.advancePaid}
+                </TableCell>
+                <TableCell className="">
+                  {booking.payment.totalAmount}
+                </TableCell>
+                <TableCell className="">{booking.user.contact}</TableCell>
+                <TableCell className="">{booking.numOfAdults}</TableCell>
+                <TableCell className="">{booking.numOfChildren}</TableCell>
+                <TableCell className="">{booking.numOfBaby}</TableCell>
+                <TableCell className="">{booking.description}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <EllipsisVertical size={16} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="">
+                      <Link href={`/admin/booking/updateBooking/${booking.id}`}>
+                        <DropdownMenuItem>Update</DropdownMenuItem>
+                      </Link>
+                      <Link href={"#"}>
+                        <DropdownMenuItem>Change Schedule</DropdownMenuItem>
+                      </Link>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
             );
           })}
         </TableBody>
