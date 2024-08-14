@@ -12,7 +12,6 @@ import {
   sleep,
 } from "@/lib/utils";
 import {
-  CompleteScheduleUpdateSchema,
   ScheduleCreateSchema,
   ScheduleSchema,
   UpdatedDateScheduleSchema,
@@ -235,18 +234,19 @@ export const schedule = router({
     },
   ),
   /** @TODO incomplete */
-  updateSchedule: AdminProcedure.input(CompleteScheduleUpdateSchema).mutation(
+  updateSchedule: AdminProcedure.input(
+    UpdatedDateScheduleSchema.extend({
+      date: z.string(),
+    }),
+  ).mutation(
     async ({
       ctx,
-      input: {
-        date: ScheduleDate,
-        schedule: { fromTime, packageId, scheduleTime, toTime },
-      },
+      input: { date: ScheduleDate, packageId, scheduleTime, ...input },
     }) => {
       try {
-        /**
-         * Do something!
-         */
+       
+        let { fromTime, toTime } = input;
+
         const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
 
         if (!date) {
@@ -265,6 +265,23 @@ export const schedule = router({
           });
         }
 
+        let SafelyParsedDate = new Date(ScheduleDate);
+        let fromTimeObj =
+          mergeTimeCycle(fromTime ?? defaultEmptyTrigger) ?? null;
+
+        let toTimeObjParsed =
+          mergeTimeCycle(toTime ?? defaultEmptyTrigger) ?? null;
+
+        let toTimeParsed = isValidMergeTimeCycle(toTimeObjParsed ?? "");
+        let fromTimeParsed = isValidMergeTimeCycle(fromTimeObj ?? "");
+
+        if (isStatusCustom(scheduleTime) && (!toTime || !fromTime)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Time is Required for ${scheduleTime} Packages.`,
+          });
+        }
+
         const isPackageFound =
           await getPackageByIdWithStatusAndCount(packageId);
         if (!isPackageFound) {
@@ -273,10 +290,7 @@ export const schedule = router({
             message: "Selected Package is not found on our database.",
           });
         }
-        // if(isexcl)
-        //________________Validate Input ends _____________
-        // Testout the date that is recieved (UTC format.)
-        let SafelyParsedDate = new Date(ScheduleDate);
+
         const Schedule = await db.schedule.findFirst({
           where: {
             AND: [
@@ -289,7 +303,31 @@ export const schedule = router({
             ],
           },
         });
-        return { message: "updated Sucessfully" };
+
+        if (!Schedule?.id) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Sorry, Schedule not found.",
+          });
+        }
+        let scheduleStatus = ShouldStatusBeAvaiablePublicWithPackage({
+          packageCategory: isPackageFound.packageCategory,
+          scheduleTime,
+        });
+
+        const data = await db.schedule.update({
+          where: {
+            id: Schedule.id,
+          },
+          data: {
+            packageId: isPackageFound.id,
+            fromTime: fromTimeParsed ? fromTimeObj : null,
+            toTime: toTimeParsed ? toTimeObjParsed : null,
+            scheduleStatus,
+          },
+        });
+
+        return data;
       } catch (error) {
         console.log(error);
         if (error instanceof TRPCError) {

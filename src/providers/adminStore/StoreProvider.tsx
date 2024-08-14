@@ -27,17 +27,24 @@ export default function StoreProvider({
   upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
 }) {
   const storeRef = useRef<AppStore>();
+
   if (!storeRef.current) {
     storeRef.current = makeStore();
-    const date = RemoveTimeStampFromDate(new Date(Date.now()));
+    
+    // const date = RemoveTimeStampFromDate(new Date(Date.now()));
+    
     storeRef.current.dispatch(
       setInitialOrganizedScheduleDates(upCommingSchedules),
     );
+
     storeRef.current.dispatch(setCurrentScheduleDate(initialSchedule));
+
     storeRef.current.dispatch(setDate(initialDate));
+
     if (Packages) {
       storeRef.current.dispatch(setOrganizedPackage(Packages));
     }
+
   }
 
   return <Provider store={storeRef.current}>{children}</Provider>;

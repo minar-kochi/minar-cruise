@@ -15,3 +15,6 @@ export function isStatusLunch(SchedulePackage: string) {
 export function isStatusCustom(SchedulePackage: string) {
   return SchedulePackage === $Enums.SCHEDULED_TIME.CUSTOM;
 }
+
+
+// export function 
