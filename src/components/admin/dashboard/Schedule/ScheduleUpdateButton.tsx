@@ -1,39 +1,72 @@
 import { Loader2, RefreshCw } from "lucide-react";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useAppSelector } from "@/hooks/adminStore/reducer";
+import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import CustomListDisk from "@/components/elements/CustomListDisk";
 import { TScheduleSelector } from "@/Types/type";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
 import { UpdatedDateScheduleSchema } from "@/lib/validators/ScheduleValidtor";
+import { isStatusCustom } from "@/lib/validators/Schedules";
+import { RemoveTimeStampFromDate, sleep, splitTimeColon } from "@/lib/utils";
+import { isPackageStatusExclusive } from "@/lib/validators/Package";
+import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
 export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
+  const [isOpen, setIsOpen] = useState(false);
   const date = useAppSelector((state) => state.schedule.date);
+
   const updatedScheduleDatas = useAppSelector(
     (state) => state.schedule.updatedDateSchedule,
   );
+  const { invalidate } = trpc.useUtils().admin.getSchedulesByDateOrNow;
+
+  const { invalidate: InvalidateScheduleInfinity } =
+    trpc.useUtils().admin.getSchedulesInfinity;
+  const dispatch = useAppDispatch();
+
   const { mutate: updateSchedule } = trpc.admin.updateSchedule.useMutation({
-    onSuccess(data, variables, context) {
-      toast.success(data.message);
+    async onMutate(variables) {
+      toast.loading(
+        `Updating Schedule at ${format(variables.date, "do 'of' LLL")}`,
+        { duration: 3000 },
+      );
+      setIsOpen(false);
+    },
+    async onSuccess(data, variables, context) {
+      toast.dismiss();
+      await InvalidateScheduleInfinity(undefined, {
+        type: "all",
+      });
+      await invalidate({
+        ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
+      });
+      dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
     },
     onError(error, variables, context) {
-      toast.error("Something went wrong!");
+      toast.dismiss();
+      // @TODO understand the mutation code and display the error message accordingly.
+      if (error.message) {
+        toast.error(error.message);
+      }
     },
   });
 
-  function handleScheduleUpdate() {
+  async function handleScheduleUpdate() {
     let updatedScheduleData = updatedScheduleDatas[type] ?? null;
     if (!updatedScheduleData) {
-      toast.error("Dude Updates aren't registered.");
+      toast.error(
+        "There aren't any changes detected. sorry, Please try again.",
+      );
       return;
     }
     if (!updatedScheduleData.packageId) {
@@ -45,20 +78,24 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
       toast.error("There was an error while reading date.");
       return;
     }
-    let { data, success, error } =
-      UpdatedDateScheduleSchema.safeParse(updatedScheduleData);
-    if (!success || !data) {
-      toast.error(
-        "There was a mismatch in the data selected. Please try again.",
-      );
-      toast.error(error?.message ?? "something is not done corret");
-      return;
-    }
-    updateSchedule({ schedule: data, date });
+
+    updateSchedule({
+      date,
+      scheduleTime: updatedScheduleData.scheduleTime,
+      packageId: updatedScheduleData.packageId,
+      fromTime: splitTimeColon(updatedScheduleData.fromTime ?? "") ?? undefined,
+      toTime: splitTimeColon(updatedScheduleData.toTime ?? "") ?? undefined,
+    });
   }
   return (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(value) => {
+        setIsOpen(value);
+      }}
+    >
       <DialogTrigger
+        disabled={!updatedScheduleDatas[type].packageId}
         className={buttonVariants({
           variant: "secondary",
           className: "w-full gap-1",
@@ -75,21 +112,22 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
             {format(date, "dd-MM-yyyy")} before changing.
           </DialogDescription>
         </DialogHeader>
-        <div>
+        <div className="">
           <p className="text-muted-foreground">
             Note: before Changing Schedules:
           </p>
-          <div>
-            <CustomListDisk
-              title={
-                "Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, repellat?"
-              }
-            />
+          <div className="px-4 text-muted-foreground my-4">
+            <ul className=" list-disc list-outside">
+              <li>This will move all the existing booking to new schedule.</li>
+              <li>This will change or update existing schedule packages.</li>
+            </ul>
           </div>
           <div className="flex gap-1">
-            <Button className="" variant={"secondary"}>
-              Cancel
-            </Button>
+            <DialogClose>
+              <Button className="" variant={"secondary"}>
+                Cancel
+              </Button>
+            </DialogClose>
             <Button
               onClick={() => handleScheduleUpdate()}
               variant={"destructive"}

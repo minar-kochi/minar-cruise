@@ -37,6 +37,7 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
       },
       select: {
         id: true,
+        
         packageCategory: true,
       },
     });
