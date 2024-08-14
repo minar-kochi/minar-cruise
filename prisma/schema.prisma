@@ -36,8 +36,6 @@ model Booking {
   paymentsId String
   payment    Payments @relation(fields: [paymentsId], references: [id])
 
-
-
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
@@ -111,8 +109,8 @@ model Package {
   duration        Int
   slug            String           @unique
   foodMenuId      String
-  startFrom       DateTime
-  endAt           DateTime
+  startFrom       DateTime // need this to be a string in ISO formattted | HH:MM:MERIDIAN Also Changing to something meaningfull would be nice. 
+  endAt           DateTime // need this to be a string in ISO formattted | HH:MM:MERIDIAN Also Changing to something meaningfull would be nice. 
   createdAt       DateTime         @default(now()) @db.Timestamp()
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id])
