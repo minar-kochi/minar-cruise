@@ -265,6 +265,7 @@ export const schedule = router({
         }
 
         let SafelyParsedDate = new Date(ScheduleDate);
+
         let fromTimeObj =
           mergeTimeCycle(fromTime ?? defaultEmptyTrigger) ?? null;
 
@@ -283,6 +284,7 @@ export const schedule = router({
 
         const isPackageFound =
           await getPackageByIdWithStatusAndCount(packageId);
+
         if (!isPackageFound) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -314,6 +316,9 @@ export const schedule = router({
           scheduleTime,
         });
 
+        /**
+         * @TODO Adding package timing to the schedule would be nice. or extract it from the package while displaying to avoid redundency.
+         */
         const data = await db.schedule.update({
           where: {
             id: Schedule.id,
@@ -348,8 +353,8 @@ export const schedule = router({
         });
       }
 
-      const d = await db.schedule.findMany()
-      console.log(JSON.stringify(d))
+      const d = await db.schedule.findMany();
+      console.log(JSON.stringify(d));
       // const clearSchedule = await db.schedule.deleteMany({});
       return true;
     } catch (error) {
