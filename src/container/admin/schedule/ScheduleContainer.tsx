@@ -47,7 +47,7 @@ export default function ScheduleBar() {
           <Button
             className="w-full"
             onClick={() => {
-              // deleteSc3hedules();
+              deleteSchedules();
             }}
           >
             delete Schedule

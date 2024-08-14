@@ -68,7 +68,6 @@ export default function OfflineBookingForm({
         toast.dismiss();
         toast.success("Successfully added booking data");
         router.prefetch(`/admin/booking/viewBookings/${data?.scheduleId}`);
-        await sleep(2000);
         router.push(`/admin/booking/viewBookings/${data?.scheduleId}`);
       },
       onError(error) {
