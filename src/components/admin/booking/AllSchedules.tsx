@@ -28,11 +28,6 @@ export default async function AllSchedules({ className }: IAllSchedules) {
   return (
     <div>
       <div className="">
-        <div className="flex justify-end p-5">
-          <Link href={`/admin/schedule`}>
-            <Button className="">Add new Schedule</Button>
-          </Link>
-        </div>
         <Table className="border ">
           <TableHeader>
             <TableRow className="text-center">
@@ -62,13 +57,13 @@ export default async function AllSchedules({ className }: IAllSchedules) {
                     <TableCell>{item.Booking}</TableCell>
                     <TableCell>{150 - item.Booking}</TableCell>
                     <TableCell>
-                      <Link href={`/admin/booking/viewBookings/${item.id}`}>
-                        <Badge className="">
+                      <Link href={`/admin/booking/view/${item.id}`}>
+                        <Button className="">
                           <CustomBookingBadge
                             label="View Booking"
                             bookingId={""}
                           />
-                        </Badge>
+                        </Button>
                       </Link>
                     </TableCell>
                   </TableRow>

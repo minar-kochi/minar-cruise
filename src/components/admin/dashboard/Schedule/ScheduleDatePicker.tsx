@@ -6,13 +6,15 @@ import {
   setDate,
   setPopOverDateToggle,
 } from "@/lib/features/schedule/ScheduleSlice";
-import { getPrevTimeStamp, RemoveTimeStampFromDate } from "@/lib/utils";
+import { cn, getPrevTimeStamp, RemoveTimeStampFromDate } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { PopOverDatePicker } from "./PopOverScheduleDate";
 import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
 import { trpc } from "@/app/_trpc/client";
 
-export default function ScheduleDatePicker() {
+export default function ScheduleDatePicker({className}: {
+  className?: string
+}) {
   const date = useAppSelector((state) => state.schedule.date);
   const dispatch = useAppDispatch();
 
@@ -54,6 +56,7 @@ export default function ScheduleDatePicker() {
           let currDate = getPrevTimeStamp(Date.now());
           return date < new Date(currDate);
         },
+        className: cn("",className)
       }}
     />
   );

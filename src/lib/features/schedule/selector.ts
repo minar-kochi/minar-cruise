@@ -2,14 +2,48 @@
 import { RootState } from "@/lib/store/adminStore";
 import { splitTimeColon } from "@/lib/utils";
 import { TKeyOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
-import { TTimeCycle } from "@/Types/type";
+import { TScheduleDataDayReplaceString, TTimeCycle } from "@/Types/type";
 import { createSelector } from "@reduxjs/toolkit";
 import { Fascinate } from "next/font/google";
 import toast from "react-hot-toast";
+import { Packages } from "../Package/selector";
 
 export const Schedule = (state: RootState) => state.schedule;
 export const CurrentSchedule = (state: RootState) =>
   state.schedule.currentDateSchedule;
+
+type d = { value: string; label: string };
+export const scheduleIdAndPackageTitleSelector = createSelector(
+  [CurrentSchedule, Packages],
+  (currentSchedule, packages): { value: string; label: string }[] => {
+    let allSchedule = [
+      currentSchedule.breakfast,
+      currentSchedule.custom,
+      currentSchedule.dinner,
+      currentSchedule.lunch,
+    ];
+    
+    let AllPackages = [
+      ...packages.breakfast,
+      ...packages.custom,
+      ...packages.dinner,
+      ...packages.lunch,
+    ];
+
+    let filteredNull = allSchedule.filter(
+      (fv) => fv && fv?.scheduleStatus !== "BLOCKED",
+    ) as TScheduleDataDayReplaceString[];
+
+    let data: d[] = filteredNull.map((item) => {
+      const packageName = AllPackages.find((fv) => fv.id === item.packageId);
+      return {
+        value: item.id,
+        label: packageName?.title ?? item.scheduleStatus,
+      };
+    });
+    return data;
+  },
+);
 
 export const UpdatedSchedule = createSelector(
   [Schedule, (item, type: TKeyOrganizedScheduleData) => type],
