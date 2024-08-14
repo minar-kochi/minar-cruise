@@ -42,8 +42,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const packages = await getOrganizedPackages();
-  if (!packages) return null;
   return (
     <html lang="en">
       <body

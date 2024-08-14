@@ -23,6 +23,7 @@ import { TRPCError } from "@trpc/server";
 import { booking } from "./booking";
 import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
+import { blog } from "./blog";
 
 export const schedule = router({
   /**
@@ -33,6 +34,7 @@ export const schedule = router({
    *
    *  */
   booking,
+  blog,
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
     async ({ input: { ScheduleDate } }) => {
       // string that will receive is in the format YYYY-MM-DD

@@ -16,6 +16,7 @@ import {
   Package,
   Package2,
   ShoppingCart,
+  SquarePen,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -48,6 +49,7 @@ const MenuBar = () => {
                 <Home className="h-4 w-4" />
                 Dashboard
               </Link>
+
               <Link
                 href="/admin/schedule"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
@@ -64,6 +66,14 @@ const MenuBar = () => {
               >
                 <Package className="h-4 w-4" />
                 Booking
+              </Link>
+
+              <Link
+                href="/admin/createBlog"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <SquarePen className="h-4 w-4" />
+                Create Blog
               </Link>
 
               <Link

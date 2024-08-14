@@ -11,6 +11,7 @@ import { packageRouter } from "./package/package";
 export const appRouter = router({
   packageInfo: packageRouter,
   admin: schedule,
+
   subscribeNewsletter: publicProcedure
     .input(
       z.object({
