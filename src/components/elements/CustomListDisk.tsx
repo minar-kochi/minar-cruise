@@ -15,7 +15,10 @@ export default function CustomListDisk({
   return (
     <div className="border-2 ">
       <div
-        className={cn("flex items-center justify-center gap-1", parentClassName)}
+        className={cn(
+          "flex items-center justify-center gap-1",
+          parentClassName,
+        )}
       >
         <div className={cn("w-1 h-1 rounded-full bg-white", DiskClassName)} />
         <p className={cn("text-muted-foreground", titleClassName)}>{title}</p>

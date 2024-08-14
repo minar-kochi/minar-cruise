@@ -2,7 +2,6 @@ import React from "react";
 import ScheduleSelector from "./ScheduleSelector";
 
 export default function ScheduleSelectors() {
- 
   return (
     <div>
       <div className="border-y   py-2">

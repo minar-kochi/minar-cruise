@@ -244,7 +244,6 @@ export const schedule = router({
       input: { date: ScheduleDate, packageId, scheduleTime, ...input },
     }) => {
       try {
-       
         let { fromTime, toTime } = input;
 
         const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
@@ -348,7 +347,10 @@ export const schedule = router({
           message: "You are on production cannot cascade all the schedules.",
         });
       }
-      const clearSchedule = await db.schedule.deleteMany({});
+
+      const d = await db.schedule.findMany()
+      console.log(JSON.stringify(d))
+      // const clearSchedule = await db.schedule.deleteMany({});
       return true;
     } catch (error) {
       console.log(error);

@@ -30,9 +30,9 @@ export default function StoreProvider({
 
   if (!storeRef.current) {
     storeRef.current = makeStore();
-    
+
     // const date = RemoveTimeStampFromDate(new Date(Date.now()));
-    
+
     storeRef.current.dispatch(
       setInitialOrganizedScheduleDates(upCommingSchedules),
     );
@@ -44,7 +44,6 @@ export default function StoreProvider({
     if (Packages) {
       storeRef.current.dispatch(setOrganizedPackage(Packages));
     }
-
   }
 
   return <Provider store={storeRef.current}>{children}</Provider>;

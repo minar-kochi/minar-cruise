@@ -7,27 +7,27 @@ import {
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setUpdatableScheduleDate } from "@/lib/features/schedule/ScheduleSlice";
-import { DefaultMergedSchedule, scheduleIdAndPackageTitleSelector } from "@/lib/features/schedule/selector";
+import {
+  DefaultMergedSchedule,
+  scheduleIdAndPackageTitleSelector,
+} from "@/lib/features/schedule/selector";
 import { cn } from "@/lib/utils";
 import { TScheduleSelector } from "@/Types/type";
 export default function ScheduleSelect({ type }: TScheduleSelector) {
   const { OrganizedPackage } = useAppSelector((state) => state.packages);
   const { currentDateSchedule } = useAppSelector((state) => state.schedule);
-  
 
   const defaultSelect = useAppSelector((state) =>
     DefaultMergedSchedule(state, type),
   );
-  
-  
-  
+
   const dispatch = useAppDispatch();
   return (
     <Select
       defaultValue={currentDateSchedule[type]?.packageId ?? "false"}
       value={defaultSelect.packageId ?? "false"}
       onValueChange={(value) => {
-        if(value === "false") return 
+        if (value === "false") return;
         dispatch(setUpdatableScheduleDate({ packageId: value, type }));
       }}
     >
