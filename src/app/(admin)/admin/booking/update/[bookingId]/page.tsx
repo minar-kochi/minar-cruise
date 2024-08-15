@@ -15,7 +15,6 @@ export default async function UpdateBooking({
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center py-8">Update Booking</h1>
       {/* Pass in prefill data here  */}
       <OfflineBookingForm
         scheduleId={bookedDetails.scheduleId}

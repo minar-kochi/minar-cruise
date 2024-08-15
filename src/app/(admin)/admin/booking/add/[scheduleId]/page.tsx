@@ -1,4 +1,5 @@
 import OfflineBookingForm from "@/components/admin/booking/OfflineBookingForm";
+import { findScheduleById } from "@/db/data/dto/schedule";
 import { redirect } from "next/navigation";
 import React from "react";
 interface IBookOfflineScheduleProps {
@@ -6,13 +7,17 @@ interface IBookOfflineScheduleProps {
     scheduleId: string;
   };
 }
-export default function OfflineBooking({
+export default async function  OfflineBooking({
   params: { scheduleId },
 }: IBookOfflineScheduleProps) {
-  if (!scheduleId) {
-    //@TODO redirect to relative page.
-    redirect("/admin/booking");
-  }
+  /**
+   * @TODO
+   * do a db count check whether the scheduleId exists is there on data-base.
+   * 
+   */
+  const scheduleIdExists = await findScheduleById(scheduleId)
+  if(!scheduleIdExists) return null
+  
   return (
     <div>
       {/* add type as ADD_BOOING */}

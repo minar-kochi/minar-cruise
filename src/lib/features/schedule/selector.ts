@@ -14,6 +14,39 @@ export const Schedule = (state: RootState) => state.schedule;
 export const CurrentSchedule = (state: RootState) =>
   state.schedule.currentDateSchedule;
 
+type d = { value: string; label: string };
+export const scheduleIdAndPackageTitleSelector = createSelector(
+  [CurrentSchedule, Packages],
+  (currentSchedule, packages): { value: string; label: string }[] => {
+    let allSchedule = [
+      currentSchedule.breakfast,
+      currentSchedule.custom,
+      currentSchedule.dinner,
+      currentSchedule.lunch,
+    ];
+    
+    let AllPackages = [
+      ...packages.breakfast,
+      ...packages.custom,
+      ...packages.dinner,
+      ...packages.lunch,
+    ];
+
+    let filteredNull = allSchedule.filter(
+      (fv) => fv && fv?.scheduleStatus !== "BLOCKED",
+    ) as TScheduleDataDayReplaceString[];
+
+    let data: d[] = filteredNull.map((item) => {
+      const packageName = AllPackages.find((fv) => fv.id === item.packageId);
+      return {
+        value: item.id,
+        label: packageName?.title ?? item.scheduleStatus,
+      };
+    });
+    return data;
+  },
+);
+
 export const UpdatedSchedule = createSelector(
   [Schedule, (item, type: TKeyOrganizedScheduleData) => type],
   ({ currentDateSchedule, updatedDateSchedule }, type): boolean => {
@@ -24,37 +57,37 @@ export const UpdatedSchedule = createSelector(
   },
 );
 
-type d = { value: string; lable: string };
-export const scheduleIdAndPackageTitleSelector = createSelector(
-  [CurrentSchedule, Packages, (_, __, type: TKeyOrganizedScheduleData) => type],
-  (currentschedule, packages, hello): { value: string; lable: string }[] => {
-    let allSchedule = [
-      currentschedule.breakfast,
-      currentschedule.custom,
-      currentschedule.dinner,
-      currentschedule.lunch,
-    ];
-    let AllPackages = [
-      ...packages.breakfast,
-      ...packages.custom,
-      ...packages.dinner,
-      ...packages.lunch,
-    ];
+// type d = { value: string; lable: string };
+// export const scheduleIdAndPackageTitleSelector = createSelector(
+//   [CurrentSchedule, Packages, (_, __, type: TKeyOrganizedScheduleData) => type],
+//   (currentschedule, packages, hello): { value: string; lable: string }[] => {
+//     let allSchedule = [
+//       currentschedule.breakfast,
+//       currentschedule.custom,
+//       currentschedule.dinner,
+//       currentschedule.lunch,
+//     ];
+//     let AllPackages = [
+//       ...packages.breakfast,
+//       ...packages.custom,
+//       ...packages.dinner,
+//       ...packages.lunch,
+//     ];
 
-    let filteredNull = allSchedule.filter(
-      (fv) => fv && isStatusBreakfast,
-    ) as TScheduleDataDayReplaceString[];
+//     let filteredNull = allSchedule.filter(
+//       (fv) => fv && isStatusBreakfast,
+//     ) as TScheduleDataDayReplaceString[];
 
-    let data: d[] = filteredNull.map((item) => {
-      const packageName = AllPackages.find((fv) => fv.id === item.packageId);
-      return {
-        value: item.id,
-        lable: packageName?.title ?? item.scheduleStatus,
-      };
-    });
-    return data;
-  },
-);
+//     let data: d[] = filteredNull.map((item) => {
+//       const packageName = AllPackages.find((fv) => fv.id === item.packageId);
+//       return {
+//         value: item.id,
+//         lable: packageName?.title ?? item.scheduleStatus,
+//       };
+//     });
+//     return data;
+//   },
+// );
 
 // export const Merged = (state: RootState) => state.schedule;
 

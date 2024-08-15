@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { TGetBookedDetails } from "@/db/data/dto/booking";
 import { useRouter } from "next/navigation";
 import { sleep } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 /**
  * accept a type prop which will be notified as update / add ENUM
@@ -50,8 +51,9 @@ export default function OfflineBookingForm({
       onSuccess() {
         toast.dismiss();
         reset();
-        router.push(`/admin/booking/viewBookings/${scheduleId}`);
         toast.success("Successfully added booking data");
+        router.prefetch(`/admin/booking/view/${scheduleId}`);
+        router.push(`/admin/booking/view/${scheduleId}`);
       },
       onError(error) {
         toast.dismiss();
@@ -67,8 +69,8 @@ export default function OfflineBookingForm({
       async onSuccess(data) {
         toast.dismiss();
         toast.success("Successfully added booking data");
-        router.prefetch(`/admin/booking/viewBookings/${data?.scheduleId}`);
-        router.push(`/admin/booking/viewBookings/${data?.scheduleId}`);
+        router.prefetch(`/admin/booking/view/${data?.scheduleId}`);
+        router.push(`/admin/booking/view/${data?.scheduleId}`);
       },
       onError(error) {
         toast.dismiss();
@@ -89,7 +91,7 @@ export default function OfflineBookingForm({
       toast.error("Please Change any values to be updated.");
       return;
     }
-    console.log("reached mutaion");
+    console.log("reached mutation");
     mutateUpdatedBooking({
       bookingId: prefillData.id,
       ...data,
@@ -121,8 +123,8 @@ export default function OfflineBookingForm({
   });
 
   return (
-    // type === "ADD"
-    <form onSubmit={handleSubmit(onSubmit)} className="p-10 ">
+    <form onSubmit={handleSubmit(onSubmit)} className="p-5">
+      <h1 className="text-3xl font-bold max-w-max mx-auto my-10">{type === "ADD" ? "Add Booking" : "Update Booking"}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
         <InputLabel
           label="Name"
