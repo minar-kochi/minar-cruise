@@ -14,7 +14,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
 
-export default function ScheduleBlockButton({ type }: TScheduleSelector) {
+export default function ScheduleUnblockButton({ type }: TScheduleSelector) {
   const date = useAppSelector((state) => state.schedule.date);
   return (
     <Dialog>
@@ -25,7 +25,7 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
         })}
       >
         <Ban className="h-4 w-4" />
-        Block {type}
+        UnBlock {type}
       </DialogTrigger>
 
       <DialogContent>

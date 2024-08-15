@@ -6,13 +6,24 @@ import ScheduleUpdateButton from "./ScheduleUpdateButton";
 // import { TScheduleSelector } from "../../../../Types/type";
 import { TScheduleSelector } from "@/Types/type";
 import { useAppSelector } from "@/hooks/adminStore/reducer";
+import { Button } from "@/components/ui/button";
+import ScheduleBlockButton from "./ScheduleBlockButton";
+import ScheduleUnblockButton from "./ScheduleUnblockButton";
 
 export default function ScheduleButtonWrapper({ type }: TScheduleSelector) {
   const data = useAppSelector((state) => state.schedule.currentDateSchedule);
 
   return !data[type]?.id ? (
-    <ScheduleAddButton type={type} />
+    <>
+      <ScheduleAddButton type={type} />
+      <ScheduleBlockButton type={type} />
+    </>
   ) : (
-    <ScheduleUpdateButton type={type} />
+    <>
+      {data[type]?.scheduleStatus === "BLOCKED" ? (
+        <ScheduleUnblockButton type={type} />
+      ) : null}
+      <ScheduleUpdateButton type={type} />
+    </>
   );
 }

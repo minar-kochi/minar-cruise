@@ -10,6 +10,7 @@ import { TkeyDbTime, TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
+import { $Enums } from "@prisma/client";
 export type TScheduleUtilsState = {
   /**
    * Popover state variable
@@ -89,6 +90,7 @@ const scheduleSlice = createSlice({
           updatingDate: string;
           currentDateSchedule: TScheduleDataDayReplaceString;
           type: TKeyOrganizedScheduleData;
+          scheduleStatus: $Enums.SCHEDULE_STATUS;
         }>,
       ) {
         //if dates are eq then add to the current date schedule.
@@ -96,10 +98,10 @@ const scheduleSlice = createSlice({
           state.currentDateSchedule[action.payload.type] =
             action.payload.currentDateSchedule;
         }
-
-        state.upCommingSchedules[action.payload.type].push(
-          action.payload.updatingDate,
-        );
+        state.upCommingSchedules[action.payload.type].push({
+          date: action.payload.updatingDate,
+          status: action.payload.scheduleStatus,
+        });
       },
       prepare(
         data: TScheduleDataDayReplaceString,
@@ -111,6 +113,7 @@ const scheduleSlice = createSlice({
             updatingDate: date,
             currentDateSchedule: data,
             type,
+            scheduleStatus: data.scheduleStatus,
           },
         };
       },
