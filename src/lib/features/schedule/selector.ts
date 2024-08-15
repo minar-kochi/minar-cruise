@@ -3,15 +3,11 @@ import { RootState } from "@/lib/store/adminStore";
 import { splitTimeColon } from "@/lib/utils";
 import { TKeyOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
 import { TScheduleDataDayReplaceString, TTimeCycle } from "@/Types/type";
-import { TScheduleDataDayReplaceString, TTimeCycle } from "@/Types/type";
 import { createSelector } from "@reduxjs/toolkit";
 import { Fascinate } from "next/font/google";
 import toast from "react-hot-toast";
 import { Packages } from "../Package/selector";
-<<<<<<< HEAD
-=======
 import { isStatusBreakfast } from "@/lib/validators/Schedules";
->>>>>>> develop
 
 export const Schedule = (state: RootState) => state.schedule;
 
@@ -61,37 +57,37 @@ export const UpdatedSchedule = createSelector(
   },
 );
 
-type d = { value: string; lable: string };
-export const scheduleIdAndPackageTitleSelector = createSelector(
-  [CurrentSchedule, Packages, (_, __, type: TKeyOrganizedScheduleData) => type],
-  (currentschedule, packages, hello): { value: string; lable: string }[] => {
-    let allSchedule = [
-      currentschedule.breakfast,
-      currentschedule.custom,
-      currentschedule.dinner,
-      currentschedule.lunch,
-    ];
-    let AllPackages = [
-      ...packages.breakfast,
-      ...packages.custom,
-      ...packages.dinner,
-      ...packages.lunch,
-    ];
+// type d = { value: string; lable: string };
+// export const scheduleIdAndPackageTitleSelector = createSelector(
+//   [CurrentSchedule, Packages, (_, __, type: TKeyOrganizedScheduleData) => type],
+//   (currentschedule, packages, hello): { value: string; lable: string }[] => {
+//     let allSchedule = [
+//       currentschedule.breakfast,
+//       currentschedule.custom,
+//       currentschedule.dinner,
+//       currentschedule.lunch,
+//     ];
+//     let AllPackages = [
+//       ...packages.breakfast,
+//       ...packages.custom,
+//       ...packages.dinner,
+//       ...packages.lunch,
+//     ];
 
-    let filteredNull = allSchedule.filter(
-      (fv) => fv && isStatusBreakfast,
-    ) as TScheduleDataDayReplaceString[];
+//     let filteredNull = allSchedule.filter(
+//       (fv) => fv && isStatusBreakfast,
+//     ) as TScheduleDataDayReplaceString[];
 
-    let data: d[] = filteredNull.map((item) => {
-      const packageName = AllPackages.find((fv) => fv.id === item.packageId);
-      return {
-        value: item.id,
-        lable: packageName?.title ?? item.scheduleStatus,
-      };
-    });
-    return data;
-  },
-);
+//     let data: d[] = filteredNull.map((item) => {
+//       const packageName = AllPackages.find((fv) => fv.id === item.packageId);
+//       return {
+//         value: item.id,
+//         lable: packageName?.title ?? item.scheduleStatus,
+//       };
+//     });
+//     return data;
+//   },
+// );
 
 // export const Merged = (state: RootState) => state.schedule;
 
