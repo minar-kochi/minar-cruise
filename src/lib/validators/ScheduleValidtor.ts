@@ -6,18 +6,7 @@ export const EnumScheduleTime = z.enum([
   "CUSTOM",
 ]);
 
-export const UpdatedDateScheduleSchema = z.object({
-  fromTime: z.string().optional(),
-  toTime: z.string().optional(),
-  packageId: z.string(),
-  scheduleTime: EnumScheduleTime,
-});
-
 export type TUpdatedDateSchedule = z.infer<typeof UpdatedDateScheduleSchema>;
-export const CompleteScheduleUpdateSchema = z.object({
-  date: z.string(),
-  schedule: UpdatedDateScheduleSchema,
-});
 
 export const ScheduleSchema = z.object({
   ScheduleDate: z.string({
@@ -32,6 +21,14 @@ export const ScheduleTime = z
     Cycle: z.enum(["AM", "PM"]),
   })
   .optional();
+
+export const UpdatedDateScheduleSchema = z.object({
+  fromTime: ScheduleTime,
+  toTime: ScheduleTime,
+  packageId: z.string(),
+  scheduleTime: EnumScheduleTime,
+});
+
 export const ScheduleCreateSchema = ScheduleSchema.extend({
   packageId: z
     .string({
@@ -45,6 +42,11 @@ export const ScheduleCreateSchema = ScheduleSchema.extend({
       toTime: ScheduleTime,
     })
     .optional(),
+});
+
+export const CompleteScheduleUpdateSchema = z.object({
+  date: z.string(),
+  schedule: ScheduleCreateSchema,
 });
 
 export type TScheduleSchema = z.infer<typeof ScheduleSchema>;

@@ -64,7 +64,9 @@ export async function getSchedulePackages() {
   try {
     const data = await db.schedule.findMany({
       where: {
-        schedulePackage: "BREAKFAST" || "DINNER" || "LUNCH",
+        schedulePackage: {
+          in: ["BREAKFAST", "DINNER", "LUNCH"],
+        },
       },
     });
 

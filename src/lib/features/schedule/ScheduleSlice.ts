@@ -154,6 +154,8 @@ const scheduleSlice = createSlice({
     ) {
       const { payload } = action;
       state.updatedDateSchedule[payload.type].packageId = payload.packageId;
+      state.updatedDateSchedule[payload.type].fromTime = undefined;
+      state.updatedDateSchedule[payload.type].toTime = undefined;
     },
     /**
      * Set the Schedule Hour for specific time (fromTime / toTime)

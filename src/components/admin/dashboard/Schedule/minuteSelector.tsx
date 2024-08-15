@@ -34,7 +34,8 @@ export default function MinuteSelector({
         <SelectValue placeholder={"Minute"} />
       </SelectTrigger>
       <SelectContent className="max-w-[100px] min-w-10">
-        {new Array(5).fill(null).map((_, i) => {
+        {/* @TODO Extract this logic to be more understandable. */}
+        {new Array(4).fill(null).map((_, i) => {
           return (
             <SelectItem
               key={`timer-${i}`}
