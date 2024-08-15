@@ -72,29 +72,29 @@ export default function AddBlog() {
       <Bounded className="">
         <div className="flex items-center justify-center flex-col text-center mt-12">
           <div>
-            {shortDes ? (
+            {/* {shortDes ? (
               <p>{shortDes}</p>
             ) : (
               <p>Short description about your blog will display here.</p>
-            )}
+            )} */}
           </div>
         </div>
         <div className="text-zinc-700">
-          <h1>By -{getValues("author")}</h1>
+          <h1 className="text-center">By -{getValues("author")}</h1>
         </div>
         <div className="max-w-3xl mx-auto  prose mt-12 ">
           <Markdown
             className="break-words"
             remarkPlugins={[remarkGfm, remarkToc]}
           >
-            {getValues("content")
+            {/* {getValues("content")
               ? `${getValues("content")}`
               : `
             \n  ## How to get most out of it this blog writer?
             1. Confirm this Content before submitting and validate your content is fully displayed \t \t
             2. If the content is not fully displayed. check the indentation of the last part that displayed here
             3. Research about keywords to get best seo results
-              `}
+              `} */}
           </Markdown>
         </div>
       </Bounded>
