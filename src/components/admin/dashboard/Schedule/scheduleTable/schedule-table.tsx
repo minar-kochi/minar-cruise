@@ -30,7 +30,7 @@ export default function ScheduleTable() {
   });
 
   const { data, fetchNextPage, isFetching, isFetchingNextPage } =
-    trpc.admin.getSchedulesInfinity.useInfiniteQuery(
+    trpc.admin.schedule.getSchedulesInfinity.useInfiniteQuery(
       {
         limit: 5,
       },

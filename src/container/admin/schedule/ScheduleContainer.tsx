@@ -25,7 +25,7 @@ import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { trpc } from "@/app/_trpc/client";
 
 export default function ScheduleBar() {
-  const { mutate: deleteSchedules } = trpc.admin.clearSchedule.useMutation({
+  const { mutate: deleteSchedules } = trpc.admin.schedule.clearSchedule.useMutation({
     onSuccess(data, variables, context) {
       toast.success("Cleared Database");
     },
