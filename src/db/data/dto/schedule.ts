@@ -10,6 +10,52 @@ import {
 } from "@/lib/validators/Schedules";
 import { TScheduleWithBookingCountWithId } from "@/Types/Schedule/ScheduleSelect";
 import { $Enums, Schedule } from "@prisma/client";
+import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+
+/**
+ * checks if the bookingId exists or not
+ *
+ * @param scheduleId
+ * @returns true | false
+ */
+
+export async function findScheduleById(scheduleId: string) {
+  try {
+    const data = await db.schedule.count({
+      where: {
+        id: scheduleId,
+      },
+    });
+
+    if (!data) return false;
+    return true;
+  } catch (error) {
+    console.error(error);
+    ErrorLogger(error);
+    return false;
+  }
+}
+/**
+ * checks if the bookingId exists or not
+ *
+ * @param bookingId
+ * @returns true | false
+ */
+export async function findBookingById(bookingId: string) {
+  try {
+    const data = await db.booking.count({
+      where: {
+        id: bookingId,
+      },
+    });
+    if (!data) return false;
+    return true;
+  } catch (error) {
+    console.error(error);
+    ErrorLogger(error);
+    return null;
+  }
+}
 
 export type TGetSchedulePAckages = Awaited<
   ReturnType<typeof getSchedulePackages>
@@ -54,7 +100,6 @@ export const getSchedule = async () => {
     return null;
   }
 
-  console.log(data);
   return data;
 };
 
@@ -70,6 +115,14 @@ export type TgetUpcommingScheduleDates = {
 export const getManySchedulesAndTotalBookingCount = async () => {
   try {
     const data = await db.schedule.findMany({
+      where: {
+        day: {
+          gte: new Date(Date.now()),
+        },
+        scheduleStatus: {
+          in: ["AVAILABLE","EXCLUSIVE"]
+        }
+      },
       select: {
         id: true,
         day: true,
@@ -326,6 +379,7 @@ export type TGetBookingsByScheduleId = Awaited<
   ReturnType<typeof getBookingsByScheduleId>
 >;
 
+
 export async function getBookingsByScheduleId(id: string) {
   try {
     const data = await db.booking.findMany({
@@ -362,7 +416,6 @@ export async function getBookingsByScheduleId(id: string) {
         },
       },
     });
-
     if (!data) {
       return null;
     }
