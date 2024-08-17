@@ -24,14 +24,6 @@ import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
 
 export const schedule = router({
-  /**
-   * @description
-   * String that should be passed in Should be in YYYY-MM-DD
-   *
-   * if not passed in any then it will get the Current Date and fetch it.
-   *
-   *  */
-  booking,
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
     async ({ input: { ScheduleDate } }) => {
       // string that will receive is in the format YYYY-MM-DD

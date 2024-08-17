@@ -28,13 +28,13 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
   const updatedScheduleDatas = useAppSelector(
     (state) => state.schedule.updatedDateSchedule,
   );
-  const { invalidate } = trpc.useUtils().admin.getSchedulesByDateOrNow;
+  const { invalidate } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
 
   const { invalidate: InvalidateScheduleInfinity } =
-    trpc.useUtils().admin.getSchedulesInfinity;
+    trpc.useUtils().admin.schedule.getSchedulesInfinity;
   const dispatch = useAppDispatch();
 
-  const { mutate: updateSchedule } = trpc.admin.updateSchedule.useMutation({
+  const { mutate: updateSchedule } = trpc.admin.schedule.updateSchedule.useMutation({
     async onMutate(variables) {
       toast.loading(
         `Updating Schedule at ${format(variables.date, "do 'of' LLL")}`,
