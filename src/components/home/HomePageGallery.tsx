@@ -13,14 +13,14 @@ const HomePageGallery = () => {
         <article className=" flex flex-wrap md:justify-evenly items-center gap-10 justify-center ">
           {galleryImageUrl.map((url, i) => (
             <>
-              <div className="" key={url+i}>
+              <div className="" key={url + i}>
                 <Image
                   src={url}
                   alt="gallery image"
                   width={1000}
                   height={400}
                   className="hover:border-8 border-primary hover:scale-110 duration-300 rounded-xl aspect-square object-cover md:max-w-64"
-                  />
+                />
               </div>
             </>
           ))}

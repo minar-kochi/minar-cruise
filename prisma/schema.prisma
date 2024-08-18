@@ -6,31 +6,50 @@
 
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
-  provider = "postgresql"
-  url  	    = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL_UNPOOLED")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL_POOLED")
+  directUrl = env("DIRECT_URL")
+}
+
+// add description 
+//
+model Payments {
+  id            String    @id @default(cuid())
+  totalAmount   Int
+  advancePaid   Int
+  discount      Int
+  modeOfPayment String
+  Booking       Booking[]
 }
 
 model Booking {
-  id            String   @id @default(cuid())
-  userId        String
+  id            String @id @default(cuid())
   numOfChildren Int
   numOfAdults   Int
-  packageId     String
-  createdAt     DateTime @default(now())
-  package       Package  @relation(fields: [packageId], references: [id])
-  user          User     @relation(fields: [userId], references: [id])
+  numOfBaby     Int
+  description   String @db.Text()
+
+  //Change this to schedule (Schedules are tied up with the Booking.)
+  paymentsId String
+  payment    Payments @relation(fields: [paymentsId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  scheduleId String
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 }
 
 model User {
   id       String    @id @default(cuid())
   name     String
-  email    String    @unique
-  contact  String
+  email    String?
+  contact  String?
   bookings Booking[]
 }
 
@@ -40,7 +59,7 @@ model FoodMenu {
   Package Package[]
 }
 
-enum SCHEDULE_PACKAGE {
+enum SCHEDULED_TIME {
   BREAKFAST
   LUNCH
   DINNER
@@ -48,20 +67,22 @@ enum SCHEDULE_PACKAGE {
 }
 
 enum SCHEDULE_STATUS {
-  BLOCKED
-  MAINTENANCE
-  EXCLUSIVE
-  AVAILABLE
+  BLOCKED //single button value change
+  MAINTENANCE // removed.
+  EXCLUSIVE // if the package is exclusive
+  AVAILABLE // if common package and online user's are searchable.
 }
 
 model Schedule {
-  id              String           @id @default(cuid())
-  day             DateTime         @db.Date()
-  time            DateTime?        @db.Time()
+  id              String          @id @default(cuid())
+  day             DateTime        @db.Date()
+  fromTime        String?
+  toTime          String?
   packageId       String?
-  schedulePackage SCHEDULE_PACKAGE
+  schedulePackage SCHEDULED_TIME
   scheduleStatus  SCHEDULE_STATUS
-  Package         Package?         @relation(fields: [packageId], references: [id])
+  Package         Package?        @relation(fields: [packageId], references: [id])
+  Booking         Booking[]
 }
 
 model Amenities {
@@ -88,13 +109,12 @@ model Package {
   duration        Int
   slug            String           @unique
   foodMenuId      String
-  startFrom       DateTime
-  endAt           DateTime
+  startFrom       DateTime // need this to be a string in ISO formattted | HH:MM:MERIDIAN Also Changing to something meaningfull would be nice. 
+  endAt           DateTime // need this to be a string in ISO formattted | HH:MM:MERIDIAN Also Changing to something meaningfull would be nice. 
   createdAt       DateTime         @default(now()) @db.Timestamp()
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id])
   packageCategory PACKAGE_CATEGORY
-  Booking         Booking[]
   Schedule        Schedule[]
   packageImage    PackageImage[]
 }

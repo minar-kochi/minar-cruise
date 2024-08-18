@@ -1,5 +1,12 @@
-import { isDate, isValid } from "date-fns";
 import { z } from "zod";
+export const EnumScheduleTime = z.enum([
+  "LUNCH",
+  "DINNER",
+  "BREAKFAST",
+  "CUSTOM",
+]);
+
+export type TUpdatedDateSchedule = z.infer<typeof UpdatedDateScheduleSchema>;
 
 export const ScheduleSchema = z.object({
   ScheduleDate: z.string({
@@ -7,7 +14,20 @@ export const ScheduleSchema = z.object({
   }),
 });
 
-// export const ScheduleTime = z.object();
+export const ScheduleTime = z
+  .object({
+    hours: z.string(),
+    min: z.string(),
+    Cycle: z.enum(["AM", "PM"]),
+  })
+  .optional();
+
+export const UpdatedDateScheduleSchema = z.object({
+  fromTime: ScheduleTime,
+  toTime: ScheduleTime,
+  packageId: z.string(),
+  scheduleTime: EnumScheduleTime,
+});
 
 export const ScheduleCreateSchema = ScheduleSchema.extend({
   packageId: z
@@ -15,7 +35,18 @@ export const ScheduleCreateSchema = ScheduleSchema.extend({
       message: "Package Id is required",
     })
     .optional(),
-  ScheduleTime: z.enum(["LUNCH", "DINNER", "BREAKFAST", "CUSTOM"]),
+  ScheduleTime: EnumScheduleTime,
+  ScheduleDateTime: z
+    .object({
+      fromTime: ScheduleTime,
+      toTime: ScheduleTime,
+    })
+    .optional(),
+});
+
+export const CompleteScheduleUpdateSchema = z.object({
+  date: z.string(),
+  schedule: ScheduleCreateSchema,
 });
 
 export type TScheduleSchema = z.infer<typeof ScheduleSchema>;

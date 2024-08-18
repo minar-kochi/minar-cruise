@@ -25,7 +25,7 @@ export const revalidateRequestSchema = z
         type: z.literal("tag"),
         tags: tagSchema.shape.tags,
       }),
-    ])
+    ]),
   );
 
 export type RevalidateRequestData = z.infer<typeof revalidateRequestSchema>;

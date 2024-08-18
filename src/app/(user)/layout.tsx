@@ -5,15 +5,11 @@ import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import { CounterStoreProvider } from "@/providers/counter-store-provider";
-import { YourStateProvider } from "@/providers/name-store-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,15 +26,15 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <Providers>
-          <CounterStoreProvider>
-              <Navbar />
-              {children}
-              <Footer />
-          </CounterStoreProvider>
+          {/* <CounterStoreProvider> */}
+          <Navbar />
+          {children}
+          <Footer />
+          {/* </CounterStoreProvider> */}
         </Providers>
       </body>
     </html>

@@ -2,29 +2,38 @@ import { PackageSelect } from "@/db/data/dto/package";
 import { TScheduleDataDayReplaceString } from "../type";
 import { Dispatch, SetStateAction } from "react";
 import { $Enums } from "@prisma/client";
+import { getUpcommingScheduleDates } from "@/db/data/dto/schedule";
 
 export type TSelectedPackageIdsAndScheduleEnum = {
   breakfast?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.BREAKFAST;
+    fromTime?: string | null;
+    toTime?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.BREAKFAST;
   };
   lunch?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.LUNCH;
+    fromTime?: string | null;
+    toTime?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
   };
   dinner?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.DINNER;
+    fromTime?: string | null;
+    toTime?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.DINNER;
   };
   custom?: {
     id?: string | null;
-    scheduleTime: typeof $Enums.SCHEDULE_PACKAGE.CUSTOM;
+    fromTime?: string | null;
+    toTime?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
   };
 };
 
 export type TselectedPackageIdsAndScheduleMapToEnum = Record<
   keyof TSelectedPackageIdsAndScheduleEnum,
-  $Enums.SCHEDULE_PACKAGE
+  $Enums.SCHEDULED_TIME
 >;
 
 export const selectedPackageIdsAndScheduleMapToEnum: TselectedPackageIdsAndScheduleMapToEnum =
@@ -50,3 +59,55 @@ export type TOrganizedScheduleData = {
   dinner: TScheduleDataDayReplaceString | null;
   custom: TScheduleDataDayReplaceString | null;
 };
+export type TKeyOrganizedScheduleData = keyof TOrganizedScheduleData;
+
+export type TIsScheduleChange = {
+  [K in TKeyOrganizedScheduleData]: boolean;
+};
+export type TUpdatedDateSchedulePackageId = {
+  breakfast: {
+    packageId?: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.BREAKFAST;
+  };
+  lunch: {
+    fromTime?: string | null;
+    toTime?: string | null;
+    packageId?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
+  };
+  dinner: {
+    fromTime?: string | null;
+    toTime?: string | null;
+    packageId?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.DINNER;
+  };
+  custom: {
+    fromTime?: string | null;
+    toTime?: string | null;
+    packageId?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
+  };
+};
+export type TRawOrganizedUpcommingSchedule = typeof getUpcommingScheduleDates;
+
+export type TOrganizedUpcommingSchedule = Awaited<
+  ReturnType<TRawOrganizedUpcommingSchedule>
+>;
+
+export type TExcludedOrganizedUpcommingSchedule = Exclude<
+  TOrganizedUpcommingSchedule,
+  null
+>;
+
+export type TScheduleWithBookingCountWithId = {
+  id: string;
+  day: string;
+  schedulePackage: string;
+  scheduleStatus: string;
+  Booking: {
+    id: string;
+  }[];
+  totalBookings: number;
+}[];

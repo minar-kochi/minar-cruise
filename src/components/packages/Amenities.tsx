@@ -12,7 +12,7 @@ export const Amenities = async ({ amenitiesId }: TAmenities) => {
     },
   });
   // console.log(e);
-	
+
   return (
     <div className={"mt-4 space-y-3"}>
       <h3 className="font-bold text-2xl border-l-4 border-red-600 px-2 ">
@@ -20,14 +20,13 @@ export const Amenities = async ({ amenitiesId }: TAmenities) => {
       </h3>
       <ul>
         {amenitiesDetails?.description.map((item, i) => {
-         const key = item.replaceAll(" ", "-") + '-' + i
-				 return (
+          const key = item.replaceAll(" ", "-") + "-" + i;
+          return (
             <>
-               <li className="list-inside flex indent-2" key={key} >
-								<Check className="stroke-red-500"/>
-								{item}
-							</li>
-              
+              <li className="list-inside flex indent-2" key={key}>
+                <Check className="stroke-red-500" />
+                {item}
+              </li>
             </>
           );
         })}

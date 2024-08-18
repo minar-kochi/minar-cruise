@@ -3,6 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
+    restart: "always"
     environment:
       POSTGRES_DB: myapp
       POSTGRES_USER: myuser
@@ -10,10 +11,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5428:5432"
 
   pgbouncer:
     image: edoburu/pgbouncer:1.18.0
+    restart: "always"
     environment:
       - DB_USER=myuser
       - DB_PASSWORD=mypassword

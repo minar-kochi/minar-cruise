@@ -11,10 +11,15 @@ const SearchLabel = ({
 }) => {
   return (
     <div
-      className={cn("flex flex-col px-8 text-left w-full max-sm:px-4 ", className)}
+      className={cn(
+        "flex flex-col px-8 text-left w-full max-sm:px-4 ",
+        className,
+      )}
     >
       <h5 className=" text-xs font-semibold  ">{label}</h5>
-      <p className=" bg-inherit md:text-xs text-[0.6rem] outline-none text-gray-600 overflow-hidden">{data}</p>
+      <p className=" bg-inherit md:text-xs text-[0.6rem] outline-none text-gray-600 overflow-hidden">
+        {data}
+      </p>
     </div>
   );
 };

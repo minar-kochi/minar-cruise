@@ -7,7 +7,6 @@ import ContactMessageCard from "@/components/contact/ContactMessageCard";
 import ContactCard from "@/components/contact/ContactCard";
 import MapView from "@/components/contact/MapView";
 
-
 const badScript = Bad_Script({
   weight: "400",
   style: ["normal"],
@@ -21,7 +20,7 @@ const page = () => {
       <h5
         className={cn(
           "text-2xl text-primary  mx-auto w-fit",
-          badScript.className
+          badScript.className,
         )}
       >
         Get in touch with us
@@ -33,10 +32,9 @@ const page = () => {
         </article>
         <ContactMessageCard />
       </Bounded>
-      <MapView/>
+      <MapView />
     </div>
   );
 };
 
 export default page;
-

@@ -20,6 +20,7 @@ import {
 
 import { exit } from "node:process";
 import { ClearDb } from "./functions/utils";
+import moment from "moment";
 
 const db = new PrismaClient();
 
@@ -34,16 +35,18 @@ async function main() {
       console.error("You need to reset/migrate database before you seed");
     }
   }
+  const isData = await db.booking.findMany();
   console.log("Seeding Data");
+  console.log("Is there data ?", isData);
   const data = await db.$transaction(async (tx) => {
     console.log("Opening Transaction...");
     try {
-      console.log("Inserting user...");
+      // console.log("Inserting user...");
 
-      await tx.user.createMany({
-        data: users,
-      });
-      console.log("Completed User \n");
+      // await tx.user.createMany({
+      //   data: users,
+      // });
+      // console.log("Completed User \n");
 
       console.log("Inserting amenities...");
       await tx.amenities.createMany({
@@ -78,19 +81,19 @@ async function main() {
       });
       console.log("Completed packageImage \n");
 
-      console.log("Inserting schedule...");
+      // console.log("Inserting schedule...");
 
-      await tx.schedule.createMany({
-        data: schedule,
-      });
-      console.log("Completed schedule \n");
+      // await tx.schedule.createMany({
+      //   data: schedule,
+      // });
+      // console.log("Completed schedule \n");
 
-      console.log("Inserting booking...");
+      // console.log("Inserting booking...");
 
-      await tx.booking.createMany({
-        data: booking,
-      });
-      console.log("Completed booking \n");
+      // await tx.booking.createMany({
+      //   data: booking,
+      // });
+      // console.log("Completed booking \n");
 
       console.log("Seeding completed!");
     } catch (error) {

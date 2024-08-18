@@ -1,10 +1,11 @@
+import { TKeyOrganized } from "@/components/admin/dashboard/Schedule/ScheduleSelector";
 import { Schedule } from "@prisma/client";
 
 export type TSplitedFormatedDate = {
   year: number;
   day: number;
   month: number;
-}
+};
 
 export type TGallery = {
   Text: {
@@ -30,5 +31,17 @@ export const Galleries = [
 
 export type TGalleries = (typeof Galleries)[number];
 
+export type TScheduleDataDayReplaceString = Omit<Schedule, "day"> & {
+  day: string;
+};
 
-export type TScheduleDataDayReplaceString = Omit<Schedule, "day" | "time"> & { day: string , time:string | null };
+export type TScheduleSelector = {
+  type: TKeyOrganized;
+};
+export type TMeridianCycle = "AM" | "PM";
+export type TTimeCycle = {
+  hours: string;
+  min: string;
+  Cycle: TMeridianCycle;
+};
+export type TkeyDbTime = "fromTime" | "toTime";

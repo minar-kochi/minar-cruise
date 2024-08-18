@@ -1,9 +1,11 @@
+import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
 import { db } from "@/db";
 import { TPackageNavigation } from "@/db/types/TPackage";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { isProd } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { afterEach } from "node:test";
 
 export async function getPackageNavigation(): Promise<
@@ -35,6 +37,7 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
       },
       select: {
         id: true,
+
         packageCategory: true,
       },
     });
@@ -58,6 +61,8 @@ export async function getPackageById({ id }: { id: string }) {
         title: true,
         description: true,
         amenitiesId: true,
+        duration: true,
+        childPrice: true,
         packageImage: {
           select: {
             image: {
@@ -140,70 +145,70 @@ export type PackageSelect = {
   packageCategory: $Enums.PACKAGE_CATEGORY;
 };
 
-export async function getPackageScheduleDatas() {
-  try {
-    const data = await db.package.findMany({
-      select: {
-        slug: true,
-        title: true,
-        id: true,
-        packageCategory: true,
-      },
-    });
-    if (!data.length) {
+export const getOrganizedPackages = unstable_cache(
+  async () => {
+    try {
+      const data = await db.package.findMany({
+        select: {
+          slug: true,
+          title: true,
+          id: true,
+          packageCategory: true,
+        },
+      });
+      if (!data.length) {
+        return null;
+      }
+
+      let lunch: PackageSelect[] = [];
+      let dinner: PackageSelect[] = [];
+      let breakfast: PackageSelect[] = [];
+      let custom: PackageSelect[] = [];
+
+      for (const PackageData of data) {
+        if (
+          PackageData.packageCategory === "LUNCH" ||
+          PackageData.packageCategory === "EXCLUSIVE"
+        ) {
+          lunch.push(PackageData);
+        }
+        if (
+          PackageData.packageCategory === "BREAKFAST" ||
+          PackageData.packageCategory === "EXCLUSIVE"
+        ) {
+          breakfast.push(PackageData);
+        }
+        if (
+          PackageData.packageCategory === "DINNER" ||
+          PackageData.packageCategory === "EXCLUSIVE"
+        ) {
+          dinner.push(PackageData);
+        }
+        if (PackageData.packageCategory === "EXCLUSIVE") {
+          custom.push(PackageData);
+        }
+      }
+
+      if (lunch?.length < 0 || dinner?.length < 0 || breakfast?.length < 0) {
+        return null;
+      }
+
+      return {
+        lunch,
+        dinner,
+        breakfast,
+        custom,
+      };
+    } catch (error) {
+      ErrorLogger(error);
       return null;
     }
-
-    let Lunch: PackageSelect[] = [];
-    let Dinner: PackageSelect[] = [];
-    let BreakFast: PackageSelect[] = [];
-    let Custom: PackageSelect[] = [];
-
-    for (const PackageData of data) {
-      if (
-        PackageData.packageCategory === "LUNCH" ||
-        PackageData.packageCategory === "EXCLUSIVE"
-      ) {
-        Lunch.push(PackageData);
-        
-      }
-      if (
-        PackageData.packageCategory === "BREAKFAST" ||
-        PackageData.packageCategory === "EXCLUSIVE"
-      ) {
-        BreakFast.push(PackageData);
-      }
-      if (
-        PackageData.packageCategory === "DINNER" ||
-        PackageData.packageCategory === "EXCLUSIVE"
-      ) {
-        Dinner.push(PackageData);
-      }
-      if (PackageData.packageCategory === "EXCLUSIVE") {
-        Custom.push(PackageData);
-      }
-    }
-
-    if (Lunch?.length < 0 || Dinner?.length < 0 || BreakFast?.length < 0) {
-      return null;
-    }
-    
-    return {
-      Lunch,
-      Dinner,
-      BreakFast,
-      Custom,
-    };
-  } catch (error) {
-    ErrorLogger(error);
-    return null;
-  }
-}
-
-export type TgetPackageScheduleDatas = Awaited<
-  ReturnType<typeof getPackageScheduleDatas>
->;
-
+  },
+  ["ORGANIZED_PACKAGE_KEY"],
+  {
+    tags: ORGANIZED_PACKAGE_KEY,
+  },
+);
 
 export type TGetPackageCardDetails = Exclude<
   Awaited<ReturnType<typeof getPackageCardDetails>>,
@@ -219,22 +224,22 @@ export async function getPackageCardDetails() {
         title: true,
         duration: true,
         packageImage: {
-          take:1,
+          take: 1,
           where: {
             image: {
               ImageUse: {
                 has: "PROD_FEATURED",
               },
             },
-          },          
+          },
           select: {
             image: {
               select: {
                 url: true,
-                alt: true, 
-              }
-            }
-          }
+                alt: true,
+              },
+            },
+          },
         },
       },
     });
@@ -252,4 +257,3 @@ export async function getPackageCardDetails() {
     return null;
   }
 }
-

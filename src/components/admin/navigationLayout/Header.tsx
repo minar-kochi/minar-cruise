@@ -31,10 +31,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
+import RouterRefreshButton from "../booking/RouterRefresh";
 
-const Header = ({ children }: {
-  children: React.ReactNode
-}) => {
+const Header = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <header className="flex h-14  top-0 sticky items-center gap-4 border-b bg-black px-4 lg:h-[60px] lg:px-6">
@@ -97,9 +96,7 @@ const Header = ({ children }: {
                 Analytics
               </Link>
             </nav>
-            <div className="mt-auto">
-              
-            </div>
+            <div className="mt-auto"></div>
           </SheetContent>
         </Sheet>
         <div className="w-full flex-1">
@@ -114,22 +111,25 @@ const Header = ({ children }: {
             </div>
           </form> */}
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
-              <CircleUser className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex gap-2">
+         <RouterRefreshButton/>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="rounded-full">
+                <CircleUser className="h-5 w-5" />
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </header>
       {children}
     </div>

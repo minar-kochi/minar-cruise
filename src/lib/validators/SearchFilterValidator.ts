@@ -18,4 +18,4 @@ export const searchValidator = z.object({
   babyCount: z.number(),
 });
 
-export type TSearchValidator = z.infer<typeof searchValidator> 
+export type TSearchValidator = z.infer<typeof searchValidator>;

@@ -10,8 +10,8 @@ export const getGallery = (slug: TGalleries): TGallery => {
   if (slug === "celebration-gathering") {
     return celebrationGathering;
   }
-  if (slug === "corporate-gathering"){
-    return corporateGathering
-  } 
-  return familyGathering
+  if (slug === "corporate-gathering") {
+    return corporateGathering;
+  }
+  return familyGathering;
 };

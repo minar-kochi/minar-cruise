@@ -1,17 +1,32 @@
 import { isProd } from "@/lib/utils";
 import { PrismaClient } from "@prisma/client";
 
+let prismaCliens = new PrismaClient().$extends({
+  name: "extend-result-total-booking",
+  result: {
+    booking: {
+      totalBooking: {
+        needs: { numOfAdults: true, numOfBaby: true, numOfChildren: true },
+        compute(data) {
+          let sum = data.numOfAdults + data.numOfBaby + data.numOfChildren;
+          return sum;
+        },
+      },
+    },
+  },
+});
+
 declare global {
   // eslint-disable-next-line no-var
-  var cachedPrisma: PrismaClient;
+  var cachedPrisma: typeof prismaCliens;
 }
 
-let prisma: PrismaClient;
+let prisma: typeof prismaCliens;
 if (isProd) {
-  prisma = new PrismaClient();
+  prisma = prismaCliens;
 } else {
   if (!global.cachedPrisma) {
-    global.cachedPrisma = new PrismaClient();
+    global.cachedPrisma = prismaCliens;
   }
 
   prisma = global.cachedPrisma;

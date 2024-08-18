@@ -8,12 +8,11 @@ import HomeVideo from "@/components/home/HomeVideo";
 import { PackageCarousel } from "@/components/packages/PackageCarousel";
 
 export default function Home() {
-
   return (
     <main className="embla__viewport">
-      <HomeVideo/>
+      <HomeVideo />
       <LandingDescription />
-      <PackageCarousel/>
+      <PackageCarousel />
       <BookingDescription />
       <Facilities />
       <Entertainments />

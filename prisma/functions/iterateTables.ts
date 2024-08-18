@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { dbSchema, IIterateTable } from "./type";
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
@@ -9,8 +10,7 @@ const db = new PrismaClient();
  */
 
 export async function iterateTable({ tables = dbSchema }: IIterateTable) {
-  let data = 
-  (//@ts-ignore
+  let data = (
     (await Promise.all([...tables.map((item) => db[item].count())])) as (
       | number
       | null

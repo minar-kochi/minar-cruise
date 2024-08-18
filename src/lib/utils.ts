@@ -1,4 +1,5 @@
-import { TSplitedFormatedDate } from "@/Types/type";
+// import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
+import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { type ClassValue, clsx } from "clsx";
 import { formatISO, isValid } from "date-fns";
 import moment from "moment";
@@ -56,13 +57,13 @@ export function convertLocalDateToUTC(date: Date | string) {
     Date.UTC(
       ParsedInputDate.getFullYear(),
       ParsedInputDate.getMonth(),
-      ParsedInputDate.getDate()
-    )
+      ParsedInputDate.getDate(),
+    ),
   );
   return formatISO(formatedDate);
 }
 /** Convert Date Object to YYYY-MM-DD format */
-export function RemoveTimeStampFromDate(date: Date):string {
+export function RemoveTimeStampFromDate(date: Date): string {
   return formatISO(date).split("T")[0];
 }
 
@@ -71,7 +72,7 @@ export function ParseStringToNumber(x: string) {
 }
 
 export function parseDateFormatYYYMMDDToNumber(
-  date: string
+  date: string,
 ): TSplitedFormatedDate | null {
   const splitValue = date.split("-");
   if (!splitValue || splitValue.length !== 3) return null;
@@ -99,3 +100,56 @@ export function parseDateFormatYYYMMDDToNumber(
 export function isDateValid(date: TSplitedFormatedDate) {
   return moment([date.year, date.month - 1, date.day]).isValid();
 }
+
+export const sleep = (ms: number) => {
+  if (isProd) return;
+  return new Promise((r) => setTimeout(r, ms));
+};
+
+export const getUTCDate = (dateStr: string): number => {
+  const date = new Date(dateStr);
+  return Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds(),
+    date.getUTCMilliseconds(),
+  );
+};
+
+export function isTimeCycleMeridianValid(cycle: string): TMeridianCycle | null {
+  if (cycle !== "AM" && cycle !== "PM") return null;
+  return cycle;
+}
+
+export function splitTimeColon(value: string): TTimeCycle | null {
+  if (!value) return null;
+  const splited = value.split(":");
+  if (splited.length !== 3) return null;
+  let hours = splited[0];
+  let min = splited[1];
+  let Cycle = isTimeCycleMeridianValid(splited[2]);
+  if (!Cycle || !hours || !min) return null;
+  return {
+    Cycle,
+    hours,
+    min,
+  };
+}
+export function isTimeCycleValid(value: TTimeCycle): boolean {
+  if (!value.Cycle || !value.hours.length || !value.min.length) return false;
+
+  if (!isTimeCycleMeridianValid(value.Cycle)) return false;
+
+  return true;
+}
+export function mergeTimeCycle(value: TTimeCycle): string | null {
+  const { hours, min, Cycle } = value;
+  return `${hours}:${min}:${Cycle}`;
+}
+
+export const isValidMergeTimeCycle = (timeString: string) => {
+  return moment(timeString, "hh:mm:A", true).isValid();
+};

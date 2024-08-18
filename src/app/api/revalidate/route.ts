@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!authentication) {
       return NextResponse.json(
         { message: "Please Authenticate and try again" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     let isVerified = authentication === process.env.REVALIDATION_SECRET;

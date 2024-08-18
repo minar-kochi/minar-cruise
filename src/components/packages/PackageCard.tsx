@@ -11,24 +11,29 @@ import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 
 interface IPackageCard {
-  url: string,
-  alt: string,
-  title: string,
-  adultPrice: number,
-  duration: number,
-  className?: string
-  
+  url: string;
+  alt: string;
+  title: string;
+  adultPrice: number;
+  duration: number;
+  className?: string;
 }
-const PackageCard = async ({ adultPrice, alt, duration, title, url, className }: IPackageCard) => {
-  
+const PackageCard = async ({
+  adultPrice,
+  alt,
+  duration,
+  title,
+  url,
+  className,
+}: IPackageCard) => {
   /**
-   * 
+   *
    * @TODO Add image galley related to the package name on camera button with notification count as number of images
    *
    */
 
   return (
-    <div  className={cn("mt-5 max-w-[355px] w-full group ",className)} >
+    <div className={cn("mt-5 max-w-[355px] w-full group ", className)}>
       <div className="relative rounded-t-xl overflow-hidden">
         <div className="absolute right-4 top-4">
           <Heart
@@ -66,7 +71,7 @@ const PackageCard = async ({ adultPrice, alt, duration, title, url, className }:
         <div className="flex flex-col gap-2">
           <div className="flex">
             <h6 className="text-xl text-wrap flex flex-wrap font-semibold">
-              {title} 
+              {title}
             </h6>
           </div>
           <p className="text-muted-foreground font-medium">

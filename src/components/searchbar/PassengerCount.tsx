@@ -12,6 +12,8 @@ export const PassengerCount = ({
   let count = watch();
   let totalSeat = count.adultCount + count.babyCount + count.childCount;
   return (
-    <p className={cn("text-muted-foreground mx-auto my-auto ", className)}>{totalSeat}</p>
+    <p className={cn("text-muted-foreground mx-auto my-auto ", className)}>
+      {totalSeat}
+    </p>
   );
 };
