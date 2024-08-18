@@ -130,8 +130,8 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
     >
       <DialogTrigger
         className={buttonVariants({
-          variant: "outline",
-          className: "w-full gap-1",
+          variant: "confirm",
+          className: "w-full  gap-1",
         })}
       >
         <Check className="h-4 w-4" />
