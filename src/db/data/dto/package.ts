@@ -37,7 +37,7 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
       },
       select: {
         id: true,
-        
+
         packageCategory: true,
       },
     });
@@ -145,64 +145,70 @@ export type PackageSelect = {
   packageCategory: $Enums.PACKAGE_CATEGORY;
 };
 
-export const getOrganizedPackages = unstable_cache(async () => {
-  try {
-    const data = await db.package.findMany({
-      select: {
-        slug: true,
-        title: true,
-        id: true,
-        packageCategory: true,
-      },
-    });
-    if (!data.length) {
+export const getOrganizedPackages = unstable_cache(
+  async () => {
+    try {
+      const data = await db.package.findMany({
+        select: {
+          slug: true,
+          title: true,
+          id: true,
+          packageCategory: true,
+        },
+      });
+      if (!data.length) {
+        return null;
+      }
+
+      let lunch: PackageSelect[] = [];
+      let dinner: PackageSelect[] = [];
+      let breakfast: PackageSelect[] = [];
+      let custom: PackageSelect[] = [];
+
+      for (const PackageData of data) {
+        if (
+          PackageData.packageCategory === "LUNCH" ||
+          PackageData.packageCategory === "EXCLUSIVE"
+        ) {
+          lunch.push(PackageData);
+        }
+        if (
+          PackageData.packageCategory === "BREAKFAST" ||
+          PackageData.packageCategory === "EXCLUSIVE"
+        ) {
+          breakfast.push(PackageData);
+        }
+        if (
+          PackageData.packageCategory === "DINNER" ||
+          PackageData.packageCategory === "EXCLUSIVE"
+        ) {
+          dinner.push(PackageData);
+        }
+        if (PackageData.packageCategory === "EXCLUSIVE") {
+          custom.push(PackageData);
+        }
+      }
+
+      if (lunch?.length < 0 || dinner?.length < 0 || breakfast?.length < 0) {
+        return null;
+      }
+
+      return {
+        lunch,
+        dinner,
+        breakfast,
+        custom,
+      };
+    } catch (error) {
+      ErrorLogger(error);
       return null;
     }
-
-    let lunch: PackageSelect[] = [];
-    let dinner: PackageSelect[] = [];
-    let breakfast: PackageSelect[] = [];
-    let custom: PackageSelect[] = [];
-
-    for (const PackageData of data) {
-      if (
-        PackageData.packageCategory === "LUNCH" ||
-        PackageData.packageCategory === "EXCLUSIVE"
-      ) {
-        lunch.push(PackageData);
-      }
-      if (
-        PackageData.packageCategory === "BREAKFAST" ||
-        PackageData.packageCategory === "EXCLUSIVE"
-      ) {
-        breakfast.push(PackageData);
-      }
-      if (
-        PackageData.packageCategory === "DINNER" ||
-        PackageData.packageCategory === "EXCLUSIVE"
-      ) {
-        dinner.push(PackageData);
-      }
-      if (PackageData.packageCategory === "EXCLUSIVE") {
-        custom.push(PackageData);
-      }
-    }
-
-    if (lunch?.length < 0 || dinner?.length < 0 || breakfast?.length < 0) {
-      return null;
-    }
-
-    return {
-      lunch,
-      dinner,
-      breakfast,
-      custom,
-    };
-  } catch (error) {
-    ErrorLogger(error);
-    return null;
-  }
-}, ["ORGANIZED_PACKAGE_KEY"]);
+  },
+  ["ORGANIZED_PACKAGE_KEY"],
+  {
+    tags: ORGANIZED_PACKAGE_KEY,
+  },
+);
 
 export type TGetPackageCardDetails = Exclude<
   Awaited<ReturnType<typeof getPackageCardDetails>>,
