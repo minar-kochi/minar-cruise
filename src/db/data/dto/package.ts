@@ -202,7 +202,7 @@ export const getOrganizedPackages = unstable_cache(async () => {
     ErrorLogger(error);
     return null;
   }
-}, ORGANIZED_PACKAGE_KEY);
+}, ["ORGANIZED_PACKAGE_KEY"]);
 
 export type TGetPackageCardDetails = Exclude<
   Awaited<ReturnType<typeof getPackageCardDetails>>,

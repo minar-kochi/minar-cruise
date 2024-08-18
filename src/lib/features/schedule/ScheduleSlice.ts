@@ -82,7 +82,46 @@ const scheduleSlice = createSlice({
         };
       },
     },
+    setSyncDatabaseDeleteSchedule: {
+      reducer(
+        state,
+        action: PayloadAction<{
+          updatingDate: string;
+          currentDateSchedule: TScheduleDataDayReplaceString;
+          type: TKeyOrganizedScheduleData;
+          scheduleStatus: $Enums.SCHEDULE_STATUS;
+        }>,
+      ) {
+        const { payload } = action;
+        const { currentDateSchedule, scheduleStatus, type, updatingDate } =
+          payload;
+        //Filtering out the dates that are removed.
+        if (state.date === action.payload.updatingDate) {
+          const newFilteredUpcommingScheduleDate = state.upCommingSchedules[
+            type
+          ].filter((fv) => fv.date !== updatingDate);
 
+          //removing the date from the deleted State
+          state.upCommingSchedules[type] = newFilteredUpcommingScheduleDate;
+        }
+        state.currentDateSchedule[type] = null;
+      },
+      prepare(
+        data: TScheduleDataDayReplaceString,
+        type: TKeyOrganizedScheduleData,
+      ) {
+        const date = RemoveTimeStampFromDate(new Date(data.day));
+
+        return {
+          payload: {
+            updatingDate: date,
+            currentDateSchedule: data,
+            type,
+            scheduleStatus: data.scheduleStatus,
+          },
+        };
+      },
+    },
     setSyncDatabaseUpdatesScheduleCreation: {
       reducer(
         state,
@@ -202,6 +241,7 @@ export const {
   setUpdatableScheduleDate,
   setUpdatableScheduleTime,
   setSyncDatabaseUpdatesScheduleCreation,
+  setSyncDatabaseDeleteSchedule,
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;

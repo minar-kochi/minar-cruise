@@ -15,14 +15,18 @@ export default function ScheduleButtonWrapper({ type }: TScheduleSelector) {
 
   return !data[type]?.id ? (
     <>
-      <ScheduleAddButton type={type} />
+      <div className="my-2">
+        <ScheduleAddButton type={type} />
+      </div>
       <ScheduleBlockButton type={type} />
     </>
   ) : (
     <>
-      {data[type]?.scheduleStatus === "BLOCKED" ? (
-        <ScheduleUnblockButton type={type} />
-      ) : null}
+      <div className="my-2">
+        {data[type]?.scheduleStatus === "BLOCKED" ? (
+          <ScheduleUnblockButton scheduleId={data[type].id} type={type} />
+        ) : null}
+      </div>
       <ScheduleUpdateButton type={type} />
     </>
   );
