@@ -29,7 +29,6 @@ const fontSans = FontSans({
   variable: "--font-sans",
 });
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -42,8 +41,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const packages = await getOrganizedPackages();
-  if (!packages) return null;
+
   return (
     <html lang="en">
       <body

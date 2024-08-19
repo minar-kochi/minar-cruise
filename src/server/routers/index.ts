@@ -4,13 +4,13 @@ import {} from "date-fns";
 import { ContactValidators } from "@/lib/validators/ContactFormValidator";
 import { ScheduleSchema } from "@/lib/validators/ScheduleValidtor";
 import { db } from "@/db";
-import { schedule } from "./admin/schedule";
+import { admin } from "./admin/admin";
 import { TRPCError } from "@trpc/server";
 import { packageRouter } from "./package/package";
 
 export const appRouter = router({
   packageInfo: packageRouter,
-  admin: schedule,
+  admin,
   subscribeNewsletter: publicProcedure
     .input(
       z.object({

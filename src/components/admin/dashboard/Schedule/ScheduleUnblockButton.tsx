@@ -15,49 +15,51 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
 import toast from "react-hot-toast";
-import { selectedPackageIdsAndScheduleMapToEnum } from "@/Types/Schedule/ScheduleSelect";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
+import { setSyncDatabaseDeleteSchedule } from "@/lib/features/schedule/ScheduleSlice";
 import { useRouter } from "next/navigation";
-import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
 
-export default function ScheduleBlockButton({ type }: TScheduleSelector) {
+export default function ScheduleUnblockButton({
+  type,
+  scheduleId,
+}: TScheduleSelector & { scheduleId: string }) {
   const [open, isOpen] = useState(false);
   const date = useAppSelector((state) => state.schedule.date);
   const { invalidate: InvalidateScheduleInfinity } =
     trpc.useUtils().admin.schedule.getSchedulesInfinity;
   const { invalidate } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
   const dispatch = useAppDispatch();
-
   const router = useRouter();
-  const { mutate, isPending } =
-    trpc.admin.schedule.blockScheduleByDateAndStatus.useMutation({
-      async onSuccess(data, variables, context) {
-        await InvalidateScheduleInfinity(undefined, {
-          type: "all",
-        });
-        await invalidate({
-          ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
-        });
-        dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
 
-        isOpen(false);
-        router.refresh();
-        toast.success("Schedule is blocked.");
+  const { isPending, mutate } =
+    trpc.admin.schedule.unBlockScheduleById.useMutation({
+      async onSuccess(data, variables, context) {
+        // setSyncDatabaseDeleteSchedule
+        try {
+          await InvalidateScheduleInfinity(undefined, {
+            type: "all",
+          });
+          await invalidate({
+            ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
+          });
+          dispatch(setSyncDatabaseDeleteSchedule(data, type));
+          isOpen(false);
+          router.refresh();
+          toast.success("Schedule is blocked.");
+        } catch (error) {
+          toast.error(
+            "something went wrong while updating the UI please refresh",
+          );
+        }
       },
       onError(error, variables, context) {
         toast.error(error.message);
       },
     });
 
-  const handleBlockButton = () => {
-    const ScheduleTime = selectedPackageIdsAndScheduleMapToEnum[type];
-    if (!ScheduleTime) {
-      toast.error("Failed to get Schedule Time.");
-      return;
-    }
+  const handleUnblock = () => {
     mutate({
-      date,
-      ScheduleTime,
+      scheduleId,
     });
   };
   return (
@@ -69,7 +71,7 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
         })}
       >
         <Ban className="h-4 w-4" />
-        Block {type}
+        Unblock {type}
       </DialogTrigger>
 
       <DialogContent>
@@ -81,19 +83,15 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-1">
-          <Button
-            onClick={() => isOpen(false)}
-            className=""
-            variant={"secondary"}
-          >
+          <Button className="" variant={"secondary"}>
             Cancel
           </Button>
           <Button
             disabled={isPending}
-            onClick={handleBlockButton}
+            onClick={handleUnblock}
             variant={"destructive"}
           >
-            Block Lunch at {format(date, "dd/MM")}{" "}
+            unblock Lunch at {format(date, "dd/MM/yyyy")}{" "}
           </Button>
         </div>
       </DialogContent>

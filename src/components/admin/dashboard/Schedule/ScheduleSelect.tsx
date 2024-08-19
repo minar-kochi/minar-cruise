@@ -16,13 +16,12 @@ import { TScheduleSelector } from "@/Types/type";
 export default function ScheduleSelect({ type }: TScheduleSelector) {
   const { OrganizedPackage } = useAppSelector((state) => state.packages);
   const { currentDateSchedule } = useAppSelector((state) => state.schedule);
-
   const defaultSelect = useAppSelector((state) =>
     DefaultMergedSchedule(state, type),
   );
 
   const dispatch = useAppDispatch();
-  return (
+  return currentDateSchedule[type]?.scheduleStatus === "BLOCKED" ? null : (
     <Select
       defaultValue={currentDateSchedule[type]?.packageId ?? "false"}
       value={defaultSelect.packageId ?? "false"}

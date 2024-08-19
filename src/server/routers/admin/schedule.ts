@@ -12,6 +12,7 @@ import {
   sleep,
 } from "@/lib/utils";
 import {
+  EnumScheduleTime,
   ScheduleCreateSchema,
   ScheduleSchema,
   UpdatedDateScheduleSchema,
@@ -24,14 +25,6 @@ import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
 
 export const schedule = router({
-  /**
-   * @description
-   * String that should be passed in Should be in YYYY-MM-DD
-   *
-   * if not passed in any then it will get the Current Date and fetch it.
-   *
-   *  */
-  booking,
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
     async ({ input: { ScheduleDate } }) => {
       // string that will receive is in the format YYYY-MM-DD
@@ -345,6 +338,103 @@ export const schedule = router({
       }
     },
   ),
+  blockScheduleByDateAndStatus: AdminProcedure.input(
+    z.object({
+      date: z.string(),
+      ScheduleTime: EnumScheduleTime,
+    }),
+  ).mutation(async ({ ctx, input: { ScheduleTime, date: ScheduleDate } }) => {
+    try {
+      const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
+      if (!date) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Date Format is not valid YYYY-MM-DD",
+        });
+      }
+
+      const validatedDate = isDateValid(date);
+
+      if (!validatedDate) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Requested date is invalid",
+        });
+      }
+
+      let SafelyParsedDate = new Date(ScheduleDate);
+
+      const Schedule = await db.schedule.findFirst({
+        where: {
+          AND: [
+            {
+              schedulePackage: ScheduleTime,
+            },
+            {
+              day: SafelyParsedDate,
+            },
+          ],
+        },
+      });
+      if (Schedule?.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot block a schedule that already set.",
+        });
+      }
+      const blockedSchedule = await db.schedule.create({
+        data: {
+          day: SafelyParsedDate,
+          schedulePackage: ScheduleTime,
+          scheduleStatus: "BLOCKED",
+        },
+      });
+      return blockedSchedule;
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something unexpected happpened, Please try again.",
+      });
+    }
+  }),
+  unBlockScheduleById: AdminProcedure.input(
+    z.object({
+      scheduleId: z.string(),
+    }),
+  ).mutation(async ({ ctx, input: { scheduleId } }) => {
+    try {
+      const data = await db.schedule.findUnique({
+        where: {
+          id: scheduleId,
+          scheduleStatus: "BLOCKED",
+        },
+      });
+      if (!data) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Schedule not found.",
+        });
+      }
+      const deletedData = await db.schedule.delete({
+        where: {
+          id: scheduleId,
+          scheduleStatus: "BLOCKED",
+        },
+      });
+      return deletedData;
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went wrong on server",
+      });
+    }
+  }),
   clearSchedule: AdminProcedure.mutation(async () => {
     try {
       if (isProd) {
