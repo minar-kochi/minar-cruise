@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
-  offlineBookingSchema,
-  TOfflineBookingSchema,
+  offlineBookingFormSchema,
+  TOfflineBookingFormSchema,
 } from "@/lib/validators/offlineBookingValidator";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
@@ -69,8 +69,8 @@ export default function OfflineBookingForm({
       async onSuccess(data) {
         toast.dismiss();
         toast.success("Successfully added booking data");
-        router.prefetch(`/admin/booking/view/${data?.scheduleId}`);
-        router.push(`/admin/booking/view/${data?.scheduleId}`);
+        router.prefetch(`/admin/booking/view/${scheduleId}`);
+        router.push(`/admin/booking/view/${scheduleId}`);
       },
       onError(error) {
         toast.dismiss();
@@ -78,7 +78,7 @@ export default function OfflineBookingForm({
       },
     });
 
-  const onSubmit = (data: TOfflineBookingSchema) => {
+  const onSubmit = (data: TOfflineBookingFormSchema) => {
     if (type === "ADD") {
       createOfflineBooking(data);
       return;
@@ -91,7 +91,6 @@ export default function OfflineBookingForm({
       toast.error("Please Change any values to be updated.");
       return;
     }
-    console.log("reached mutation");
     mutateUpdatedBooking({
       bookingId: prefillData.id,
       ...data,
@@ -102,8 +101,8 @@ export default function OfflineBookingForm({
     register,
     formState: { errors, isSubmitting, isDirty },
     reset,
-  } = useForm<TOfflineBookingSchema>({
-    resolver: zodResolver(offlineBookingSchema),
+  } = useForm<TOfflineBookingFormSchema>({
+    resolver: zodResolver(offlineBookingFormSchema),
     defaultValues: {
       /**allow to use the value to be included on the server send id */
       schedule: scheduleId,
