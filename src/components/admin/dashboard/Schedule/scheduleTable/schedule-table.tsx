@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { trpc } from "@/app/_trpc/client";
 import {
@@ -31,9 +31,7 @@ export default function ScheduleTable() {
 
   const { data, fetchNextPage, isFetching, isFetchingNextPage } =
     trpc.admin.schedule.getSchedulesInfinity.useInfiniteQuery(
-      {
-        limit: 5,
-      },
+      {},
       {
         getNextPageParam: (lastPage) => lastPage?.nextCursor,
       },
