@@ -8,6 +8,11 @@ interface GalleryProps {
   };
 }
 
+export async function generateStaticParams({ params: { slug } }: GalleryProps) {
+  return Galleries.map((item) => ({
+    slug: item,
+  }));
+}
 const page = ({ params }: GalleryProps) => {
   if (!Galleries.includes(params.slug)) {
     return redirect("/gallery/family-gathering");

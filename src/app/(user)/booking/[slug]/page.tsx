@@ -6,12 +6,14 @@ import PackageGalleryCard from "@/components/packages/PackageGalleryCard";
 import { getPackageById } from "@/db/data/dto/package";
 import { isProd } from "@/lib/utils";
 import { db } from "@/db";
+import { Metadata } from "next";
 
 interface BookingPage {
   params: {
     slug: string;
   };
 }
+
 export async function generateStaticParams({ params: { slug } }: BookingPage) {
   const packageSlug = await db.package.findMany({
     select: {
@@ -23,9 +25,7 @@ export async function generateStaticParams({ params: { slug } }: BookingPage) {
     slug: item.slug,
   }));
 }
-export default async function PackagePage({
-  params: { slug },
-}: BookingPage) {
+export default async function PackagePage({ params: { slug } }: BookingPage) {
   const data = await getPackageById({ slug });
   if (!data) {
     if (isProd) {
