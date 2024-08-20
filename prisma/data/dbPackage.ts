@@ -30,7 +30,7 @@ export const packages: packagesPartialId = [
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clk3m9p2q0000472xzt81h294",
     fromTime: "12:00:PM",
-    toTime: "02:00:PM",
+    toTime: "02:00:AM",
     packageCategory: "LUNCH",
   },
   {

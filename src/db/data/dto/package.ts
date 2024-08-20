@@ -62,6 +62,8 @@ export async function getPackageById({ id }: { id: string }) {
         description: true,
         amenitiesId: true,
         duration: true,
+        fromTime: true,
+        toTime: true,
         childPrice: true,
         packageImage: {
           select: {
