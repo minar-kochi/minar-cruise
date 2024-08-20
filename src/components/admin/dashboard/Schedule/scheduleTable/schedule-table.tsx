@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
+import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
@@ -55,13 +56,24 @@ export default function ScheduleTable() {
             data.pages?.length &&
             data.pages.map((page) => {
               return page.response.map((item, i) => {
+                const { fromTime, toTime } =
+                  selectFromTimeAndToTimeFromScheduleOrPackages({
+                    Packages: {
+                      packageFromTime: item.Package?.fromTime ?? "",
+                      packageToTime: item.Package?.toTime ?? "",
+                    },
+                    schedule: {
+                      scheduleFromTime: item.fromTime,
+                      scheduleToTime: item.toTime,
+                    },
+                  });
                 return (
                   <TableRow ref={ref} key={`${item.id}-table-row`}>
                     {/* <TableCell>{i}</TableCell> */}
                     <TableCell>{format(item.day, "dd/ MM /yyyy")}</TableCell>
                     <TableCell>{item.schedulePackage}</TableCell>
                     <TableCell>
-                      {item.fromTime} - {item.toTime}
+                      {fromTime} - {toTime}
                     </TableCell>
                     <TableCell>{item.Package?.title}</TableCell>
                     <TableCell>{item.scheduleStatus}</TableCell>
