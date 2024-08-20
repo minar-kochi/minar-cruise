@@ -5,17 +5,28 @@ import TermsAndConditionsCard from "@/components/packages/TermsAndConditionsCard
 import PackageGalleryCard from "@/components/packages/PackageGalleryCard";
 import { getPackageById } from "@/db/data/dto/package";
 import { isProd } from "@/lib/utils";
+import { db } from "@/db";
 
 interface BookingPage {
   params: {
-    packageId: string;
+    slug: string;
   };
 }
+export async function generateStaticParams({ params: { slug } }: BookingPage) {
+  const packageSlug = await db.package.findMany({
+    select: {
+      slug: true,
+    },
+  });
 
+  return packageSlug.map((item) => ({
+    slug: item.slug,
+  }));
+}
 export default async function PackagePage({
-  params: { packageId },
+  params: { slug },
 }: BookingPage) {
-  const data = await getPackageById({ id: packageId });
+  const data = await getPackageById({ slug });
   if (!data) {
     if (isProd) {
       return;
@@ -33,7 +44,6 @@ export default async function PackagePage({
         title={data.title}
         fromTime={data.fromTime}
         toTime={data.toTime}
-
       />
       <ContentCard
         amenitiesId={data.amenitiesId}

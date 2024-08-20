@@ -49,11 +49,11 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
   }
 }
 
-export async function getPackageById({ id }: { id: string }) {
+export async function getPackageById({ slug }: { slug: string }) {
   try {
     const data = await db.package.findUnique({
       where: {
-        slug: id,
+        slug,
       },
       select: {
         id: true,
