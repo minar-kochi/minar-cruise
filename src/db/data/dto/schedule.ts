@@ -120,8 +120,11 @@ export const getManySchedulesAndTotalBookingCount = async () => {
           gte: new Date(Date.now()),
         },
         scheduleStatus: {
-          in: ["AVAILABLE","EXCLUSIVE"]
-        }
+          in: ["AVAILABLE", "EXCLUSIVE"],
+        },
+      },
+      orderBy: {
+        day: "asc",
       },
       select: {
         id: true,
@@ -155,7 +158,9 @@ export const getManySchedulesAndTotalBookingCount = async () => {
     console.log(error);
   }
 };
-
+export type TGetManySchedulesAndTotalBookingCount = Awaited<
+  ReturnType<typeof getManySchedulesAndTotalBookingCount>
+>;
 export const getUpcommingScheduleDates = async () => {
   try {
     const data = await db.schedule.findMany({
@@ -184,7 +189,7 @@ export const getUpcommingScheduleDates = async () => {
           date: item.day.toLocaleDateString(undefined, {
             timeZone: "Asia/Kolkata",
           }),
-          status: item.scheduleStatus
+          status: item.scheduleStatus,
         });
         continue;
       }
@@ -193,7 +198,7 @@ export const getUpcommingScheduleDates = async () => {
           date: item.day.toLocaleDateString(undefined, {
             timeZone: "Asia/Kolkata",
           }),
-          status: item.scheduleStatus
+          status: item.scheduleStatus,
         });
         continue;
       }
@@ -202,7 +207,7 @@ export const getUpcommingScheduleDates = async () => {
           date: item.day.toLocaleDateString(undefined, {
             timeZone: "Asia/Kolkata",
           }),
-          status: item.scheduleStatus
+          status: item.scheduleStatus,
         });
         continue;
       }
@@ -210,7 +215,7 @@ export const getUpcommingScheduleDates = async () => {
         date: item.day.toLocaleDateString(undefined, {
           timeZone: "Asia/Kolkata",
         }),
-        status: item.scheduleStatus
+        status: item.scheduleStatus,
       });
     }
     return scheduledDate;
@@ -378,7 +383,6 @@ export const getSchedulesAndBookingByDate = async () => {
 export type TGetBookingsByScheduleId = Awaited<
   ReturnType<typeof getBookingsByScheduleId>
 >;
-
 
 export async function getBookingsByScheduleId(id: string) {
   try {

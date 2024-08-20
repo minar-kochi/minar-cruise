@@ -31,6 +31,9 @@ export default async function PackagePage({
         adultPrice={data.adultPrice}
         childPrice={data.childPrice}
         title={data.title}
+        fromTime={data.fromTime}
+        toTime={data.toTime}
+
       />
       <ContentCard
         amenitiesId={data.amenitiesId}

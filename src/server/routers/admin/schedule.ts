@@ -87,6 +87,8 @@ export const schedule = router({
         Package: {
           select: {
             title: true,
+            fromTime: true,
+            toTime: true,
           },
         },
       },

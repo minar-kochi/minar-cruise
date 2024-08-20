@@ -1,8 +1,10 @@
 import { trpc } from "@/app/_trpc/client";
+import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
 import { findBookingById, findScheduleById } from "@/db/data/dto/schedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { sleep } from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
 import {
   offlineBookingFormSchema,
@@ -13,9 +15,7 @@ import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { error } from "console";
 import { revalidatePath } from "next/cache";
-import { string, z } from "zod";
-import { schedule } from "./schedule";
-import { Trocchi } from "next/font/google";
+import {z } from "zod";
 
 export const booking = router({
   transferAllBookingsToASpecificSchedule: AdminProcedure.input(
@@ -331,6 +331,19 @@ export const booking = router({
       paymentMode,
       phone,
     } = input;
+    // @TODO @HOTFIX need to check the total count before updating booking
+    const existingId = await db.booking.count({
+      where: {
+        id: bookingId,
+      },
+    });
+
+    if (!existingId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Booking is not found.",
+      });
+    }
 
     /**
      * check if booking id exists
@@ -616,4 +629,69 @@ export const booking = router({
       }
     },
   ),
+
+  bookingScheduleInfinity: AdminProcedure.input(
+    z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(),
+    }),
+  ).query(async ({ ctx, input }) => {
+    await sleep(2000);
+    await sleep(2000);
+    const { cursor } = input;
+    const limit = input.limit ?? INFINITE_QUERY_LIMIT;
+
+    const data = await db.schedule.findMany({
+      where: {
+        day: {
+          gte: new Date(Date.now()),
+        },
+        scheduleStatus: {
+          in: ["AVAILABLE", "EXCLUSIVE"],
+        },
+      },
+      select: {
+        id: true,
+        day: true,
+        fromTime: true,
+        schedulePackage: true,
+        scheduleStatus: true,
+        toTime: true,
+        Package: {
+          select: {
+            title: true,
+          },
+        },
+        Booking: {
+          select: {
+            totalBooking: true,
+          },
+        },
+      },
+      cursor: cursor ? { id: cursor } : undefined,
+      take: limit + 1,
+      orderBy: {
+        day: "asc",
+      },
+    });
+
+    
+    let nextCursor: typeof cursor | undefined = undefined;
+
+    let scheduleBookingData = data.map((item) => ({
+      ...item,
+      Booking: item.Booking.reduce(
+        (total, booking) => total + booking.totalBooking,
+        0,
+      ),
+    }));
+    if (data.length > limit) {
+      const nextItem = scheduleBookingData.pop();
+      nextCursor = nextItem?.id;
+    }
+    return {
+      response: scheduleBookingData,
+      nextCursor,
+    };
+  }),
 });
