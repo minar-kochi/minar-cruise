@@ -29,7 +29,7 @@ export default function ScheduleBar() {
   const { mutate: deleteSchedules } =
     trpc.admin.schedule.clearSchedule.useMutation({
       onSuccess(data, variables, context) {
-        invalidate()
+        invalidate();
         toast.success("Cleared Database");
       },
       onError(error, variables, context) {

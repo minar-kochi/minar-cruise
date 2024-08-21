@@ -112,7 +112,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
           </form> */}
         </div>
         <div className="flex gap-2">
-         <RouterRefreshButton/>
+          <RouterRefreshButton />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">

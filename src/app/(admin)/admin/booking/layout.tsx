@@ -1,13 +1,15 @@
-
-export default function layout({ children, modal}:{
-    children: string
-    modal: string
+export default function layout({
+  children,
+  modal,
+}: {
+  children: string;
+  modal: string;
 }) {
   return (
     <div>
-        {children}
-        {modal}
-        <div id="modal-root" />
+      {children}
+      {modal}
+      <div id="modal-root" />
     </div>
-  )
+  );
 }
