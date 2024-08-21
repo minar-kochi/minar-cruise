@@ -15,7 +15,7 @@ import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { error } from "console";
 import { revalidatePath } from "next/cache";
-import {z } from "zod";
+import { z } from "zod";
 
 export const booking = router({
   transferAllBookingsToASpecificSchedule: AdminProcedure.input(
@@ -458,7 +458,8 @@ export const booking = router({
       // }
 
       if (
-        updatedSeatCountOfBooking + (formattedTotalCountOfSchedule - seatCountBeforeUpdate.totalBooking  ) >
+        updatedSeatCountOfBooking +
+          (formattedTotalCountOfSchedule - seatCountBeforeUpdate.totalBooking) >
         MAX_BOAT_SEAT
       ) {
         throw new TRPCError({
@@ -675,7 +676,6 @@ export const booking = router({
       },
     });
 
-    
     let nextCursor: typeof cursor | undefined = undefined;
 
     let scheduleBookingData = data.map((item) => ({

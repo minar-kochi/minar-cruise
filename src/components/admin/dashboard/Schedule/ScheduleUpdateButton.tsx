@@ -34,32 +34,33 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
     trpc.useUtils().admin.schedule.getSchedulesInfinity;
   const dispatch = useAppDispatch();
 
-  const { mutate: updateSchedule } = trpc.admin.schedule.updateSchedule.useMutation({
-    async onMutate(variables) {
-      toast.loading(
-        `Updating Schedule at ${format(variables.date, "do 'of' LLL")}`,
-        { duration: 3000 },
-      );
-      setIsOpen(false);
-    },
-    async onSuccess(data, variables, context) {
-      toast.dismiss();
-      await InvalidateScheduleInfinity(undefined, {
-        type: "all",
-      });
-      await invalidate({
-        ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
-      });
-      dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
-    },
-    onError(error, variables, context) {
-      toast.dismiss();
-      // @TODO understand the mutation code and display the error message accordingly.
-      if (error.message) {
-        toast.error(error.message);
-      }
-    },
-  });
+  const { mutate: updateSchedule } =
+    trpc.admin.schedule.updateSchedule.useMutation({
+      async onMutate(variables) {
+        toast.loading(
+          `Updating Schedule at ${format(variables.date, "do 'of' LLL")}`,
+          { duration: 3000 },
+        );
+        setIsOpen(false);
+      },
+      async onSuccess(data, variables, context) {
+        toast.dismiss();
+        await InvalidateScheduleInfinity(undefined, {
+          type: "all",
+        });
+        await invalidate({
+          ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
+        });
+        dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
+      },
+      onError(error, variables, context) {
+        toast.dismiss();
+        // @TODO understand the mutation code and display the error message accordingly.
+        if (error.message) {
+          toast.error(error.message);
+        }
+      },
+    });
 
   async function handleScheduleUpdate() {
     let updatedScheduleData = updatedScheduleDatas[type] ?? null;

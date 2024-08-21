@@ -16,10 +16,13 @@ import { createPortal } from "react-dom";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-export function Modal({ children, className }: {
-   children: React.ReactNode 
-   className?: string
-  }) {
+export function Modal({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   const router = useRouter();
   //   const dialogRef = useRef<ElementRef<"AlertDialogTrigger">>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -43,9 +46,7 @@ export function Modal({ children, className }: {
         setIsOpen(value);
       }}
     >
-      <DialogContent className={cn("",className)}>
-        {children}
-        </DialogContent>
+      <DialogContent className={cn("", className)}>{children}</DialogContent>
       {/* <dialog ref={dialogRef} className="modal" onClose={onDismiss}>
         {children}
         <button onClick={onDismiss} className="close-button" />

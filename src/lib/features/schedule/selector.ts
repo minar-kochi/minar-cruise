@@ -24,7 +24,7 @@ export const scheduleIdAndPackageTitleSelector = createSelector(
       currentSchedule.dinner,
       currentSchedule.lunch,
     ];
-    
+
     let AllPackages = [
       ...packages.breakfast,
       ...packages.custom,

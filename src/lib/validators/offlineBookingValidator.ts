@@ -45,4 +45,6 @@ export const updateOfflineBookingSchema = z
   .merge(offlineBookingFormSchema);
 
 export type TUpdateBookingSchema = z.infer<typeof updateOfflineBookingSchema>;
-export type TOfflineBookingFormSchema = z.infer<typeof offlineBookingFormSchema>;
+export type TOfflineBookingFormSchema = z.infer<
+  typeof offlineBookingFormSchema
+>;

@@ -5,14 +5,18 @@ export const updateScheduleIdOfBooking = z.object({
   idOfBookingToBeUpdated: z.string(),
 });
 
-export type TUpdateScheduleIdOfBooking = z.infer<typeof updateScheduleIdOfBooking>
+export type TUpdateScheduleIdOfBooking = z.infer<
+  typeof updateScheduleIdOfBooking
+>;
 
-export const moveAllBookingsSchema = z.object({
-  fromScheduleId: z.string(),
-  toScheduleId: z.string(),
-}).refine(val => val.fromScheduleId !== val.toScheduleId,{
-  message: "From and To schedule ID must bew different",
-  path:["ScheduleId"]
-})
+export const moveAllBookingsSchema = z
+  .object({
+    fromScheduleId: z.string(),
+    toScheduleId: z.string(),
+  })
+  .refine((val) => val.fromScheduleId !== val.toScheduleId, {
+    message: "From and To schedule ID must bew different",
+    path: ["ScheduleId"],
+  });
 
-export type TMoveAllBookingsSchema = z.infer<typeof moveAllBookingsSchema>
+export type TMoveAllBookingsSchema = z.infer<typeof moveAllBookingsSchema>;

@@ -12,8 +12,10 @@ import { PopOverDatePicker } from "./PopOverScheduleDate";
 import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
 import { trpc } from "@/app/_trpc/client";
 
-export default function ScheduleDatePicker({className}: {
-  className?: string
+export default function ScheduleDatePicker({
+  className,
+}: {
+  className?: string;
 }) {
   const date = useAppSelector((state) => state.schedule.date);
   const dispatch = useAppDispatch();
@@ -56,7 +58,7 @@ export default function ScheduleDatePicker({className}: {
           let currDate = getPrevTimeStamp(Date.now());
           return date < new Date(currDate);
         },
-        className: cn("",className)
+        className: cn("", className),
       }}
     />
   );
