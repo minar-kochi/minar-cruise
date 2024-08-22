@@ -35,6 +35,7 @@ export default async function PackagePage({
       <ContentCard
         amenitiesId={data.amenitiesId}
         description={data.description}
+        formData={data} 
       />
       <TermsAndConditionsCard />
       <Reviews />

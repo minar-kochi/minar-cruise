@@ -49,6 +49,11 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
   }
 }
 
+export type TGetPackageById = Exclude<
+  Awaited<ReturnType<typeof getPackageById>>,
+  null
+>;
+
 export async function getPackageById({ id }: { id: string }) {
   try {
     const data = await db.package.findUnique({
@@ -88,10 +93,6 @@ export async function getPackageById({ id }: { id: string }) {
   }
 }
 
-export type TGetPackageById = Exclude<
-  Awaited<ReturnType<typeof getPackageById>>,
-  null
->;
 
 export type TGetPackageSearchItems = Exclude<
   Awaited<ReturnType<typeof getPackageSearchItems>>,
