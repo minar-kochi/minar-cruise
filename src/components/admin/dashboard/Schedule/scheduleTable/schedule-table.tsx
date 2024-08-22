@@ -64,7 +64,7 @@ export default function ScheduleTable() {
                     <TableCell>{item.schedulePackage}</TableCell>
                     <TableCell>
                       {item.fromTime} - {item.toTime}
-                    </TableCell>
+                    </TableCell>  
                     <TableCell>{item.Package?.title}</TableCell>
                     <TableCell>{item.scheduleStatus}</TableCell>
                   </TableRow>

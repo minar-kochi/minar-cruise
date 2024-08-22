@@ -29,10 +29,24 @@ import remarkToc from "remark-toc";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import ChooseImg from "@/components/admin/blog/ChooseImg";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Image from "next/image";
+import { getBlogPostById } from "@/db/data/dto/blog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export default function AddBlog() {
   const router = useRouter();
   const EditorRef = useRef<MDXEditorMethods | null>(null);
+  const [selectedImageId, setSelectedImageId] = useState<string>("");
+  // console.log(selectedImageId);
 
   const { mutate: addBlog } = trpc.admin.blog.addBlog.useMutation({
     onMutate() {
@@ -61,22 +75,33 @@ export default function AddBlog() {
     resolver: zodResolver(BlogFormValidators),
   });
 
-  const onSubmitBlog = (e: TBlogFormValidators) => {
-    addBlog(e);
+  const onSubmitBlog = (data: TBlogFormValidators) => {
+    addBlog(data);
   };
 
   const shortDes = getValues("shortDes");
-
   return (
     <>
       <Bounded className="">
         <div className="flex items-center justify-center flex-col text-center mt-12">
           <div>
-            {/* {shortDes ? (
+            {selectedImageId ? (
+              <Image
+                src={selectedImageId}
+                alt="selected image"
+                width={380}
+                height={380}
+              />
+            ) : (
+              ""
+            )}
+          </div>
+          <div>
+            {shortDes ? (
               <p>{shortDes}</p>
             ) : (
               <p>Short description about your blog will display here.</p>
-            )} */}
+            )}
           </div>
         </div>
         <div className="text-zinc-700">
@@ -162,8 +187,23 @@ export default function AddBlog() {
                 Note: Add period in the end.
               </p>
             </Label>
+            {/* {JSON.stringify("getValues(imageId")} */}
           </div>
-          <div className="w-full "></div>
+          <div className="w-full ">
+            <Dialog>
+              <DialogTrigger className="border-2  rounded-md p-2">
+                Choose Image
+              </DialogTrigger>
+              <DialogContent className="max-h-[600px] max-w-[1800px] overflow-scroll overflow-x-hidden ">
+                <ChooseImg
+                  onSelectImage={(imageId: string, url: string) => {
+                    setValue("imageId", imageId);
+                    setSelectedImageId(url);
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
         <div className="max-w-screen-xl mx-auto border-[1px] border-t-0 rounded-xl mb-4 p-1.5 overflow-hidden ">
           <Suspense fallback={<p>Loading editor</p>}>
@@ -206,7 +246,12 @@ export default function AddBlog() {
                 : ""}
             </p>
           </div>
-          <Button className="max-w-xs w-full" disabled={isSubmitting}>
+
+          <Button
+            className="max-w-xs w-full"
+            type="submit"
+            disabled={isSubmitting}
+          >
             Submit
           </Button>
         </Bounded>

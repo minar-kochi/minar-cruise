@@ -14,7 +14,7 @@ export default async function ScheduleAdminPage() {
             <h1 className="mt-12 text-2xl font-bold">Recent Schedules</h1>
           </div>
 
-          <div className="relative z-10">
+          <div className="relative z-10 ">
             <ScheduleTable />
           </div>
         </div>
@@ -23,7 +23,7 @@ export default async function ScheduleAdminPage() {
             <Suspense
               fallback={
                 <div>
-                  <ScheduleSelectorLoader title="Breakfast" />
+                  <ScheduleSelectorLoader title="Breakfast"  />
                   <ScheduleSelectorLoader title="Lunch" />
                   <ScheduleSelectorLoader title="Dinner" />
                   <ScheduleSelectorLoader title="Custom" />

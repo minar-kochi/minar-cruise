@@ -8,7 +8,7 @@ export const BlogFormValidators = z.object({
   banner: z.string().optional(),
   content: z.string().min(1),
   blogStatus: z.enum(["DRAFT", "PUBLISHED"]),
-  // image: z.any().optional(),
+  imageId: z.string(),
 });
 
 export type TBlogFormValidators = z.infer<typeof BlogFormValidators>;

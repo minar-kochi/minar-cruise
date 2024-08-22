@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Bounded from "../elements/Bounded";
-import { blogCard } from "@/constants/blog/blog";
 import Link from "next/link";
 
 interface BlogcardType {
@@ -12,7 +11,7 @@ interface BlogcardType {
 
 export default function BlogCard({ imgUrl, title, desc, link }: BlogcardType) {
   return (
-    <div className="border-[1px] border-muted  max-w-[350px] rounded-xl flex flex-col ">
+    <div className="border-[1px] border-muted max-w-[350px] rounded-xl flex flex-col h-fit">
       <div className="h-1/2 max-h-[250px]">
         <Image
           src={imgUrl}
@@ -26,7 +25,7 @@ export default function BlogCard({ imgUrl, title, desc, link }: BlogcardType) {
         <h1 className="text-xl font-semibold py-2 hover:text-red-500 cursor-pointer">
           {title}
         </h1>
-        <p className="text-muted-foreground py-2 text-sm">{desc}</p>
+        <p className="text-muted-foreground py-2 text-base">{desc}</p>
         <Link className="py-2 text-red-500 font-semibold text-sm" href={link}>
           READ MORE
         </Link>
