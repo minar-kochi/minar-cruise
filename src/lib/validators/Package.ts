@@ -43,7 +43,7 @@ export function isPackageStatusLunch({
   exlcusive,
 }: IsPackageTypeOrExclusiveChecker) {
   return (
-    packageStatus === $Enums.PACKAGE_CATEGORY.BREAKFAST ||
+    packageStatus === $Enums.PACKAGE_CATEGORY.LUNCH ||
     (exlcusive && isPackageStatusExclusive(packageStatus))
   );
 }
