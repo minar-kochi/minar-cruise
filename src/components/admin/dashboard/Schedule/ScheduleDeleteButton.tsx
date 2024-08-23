@@ -73,21 +73,21 @@ export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
     <Dialog open={open} onOpenChange={isOpen}>
       <DialogTrigger
         className={buttonVariants({
-          variant: "outline",
+          variant: "destructive",
           className:
             "w-full my-2 gap-1 border-destructive border-2 text-destructive",
         })}
       >
-        <Ban className="h-4 w-4 text-red-600" />
-        <p className="text-red-600">Delete {type}</p>
+        <Ban className="h-4 w-4 " />
+        <p className="">Delete {type}</p>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Schedule</DialogTitle>
-          <DialogDescription>
-            Are you sure to Delete Schedule at {format(date, "dd-MM-yyyy")}{" "}
-            {type}
+          <DialogTitle className="text-red-600">Delete Schedule</DialogTitle>
+          <DialogDescription className="">
+            Are you sure to Delete {type} Schedule at {format(date, "dd-MM-yyyy")}
+            
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-1">
@@ -103,7 +103,7 @@ export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
             onClick={handleDeleteButton}
             variant={"destructive"}
           >
-            Block Lunch at {format(date, "dd/MM")}{" "}
+            Delete Lunch at {format(date, "dd/MM")}{" "}
           </Button>
         </div>
       </DialogContent>
