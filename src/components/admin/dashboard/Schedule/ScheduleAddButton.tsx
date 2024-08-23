@@ -34,6 +34,8 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
   const PackageDetails = useAppSelector((state) =>
     SelectPackageById(state, updatedDateSchedule[type].packageId, type),
   );
+  const { invalidate: InvalidateBookingScheduleInfinity } =
+    trpc.useUtils().admin.booking.bookingScheduleInfinity;
   const { invalidate: InvalidateScheduleInfinity } =
     trpc.useUtils().admin.schedule.getSchedulesInfinity;
   const dispatch = useAppDispatch();
@@ -51,6 +53,9 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
         if (data) {
           toast.success("Schedule set successfully ");
           await InvalidateScheduleInfinity(undefined, {
+            type: "all",
+          });
+          await InvalidateBookingScheduleInfinity(undefined, {
             type: "all",
           });
           await invalidate({

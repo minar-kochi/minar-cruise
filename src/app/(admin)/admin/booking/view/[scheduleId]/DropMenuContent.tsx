@@ -7,16 +7,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function DropMenuClient({ BookingId, scheduleId }: { BookingId: string, scheduleId: string }) {
+export default function DropMenuClient({
+  BookingId,
+  scheduleId,
+}: {
+  BookingId: string;
+  scheduleId: string;
+}) {
   return (
     <DropdownMenuContent align="end" className="">
+      {/* <Link href={{
+        pathname:`/admin/booking/update/${BookingId}`,
+        query: {scheduleId}
+      }}>
+        <DropdownMenuItem>Update</DropdownMenuItem>
+      </Link> */}
       <Link href={`/admin/booking/update/${BookingId}`}>
         <DropdownMenuItem>Update</DropdownMenuItem>
       </Link>
-      <Link href={{
-        pathname: `/admin/booking/change/${BookingId}`,
-        query: {scheduleId}
-      }}>
+      <Link
+        href={{
+          pathname: `/admin/booking/change/${BookingId}`,
+          query: { scheduleId },
+        }}
+      >
         <DropdownMenuItem>Change Schedule</DropdownMenuItem>
       </Link>
     </DropdownMenuContent>

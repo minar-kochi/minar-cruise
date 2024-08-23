@@ -64,7 +64,7 @@ export default function ChangeBooking({
     });
 
   const onSubmit = ({ scheduleId: toScheduleId }: { scheduleId: string }) => {
-    if(scheduleId === "") toast.error("select a package")
+    if (scheduleId === "") toast.error("select a package");
     mutateScheduleIdOfBooking({
       idOfBookingToBeUpdated: bookingId,
       toScheduleId: toScheduleId,

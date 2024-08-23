@@ -83,19 +83,20 @@ export default function MoveAllBookingsButton({
         return;
       }
 
-      const { fromScheduleId, toScheduleId } = moveAllBookingsSchema.parse(unSafeData);
-      
+      const { fromScheduleId, toScheduleId } =
+        moveAllBookingsSchema.parse(unSafeData);
+
       mutate({
         fromScheduleId,
         toScheduleId,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (error instanceof ZodError) {
         toast.error(error.issues[0].message);
-        return
+        return;
       }
-      toast.error("Something went wrong.")
+      toast.error("Something went wrong.");
     }
   }
   return (

@@ -3,10 +3,12 @@ import { getBookedDetails } from "@/db/data/dto/booking";
 import { unstable_noStore as noStore } from "next/cache";
 interface IUpdateBookingProps {
   params: { bookingId: string };
+  searchParams: { scheduleId: string };
 }
 
 export default async function UpdateBooking({
   params: { bookingId },
+  searchParams: { scheduleId },
 }: IUpdateBookingProps) {
   noStore();
   // fetch booking data and related fields of payment that is neeeded in the form.

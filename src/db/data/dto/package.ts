@@ -54,11 +54,11 @@ export type TGetPackageById = Exclude<
   null
 >;
 
-export async function getPackageById({ id }: { id: string }) {
+export async function getPackageById({ slug }: { slug: string }) {
   try {
     const data = await db.package.findUnique({
       where: {
-        slug: id,
+        slug,
       },
       select: {
         id: true,
@@ -67,6 +67,8 @@ export async function getPackageById({ id }: { id: string }) {
         description: true,
         amenitiesId: true,
         duration: true,
+        fromTime: true,
+        toTime: true,
         childPrice: true,
         packageImage: {
           select: {

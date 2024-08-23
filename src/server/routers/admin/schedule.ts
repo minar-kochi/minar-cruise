@@ -87,6 +87,8 @@ export const schedule = router({
         Package: {
           select: {
             title: true,
+            fromTime: true,
+            toTime: true,
           },
         },
       },
@@ -444,8 +446,8 @@ export const schedule = router({
         });
       }
 
-      const d = await db.schedule.findMany();
-      console.log(JSON.stringify(d));
+      await db.booking.deleteMany();
+      await db.schedule.deleteMany();
       // const clearSchedule = await db.schedule.deleteMany({});
       return true;
     } catch (error) {

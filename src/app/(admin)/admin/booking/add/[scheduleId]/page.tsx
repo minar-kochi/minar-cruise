@@ -7,17 +7,17 @@ interface IBookOfflineScheduleProps {
     scheduleId: string;
   };
 }
-export default async function  OfflineBooking({
+export default async function OfflineBooking({
   params: { scheduleId },
 }: IBookOfflineScheduleProps) {
   /**
    * @TODO
    * do a db count check whether the scheduleId exists is there on data-base.
-   * 
+   *
    */
-  const scheduleIdExists = await findScheduleById(scheduleId)
-  if(!scheduleIdExists) return null
-  
+  const scheduleIdExists = await findScheduleById(scheduleId);
+  if (!scheduleIdExists) return null;
+
   return (
     <div>
       {/* add type as ADD_BOOING */}

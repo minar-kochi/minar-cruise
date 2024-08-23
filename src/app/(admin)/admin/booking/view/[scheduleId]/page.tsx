@@ -59,7 +59,11 @@ export default async function ViewBooking({
           />
         </div>
         <div className="flex gap-5">
-          <MoveAllBookingsButton disabled={!bookings?.length ? true : false } scheduleId={scheduleId} className="" />
+          <MoveAllBookingsButton
+            disabled={!bookings?.length ? true : false}
+            scheduleId={scheduleId}
+            className=""
+          />
           <CustomLinkButton
             href={`/admin/booking/add/${scheduleId}`}
             label="Add Booking"
@@ -113,7 +117,10 @@ export default async function ViewBooking({
                         <DropdownMenuTrigger>
                           <EllipsisVertical size={16} />
                         </DropdownMenuTrigger>
-                        <DropMenuClient BookingId={booking.id} scheduleId={scheduleId}/>
+                        <DropMenuClient
+                          BookingId={booking.id}
+                          scheduleId={scheduleId}
+                        />
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
