@@ -25,6 +25,15 @@ export default function ScheduleSelectors() {
       <div className="border-b   py-2">
         <div className="">
           <ScheduleSelector
+            label="Sunset"
+            key={`ScheduleSelector-type-sunset`}
+            type="sunset"
+          />{" "}
+        </div>
+      </div>
+      <div className="border-b   py-2">
+        <div className="">
+          <ScheduleSelector
             label="Dinner"
             key={`ScheduleSelector-type-dinner`}
             type="dinner"

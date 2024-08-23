@@ -1,7 +1,7 @@
 import util from "node:util";
 import { ConfirmDelete } from "./ConfirmDelete";
 const execs = util.promisify(require("node:child_process").exec);
-let DATABASE_URL = process.env.DATABASE_URL!;
+let DATABASE_URL = process.env.DATABASE_URL_POOLED!;
 
 export async function TruncateTable() {
   if (!DATABASE_URL.includes("localhost")) {
@@ -13,7 +13,7 @@ export async function TruncateTable() {
       process.exit();
     }
   }
-
+  console.log("RESETTING DATABASE");
   const { stdout: deleteDb, stderr } = await execs(
     `npx prisma db execute --file='./prisma/functions/dbReset.sql'`,
   );
@@ -27,6 +27,6 @@ export async function TruncateTable() {
   console.log(deleteDb, "\n");
   const { stdout: generate, stderr: generateErr } =
     await execs(`npx prisma db push`);
-  console.log(generate, "\n\n", stderr);
+  console.log(generate, "\n\n", generateErr);
   return true;
 }

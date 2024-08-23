@@ -1,20 +1,18 @@
-// import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
 import { RootState } from "@/lib/store/adminStore";
 import { splitTimeColon } from "@/lib/utils";
 import { TKeyOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
 import { TScheduleDataDayReplaceString, TTimeCycle } from "@/Types/type";
 import { createSelector } from "@reduxjs/toolkit";
-import { Fascinate } from "next/font/google";
-import toast from "react-hot-toast";
 import { Packages } from "../Package/selector";
-import { isStatusBreakfast } from "@/lib/validators/Schedules";
+import { TKeyOrganized } from "@/components/admin/dashboard/Schedule/ScheduleSelector";
 
 export const Schedule = (state: RootState) => state.schedule;
-
+export const ModalSelect = (state: RootState) => state.modalStore.isModalOpen;
+export const selectModal = createSelector([ModalSelect], (state) => state);
 export const CurrentSchedule = (state: RootState) =>
   state.schedule.currentDateSchedule;
 
-type d = { value: string; label: string };
+type TSelectBoxValueLableSelector = { value: string; label: string };
 export const scheduleIdAndPackageTitleSelector = createSelector(
   [CurrentSchedule, Packages],
   (currentSchedule, packages): { value: string; label: string }[] => {
@@ -23,6 +21,7 @@ export const scheduleIdAndPackageTitleSelector = createSelector(
       currentSchedule.custom,
       currentSchedule.dinner,
       currentSchedule.lunch,
+      currentSchedule.sunset,
     ];
 
     let AllPackages = [
@@ -30,13 +29,14 @@ export const scheduleIdAndPackageTitleSelector = createSelector(
       ...packages.custom,
       ...packages.dinner,
       ...packages.lunch,
+      ...packages.sunset,
     ];
 
     let filteredNull = allSchedule.filter(
       (fv) => fv && fv?.scheduleStatus !== "BLOCKED",
     ) as TScheduleDataDayReplaceString[];
 
-    let data: d[] = filteredNull.map((item) => {
+    let data: TSelectBoxValueLableSelector[] = filteredNull.map((item) => {
       const packageName = AllPackages.find((fv) => fv.id === item.packageId);
       return {
         value: item.id,
@@ -51,45 +51,14 @@ export const UpdatedSchedule = createSelector(
   [Schedule, (item, type: TKeyOrganizedScheduleData) => type],
   ({ currentDateSchedule, updatedDateSchedule }, type): boolean => {
     let currentState = updatedDateSchedule && updatedDateSchedule[type];
+
     let dbState = currentDateSchedule && currentDateSchedule[type];
+
     if (currentState?.packageId !== dbState?.id) return false;
+
     return true;
   },
 );
-
-// type d = { value: string; lable: string };
-// export const scheduleIdAndPackageTitleSelector = createSelector(
-//   [CurrentSchedule, Packages, (_, __, type: TKeyOrganizedScheduleData) => type],
-//   (currentschedule, packages, hello): { value: string; lable: string }[] => {
-//     let allSchedule = [
-//       currentschedule.breakfast,
-//       currentschedule.custom,
-//       currentschedule.dinner,
-//       currentschedule.lunch,
-//     ];
-//     let AllPackages = [
-//       ...packages.breakfast,
-//       ...packages.custom,
-//       ...packages.dinner,
-//       ...packages.lunch,
-//     ];
-
-//     let filteredNull = allSchedule.filter(
-//       (fv) => fv && isStatusBreakfast,
-//     ) as TScheduleDataDayReplaceString[];
-
-//     let data: d[] = filteredNull.map((item) => {
-//       const packageName = AllPackages.find((fv) => fv.id === item.packageId);
-//       return {
-//         value: item.id,
-//         lable: packageName?.title ?? item.scheduleStatus,
-//       };
-//     });
-//     return data;
-//   },
-// );
-
-// export const Merged = (state: RootState) => state.schedule;
 
 export const DefaultMergedSchedule = createSelector(
   [Schedule, (_, type: TKeyOrganizedScheduleData) => type],
@@ -110,10 +79,11 @@ export const DefaultMergedSchedule = createSelector(
 
     return {
       packageId: currentDateSchedule[type]?.packageId ?? null,
-      changed: true,
+      changed: false,
     };
   },
 );
+
 export const currentScheduleTimer = createSelector(
   [CurrentSchedule, (_, type: TKeyOrganizedScheduleData) => type],
   (
@@ -194,6 +164,74 @@ export const DefaultMergedScheduleTimer = createSelector(
   },
 );
 
+export type TIsScheduleInputsChanged = {
+  isTimeOnlyChanged: Boolean;
+  isPackageOnlyChanged: Boolean;
+  isAllChanged: Boolean;
+  packageId: Boolean;
+  isTimeChanged: Boolean;
+  isAnyChanged: Boolean;
+};
+export const isScheduleInputsChanged = createSelector(
+  [Schedule, (_, type: TKeyOrganized) => type],
+  (
+    { currentDateSchedule, updatedDateSchedule },
+    type,
+  ): TIsScheduleInputsChanged => {
+    let Changed = {
+      isTimeOnlyChanged: false,
+      isPackageOnlyChanged: false,
+      isAllChanged: false,
+      packageId: false,
+      isTimeChanged: false,
+      isAnyChanged: false,
+    };
+    // if package id is changed.
+    console.log(
+      updatedDateSchedule[type]?.packageId !==
+        currentDateSchedule[type]?.packageId,
+    );
+    if (
+      currentDateSchedule[type]?.packageId !==
+      updatedDateSchedule[type]?.packageId
+    ) {
+      Changed.packageId = true;
+    }
+    // if from time is changed
+    if (
+      currentDateSchedule[type]?.fromTime !==
+      updatedDateSchedule[type]?.fromTime
+    ) {
+      Changed.isTimeChanged = true;
+    }
+    // if to time is changed
+    if (
+      currentDateSchedule[type]?.toTime !== updatedDateSchedule[type]?.toTime
+    ) {
+      Changed.isTimeChanged = true;
+    }
+
+    // if time and package is changed
+    if (Changed.packageId && Changed.isTimeChanged) {
+      Changed.isAllChanged = true;
+    }
+
+    // if time only Change.
+    if (!Changed.packageId && Changed.isTimeChanged) {
+      Changed.isTimeOnlyChanged = true;
+    }
+
+    // if package only Change
+    if (Changed.packageId && !Changed.isTimeOnlyChanged) {
+      Changed.isPackageOnlyChanged = true;
+    }
+
+    if (Changed.packageId || Changed.isTimeOnlyChanged) {
+      Changed.isAnyChanged = true;
+    }
+    return Changed;
+  },
+);
 /**
  * if nothing on database then its a new state
  * if there is something on database then its updating state.

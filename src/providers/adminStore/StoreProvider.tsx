@@ -5,13 +5,14 @@ import {
   setInitialOrganizedScheduleDates,
 } from "@/lib/features/schedule/ScheduleSlice";
 import { AppStore, makeStore } from "@/lib/store/adminStore";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { useRef } from "react";
 import { Provider } from "react-redux";
 import { setOrganizedPackage } from "@/lib/features/Package/packageSlice";
 import { TExcludedOrganizedPackageData } from "@/Types/packages/package";
 import { TExcludedOrganizedUpcommingSchedule } from "@/Types/Schedule/ScheduleSelect";
 import { TScheduleDataDayReplaceString } from "@/Types/type";
+import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
+import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 
 export default function StoreProvider({
   children,
@@ -27,24 +28,23 @@ export default function StoreProvider({
   upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
 }) {
   const storeRef = useRef<AppStore>();
-
   if (!storeRef.current) {
     storeRef.current = makeStore();
-
-    // const date = RemoveTimeStampFromDate(new Date(Date.now()));
-
     storeRef.current.dispatch(
       setInitialOrganizedScheduleDates(upCommingSchedules),
     );
-
     storeRef.current.dispatch(setCurrentScheduleDate(initialSchedule));
-
     storeRef.current.dispatch(setDate(initialDate));
-
     if (Packages) {
       storeRef.current.dispatch(setOrganizedPackage(Packages));
     }
   }
 
-  return <Provider store={storeRef.current}>{children}</Provider>;
+  return (
+    <Provider store={storeRef.current}>
+      {/* <RouterRefreshButton />
+      <OpenScheduleButton /> */}
+      {children}
+    </Provider>
+  );
 }

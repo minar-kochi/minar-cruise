@@ -64,12 +64,13 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
     <Dialog open={open} onOpenChange={isOpen}>
       <DialogTrigger
         className={buttonVariants({
-          variant: "destructive",
-          className: "w-full  gap-1",
+          variant: "outline",
+          className:
+            "w-full  gap-1 border-destructive border-2 text-destructive",
         })}
       >
-        <Ban className="h-4 w-4" />
-        Block {type}
+        <Ban className="h-4 w-4 text-red-600" />
+        <p className="text-red-600">Block {type}</p>
       </DialogTrigger>
 
       <DialogContent>

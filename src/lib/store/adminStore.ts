@@ -1,6 +1,7 @@
 import ScheduleSlice from "../features/schedule/ScheduleSlice";
 import PackageSlice from "../features/Package/packageSlice";
 import { configureStore } from "@reduxjs/toolkit";
+import modalSlice from "../features/modal/modalSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -8,6 +9,7 @@ export const makeStore = () => {
     reducer: {
       schedule: ScheduleSlice,
       packages: PackageSlice,
+      modalStore: modalSlice,
     },
   });
 };
