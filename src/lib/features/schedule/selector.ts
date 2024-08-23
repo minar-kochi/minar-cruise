@@ -165,16 +165,19 @@ export const DefaultMergedScheduleTimer = createSelector(
 );
 
 export type TIsScheduleInputsChanged = {
-  isTimeOnlyChanged: Boolean,
-  isPackageOnlyChanged: Boolean,
-  isAllChanged: Boolean,
-  packageId: Boolean,
-  isTimeChanged: Boolean,
-  isAnyChanged: Boolean,
-}
+  isTimeOnlyChanged: Boolean;
+  isPackageOnlyChanged: Boolean;
+  isAllChanged: Boolean;
+  packageId: Boolean;
+  isTimeChanged: Boolean;
+  isAnyChanged: Boolean;
+};
 export const isScheduleInputsChanged = createSelector(
   [Schedule, (_, type: TKeyOrganized) => type],
-  ({ currentDateSchedule, updatedDateSchedule }, type):TIsScheduleInputsChanged => {
+  (
+    { currentDateSchedule, updatedDateSchedule },
+    type,
+  ): TIsScheduleInputsChanged => {
     let Changed = {
       isTimeOnlyChanged: false,
       isPackageOnlyChanged: false,
@@ -184,7 +187,10 @@ export const isScheduleInputsChanged = createSelector(
       isAnyChanged: false,
     };
     // if package id is changed.
-    console.log(updatedDateSchedule[type]?.packageId !== currentDateSchedule[type]?.packageId)
+    console.log(
+      updatedDateSchedule[type]?.packageId !==
+        currentDateSchedule[type]?.packageId,
+    );
     if (
       currentDateSchedule[type]?.packageId !==
       updatedDateSchedule[type]?.packageId

@@ -3,7 +3,7 @@ import { TScheduleState } from "./ScheduleSlice";
 export const resetUpdates = {
   breakfast: false,
   lunch: false,
-  sunset:false,
+  sunset: false,
   dinner: false,
   custom: false,
 };

@@ -210,15 +210,19 @@ const scheduleSlice = createSlice({
         type: TKeyOrganizedScheduleData;
         time: string;
         eventType: TkeyDbTime;
-        packageId?: string
+        packageId?: string;
       }>,
     ) {
       const {
         payload: { time, type, eventType },
       } = action;
-      if(!state.updatedDateSchedule[type].packageId && state.currentDateSchedule[type]?.packageId){
-        state.updatedDateSchedule[type].packageId =  state.currentDateSchedule[type]?.packageId    
-      }  
+      if (
+        !state.updatedDateSchedule[type].packageId &&
+        state.currentDateSchedule[type]?.packageId
+      ) {
+        state.updatedDateSchedule[type].packageId =
+          state.currentDateSchedule[type]?.packageId;
+      }
       state.updatedDateSchedule[type][eventType] = time;
     },
 

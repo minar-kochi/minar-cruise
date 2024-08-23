@@ -6,11 +6,17 @@ import { createSelector } from "@reduxjs/toolkit";
 export const Packages = (state: RootState) => state.packages.OrganizedPackage;
 
 export const IsIdExclusive = createSelector(
-  [Packages, (_, id: string | null) => id, (_,__,type: TKeyOrganized) => type],
-  (packages, id,type): boolean => {
+  [
+    Packages,
+    (_, id: string | null) => id,
+    (_, __, type: TKeyOrganized) => type,
+  ],
+  (packages, id, type): boolean => {
     if (!id) return false;
     const ExclusivePackage = packages[type].find(
-      (item) => item.packageCategory === "EXCLUSIVE" || item.packageCategory === "CUSTOM",
+      (item) =>
+        item.packageCategory === "EXCLUSIVE" ||
+        item.packageCategory === "CUSTOM",
     );
 
     if (ExclusivePackage?.id !== id) {

@@ -16,7 +16,7 @@ export default function OpenScheduleButton({ title }: { title?: string }) {
     <Button
       variant={"secondary"}
       onClick={() => {
-        toast.success("clicked"); 
+        toast.success("clicked");
         dispatch(setIsModalToggle());
       }}
     >

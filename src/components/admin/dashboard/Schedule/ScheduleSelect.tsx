@@ -39,10 +39,7 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
         </SelectItem>
         {OrganizedPackage[type].map((item) => {
           return (
-            <SelectItem
-              value={item.id}
-              key={`select-item-${item.id}`}
-            >
+            <SelectItem value={item.id} key={`select-item-${item.id}`}>
               <div className="flex items-center gap-2">
                 {item.title}
                 <div

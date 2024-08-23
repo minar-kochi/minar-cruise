@@ -113,7 +113,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
           </form> */}
         </div>
         <div className="flex gap-2">
-          <OpenScheduleButton/>
+          <OpenScheduleButton />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">

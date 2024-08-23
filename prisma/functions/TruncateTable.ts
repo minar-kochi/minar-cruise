@@ -13,7 +13,7 @@ export async function TruncateTable() {
       process.exit();
     }
   }
-  console.log('RESETTING DATABASE')
+  console.log("RESETTING DATABASE");
   const { stdout: deleteDb, stderr } = await execs(
     `npx prisma db execute --file='./prisma/functions/dbReset.sql'`,
   );
