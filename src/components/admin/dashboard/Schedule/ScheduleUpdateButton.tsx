@@ -69,7 +69,6 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
     });
 
   async function handleScheduleUpdate() {
-
     let updatedScheduleData = updatedScheduleDatas[type] ?? null;
 
     if (!updatedScheduleData) {

@@ -17,9 +17,7 @@ import { TScheduleSelector } from "@/Types/type";
 import toast from "react-hot-toast";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import {
-  setSyncDatabaseUpdatesScheduleDeletion,
-} from "@/lib/features/schedule/ScheduleSlice";
+import { setSyncDatabaseUpdatesScheduleDeletion } from "@/lib/features/schedule/ScheduleSlice";
 
 export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
   const [open, isOpen] = useState(false);
@@ -86,8 +84,8 @@ export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
         <DialogHeader>
           <DialogTitle className="text-red-600">Delete Schedule</DialogTitle>
           <DialogDescription className="">
-            Are you sure to Delete {type} Schedule at {format(date, "dd-MM-yyyy")}
-            
+            Are you sure to Delete {type} Schedule at{" "}
+            {format(date, "dd-MM-yyyy")}
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-1">
