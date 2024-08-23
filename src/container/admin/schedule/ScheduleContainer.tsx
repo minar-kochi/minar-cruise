@@ -25,14 +25,17 @@ import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { trpc } from "@/app/_trpc/client";
 
 export default function ScheduleBar() {
-  const { mutate: deleteSchedules } = trpc.admin.clearSchedule.useMutation({
-    onSuccess(data, variables, context) {
-      toast.success("Cleared Database");
-    },
-    onError(error, variables, context) {
-      toast.error("SOmethign went wrong");
-    },
-  });
+  const { invalidate } = trpc.useUtils();
+  const { mutate: deleteSchedules } =
+    trpc.admin.schedule.clearSchedule.useMutation({
+      onSuccess(data, variables, context) {
+        invalidate();
+        toast.success("Cleared Database");
+      },
+      onError(error, variables, context) {
+        toast.error("Something went wrong");
+      },
+    });
   return (
     <Bounded className="">
       <Card className="w-full   ">
@@ -50,7 +53,7 @@ export default function ScheduleBar() {
               deleteSchedules();
             }}
           >
-            delete Schedule
+            delete all Schedule and booking
           </Button>
         </CardContent>
       </Card>

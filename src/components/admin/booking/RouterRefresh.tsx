@@ -7,10 +7,10 @@ import React from "react";
 export default function RouterRefreshButton() {
   const router = useRouter();
   return (
-    <Button onClick={() => router.refresh()}>
+    <Button variant={"ghost"} onClick={() => router.refresh()}>
       <div className="flex gap-2">
         <RefreshCcw />
-        Refresh
+        {/* Refresh */}
       </div>
     </Button>
   );

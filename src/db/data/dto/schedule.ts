@@ -9,7 +9,7 @@ import {
   isStatusLunch,
 } from "@/lib/validators/Schedules";
 import { TScheduleWithBookingCountWithId } from "@/Types/Schedule/ScheduleSelect";
-import { Schedule } from "@prisma/client";
+import { $Enums, Schedule } from "@prisma/client";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
 /**
@@ -106,10 +106,10 @@ export const getSchedule = async () => {
 export type TScheduleData = Schedule;
 
 export type TgetUpcommingScheduleDates = {
-  breakfast: string[];
-  lunch: string[];
-  dinner: string[];
-  custom: string[];
+  breakfast: { date: string; status: $Enums.SCHEDULE_STATUS }[];
+  lunch: { date: string; status: $Enums.SCHEDULE_STATUS }[];
+  dinner: { date: string; status: $Enums.SCHEDULE_STATUS }[];
+  custom: { date: string; status: $Enums.SCHEDULE_STATUS }[];
 };
 
 export const getManySchedulesAndTotalBookingCount = async () => {
@@ -120,8 +120,11 @@ export const getManySchedulesAndTotalBookingCount = async () => {
           gte: new Date(Date.now()),
         },
         scheduleStatus: {
-          in: ["AVAILABLE","EXCLUSIVE"]
-        }
+          in: ["AVAILABLE", "EXCLUSIVE"],
+        },
+      },
+      orderBy: {
+        day: "asc",
       },
       select: {
         id: true,
@@ -155,7 +158,9 @@ export const getManySchedulesAndTotalBookingCount = async () => {
     console.log(error);
   }
 };
-
+export type TGetManySchedulesAndTotalBookingCount = Awaited<
+  ReturnType<typeof getManySchedulesAndTotalBookingCount>
+>;
 export const getUpcommingScheduleDates = async () => {
   try {
     const data = await db.schedule.findMany({
@@ -180,26 +185,38 @@ export const getUpcommingScheduleDates = async () => {
 
     for (const item of data) {
       if (isStatusLunch(item.schedulePackage)) {
-        scheduledDate.lunch.push(
-          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
-        );
+        scheduledDate.lunch.push({
+          date: item.day.toLocaleDateString(undefined, {
+            timeZone: "Asia/Kolkata",
+          }),
+          status: item.scheduleStatus,
+        });
         continue;
       }
       if (isStatusDinner(item.schedulePackage)) {
-        scheduledDate.dinner.push(
-          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
-        );
+        scheduledDate.dinner.push({
+          date: item.day.toLocaleDateString(undefined, {
+            timeZone: "Asia/Kolkata",
+          }),
+          status: item.scheduleStatus,
+        });
         continue;
       }
       if (isStatusBreakfast(item.schedulePackage)) {
-        scheduledDate.breakfast.push(
-          item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
-        );
+        scheduledDate.breakfast.push({
+          date: item.day.toLocaleDateString(undefined, {
+            timeZone: "Asia/Kolkata",
+          }),
+          status: item.scheduleStatus,
+        });
         continue;
       }
-      scheduledDate.custom.push(
-        item.day.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }),
-      );
+      scheduledDate.custom.push({
+        date: item.day.toLocaleDateString(undefined, {
+          timeZone: "Asia/Kolkata",
+        }),
+        status: item.scheduleStatus,
+      });
     }
     return scheduledDate;
   } catch (error) {
@@ -366,7 +383,6 @@ export const getSchedulesAndBookingByDate = async () => {
 export type TGetBookingsByScheduleId = Awaited<
   ReturnType<typeof getBookingsByScheduleId>
 >;
-
 
 export async function getBookingsByScheduleId(id: string) {
   try {

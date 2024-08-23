@@ -48,26 +48,23 @@ export default function ChangeBookingModal({
     scheduleIdAndPackageTitleSelector(state),
   );
 
-  const {
-    mutate: mutateScheduleIdOfBooking,
-    isPending,
-  } = trpc.admin.booking.changeBookingSchedule.useMutation({
-    onMutate() {
-      toast.loading(`Changing Booking to new date`);
-    },
-    onSuccess() {
-      toast.dismiss();
-      toast.success(`successfully changed Booking to new date`);
-      router.back()
-    },
-    onError() {
-      toast.dismiss();
-      toast.error(`something went wrong`);
-    },
-  });
+  const { mutate: mutateScheduleIdOfBooking, isPending } =
+    trpc.admin.booking.changeBookingSchedule.useMutation({
+      onMutate() {
+        toast.loading(`Changing Booking to new date`);
+      },
+      onSuccess() {
+        toast.dismiss();
+        toast.success(`successfully changed Booking to new date`);
+        router.back();
+      },
+      onError() {
+        toast.dismiss();
+        toast.error(`something went wrong`);
+      },
+    });
 
   const onSubmit = ({ scheduleId: toScheduleId }: { scheduleId: string }) => {
-
     mutateScheduleIdOfBooking({
       idOfBookingToBeUpdated: bookingId,
       toScheduleId: toScheduleId,
@@ -88,7 +85,7 @@ export default function ChangeBookingModal({
           <div className="min-w-[200px]">
             <ScheduleDatePicker className="" />
           </div>
- 
+
           <Controller
             name="scheduleId"
             control={control}

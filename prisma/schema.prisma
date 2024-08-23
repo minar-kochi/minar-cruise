@@ -10,8 +10,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL_UNPOOLED")
+  url       = env("DATABASE_URL_POOLED")
+  directUrl = env("DIRECT_URL")
 }
 
 // add description 
@@ -109,8 +109,8 @@ model Package {
   duration        Int
   slug            String           @unique
   foodMenuId      String
-  startFrom       DateTime // need this to be a string in ISO formattted | HH:MM:MERIDIAN Also Changing to something meaningfull would be nice. 
-  endAt           DateTime // need this to be a string in ISO formattted | HH:MM:MERIDIAN Also Changing to something meaningfull would be nice. 
+  fromTime        String
+  toTime          String
   createdAt       DateTime         @default(now()) @db.Timestamp()
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id])

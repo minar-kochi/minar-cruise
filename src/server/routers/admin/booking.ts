@@ -1,20 +1,21 @@
 import { trpc } from "@/app/_trpc/client";
+import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
 import { findBookingById, findScheduleById } from "@/db/data/dto/schedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { sleep } from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
 import {
-  offlineBookingSchema,
-  TOfflineBookingSchema,
+  offlineBookingFormSchema,
+  TOfflineBookingFormSchema,
   updateOfflineBookingSchema,
 } from "@/lib/validators/offlineBookingValidator";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { error } from "console";
 import { revalidatePath } from "next/cache";
-import { string, z } from "zod";
-
+import { z } from "zod";
 
 export const booking = router({
   transferAllBookingsToASpecificSchedule: AdminProcedure.input(
@@ -194,10 +195,8 @@ export const booking = router({
     updateScheduleIdOfBooking,
   ).mutation(
     async ({ input: { idOfBookingToBeUpdated, toScheduleId }, ctx }) => {
-
       try {
-
-//-----------------Checks if given ID exists in db STARTS-----------------------------
+        //-----------------Checks if given ID exists in db STARTS-----------------------------
         const fromScheduleIdExists = await findScheduleById(toScheduleId);
 
         if (!fromScheduleIdExists) {
@@ -215,11 +214,9 @@ export const booking = router({
             message: "Could not find booking id",
           });
         }
-//-----------------Checks if given ID exists in db ENDS-----------------------------
+        //-----------------Checks if given ID exists in db ENDS-----------------------------
 
-
-
-//-----------------CHecking Count of the given booking id STARTS-----------------------------
+        //-----------------CHecking Count of the given booking id STARTS-----------------------------
         const totalSeatsOfBooking = await db.booking.findUnique({
           where: {
             id: idOfBookingToBeUpdated,
@@ -229,18 +226,16 @@ export const booking = router({
           },
         });
 
-        if(!totalSeatsOfBooking) {
+        if (!totalSeatsOfBooking) {
           throw new TRPCError({
             code: "BAD_GATEWAY",
-            message: "Could get any seat count in the booking id"
-          })
+            message: "Could get any seat count in the booking id",
+          });
         }
-        
-//-----------------CHecking Count of the given booking id END-----------------------------
 
+        //-----------------CHecking Count of the given booking id END-----------------------------
 
-
-//-----------------CHecking Count of the given scheduleID STARTS-----------------------------
+        //-----------------CHecking Count of the given scheduleID STARTS-----------------------------
         const unformattedScheduleCount = await db.schedule.findUnique({
           where: {
             id: toScheduleId,
@@ -257,8 +252,8 @@ export const booking = router({
         if (!unformattedScheduleCount) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Could find schedule count"
-          })
+            message: "Could find schedule count",
+          });
         }
 
         let totalCountOfToScheduleId = unformattedScheduleCount.Booking.reduce(
@@ -266,29 +261,34 @@ export const booking = router({
           0,
         );
 
-//-----------------CHecking Count of the given scheduleID ENDS-----------------------------
+        //-----------------CHecking Count of the given scheduleID ENDS-----------------------------
 
-//-----------------CHecking if the seats does not surpass max capacity STARTS-----------------------------
-        if(totalSeatsOfBooking.totalBooking > MAX_BOAT_SEAT){
+        //-----------------CHecking if the seats does not surpass max capacity STARTS-----------------------------
+        if (totalSeatsOfBooking.totalBooking > MAX_BOAT_SEAT) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Total passengers cannot surpass max capacity"
-          })
+            message: "Total passengers cannot surpass max capacity",
+          });
         }
-        if(totalCountOfToScheduleId >= MAX_BOAT_SEAT ){
+        if (totalCountOfToScheduleId >= MAX_BOAT_SEAT) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "The selected schedule is at maximum capacity, cannot add more passengers"
-          })
+            message:
+              "The selected schedule is at maximum capacity, cannot add more passengers",
+          });
         }
 
-        if((totalCountOfToScheduleId + totalSeatsOfBooking.totalBooking) > MAX_BOAT_SEAT) {
+        if (
+          totalCountOfToScheduleId + totalSeatsOfBooking.totalBooking >
+          MAX_BOAT_SEAT
+        ) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Cannot add passengers to the selected schedule, Count Exceeds max capacity of the boat"
-          })
+            message:
+              "Cannot add passengers to the selected schedule, Count Exceeds max capacity of the boat",
+          });
         }
-//-----------------CHecking if the seats does not surpass max capacity ENDS-----------------------------
+        //-----------------CHecking if the seats does not surpass max capacity ENDS-----------------------------
 
         const data = await db.booking.update({
           where: {
@@ -317,6 +317,7 @@ export const booking = router({
     updateOfflineBookingSchema,
   ).mutation(async ({ input, ctx }) => {
     const {
+      schedule,
       bookingId,
       adultCount,
       advanceAmount,
@@ -330,7 +331,7 @@ export const booking = router({
       paymentMode,
       phone,
     } = input;
-// @TODO @HOTFIX need to check the total count before updating booking 
+    // @TODO @HOTFIX need to check the total count before updating booking
     const existingId = await db.booking.count({
       where: {
         id: bookingId,
@@ -344,7 +345,131 @@ export const booking = router({
       });
     }
 
+    /**
+     * check if booking id exists
+     *
+     * check min 1 adult count
+     *
+     * check total count of booking that it already had
+     *
+     * check total count of booking that is being updated
+     *
+     * check the total seat count of the current schedule in which the booking is going to be updated
+     *
+     * should return error - if  the total seat count of the booking  exceeds maximum capacity
+     *     in the specific schedule that is going to be updated
+     *
+     */
+    // @TODO @HOTFIX need to check the total count before updating booking
     try {
+      //-------------checks if booking exists in DB STARTS------------------------
+      const existingId = await db.booking.count({
+        where: {
+          id: bookingId,
+        },
+      });
+
+      if (!existingId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Booking is not found.",
+        });
+      }
+      //-------------checks if booking exists in DB ENDS------------------------
+
+      //-------------checks adult has min count STARTS------------------------
+      if (adultCount < 1 || !adultCount) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Need at least 1 adult to update booking",
+        });
+      }
+      //-------------checks adult has min count END------------------------
+
+      //-------------Takes all the updated count STARTS------------------------
+
+      const seatCountBeforeUpdate = await db.booking.findUnique({
+        where: {
+          id: bookingId,
+        },
+        select: {
+          totalBooking: true,
+        },
+      });
+
+      if (!seatCountBeforeUpdate) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Could not get existing booking count",
+        });
+      }
+      const updatedSeatCountOfBooking = adultCount + childCount + babyCount;
+
+      if (updatedSeatCountOfBooking < 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot update booking where count is less than 1",
+        });
+      }
+
+      if (updatedSeatCountOfBooking > 150) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Cannot update booking where total count exceeds max capacity",
+        });
+      }
+      //-------------Takes all the updated count ENDS------------------------
+
+      //-------------checks total count of booking associated with schedule STARTS------------------------
+      const totalCountOfSchedule = await db.booking.findMany({
+        where: {
+          scheduleId: schedule,
+        },
+        select: {
+          totalBooking: true,
+        },
+      });
+
+      if (!totalCountOfSchedule) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Couldn't get total seat count of schedule",
+        });
+      }
+
+      const formattedTotalCountOfSchedule = totalCountOfSchedule.reduce(
+        (total, booking) => total + booking.totalBooking,
+        0,
+      );
+      //-------------checks total count of booking associated with schedule ENDS------------------------
+
+      //-------------checks if updated seats exceeds max capacity STARTS------------------------
+      // if (
+      //   seatCountBeforeUpdate.totalBooking -
+      //     updatedSeatCountOfBooking +
+      //     formattedTotalCountOfSchedule >
+      //   MAX_BOAT_SEAT
+      // ) {
+      //   throw new TRPCError({
+      //     code: "BAD_REQUEST",
+      //     message: "Cannot update booking, as the updated count exceeds max capacity"
+      //   })
+      // }
+
+      if (
+        updatedSeatCountOfBooking +
+          (formattedTotalCountOfSchedule - seatCountBeforeUpdate.totalBooking) >
+        MAX_BOAT_SEAT
+      ) {
+        throw new TRPCError({
+          code: "BAD_GATEWAY",
+          message:
+            "Cannot update booking, as the updated count exceeds max capacity",
+        });
+      }
+      //-------------checks if updated seats exceeds max capacity ENDS------------------------
+
       const data = await db.booking.update({
         where: {
           id: bookingId,
@@ -386,11 +511,10 @@ export const booking = router({
       });
     }
   }),
-  /**
-   * @TODO [Amjad / Muad]
-   *  -
-   */
-  createNewOfflineBooking: AdminProcedure.input(offlineBookingSchema).mutation(
+
+  createNewOfflineBooking: AdminProcedure.input(
+    offlineBookingFormSchema,
+  ).mutation(
     async ({
       input: {
         schedule: scheduleId,
@@ -506,4 +630,68 @@ export const booking = router({
       }
     },
   ),
+
+  bookingScheduleInfinity: AdminProcedure.input(
+    z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(),
+    }),
+  ).query(async ({ ctx, input }) => {
+    await sleep(2000);
+    await sleep(2000);
+    const { cursor } = input;
+    const limit = input.limit ?? INFINITE_QUERY_LIMIT;
+
+    const data = await db.schedule.findMany({
+      where: {
+        day: {
+          gte: new Date(Date.now()),
+        },
+        scheduleStatus: {
+          in: ["AVAILABLE", "EXCLUSIVE"],
+        },
+      },
+      select: {
+        id: true,
+        day: true,
+        fromTime: true,
+        schedulePackage: true,
+        scheduleStatus: true,
+        toTime: true,
+        Package: {
+          select: {
+            title: true,
+          },
+        },
+        Booking: {
+          select: {
+            totalBooking: true,
+          },
+        },
+      },
+      cursor: cursor ? { id: cursor } : undefined,
+      take: limit + 1,
+      orderBy: {
+        day: "asc",
+      },
+    });
+
+    let nextCursor: typeof cursor | undefined = undefined;
+
+    let scheduleBookingData = data.map((item) => ({
+      ...item,
+      Booking: item.Booking.reduce(
+        (total, booking) => total + booking.totalBooking,
+        0,
+      ),
+    }));
+    if (data.length > limit) {
+      const nextItem = scheduleBookingData.pop();
+      nextCursor = nextItem?.id;
+    }
+    return {
+      response: scheduleBookingData,
+      nextCursor,
+    };
+  }),
 });

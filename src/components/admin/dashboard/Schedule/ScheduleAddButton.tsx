@@ -26,7 +26,7 @@ import { SelectPackageById } from "@/lib/features/Package/selector";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 
 export default function ScheduleAddButton({ type }: TScheduleSelector) {
-  const { invalidate } = trpc.useUtils().admin.getSchedulesByDateOrNow;
+  const { invalidate } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
   const { updatedDateSchedule, date, currentDateSchedule } = useAppSelector(
     (state) => state.schedule,
   );
@@ -34,11 +34,13 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
   const PackageDetails = useAppSelector((state) =>
     SelectPackageById(state, updatedDateSchedule[type].packageId, type),
   );
+  const { invalidate: InvalidateBookingScheduleInfinity } =
+    trpc.useUtils().admin.booking.bookingScheduleInfinity;
   const { invalidate: InvalidateScheduleInfinity } =
-    trpc.useUtils().admin.getSchedulesInfinity;
+    trpc.useUtils().admin.schedule.getSchedulesInfinity;
   const dispatch = useAppDispatch();
   const { mutate: createNewSchedule, isPending: isLoading } =
-    trpc.admin.createNewSchedule.useMutation({
+    trpc.admin.schedule.createNewSchedule.useMutation({
       async onMutate(variables) {
         toast.loading(
           `Confirming Schedule at ${format(variables.ScheduleDate, "do 'of' LLL")}`,
@@ -51,6 +53,9 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
         if (data) {
           toast.success("Schedule set successfully ");
           await InvalidateScheduleInfinity(undefined, {
+            type: "all",
+          });
+          await InvalidateBookingScheduleInfinity(undefined, {
             type: "all",
           });
           await invalidate({
@@ -130,8 +135,8 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
     >
       <DialogTrigger
         className={buttonVariants({
-          variant: "outline",
-          className: "w-full gap-1",
+          variant: "confirm",
+          className: "w-full  gap-1",
         })}
       >
         <Check className="h-4 w-4" />

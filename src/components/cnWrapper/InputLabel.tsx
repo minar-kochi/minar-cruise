@@ -9,7 +9,7 @@ export interface TInputLabel {
   containerClassName?: string;
 }
 
-const   InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
+const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
   ({ label, errorMessage, InputProps, containerClassName, ...props }, ref) => {
     return (
       <div className={cn("space-y-2 py-2", containerClassName)}>

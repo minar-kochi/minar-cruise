@@ -13,6 +13,8 @@ interface IHeadingCard {
   duration: number;
   adultPrice: number;
   childPrice: number;
+  fromTime: string;
+  toTime: string;
 }
 
 const HeadingCard = async ({
@@ -20,6 +22,8 @@ const HeadingCard = async ({
   duration,
   adultPrice,
   childPrice,
+  fromTime,
+  toTime,
 }: IHeadingCard) => {
   return (
     <div className="bg-orange-100 ">
@@ -31,7 +35,9 @@ const HeadingCard = async ({
             {/* @TODO : fix seeding time data in data.ts file
                 fix how to decode time formate here
             */}
-            <p className="my-auto">{"time"}</p>
+            <p className="my-auto">
+              {fromTime} - {toTime}
+            </p>
           </div>
         </article>
         <article className="flex max-md:items-center max-md:flex-col my-auto  space-x-11">
