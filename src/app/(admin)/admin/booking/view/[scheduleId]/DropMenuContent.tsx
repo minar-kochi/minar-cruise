@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import DeleteBookingButton from "@/components/admin/booking/DeleteBookingButton";
 
 export default function DropMenuClient({
   BookingId,
@@ -33,6 +34,7 @@ export default function DropMenuClient({
       >
         <DropdownMenuItem>Change Schedule</DropdownMenuItem>
       </Link>
+        <DeleteBookingButton BookingId={BookingId} ScheduleId={scheduleId} />
     </DropdownMenuContent>
   );
 }

@@ -15,9 +15,28 @@ import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { error } from "console";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { string, z } from "zod";
 
 export const booking = router({
+  deleteBooking: AdminProcedure
+  .input(z.object({
+    bookingId: z.string(),
+  }))
+  .mutation(async({input: {bookingId}})=>{
+    const bookingExists = await findBookingById(bookingId)
+    if(!bookingExists) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "booking id doesn't exists"
+      })
+    }
+    const deleteBooking = await db.booking.delete({
+      where: {
+        id: bookingId
+      },
+    })
+  })
+  ,
   transferAllBookingsToASpecificSchedule: AdminProcedure.input(
     z.object({
       fromScheduleId: z.string(),

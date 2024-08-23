@@ -123,6 +123,9 @@ export default async function ViewBooking({
                         />
                       </DropdownMenu>
                     </TableCell>
+                    <TableCell>
+                      
+                    </TableCell>
                   </TableRow>
                 );
               })
