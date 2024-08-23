@@ -78,7 +78,6 @@ export default function UserBookingDateSelector({
                 RemoveTimeStampFromDate(date),
             );
 
-            console.log(scheduleIndex);
             let schedule = scheduleIndex !== -1 ? data[scheduleIndex] : null;
             if (!schedule) {
               setSelectedScheduleId(null);
@@ -105,8 +104,8 @@ export default function UserBookingDateSelector({
       )}
       <Button
         onClick={() => setIsNextSlide((prev) => !prev)}
-        className={cn("w-full",{
-          "hidden": isNextSlide
+        className={cn("w-full", {
+          hidden: isNextSlide,
         })}
       >
         Next

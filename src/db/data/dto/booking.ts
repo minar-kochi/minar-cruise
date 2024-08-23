@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { TRPCError } from "@trpc/server";
 
 export async function getAllBookingDataFromToday() {
   try {
@@ -86,3 +87,29 @@ export async function getBookedDetails(bookingId: string) {
     return null;
   }
 }
+
+export const totalBookedSeats = async (scheduleId: string) => {
+
+  const unformattedCount = await db.booking.findMany({
+    where: {
+      scheduleId,
+    },
+    select: {
+      totalBooking: true,
+    },
+  });
+
+  if (!unformattedCount) {
+    throw new TRPCError({
+      code: "BAD_GATEWAY",
+      message: "Couldn't get count of all bookings from schedule",
+    });
+  }
+
+  let formattedCount = unformattedCount.reduce(
+    (total, booking) => total + booking.totalBooking,
+    0,
+  );
+
+  return formattedCount;
+};
