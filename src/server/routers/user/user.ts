@@ -322,7 +322,7 @@ export const user = router({
             },
           };
 
-          return options
+          return options;
           // ==============================================================================
         }
 

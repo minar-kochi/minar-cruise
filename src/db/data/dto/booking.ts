@@ -89,7 +89,6 @@ export async function getBookedDetails(bookingId: string) {
 }
 
 export const totalBookedSeats = async (scheduleId: string) => {
-
   const unformattedCount = await db.booking.findMany({
     where: {
       scheduleId,

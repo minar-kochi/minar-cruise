@@ -28,7 +28,10 @@ const ContentCard = async ({
         <MDXRemote source={description} />
         <Amenities amenitiesId={amenitiesId} />
       </article>
-      <UserBookingDateSelector packageId={formData.id} packageTitle={formData.title}/>
+      <UserBookingDateSelector
+        packageId={formData.id}
+        packageTitle={formData.title}
+      />
       {/* <BookingFormCard className="ml-5" formData={formData} /> */}
     </Bounded>
   );

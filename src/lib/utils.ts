@@ -154,12 +154,10 @@ export const isValidMergeTimeCycle = (timeString: string) => {
   return moment(timeString, "hh:mm:A", true).isValid();
 };
 
-
 /**
- * 
- * @param clientDate send in YYYYMMDD format 
+ *
+ * @param clientDate send in YYYYMMDD format
  */
 export const isCurrentMonthSameAsRequestedMonth = (clientDate: string) => {
- return isSameMonth(clientDate, new Date(Date.now()))
-}
-
+  return isSameMonth(clientDate, new Date(Date.now()));
+};

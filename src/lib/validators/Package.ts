@@ -25,12 +25,12 @@ export function isPackageStatusExclusive(value: $Enums.PACKAGE_CATEGORY) {
 }
 
 export function isBreakFast(packageCategory: string) {
-  if(packageCategory === $Enums.PACKAGE_CATEGORY.BREAKFAST) return true
-  return false 
+  if (packageCategory === $Enums.PACKAGE_CATEGORY.BREAKFAST) return true;
+  return false;
 }
 export function isLunch(packageCategory: string) {
-  if(packageCategory === $Enums.PACKAGE_CATEGORY.LUNCH) return true
-  return false 
+  if (packageCategory === $Enums.PACKAGE_CATEGORY.LUNCH) return true;
+  return false;
 }
 export function isDinner(packageCategory: string) {
   return packageCategory === $Enums.PACKAGE_CATEGORY.DINNER;

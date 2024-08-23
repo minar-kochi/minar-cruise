@@ -95,7 +95,6 @@ export async function getPackageById({ slug }: { slug: string }) {
   }
 }
 
-
 export type TGetPackageSearchItems = Exclude<
   Awaited<ReturnType<typeof getPackageSearchItems>>,
   null

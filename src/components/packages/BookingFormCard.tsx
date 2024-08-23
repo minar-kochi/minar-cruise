@@ -5,10 +5,6 @@ import { InputLabel } from "../cnWrapper/InputLabel";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  offlineBookingSchema,
-  TOfflineBookingSchema,
-} from "@/lib/validators/offlineBookingValidator";
-import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
 } from "@/lib/validators/onlineBookingValidator";
@@ -34,7 +30,7 @@ const BookingFormCard = ({
   formData,
   selectedSchedule,
   packageId,
-  selectedDate
+  selectedDate,
 }: IBookingFormCard) => {
   const {
     register,
@@ -49,12 +45,12 @@ const BookingFormCard = ({
       numOfBaby: 0,
       packageId: packageId,
       scheduleId: selectedSchedule?.scheduleId ?? "",
-      selectedScheduleDate: selectedDate
+      selectedScheduleDate: selectedDate,
     },
   });
   function onSubmit() {
     try {
-      // @TODO 
+      // @TODO
       // ADD YOUR TRPC FETCH CALL HERE
       console.log("code successful");
     } catch (error) {
