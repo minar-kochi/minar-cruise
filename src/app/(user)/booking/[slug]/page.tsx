@@ -16,6 +16,11 @@ interface BookingPage {
 
 export async function generateStaticParams({ params: { slug } }: BookingPage) {
   const packageSlug = await db.package.findMany({
+    where: {
+      packageCategory: {
+        not: "CUSTOM",
+      },
+    },
     select: {
       slug: true,
     },

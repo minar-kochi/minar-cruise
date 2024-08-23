@@ -2,6 +2,7 @@ import { z } from "zod";
 export const EnumScheduleTime = z.enum([
   "LUNCH",
   "DINNER",
+  "SUNSET",
   "BREAKFAST",
   "CUSTOM",
 ]);

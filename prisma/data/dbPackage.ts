@@ -13,8 +13,8 @@ export const packages: packagesPartialId = [
     slug: "breakfast-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clj9r7rku0000356cql29f673",
-    fromTime: "09:30:PM", //09:30:PM
-    toTime: "11:30:PM",
+    fromTime: "09:30:AM", //09:30:PM
+    toTime: "11:00:AM",
     packageCategory: "BREAKFAST",
   },
   {
@@ -30,7 +30,7 @@ export const packages: packagesPartialId = [
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clk3m9p2q0000472xzt81h294",
     fromTime: "12:00:PM",
-    toTime: "02:00:AM",
+    toTime: "02:00:PM",
     packageCategory: "LUNCH",
   },
   {
@@ -47,7 +47,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clr5t6w8x0000639yvn47j516",
     fromTime: "05:30:PM",
     toTime: "07:30:PM",
-    packageCategory: "DINNER",
+    packageCategory: "SUNSET",
   },
   {
     id: "clqqxac8q000308l55rjn5nv8",
@@ -77,7 +77,7 @@ export const packages: packagesPartialId = [
     slug: "sunset-with-dinner-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "cly9g5k7m0000192wpd25l940",
-    fromTime: "05:00:PM",
+    fromTime: "05:30:PM",
     toTime: "08:30:PM",
     packageCategory: "DINNER",
   },
@@ -115,7 +115,7 @@ export const packages: packagesPartialId = [
   },
   {
     id: "clqqxbb7r000708l58m9f3ry2",
-    title: "Premium Packages",
+    title: "Exlusive Packages",
     packageType: "premium",
     description:
       "Half past five in the evening starts the sunset cruise of Minar Cruise. The Sunset Cruise is an amazing 2 hours journey beginning from Marine Drive, Kochi. The vastness of the deep blue sea, undulating waves, fishing crafts focusing on the harbor, and red beautiful sky all combine to paint a rare picture of natural harmony. Our professional crew will be ready with hot teapots with crunchy snacks to serve you and the entertainment team to serve you with fun-filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
@@ -128,5 +128,21 @@ export const packages: packagesPartialId = [
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
     packageCategory: "EXCLUSIVE",
+  },
+  {
+    id: "cm06nexn400000cl59cd4hz0m",
+    title: "Custom Packages",
+    packageType: "Custom",
+    description:
+      "Half past five in the evening starts the sunset cruise of Minar Cruise. The Sunset Cruise is an amazing 2 hours journey beginning from Marine Drive, Kochi. The vastness of the deep blue sea, undulating waves, fishing crafts focusing on the harbor, and red beautiful sky all combine to paint a rare picture of natural harmony. Our professional crew will be ready with hot teapots with crunchy snacks to serve you and the entertainment team to serve you with fun-filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
+    childPrice: 100000,
+    adultPrice: 200000,
+    duration: 240,
+    slug: "custom-cruise",
+    foodMenuId: "clj9r7rku0000356cql29f674",
+    amenitiesId: "clu5k4t6v0000736sqh81p506",
+    fromTime: "05:00:PM",
+    toTime: "09:00:PM",
+    packageCategory: "CUSTOM",
   },
 ];

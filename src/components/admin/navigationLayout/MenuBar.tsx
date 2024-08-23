@@ -1,4 +1,9 @@
-import { Accordion, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionTrigger,
+  AccordionContent,
+  AccordionItem,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AccordionItem } from "@radix-ui/react-accordion";
 import {
   Bell,
   Home,
@@ -54,10 +58,21 @@ const MenuBar = () => {
               >
                 <ShoppingCart className="h-4 w-4" />
                 Schedule
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
               </Link>
+              {/* <Accordion type="multiple">
+                <AccordionItem value="schedule-link">
+                  <AccordionTrigger>Schedule</AccordionTrigger>
+                  <AccordionContent>
+                    <Link
+                      href="/admin/schedule"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Schedule
+                    </Link>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion> */}
               <Link
                 href="/admin/booking"
                 className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
