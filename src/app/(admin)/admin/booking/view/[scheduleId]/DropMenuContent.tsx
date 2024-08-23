@@ -34,7 +34,7 @@ export default function DropMenuClient({
       >
         <DropdownMenuItem>Change Schedule</DropdownMenuItem>
       </Link>
-        <DeleteBookingButton BookingId={BookingId} ScheduleId={scheduleId} />
+      <DeleteBookingButton BookingId={BookingId} ScheduleId={scheduleId} />
     </DropdownMenuContent>
   );
 }

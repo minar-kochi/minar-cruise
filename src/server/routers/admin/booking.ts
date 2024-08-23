@@ -18,25 +18,24 @@ import { revalidatePath } from "next/cache";
 import { string, z } from "zod";
 
 export const booking = router({
-  deleteBooking: AdminProcedure
-  .input(z.object({
-    bookingId: z.string(),
-  }))
-  .mutation(async({input: {bookingId}})=>{
-    const bookingExists = await findBookingById(bookingId)
-    if(!bookingExists) {
+  deleteBooking: AdminProcedure.input(
+    z.object({
+      bookingId: z.string(),
+    }),
+  ).mutation(async ({ input: { bookingId } }) => {
+    const bookingExists = await findBookingById(bookingId);
+    if (!bookingExists) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "booking id doesn't exists"
-      })
+        message: "booking id doesn't exists",
+      });
     }
     const deleteBooking = await db.booking.delete({
       where: {
-        id: bookingId
+        id: bookingId,
       },
-    })
-  })
-  ,
+    });
+  }),
   transferAllBookingsToASpecificSchedule: AdminProcedure.input(
     z.object({
       fromScheduleId: z.string(),
