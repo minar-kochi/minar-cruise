@@ -23,6 +23,10 @@ import { Suspense } from "react";
 import InitialStateDispatcher from "@/wrapper/admin/Schedule/initial-state-dispatcher";
 import CustomAlertDialog from "@/components/custom/CustomAlertDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import ScheduleBarWrapper from "@/container/admin/schedule/ScheduleBarWrapper";
+import { ModalProvider } from "@/context/ModalProvider";
+import ModalStoreProvider from "@/providers/adminStore/ModalStoreProvider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -49,17 +53,18 @@ export default async function RootLayout({
         )}
       >
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-          <MenuBar />
-          <Header>
-            <Toaster />
-            {/* <CustomAlertDialog alertProps="gte"/> */}
-            <Providers>
-              {/* @TODO [ neil ] Add proper loading state */}
-              <Suspense fallback={<Skeleton className="h-96 w-full" />}>
-                <InitialStateDispatcher>{children}</InitialStateDispatcher>
-              </Suspense>
-            </Providers>
-          </Header>
+          <InitialStateDispatcher>
+            <MenuBar />
+            <Header>
+              <Toaster />
+              <Providers>
+                <Suspense fallback={<Skeleton className="h-full w-full" />}>
+                  {children}
+                  <ScheduleBarWrapper />
+                </Suspense>
+              </Providers>
+            </Header>
+          </InitialStateDispatcher>
         </div>
       </body>
     </html>

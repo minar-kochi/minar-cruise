@@ -40,10 +40,6 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
         {OrganizedPackage[type].map((item) => {
           return (
             <SelectItem
-              disabled={
-                currentDateSchedule &&
-                currentDateSchedule[type]?.packageId === item.id
-              }
               value={item.id}
               key={`select-item-${item.id}`}
             >

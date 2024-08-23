@@ -3,6 +3,7 @@ import { TScheduleState } from "./ScheduleSlice";
 export const resetUpdates = {
   breakfast: false,
   lunch: false,
+  sunset:false,
   dinner: false,
   custom: false,
 };
@@ -11,6 +12,7 @@ export const initialState: Required<TScheduleState> = {
   currentDateSchedule: {
     breakfast: null,
     custom: null,
+    sunset: null,
     dinner: null,
     lunch: null,
   },
@@ -21,6 +23,7 @@ export const initialState: Required<TScheduleState> = {
   upCommingSchedules: {
     breakfast: [],
     custom: [],
+    sunset: [],
     dinner: [],
     lunch: [],
   },
@@ -36,6 +39,12 @@ export const initialState: Required<TScheduleState> = {
       fromTime: undefined,
       toTime: undefined,
       scheduleTime: "CUSTOM",
+    },
+    sunset: {
+      packageId: undefined,
+      fromTime: undefined,
+      toTime: undefined,
+      scheduleTime: "SUNSET",
     },
     dinner: {
       packageId: undefined,

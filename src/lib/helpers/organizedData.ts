@@ -7,6 +7,7 @@ import {
   isStatusBreakfast,
   isStatusDinner,
   isStatusLunch,
+  isStatusSunset,
 } from "../validators/Schedules";
 import { randomUUID } from "crypto";
 import { Schedule } from "@prisma/client";
@@ -20,8 +21,9 @@ export function organizeScheduleData({
 }): TOrganizedScheduleData {
   let organizedData: TOrganizedScheduleData = {
     breakfast: null,
-    dinner: null,
     lunch: null,
+    sunset: null,
+    dinner: null,
     custom: null,
   };
 
@@ -30,6 +32,10 @@ export function organizeScheduleData({
 
     if (isStatusBreakfast(Schedules.schedulePackage)) {
       organizedData.breakfast = Schedules;
+      continue;
+    }
+    if (isStatusSunset(Schedules.schedulePackage)) {
+      organizedData.sunset = Schedules;
       continue;
     }
     if (isStatusDinner(Schedules.schedulePackage)) {
@@ -61,6 +67,12 @@ export function placeOrganizedDataIntoPackageIdAndScheduleTime(
       fromTime: OrgData.custom?.fromTime,
       toTime: OrgData.custom?.toTime,
       scheduleTime: "CUSTOM",
+    },
+    sunset: {
+      id: OrgData.dinner?.packageId,
+      fromTime: OrgData.dinner?.fromTime,
+      toTime: OrgData.custom?.toTime,
+      scheduleTime: "SUNSET",
     },
     dinner: {
       id: OrgData.dinner?.packageId,

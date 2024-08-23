@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
 import RouterRefreshButton from "../booking/RouterRefresh";
+import OpenScheduleButton from "../dashboard/Schedule/OpenScheduleButton";
 
 const Header = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -112,7 +113,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
           </form> */}
         </div>
         <div className="flex gap-2">
-          <RouterRefreshButton />
+          <OpenScheduleButton/>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">

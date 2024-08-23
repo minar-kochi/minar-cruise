@@ -17,6 +17,9 @@ export function CustomDayContentWithScheduleIndicator(props: DayContentProps) {
   const isDinner = data.dinner.findIndex((item) =>
     isSameDay(new Date(item.date), date),
   );
+  const isSunset = data.sunset.findIndex((item) =>
+    isSameDay(new Date(item.date), date),
+  );
   const isCustom = data.custom.findIndex((item) =>
     isSameDay(new Date(item.date), date),
   );
@@ -29,9 +32,13 @@ export function CustomDayContentWithScheduleIndicator(props: DayContentProps) {
         {isLunchFound !== -1 && data.lunch[isLunchFound].date ? (
           <div className="w-1 h-1 bg-lime-500  rounded-full" />
         ) : null}
-        {isDinner !== -1 && data.dinner[isDinner].date ? (
+        {isSunset !== -1 && data.sunset[isSunset].date ? (
           <div className="w-1 h-1 bg-orange-600  rounded-full" />
         ) : null}
+        {isDinner !== -1 && data.dinner[isDinner].date ? (
+          <div className="w-1 h-1 bg-violet-500  rounded-full" />
+        ) : null}
+
         {isCustom !== -1 && data.custom[isCustom].date ? (
           <div className="w-1 h-1 bg-white  rounded-full" />
         ) : null}

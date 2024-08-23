@@ -1,6 +1,6 @@
 "use client";
 import Bounded from "@/components/elements/Bounded";
-import React, { useRef } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -11,17 +11,8 @@ import {
 import ScheduleDatePicker from "@/components/admin/dashboard/Schedule/ScheduleDatePicker";
 import ScheduleSelectors from "@/components/admin/dashboard/Schedule/ScheduleSelectors";
 import ScheduleButtonInfo from "@/components/admin/dashboard/Schedule/ScheduleButtonInfo";
-import { useAppSelector, useAppStore } from "@/hooks/adminStore/reducer";
-import { TExcludedOrganizedUpcommingSchedule } from "@/Types/Schedule/ScheduleSelect";
-import {
-  setCurrentScheduleDate,
-  setDate,
-  setInitialOrganizedScheduleDates,
-} from "@/lib/features/schedule/ScheduleSlice";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { Schedule } from "@prisma/client";
-import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { trpc } from "@/app/_trpc/client";
 
 export default function ScheduleBar() {
@@ -37,13 +28,13 @@ export default function ScheduleBar() {
       },
     });
   return (
-    <Bounded className="">
-      <Card className="w-full   ">
-        <CardHeader>
+    <div className="w-full py-12 ">
+      <Card className="">
+        <CardHeader className="">
           <CardTitle>Schedule&apos;s</CardTitle>
           <CardDescription>Update or add new schedules</CardDescription>
         </CardHeader>
-        <CardContent className="w-full">
+        <CardContent className="w-full  ">
           <ScheduleDatePicker />
           <ScheduleButtonInfo />
           <ScheduleSelectors />
@@ -57,6 +48,6 @@ export default function ScheduleBar() {
           </Button>
         </CardContent>
       </Card>
-    </Bounded>
+    </div>
   );
 }

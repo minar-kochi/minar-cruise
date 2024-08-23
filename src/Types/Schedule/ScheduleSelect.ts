@@ -17,6 +17,12 @@ export type TSelectedPackageIdsAndScheduleEnum = {
     toTime?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
   };
+  sunset?: {
+    id?: string | null;
+    fromTime?: string | null;
+    toTime?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.SUNSET;
+  };
   dinner?: {
     id?: string | null;
     fromTime?: string | null;
@@ -40,6 +46,7 @@ export const selectedPackageIdsAndScheduleMapToEnum: TselectedPackageIdsAndSched
   {
     breakfast: "BREAKFAST",
     custom: "CUSTOM",
+    sunset: "SUNSET",
     dinner: "DINNER",
     lunch: "LUNCH",
   } as const;
@@ -56,6 +63,7 @@ export type TScheduleSelect = {
 export type TOrganizedScheduleData = {
   breakfast: TScheduleDataDayReplaceString | null;
   lunch: TScheduleDataDayReplaceString | null;
+  sunset: TScheduleDataDayReplaceString | null;
   dinner: TScheduleDataDayReplaceString | null;
   custom: TScheduleDataDayReplaceString | null;
 };
@@ -76,6 +84,12 @@ export type TUpdatedDateSchedulePackageId = {
     toTime?: string | null;
     packageId?: string | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
+  };
+  sunset: {
+    fromTime?: string | null;
+    toTime?: string | null;
+    packageId?: string | null;
+    scheduleTime: typeof $Enums.SCHEDULED_TIME.SUNSET;
   };
   dinner: {
     fromTime?: string | null;
