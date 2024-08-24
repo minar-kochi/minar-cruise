@@ -26,6 +26,8 @@ export default function DeleteBookingButton({
   ScheduleId,
 }: IDeleteBookingButton) {
   const router = useRouter();
+  const { invalidate: invalidateBookingSchedule } =
+    trpc.useUtils().admin.booking.bookingScheduleInfinity;
   const {
     mutate: deleteBooking,
     isPending,
@@ -41,6 +43,10 @@ export default function DeleteBookingButton({
     async onSuccess() {
       toast.dismiss();
       toast.success("Booking deleted");
+      await invalidateBookingSchedule(undefined, {
+        type: "all",
+      });
+
       router.refresh();
     },
   });

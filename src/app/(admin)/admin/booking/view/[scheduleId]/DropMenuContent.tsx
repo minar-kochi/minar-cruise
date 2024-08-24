@@ -17,12 +17,6 @@ export default function DropMenuClient({
 }) {
   return (
     <DropdownMenuContent align="end" className="">
-      {/* <Link href={{
-        pathname:`/admin/booking/update/${BookingId}`,
-        query: {scheduleId}
-      }}>
-        <DropdownMenuItem>Update</DropdownMenuItem>
-      </Link> */}
       <DropdownMenuItem>
         <Link href={`/admin/booking/update/${BookingId}`}>Update Schedule</Link>
       </DropdownMenuItem>
