@@ -28,7 +28,11 @@ export default function ScheduleButtonWrapper({ type }: TScheduleSelector) {
       <div className="my-2">
         {data[type]?.scheduleStatus === "BLOCKED" ? (
           <>
-            <Input placeholder={`${CapitalizeFirstLetterOfWord(type)} is blocked`} disabled className="my-1"/>
+            <Input
+              placeholder={`${CapitalizeFirstLetterOfWord(type)} is blocked`}
+              disabled
+              className="my-1"
+            />
             <ScheduleUnblockButton scheduleId={data[type].id} type={type} />
           </>
         ) : (

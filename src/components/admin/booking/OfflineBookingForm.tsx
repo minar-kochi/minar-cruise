@@ -58,7 +58,7 @@ export default function OfflineBookingForm({
           type: "all",
         });
         /**@todo remove this and add infinity table in booking page. */
-        await sleep(1000)
+        await sleep(1000);
         router.prefetch(`/admin/booking/view/${scheduleId}`);
         router.push(`/admin/booking/view/${scheduleId}`);
       },

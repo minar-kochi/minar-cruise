@@ -164,6 +164,6 @@ export const isCurrentMonthSameAsRequestedMonth = (clientDate: string) => {
 
 export function CapitalizeFirstLetterOfWord(value: string) {
   if (value.length < 1) return value;
-  
+
   return `${value.charAt(0).toLocaleUpperCase()}${value.slice(1)}`;
 }
