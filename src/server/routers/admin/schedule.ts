@@ -437,6 +437,54 @@ export const schedule = router({
       });
     }
   }),
+  deleteScheduleById: AdminProcedure.input(
+    z.object({
+      scheduleId: z.string(),
+    }),
+  ).mutation(async ({ ctx, input: { scheduleId } }) => {
+    try {
+      const isScheduleExists = await db.schedule.count({
+        where: {
+          id: scheduleId,
+        },
+      });
+      if (!isScheduleExists) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "schedule not found.",
+        });
+      }
+      const isScheduleBookingFound = await db.booking.findFirst({
+        where: {
+          scheduleId,
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (isScheduleBookingFound?.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Schedule Cannot be deleted because of existing booking found.",
+        });
+      }
+      const data = await db.schedule.delete({
+        where: {
+          id: scheduleId,
+        },
+      });
+      return data;
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went wrong",
+      });
+    }
+  }),
   clearSchedule: AdminProcedure.mutation(async () => {
     try {
       if (isProd) {
