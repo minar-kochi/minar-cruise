@@ -23,17 +23,19 @@ export default function DropMenuClient({
       }}>
         <DropdownMenuItem>Update</DropdownMenuItem>
       </Link> */}
-      <Link href={`/admin/booking/update/${BookingId}`}>
-        <DropdownMenuItem>Update</DropdownMenuItem>
-      </Link>
-      <Link
-        href={{
-          pathname: `/admin/booking/change/${BookingId}`,
-          query: { scheduleId },
-        }}
-      >
-        <DropdownMenuItem>Change Schedule</DropdownMenuItem>
-      </Link>
+      <DropdownMenuItem>
+        <Link href={`/admin/booking/update/${BookingId}`}>Update Schedule</Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <Link
+          href={{
+            pathname: `/admin/booking/change/${BookingId}`,
+            query: { scheduleId },
+          }}
+        >
+          Change Schedule
+        </Link>
+      </DropdownMenuItem>
       <DeleteBookingButton BookingId={BookingId} ScheduleId={scheduleId} />
     </DropdownMenuContent>
   );
