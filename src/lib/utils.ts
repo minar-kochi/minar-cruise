@@ -161,3 +161,9 @@ export const isValidMergeTimeCycle = (timeString: string) => {
 export const isCurrentMonthSameAsRequestedMonth = (clientDate: string) => {
   return isSameMonth(clientDate, new Date(Date.now()));
 };
+
+export function CapitalizeFirstLetterOfWord(value: string) {
+  if (value.length < 1) return value;
+  
+  return `${value.charAt(0).toLocaleUpperCase()}${value.slice(1)}`;
+}
