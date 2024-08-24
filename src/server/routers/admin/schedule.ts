@@ -70,8 +70,6 @@ export const schedule = router({
       cursor: z.string().nullish(),
     }),
   ).query(async ({ ctx, input }) => {
-    await sleep(2000);
-    await sleep(2000);
     const { cursor } = input;
     const limit = input.limit ?? INFINITE_QUERY_LIMIT;
 

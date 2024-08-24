@@ -53,6 +53,7 @@ export default async function PackagePage({ params: { slug } }: BookingPage) {
       <ContentCard
         amenitiesId={data.amenitiesId}
         description={data.description}
+        formData={data}
       />
       <TermsAndConditionsCard />
       <Reviews />

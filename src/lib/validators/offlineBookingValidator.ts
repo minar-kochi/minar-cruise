@@ -25,12 +25,12 @@ export const offlineBookingFormSchema = z.object({
     .number({
       message: "Please Enter a valid number",
     })
-    .max(150, "Count cannot exceed 150"),
+    .max(120, "Count cannot exceed 120"),
   babyCount: z
     .number({
       message: "Please Enter a valid number",
     })
-    .max(150, "Count cannot exceed 150"),
+    .max(50, "Count cannot exceed 50"),
   discount: z.number({ message: "Please provide a valid prize" }),
   paymentMode: z.string(),
   advanceAmount: z.number({ message: "Please provide number" }),
