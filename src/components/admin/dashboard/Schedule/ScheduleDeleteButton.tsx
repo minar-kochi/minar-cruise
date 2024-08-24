@@ -15,22 +15,28 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
 import toast from "react-hot-toast";
-import { selectedPackageIdsAndScheduleMapToEnum } from "@/Types/Schedule/ScheduleSelect";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
+import { setSyncDatabaseUpdatesScheduleDeletion } from "@/lib/features/schedule/ScheduleSlice";
 
-export default function ScheduleBlockButton({ type }: TScheduleSelector) {
+export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
   const [open, isOpen] = useState(false);
+
   const date = useAppSelector((state) => state.schedule.date);
+  const schduleData = useAppSelector(
+    (state) => state.schedule.currentDateSchedule,
+  );
+
   const { invalidate: InvalidateScheduleInfinity } =
     trpc.useUtils().admin.schedule.getSchedulesInfinity;
+
   const { invalidate } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
+
   const dispatch = useAppDispatch();
 
   const router = useRouter();
   const { mutate, isPending } =
-    trpc.admin.schedule.blockScheduleByDateAndStatus.useMutation({
+    trpc.admin.schedule.deleteScheduleById.useMutation({
       async onSuccess(data, variables, context) {
         await InvalidateScheduleInfinity(undefined, {
           type: "all",
@@ -38,47 +44,48 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
         await invalidate({
           ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
         });
-        dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
-
+        dispatch(setSyncDatabaseUpdatesScheduleDeletion(data, type));
         isOpen(false);
         router.refresh();
-        toast.success("Schedule is blocked.");
+        toast.success("Schedule is Deleted.");
       },
       onError(error, variables, context) {
         toast.error(error.message);
       },
     });
 
-  const handleBlockButton = () => {
-    const ScheduleTime = selectedPackageIdsAndScheduleMapToEnum[type];
-    if (!ScheduleTime) {
-      toast.error("Failed to get Schedule Time.");
+  const handleDeleteButton = () => {
+    if (!schduleData[type]) {
+      toast.error("Schedule not found to be deleted.");
+      return;
+    }
+    if (!schduleData[type]?.id) {
+      toast.error("Schedule not found to be deleted.");
       return;
     }
     mutate({
-      date,
-      ScheduleTime,
+      scheduleId: schduleData[type].id,
     });
   };
   return (
     <Dialog open={open} onOpenChange={isOpen}>
       <DialogTrigger
         className={buttonVariants({
-          variant: "outline",
+          variant: "destructive",
           className:
-            "w-full  gap-1 border-destructive border-2 text-destructive",
+            "w-full my-2 gap-1 border-destructive border-2 text-destructive",
         })}
       >
-        <Ban className="h-4 w-4 text-red-600" />
-        <p className="text-red-600">Block {type}</p>
+        <Ban className="h-4 w-4 " />
+        <p className="">Delete {type}</p>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Block Schedule</DialogTitle>
-          <DialogDescription>
-            Are you sure to Block Schedule at {format(date, "dd-MM-yyyy")}{" "}
-            {type}
+          <DialogTitle className="text-red-600">Delete Schedule</DialogTitle>
+          <DialogDescription className="">
+            Are you sure to Delete {type} Schedule at{" "}
+            {format(date, "dd-MM-yyyy")}
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-1">
@@ -91,10 +98,10 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
           </Button>
           <Button
             disabled={isPending}
-            onClick={handleBlockButton}
+            onClick={handleDeleteButton}
             variant={"destructive"}
           >
-            Block Lunch at {format(date, "dd/MM")}{" "}
+            Delete Lunch at {format(date, "dd/MM")}{" "}
           </Button>
         </div>
       </DialogContent>

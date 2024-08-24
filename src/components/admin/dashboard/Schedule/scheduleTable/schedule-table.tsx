@@ -39,16 +39,17 @@ export default function ScheduleTable() {
     );
 
   return (
-    <div>
+    <div className="max-w-7xl  mt-12 mx-auto">
       <Table>
         <TableHeader>
           <TableRow>
             {/* <TableHead>id</TableHead> */}
-            <TableHead>Date</TableHead>
-            <TableHead>Package Type</TableHead>
-            <TableHead>From To</TableHead>
-            <TableHead>Package Name</TableHead>
-            <TableHead>Package Staus</TableHead>
+            <TableHead className="">Date</TableHead>
+            <TableHead className="">Day</TableHead>
+            <TableHead className="">From To</TableHead>
+            <TableHead className="">Package Name</TableHead>
+            <TableHead className="">Package Type</TableHead>
+            <TableHead className="">Package Staus</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,15 +68,19 @@ export default function ScheduleTable() {
                       scheduleToTime: item.toTime,
                     },
                   });
+
                 return (
                   <TableRow ref={ref} key={`${item.id}-table-row`}>
                     {/* <TableCell>{i}</TableCell> */}
-                    <TableCell>{format(item.day, "dd/ MM /yyyy")}</TableCell>
-                    <TableCell>{item.schedulePackage}</TableCell>
+                    <TableCell className="max-w-[100px]">
+                      {format(item.day, "dd/ MM /yyyy")}
+                    </TableCell>
+                    <TableCell>{format(item.day, "EEEE")}</TableCell>
                     <TableCell>
                       {fromTime} - {toTime}
                     </TableCell>
                     <TableCell>{item.Package?.title}</TableCell>
+                    <TableCell>{item.schedulePackage}</TableCell>
                     <TableCell>{item.scheduleStatus}</TableCell>
                   </TableRow>
                 );

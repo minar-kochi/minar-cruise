@@ -16,6 +16,11 @@ interface BookingPage {
 
 export async function generateStaticParams({ params: { slug } }: BookingPage) {
   const packageSlug = await db.package.findMany({
+    where: {
+      packageCategory: {
+        not: "CUSTOM",
+      },
+    },
     select: {
       slug: true,
     },
@@ -48,6 +53,7 @@ export default async function PackagePage({ params: { slug } }: BookingPage) {
       <ContentCard
         amenitiesId={data.amenitiesId}
         description={data.description}
+        formData={data}
       />
       <TermsAndConditionsCard />
       <Reviews />

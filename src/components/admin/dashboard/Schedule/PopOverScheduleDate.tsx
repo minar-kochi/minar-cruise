@@ -62,7 +62,11 @@ export function PopOverDatePicker({
           </div>
           <div className="flex items-center justify-center gap-2">
             <div className="h-1 w-1 rounded-full bg-orange-600" />
-            <p className="text-xs text-muted-foreground">Dinner / Sunset</p>
+            <p className="text-xs text-muted-foreground"> Sunset</p>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <div className="h-1 w-1 rounded-full bg-violet-600" />
+            <p className="text-xs text-muted-foreground">Dinner</p>
           </div>
         </div>
       </PopoverContent>

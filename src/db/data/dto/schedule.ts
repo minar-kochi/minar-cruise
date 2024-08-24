@@ -7,6 +7,7 @@ import {
   isStatusCustom,
   isStatusDinner,
   isStatusLunch,
+  isStatusSunset,
 } from "@/lib/validators/Schedules";
 import { TScheduleWithBookingCountWithId } from "@/Types/Schedule/ScheduleSelect";
 import { $Enums, Schedule } from "@prisma/client";
@@ -46,6 +47,7 @@ export async function findBookingById(bookingId: string) {
     const data = await db.booking.count({
       where: {
         id: bookingId,
+        
       },
     });
     if (!data) return false;
@@ -108,6 +110,7 @@ export type TScheduleData = Schedule;
 export type TgetUpcommingScheduleDates = {
   breakfast: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   lunch: { date: string; status: $Enums.SCHEDULE_STATUS }[];
+  sunset: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   dinner: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   custom: { date: string; status: $Enums.SCHEDULE_STATUS }[];
 };
@@ -175,6 +178,7 @@ export const getUpcommingScheduleDates = async () => {
     let scheduledDate: TgetUpcommingScheduleDates = {
       breakfast: [],
       dinner: [],
+      sunset: [],
       lunch: [],
       custom: [],
     };
@@ -186,6 +190,15 @@ export const getUpcommingScheduleDates = async () => {
     for (const item of data) {
       if (isStatusLunch(item.schedulePackage)) {
         scheduledDate.lunch.push({
+          date: item.day.toLocaleDateString(undefined, {
+            timeZone: "Asia/Kolkata",
+          }),
+          status: item.scheduleStatus,
+        });
+        continue;
+      }
+      if (isStatusSunset(item.schedulePackage)) {
+        scheduledDate.sunset.push({
           date: item.day.toLocaleDateString(undefined, {
             timeZone: "Asia/Kolkata",
           }),

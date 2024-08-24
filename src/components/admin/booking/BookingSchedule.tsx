@@ -17,22 +17,17 @@ import { trpc } from "@/app/_trpc/client";
 import Link from "next/link";
 const VIEW_BEFORE_PX = 50;
 
-export default function BookingScheduleTable(
-  {
-    //   schedules,
-  }: {
-    //   schedules: Exclude<TGetManySchedulesAndTotalBookingCount, null | undefined>;
-  },
-) {
+export default function BookingScheduleTable() {
   const {
     data: schedules,
     fetchNextPage,
     isFetching,
     isFetchingNextPage,
   } = trpc.admin.booking.bookingScheduleInfinity.useInfiniteQuery(
-    {},
+    { limit: null },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
+      
     },
   );
   const { ref } = useInView({

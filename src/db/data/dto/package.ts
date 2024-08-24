@@ -3,6 +3,14 @@ import { db } from "@/db";
 import { TPackageNavigation } from "@/db/types/TPackage";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { isProd } from "@/lib/utils";
+import {
+  isPackageStatusBreakfast,
+  isPackageStatusCustom,
+  isPackageStatusDinner,
+  isPackageStatusExclusive,
+  isPackageStatusLunch,
+  isPackageStatusSunSet,
+} from "@/lib/validators/Package";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
 import { revalidateTag, unstable_cache } from "next/cache";
@@ -17,6 +25,11 @@ export async function getPackageNavigation(): Promise<
         slug: true,
         title: true,
         id: true,
+      },
+      where: {
+        packageCategory: {
+          not: "CUSTOM",
+        },
       },
     });
     if (!data.length) {
@@ -37,7 +50,6 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
       },
       select: {
         id: true,
-
         packageCategory: true,
       },
     });
@@ -48,6 +60,11 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
     return null;
   }
 }
+
+export type TGetPackageById = Exclude<
+  Awaited<ReturnType<typeof getPackageById>>,
+  null
+>;
 
 export async function getPackageById({ slug }: { slug: string }) {
   try {
@@ -89,11 +106,6 @@ export async function getPackageById({ slug }: { slug: string }) {
     return null;
   }
 }
-
-export type TGetPackageById = Exclude<
-  Awaited<ReturnType<typeof getPackageById>>,
-  null
->;
 
 export type TGetPackageSearchItems = Exclude<
   Awaited<ReturnType<typeof getPackageSearchItems>>,
@@ -165,28 +177,43 @@ export const getOrganizedPackages = unstable_cache(
       let lunch: PackageSelect[] = [];
       let dinner: PackageSelect[] = [];
       let breakfast: PackageSelect[] = [];
+      let sunset: PackageSelect[] = [];
       let custom: PackageSelect[] = [];
 
       for (const PackageData of data) {
         if (
-          PackageData.packageCategory === "LUNCH" ||
-          PackageData.packageCategory === "EXCLUSIVE"
+          isPackageStatusLunch({
+            packageStatus: PackageData.packageCategory,
+            exlcusive: true,
+          })
         ) {
           lunch.push(PackageData);
         }
         if (
-          PackageData.packageCategory === "BREAKFAST" ||
-          PackageData.packageCategory === "EXCLUSIVE"
+          isPackageStatusSunSet({
+            packageStatus: PackageData.packageCategory,
+            exlcusive: true,
+          })
+        ) {
+          sunset.push(PackageData);
+        }
+        if (
+          isPackageStatusBreakfast({
+            packageStatus: PackageData.packageCategory,
+            exlcusive: true,
+          })
         ) {
           breakfast.push(PackageData);
         }
         if (
-          PackageData.packageCategory === "DINNER" ||
-          PackageData.packageCategory === "EXCLUSIVE"
+          isPackageStatusDinner({
+            packageStatus: PackageData.packageCategory,
+            exlcusive: true,
+          })
         ) {
           dinner.push(PackageData);
         }
-        if (PackageData.packageCategory === "EXCLUSIVE") {
+        if (isPackageStatusCustom(PackageData.packageCategory)) {
           custom.push(PackageData);
         }
       }
@@ -198,6 +225,7 @@ export const getOrganizedPackages = unstable_cache(
       return {
         lunch,
         dinner,
+        sunset,
         breakfast,
         custom,
       };
@@ -220,6 +248,11 @@ export type TGetPackageCardDetails = Exclude<
 export async function getPackageCardDetails() {
   try {
     const data = await db.package.findMany({
+      where: {
+        packageCategory: {
+          not: "CUSTOM",
+        },
+      },
       select: {
         id: true,
         adultPrice: true,

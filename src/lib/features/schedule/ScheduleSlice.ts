@@ -157,6 +157,40 @@ const scheduleSlice = createSlice({
         };
       },
     },
+    setSyncDatabaseUpdatesScheduleDeletion: {
+      reducer(
+        state,
+        action: PayloadAction<{
+          updatingDate: string;
+          currentDateSchedule: TScheduleDataDayReplaceString;
+          type: TKeyOrganizedScheduleData;
+          scheduleStatus: $Enums.SCHEDULE_STATUS;
+        }>,
+      ) {
+        //if dates are eq then add to the current date schedule.
+        if (state.date === action.payload.updatingDate) {
+          state.currentDateSchedule[action.payload.type] = null;
+        }
+        state.upCommingSchedules[action.payload.type] =
+          state.upCommingSchedules[action.payload.type].filter(
+            (fv) => fv.date !== action.payload.updatingDate,
+          );
+      },
+      prepare(
+        data: TScheduleDataDayReplaceString,
+        type: TKeyOrganizedScheduleData,
+      ) {
+        const date = RemoveTimeStampFromDate(new Date(data.day));
+        return {
+          payload: {
+            updatingDate: date,
+            currentDateSchedule: data,
+            type,
+            scheduleStatus: data.scheduleStatus,
+          },
+        };
+      },
+    },
     /**
      * if there is boolean then it will set the boolean or else it will toggle the previous state.
      * @param action boolean | null
@@ -210,11 +244,19 @@ const scheduleSlice = createSlice({
         type: TKeyOrganizedScheduleData;
         time: string;
         eventType: TkeyDbTime;
+        packageId?: string;
       }>,
     ) {
       const {
         payload: { time, type, eventType },
       } = action;
+      if (
+        !state.updatedDateSchedule[type].packageId &&
+        state.currentDateSchedule[type]?.packageId
+      ) {
+        state.updatedDateSchedule[type].packageId =
+          state.currentDateSchedule[type]?.packageId;
+      }
       state.updatedDateSchedule[type][eventType] = time;
     },
 
@@ -242,6 +284,7 @@ export const {
   setUpdatableScheduleTime,
   setSyncDatabaseUpdatesScheduleCreation,
   setSyncDatabaseDeleteSchedule,
+  setSyncDatabaseUpdatesScheduleDeletion,
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;

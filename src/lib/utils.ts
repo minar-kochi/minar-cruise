@@ -1,7 +1,7 @@
 // import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { type ClassValue, clsx } from "clsx";
-import { formatISO, isValid } from "date-fns";
+import { formatISO, isValid, isSameMonth, endOfMonth } from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { object } from "zod";
@@ -152,4 +152,12 @@ export function mergeTimeCycle(value: TTimeCycle): string | null {
 
 export const isValidMergeTimeCycle = (timeString: string) => {
   return moment(timeString, "hh:mm:A", true).isValid();
+};
+
+/**
+ *
+ * @param clientDate send in YYYYMMDD format
+ */
+export const isCurrentMonthSameAsRequestedMonth = (clientDate: string) => {
+  return isSameMonth(clientDate, new Date(Date.now()));
 };

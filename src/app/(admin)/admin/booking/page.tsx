@@ -1,4 +1,5 @@
 import AllSchedules from "@/components/admin/booking/AllSchedules";
+import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -14,9 +15,7 @@ export default function page() {
           <Link href={`/admin`}>
             <Button className="">Back</Button>
           </Link>
-          <Link href={`/admin/schedule`}>
-            <Button className="">Add new Schedule</Button>
-          </Link>
+          <OpenScheduleButton />
         </div>
 
         <AllSchedules />
