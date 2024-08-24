@@ -47,7 +47,6 @@ export async function findBookingById(bookingId: string) {
     const data = await db.booking.count({
       where: {
         id: bookingId,
-        
       },
     });
     if (!data) return false;

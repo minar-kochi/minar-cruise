@@ -27,7 +27,6 @@ export default function BookingScheduleTable() {
     { limit: null },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
-      
     },
   );
   const { ref } = useInView({
