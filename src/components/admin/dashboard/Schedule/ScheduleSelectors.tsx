@@ -28,7 +28,7 @@ export default function ScheduleSelectors() {
             label="Sunset"
             key={`ScheduleSelector-type-sunset`}
             type="sunset"
-          />{" "}
+          />
         </div>
       </div>
       <div className="border-b   py-2">
