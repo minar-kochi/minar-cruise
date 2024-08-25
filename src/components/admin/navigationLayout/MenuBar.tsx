@@ -59,20 +59,6 @@ const MenuBar = () => {
                 <ShoppingCart className="h-4 w-4" />
                 Schedule
               </Link>
-              {/* <Accordion type="multiple">
-                <AccordionItem value="schedule-link">
-                  <AccordionTrigger>Schedule</AccordionTrigger>
-                  <AccordionContent>
-                    <Link
-                      href="/admin/schedule"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                      Schedule
-                    </Link>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion> */}
               <Link
                 href="/admin/booking"
                 className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"

@@ -19,7 +19,7 @@ const ExploreCard = ({ className }: { className: string }) => {
           <Link href={"/contact"}>Contact Us</Link>
         </li>
         <li className="max-sm:mx-auto font-semibold text-slate-400">
-        <Link href={"/refund_returns"}>Refund Policy</Link>
+          <Link href={"/refund_returns"}>Refund Policy</Link>
         </li>
       </ul>
     </section>
