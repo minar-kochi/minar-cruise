@@ -136,172 +136,221 @@ export default function OfflineBookingForm({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-5">
-      <h1 className="text-3xl font-bold max-w-max mx-auto my-10">
+    <form onSubmit={handleSubmit(onSubmit)} className="p-6">
+      <h1 className="text-5xl font-extrabold">
         {type === "ADD" ? "Add Booking" : "Update Booking"}
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
-        <InputLabel
-          label="Name"
-          InputProps={{
-            placeholder: "Enter name",
-            required: true,
-            ...register("name"),
-          }}
-          errorMessage={errors.name ? `${errors.name.message}` : null}
-        />
-        <InputLabel
-          label="Phone"
-          InputProps={{
-            type: "number",
-            placeholder: "Enter Phone number",
-            ...register("phone"),
-          }}
-          errorMessage={errors.phone ? `${errors.phone.message}` : null}
-        />
-        <InputLabel
-          containerClassName=""
-          label="Email"
-          InputProps={{
-            type: "email",
-            placeholder: "example@gmail.com",
-            ...register("email"),
-          }}
-          errorMessage={
-            errors.email?.message ? `${errors.email.message}` : null
-          }
-        />
-        {/* <InputLabel
-          containerClassName="hidden"
-          label="Schedule"
-          InputProps={{
-            type: "text",
-            className: "hidden",
-            placeholder: "Select a schedule",
-            required: true,
-            ...register("schedule", {
-              value: scheduleId,
-            }),
-          }}
-          errorMessage={
-            errors.schedule?.message ? `${errors.schedule.message}` : null
-          }
-        /> */}
-        <InputLabel
-          label="Adult Count"
-          InputProps={{
-            type: "number",
-            placeholder: "Enter Adult count",
-            min: 0,
-            ...register("adultCount", { valueAsNumber: true }),
-          }}
-          errorMessage={
-            errors.adultCount?.message ? `${errors.adultCount.message}` : null
-          }
-        />
-        <InputLabel
-          label="Child Count"
-          InputProps={{
-            min: 0,
-            type: "number",
-            placeholder: "Enter a Child Count",
-            ...register("childCount", { valueAsNumber: true }),
-          }}
-          errorMessage={
-            errors.childCount?.message ? `${errors.childCount.message}` : null
-          }
-        />
-        <InputLabel
-          label="Baby Count"
-          InputProps={{
-            min: 0,
-            type: "number",
-            placeholder: "Enter a baby Count",
-            ...register("babyCount", { valueAsNumber: true }),
-          }}
-          errorMessage={
-            errors.babyCount?.message ? `${errors.babyCount.message}` : null
-          }
-        />
-        <InputLabel
-          label="Discount"
-          InputProps={{
-            min: 0,
-            type: "number",
-            defaultValue: 0,
-            placeholder: "Enter a Discount in rupee",
-            ...register("discount", { valueAsNumber: true }),
-          }}
-          errorMessage={
-            errors.discount?.message ? `${errors.discount.message}` : null
-          }
-        />
-        <InputLabel
-          label="Payment mode"
-          InputProps={{
-            type: "text",
-            placeholder: "eg: GPAY, CASH, PAYTM",
-            ...register("paymentMode"),
-          }}
-          errorMessage={
-            errors.paymentMode?.message ? `${errors.paymentMode.message}` : null
-          }
-        />
-        <InputLabel
-          label="Advance amount"
-          InputProps={{
-            min: 0,
-            type: "number",
-            placeholder: "Enter received amount in rupee",
-            ...register("advanceAmount", { valueAsNumber: true }),
-          }}
-          errorMessage={
-            errors.advanceAmount?.message
-              ? `${errors.advanceAmount.message}`
-              : null
-          }
-        />
-        <InputLabel
-          label="Total fare"
-          InputProps={{
-            min: 0,
-            type: "number",
-            placeholder: "Enter total fare",
-            ...register("billAmount", { valueAsNumber: true }),
-          }}
-          errorMessage={
-            errors.billAmount?.message ? `${errors.billAmount.message}` : null
-          }
-        />
-        <InputLabel
-          label="Description"
-          InputProps={{
-            type: "text",
-            placeholder: "Enter a description, eg: Via Aslu",
-            ...register("description"),
-          }}
-          errorMessage={
-            errors.description?.message ? `${errors.description.message}` : null
-          }
-        />
+      <p className="my-3">Offline Booking Form</p>
+      <div className="w-full border-b border-gray-200 my-5"></div>
+      <div className="grid grid-cols-3 max-md:flex max-md:flex-col gap-3">
+        <div className="col-span-2 flex-col">
+          {/* first last name  */}
+          <div className="grid grid-cols-2 gap-4">
+            <InputLabel
+              label="Name"
+              InputProps={{
+                placeholder: "Enter name",
+                required: true,
+                ...register("name"),
+              }}
+              errorMessage={errors.name ? `${errors.name.message}` : null}
+            />
+            <InputLabel
+              label="Phone"
+              InputProps={{
+                type: "number",
+                placeholder: "Enter Phone number",
+                ...register("phone"),
+              }}
+              errorMessage={errors.phone ? `${errors.phone.message}` : null}
+            />
+          </div>
+          <InputLabel
+            containerClassName=""
+            label="Email"
+            InputProps={{
+              type: "email",
+              placeholder: "example@gmail.com",
+              ...register("email"),
+            }}
+            errorMessage={
+              errors.email?.message ? `${errors.email.message}` : null
+            }
+          />
+
+          <div className="grid grid-cols-3 gap-3 max-md:flex max-md:flex-col">
+            <div className="col-span-1">
+              <div className="flex flex-col items-start ">
+                <div className="mt-4 w-full">
+                  <InputLabel
+                    label="Adult Count"
+                    InputProps={{
+                      type: "number",
+                      placeholder: "Enter Adult count",
+                      min: 0,
+                      ...register("adultCount", { valueAsNumber: true }),
+                    }}
+                    errorMessage={
+                      errors.adultCount?.message
+                        ? `${errors.adultCount.message}`
+                        : null
+                    }
+                  />
+                </div>
+                <div className="mt-4 w-full">
+                  <InputLabel
+                    label="Child Count"
+                    InputProps={{
+                      min: 0,
+                      type: "number",
+                      placeholder: "Enter a Child Count",
+                      ...register("childCount", { valueAsNumber: true }),
+                    }}
+                    errorMessage={
+                      errors.childCount?.message
+                        ? `${errors.childCount.message}`
+                        : null
+                    }
+                  />
+                </div>
+                <div className="mt-4 w-full">
+                  <InputLabel
+                    label="Baby Count"
+                    InputProps={{
+                      min: 0,
+                      type: "number",
+                      placeholder: "Enter a baby Count",
+                      ...register("babyCount", { valueAsNumber: true }),
+                    }}
+                    errorMessage={
+                      errors.babyCount?.message
+                        ? `${errors.babyCount.message}`
+                        : null
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-span-2">
+              <div className="flex flex-col items-start ">
+                <div className="mt-4 w-full">
+                  <InputLabel
+                    label="Discount"
+                    InputProps={{
+                      min: 0,
+                      type: "number",
+                      defaultValue: 0,
+                      placeholder: "Enter a Discount in rupee",
+                      ...register("discount", { valueAsNumber: true }),
+                    }}
+                    errorMessage={
+                      errors.discount?.message
+                        ? `${errors.discount.message}`
+                        : null
+                    }
+                  />
+                </div>
+                <div className="mt-4 w-full">
+                  <InputLabel
+                    label="Payment mode"
+                    InputProps={{
+                      type: "text",
+                      placeholder: "eg: GPAY, CASH, PAYTM",
+                      ...register("paymentMode"),
+                    }}
+                    errorMessage={
+                      errors.paymentMode?.message
+                        ? `${errors.paymentMode.message}`
+                        : null
+                    }
+                  />
+                </div>
+                <div className=" w-full flex justify-between gap-3">
+                  <div className="mt-4 w-full">
+                    <InputLabel
+                      label="Advance amount"
+                      InputProps={{
+                        min: 0,
+                        type: "number",
+                        placeholder: "Enter received amount in rupee",
+                        ...register("advanceAmount", { valueAsNumber: true }),
+                      }}
+                      errorMessage={
+                        errors.advanceAmount?.message
+                          ? `${errors.advanceAmount.message}`
+                          : null
+                      }
+                    />
+                  </div>
+                  <div className="mt-4 w-full">
+                    <InputLabel
+                      label="Total fare"
+                      InputProps={{
+                        min: 0,
+                        type: "number",
+                        placeholder: "Enter total fare",
+                        ...register("billAmount", { valueAsNumber: true }),
+                      }}
+                      errorMessage={
+                        errors.billAmount?.message
+                          ? `${errors.billAmount.message}`
+                          : null
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-span-1">
+          <InputLabel
+            label="Description"
+            errorMessage={
+              errors.description?.message
+                ? `${errors.description.message}`
+                : null
+            }
+            InputBox="textarea"
+            TextAreaProps={{
+              placeholder: "Enter a description, eg: Via Aslu",
+              ...register("description"),
+            }}
+            TextAreaClassName="mt-3 bg-neutral-900 min-h-[470px]"
+          />
+        </div>
       </div>
-      <div className="py-5">
+
+      {/* ===================================================== */}
+      <div className="flex justify-between mt-3">
         {type === "ADD" ? (
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isLoading ? <Loader2 /> : "Add"}
-          </Button>
+          <div className="flex justify-between w-full">
+            <Button
+              className="bg-red-900 font-semibold text-sl hover:text-black"
+              onClick={() => reset()}
+            >
+              Reset
+            </Button>
+            <Button
+              type="submit"
+              className=" bg-green-900 text-white hover:text-black min-w-[520px]"
+              disabled={isSubmitting}
+            >
+              {isLoading ? <Loader2 /> : "Add"}
+            </Button>
+          </div>
         ) : (
-          <Button type="submit" className="w-full" disabled={!isDirty}>
-            {isUpdatingLoading ? <Loader2 /> : "Update"}
-          </Button>
+          <div className="w-full flex justify-end">
+            <Button
+              type="submit"
+              className="  bg-green-900 text-white hover:text-black min-w-[520px] "
+              disabled={!isDirty}
+            >
+              {isUpdatingLoading ? <Loader2 /> : "Update"}
+            </Button>
+          </div>
         )}
       </div>
     </form>
   );
 }
-
-// const AddButton = () => {
-//   return <Button disabled={}>
-//     Add
-//   </Button>
-// }
