@@ -73,11 +73,14 @@ export default function ChangeBooking({
 
   return (
     <div className="flex flex-col gap-8 p-5">
-      <h1 className="text-2xl font-semibold">
+      <h1 className="text-2xl font-semibold text-wrap">
         Select a schedule that you want to change
       </h1>
 
-      <form className="flex gap-8" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="flex max-sm:flex-col gap-8"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="min-w-[200px]">
           <ScheduleDatePicker className="" />
         </div>
@@ -88,7 +91,7 @@ export default function ChangeBooking({
           rules={{ required: "Please select a schedule" }}
           render={({ field }) => (
             <Select onValueChange={field.onChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] max-sm:w-full">
                 <SelectValue placeholder="Select a Package" />
               </SelectTrigger>
               <SelectContent>
@@ -110,7 +113,7 @@ export default function ChangeBooking({
           )}
         />
 
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending} variant={"destructive"}>
           {isPending ? <Loader2 /> : "Change"}
         </Button>
       </form>

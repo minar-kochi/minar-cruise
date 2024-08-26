@@ -102,11 +102,11 @@ export default function MoveAllBookingsButton({
   return (
     <Dialog>
       <DialogTrigger disabled={disabled} asChild className={cn("", className)}>
-        <Button variant="outline">Move all bookings </Button>
+        <Button variant="destructive">Move all bookings</Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[550px]">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-red-700 text-xl">
+      <DialogContent className="sm:max-w-[525px]">
+        <DialogHeader>
+          <DialogTitle className="text-xl">
             Are you sure you want to change all bookings ?
           </DialogTitle>
           <DialogDescription>
@@ -114,21 +114,21 @@ export default function MoveAllBookingsButton({
             of the changes that you are going to commit
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4 ">
-          <div className="flex justify-between items-center gap-4 ">
-            <Label htmlFor="name" className="">
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4 ">
+            <Label htmlFor="name" className="text-right">
               Date
             </Label>
-            <div className="min-w-[350px]">
+            <div className="col-span-3 ">
               <ScheduleDatePicker className="" />
             </div>
           </div>
-          <form className="flex justify-between items-center gap-4">
-            <Label htmlFor="schedule" className="">
+          <form className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="username" className="text-right">
               Schedule
             </Label>
             <Select onValueChange={setChangeToScheduleId}>
-              <SelectTrigger className="w-[350px]">
+              <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select package" />
               </SelectTrigger>
               <SelectContent>
@@ -151,11 +151,76 @@ export default function MoveAllBookingsButton({
           </form>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleClick} disabled={isPending}>
+          <Button
+            type="submit"
+            onClick={handleClick}
+            disabled={isPending}
+            variant={"destructiveOutline"}
+          >
             Confirm changes
-          </Button>
+          </Button>{" "}
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
+}
+
+{
+  /* <Dialog>
+<DialogTrigger disabled={disabled} asChild className={cn("", className)}>
+  <Button variant="destructive">Move all bookings </Button>
+</DialogTrigger>
+<DialogContent className="">
+  <DialogHeader className="space-y-3">
+    <DialogTitle className="text-red-700 text-xl text-left text-wrap">
+      Are you sure you want to change all bookings ?
+    </DialogTitle>
+    <DialogDescription>
+      Make sure you made sure every customers in this schedule are aware
+      of the changes that you are going to commit
+    </DialogDescription>
+  </DialogHeader>
+  <div className="grid gap-4 py-4 ">
+    <div className="flex justify-between items-center gap-4 ">
+      <Label htmlFor="name" className="">
+        Date
+      </Label>
+      <div className="min-w-[350px]">
+        <ScheduleDatePicker className="" />
+      </div>
+    </div>
+    <form className="flex justify-between items-center gap-4">
+      <Label htmlFor="schedule" className="">
+        Schedule
+      </Label>
+      <Select onValueChange={setChangeToScheduleId}>
+        <SelectTrigger className="w-[350px]">
+          <SelectValue placeholder="Select package" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Available packages</SelectLabel>
+            {schedulesData.map((item, i) => {
+              return (
+                <SelectItem
+                  key={item.label + item.value + i}
+                  value={item.value}
+                  disabled={item.value === scheduleId}
+                >
+                  {item.label}
+                </SelectItem>
+              );
+            })}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </form>
+  </div>
+  <DialogFooter>
+    <Button type="submit" onClick={handleClick} disabled={isPending}>
+      Confirm changes
+    </Button>
+  </DialogFooter>
+</DialogContent>
+</Dialog> */
 }
