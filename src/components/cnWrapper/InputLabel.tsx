@@ -1,16 +1,32 @@
 import React from "react";
 import { Input, InputProps } from "../ui/input";
+import { Textarea, TextareaProps } from "../ui/textarea";
 import { cn } from "@/lib/utils";
 
 export interface TInputLabel {
-  errorMessage?: string | null;
+  InputBox?: "textarea";
+  TextAreaProps?: TextareaProps;
+  TextAreaClassName?: string;
   label?: string;
   InputProps?: InputProps;
+  errorMessage?: string | null;
   containerClassName?: string;
 }
 
 const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
-  ({ label, errorMessage, InputProps, containerClassName, ...props }, ref) => {
+  (
+    {
+      TextAreaClassName,
+      InputBox,
+      label,
+      errorMessage,
+      TextAreaProps,
+      InputProps,
+      containerClassName,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <div className={cn("space-y-2 py-2", containerClassName)}>
         <label
@@ -20,7 +36,15 @@ const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
         >
           {label}
         </label>
-        <Input ref={ref} {...InputProps} />
+        {InputBox === "textarea" ? (
+          <Textarea
+            className={cn("", TextAreaClassName)}
+            placeholder={label}
+            {...TextAreaProps}
+          />
+        ) : (
+          <Input ref={ref} {...InputProps} />
+        )}
         <p className="text-red-500 flex justify-center">{errorMessage}</p>
       </div>
     );
