@@ -3,6 +3,7 @@ import { defaultEmptyTrigger } from "@/constants/data/timer";
 import { db } from "@/db";
 import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
 import {
+  combineDateWithSplitedTime,
   isDateValid,
   isProd,
   isValidMergeTimeCycle,
@@ -10,6 +11,7 @@ import {
   parseDateFormatYYYMMDDToNumber,
   RemoveTimeStampFromDate,
   sleep,
+  splitTimeColon,
 } from "@/lib/utils";
 import {
   EnumScheduleTime,
@@ -23,6 +25,7 @@ import { TRPCError } from "@trpc/server";
 import { booking } from "./booking";
 import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
+import moment from "moment";
 
 export const schedule = router({
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
@@ -70,46 +73,71 @@ export const schedule = router({
       cursor: z.string().nullish(),
     }),
   ).query(async ({ ctx, input }) => {
-    const { cursor } = input;
-    const limit = input.limit ?? INFINITE_QUERY_LIMIT;
+    try {
+      const { cursor } = input;
+      const limit = input.limit ?? INFINITE_QUERY_LIMIT;
 
-    const data = await db.schedule.findMany({
-      select: {
-        day: true,
-        fromTime: true,
-        id: true,
-        packageId: true,
-        schedulePackage: true,
-        scheduleStatus: true,
-        toTime: true,
-        Package: {
-          select: {
-            title: true,
-            fromTime: true,
-            toTime: true,
+      const data = await db.schedule.findMany({
+        select: {
+          day: true,
+          fromTime: true,
+          id: true,
+          packageId: true,
+          schedulePackage: true,
+          scheduleStatus: true,
+          toTime: true,
+          Package: {
+            select: {
+              title: true,
+              fromTime: true,
+              toTime: true,
+            },
           },
         },
-      },
-      where: {
-        day: {
-          gte: new Date(Date.now()),
+        where: {
+          day: {
+            gte: new Date(Date.now()),
+          },
         },
-      },
-      cursor: cursor ? { id: cursor } : undefined,
-      take: limit + 1,
-      orderBy: {
-        day: "asc",
-      },
-    });
-    let nextCursor: typeof cursor | undefined = undefined;
-    if (data.length > limit) {
-      const nextItem = data.pop();
-      nextCursor = nextItem?.id;
+        cursor: cursor ? { id: cursor } : undefined,
+        take: limit + 1,
+        orderBy: [
+          {
+            day: "asc",
+          },
+          {
+            fromTime: "asc",
+          },
+        ],
+        // distinct: ["day", "fromTime"]
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (data.length > limit) {
+        const nextItem = data.pop();
+        nextCursor = nextItem?.id;
+      }
+      try {
+        data.sort((a, b) => {
+          let Atime = splitTimeColon(a.fromTime ?? a.Package?.fromTime ?? "");
+          let Btime = splitTimeColon(b.fromTime ?? b.Package?.fromTime ?? "");
+
+          if (!Btime || !Atime) return 0;
+
+          let ADate = combineDateWithSplitedTime(a.day, Atime);
+          let BDate = combineDateWithSplitedTime(b.day, Btime);
+          return ADate.getTime() - BDate.getTime();
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      return {
+        response: data,
+        nextCursor,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Failed" });
     }
-    return {
-      response: data,
-      nextCursor,
-    };
   }),
   // getUpcommingScheduleDates: AdminProcedure.input().query()
   createNewSchedule: AdminProcedure.input(

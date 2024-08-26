@@ -7,6 +7,7 @@ import { Packages } from "../Package/selector";
 import { TKeyOrganized } from "@/components/admin/dashboard/Schedule/ScheduleSelector";
 import { duration } from "moment";
 import { NUMBER_MATCH } from "@/lib/helpers/regex";
+import { getPackageTitleWithTimeIfNotExists } from "@/lib/Data/manipulators/PackageManipulators";
 
 export const Schedule = (state: RootState) => state.schedule;
 export const ModalSelect = (state: RootState) => state.modalStore.isModalOpen;
@@ -40,14 +41,14 @@ export const scheduleIdAndPackageTitleSelector = createSelector(
 
     let data: TSelectBoxValueLableSelector[] = filteredNull.map((item) => {
       const packageName = AllPackages.find((fv) => fv.id === item.packageId);
-      const duration = packageName ? packageName.duration : 0;
-      const title = packageName ? packageName?.title : "";
-      const prefix = NUMBER_MATCH.test(title)
-        ? title
-        : `${title} ${duration / 60} hr`;
+        let title = packageName ?  getPackageTitleWithTimeIfNotExists(
+          packageName.title,
+          packageName.duration,
+          packageName.packageCategory,
+        ): ""
       return {
         value: item.id,
-        label: prefix ?? item.scheduleStatus,
+        label: title ?? item.scheduleStatus,
       };
     });
     return data;
