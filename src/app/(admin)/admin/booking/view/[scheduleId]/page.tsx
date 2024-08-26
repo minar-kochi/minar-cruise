@@ -29,6 +29,7 @@ import { Dialog } from "@/components/ui/dialog";
 import MoveAllSchedulesButton from "@/components/admin/booking/MoveAllBookingsButton";
 import MoveAllBookingsButton from "@/components/admin/booking/MoveAllBookingsButton";
 import { booking } from "@/server/routers/admin/booking";
+import DownloadTable from "@/components/admin/booking/DownloadTable";
 
 interface IViewBooking {
   params: {
@@ -45,7 +46,7 @@ export default async function ViewBooking({
 }: IViewBooking) {
   const bookings: TGetBookingsByScheduleId =
     await getBookingsByScheduleId(scheduleId);
-
+  if(!booking) return null
   return (
     <div className="">
       <h2 className="font-bold text-3xl text-center py-5">Booking data</h2>
@@ -58,7 +59,7 @@ export default async function ViewBooking({
             className="flex gap-2 justify-between max-md:hidden"
           />
         </div>
-        <div className="flex max-sm:justify-between max-sm:w-full sm:gap-5">
+        <div className="flex flex-wrap max-sm:justify-between max-sm:w-full sm:gap-5">
           <RouterRefreshButton className="border" />
           <MoveAllBookingsButton
             disabled={!bookings?.length ? true : false}
@@ -73,6 +74,7 @@ export default async function ViewBooking({
               variant: "greenFlag",
             }}
           />
+          <DownloadTable tableData={bookings}/>
         </div>
       </div>
       <Table className="border-2">
@@ -99,7 +101,7 @@ export default async function ViewBooking({
             <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
               Phone
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:block hidden">
               Count
             </TableHead>
 
