@@ -10,6 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         confirm: " text-green-600 border border-green-600 hover:bg-black",
+        greenFlag: " bg-green-700",
+        destructiveOutline:
+          "text-destructive border-2 border-destructive hover:text-black hover:bg-destructive",
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",

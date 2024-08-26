@@ -9,6 +9,9 @@ import { useAppSelector } from "@/hooks/adminStore/reducer";
 import { Button } from "@/components/ui/button";
 import ScheduleBlockButton from "./ScheduleBlockButton";
 import ScheduleUnblockButton from "./ScheduleUnblockButton";
+import ScheduleDeleteButton from "./ScheduleDeleteButton";
+import { Input } from "@/components/ui/input";
+import { CapitalizeFirstLetterOfWord } from "@/lib/utils";
 
 export default function ScheduleButtonWrapper({ type }: TScheduleSelector) {
   const data = useAppSelector((state) => state.schedule.currentDateSchedule);
@@ -24,10 +27,21 @@ export default function ScheduleButtonWrapper({ type }: TScheduleSelector) {
     <>
       <div className="my-2">
         {data[type]?.scheduleStatus === "BLOCKED" ? (
-          <ScheduleUnblockButton scheduleId={data[type].id} type={type} />
-        ) : null}
+          <>
+            <Input
+              placeholder={`${CapitalizeFirstLetterOfWord(type)} is blocked`}
+              disabled
+              className="my-1"
+            />
+            <ScheduleUnblockButton scheduleId={data[type].id} type={type} />
+          </>
+        ) : (
+          <>
+            <ScheduleUpdateButton type={type} />
+            <ScheduleDeleteButton type={type} />
+          </>
+        )}
       </div>
-      <ScheduleUpdateButton type={type} />
     </>
   );
 }

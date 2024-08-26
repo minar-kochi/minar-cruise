@@ -95,7 +95,7 @@ export default function ExclusiveScheduleTime({ type }: TScheduleSelector) {
   }
 
   const isExclusive = useAppSelector((state) =>
-    IsIdExclusive(state, defaultSelect.packageId),
+    IsIdExclusive(state, defaultSelect.packageId, type),
   );
 
   if (!isExclusive) return null;

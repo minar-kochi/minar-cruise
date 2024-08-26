@@ -4,6 +4,7 @@ type TShouldStatusBeAvaiablePublicWithPackage = {
   packageCategory: $Enums.PACKAGE_CATEGORY;
   scheduleTime: $Enums.SCHEDULED_TIME;
 };
+
 export function ShouldStatusBeAvaiablePublicWithPackage({
   packageCategory,
   scheduleTime,
@@ -17,9 +18,65 @@ export function ShouldStatusBeAvaiablePublicWithPackage({
   return "AVAILABLE";
 }
 
-export function isPackageStatusExclusive(value: $Enums.PACKAGE_CATEGORY) {
-  if (value !== "EXCLUSIVE") {
-    return false;
-  }
-  return true;
+export type IsPackageTypeOrExclusiveChecker = {
+  packageStatus: string;
+  exlcusive?: boolean;
+};
+export function isPackageStatusExclusive(packageStatus: string) {
+  return packageStatus === $Enums.PACKAGE_CATEGORY.EXCLUSIVE;
+}
+export function isPackageStatusCustom(packageStatus: string) {
+  return packageStatus === $Enums.PACKAGE_CATEGORY.CUSTOM;
+}
+export function isPackageStatusBreakfast({
+  packageStatus,
+  exlcusive,
+}: IsPackageTypeOrExclusiveChecker) {
+  return (
+    packageStatus === $Enums.PACKAGE_CATEGORY.BREAKFAST ||
+    (exlcusive && isPackageStatusExclusive(packageStatus))
+  );
+}
+
+export function isPackageStatusLunch({
+  packageStatus,
+  exlcusive,
+}: IsPackageTypeOrExclusiveChecker) {
+  return (
+    packageStatus === $Enums.PACKAGE_CATEGORY.LUNCH ||
+    (exlcusive && isPackageStatusExclusive(packageStatus))
+  );
+}
+export function isPackageStatusDinner({
+  packageStatus,
+  exlcusive,
+}: IsPackageTypeOrExclusiveChecker) {
+  return (
+    packageStatus === $Enums.PACKAGE_CATEGORY.DINNER ||
+    (exlcusive && isPackageStatusExclusive(packageStatus))
+  );
+}
+export function isPackageStatusSunSet({
+  packageStatus,
+  exlcusive,
+}: IsPackageTypeOrExclusiveChecker) {
+  return (
+    packageStatus === $Enums.PACKAGE_CATEGORY.SUNSET ||
+    (exlcusive && isPackageStatusExclusive(packageStatus))
+  );
+}
+
+export function isBreakFast(packageCategory: string) {
+  if (packageCategory === $Enums.PACKAGE_CATEGORY.BREAKFAST) return true;
+  return false;
+}
+export function isLunch(packageCategory: string) {
+  if (packageCategory === $Enums.PACKAGE_CATEGORY.LUNCH) return true;
+  return false;
+}
+export function isDinner(packageCategory: string) {
+  return packageCategory === $Enums.PACKAGE_CATEGORY.DINNER;
+}
+export function isExclusive(packageCategory: string) {
+  return packageCategory === $Enums.PACKAGE_CATEGORY.EXCLUSIVE;
 }

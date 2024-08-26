@@ -9,9 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
@@ -39,16 +37,19 @@ export default function ScheduleTable() {
     );
 
   return (
-    <div>
+    <div className="max-w-7xl  mt-12 mx-auto">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="">
             {/* <TableHead>id</TableHead> */}
-            <TableHead>Date</TableHead>
-            <TableHead>Package Type</TableHead>
-            <TableHead>From To</TableHead>
-            <TableHead>Package Name</TableHead>
-            <TableHead>Package Staus</TableHead>
+            <TableHead className="max-sm:text-[9px]">Date</TableHead>
+            <TableHead className="max-sm:text-[9px]">Day</TableHead>
+            <TableHead className="max-sm:text-[9px]">From To</TableHead>
+            <TableHead className="max-sm:text-[9px]">Package Name</TableHead>
+            <TableHead className="max-sm:text-[9px] max-sm:hidden">
+              Package Type
+            </TableHead>
+            <TableHead className="max-sm:text-[9px]">Package Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,16 +68,28 @@ export default function ScheduleTable() {
                       scheduleToTime: item.toTime,
                     },
                   });
+
                 return (
                   <TableRow ref={ref} key={`${item.id}-table-row`}>
                     {/* <TableCell>{i}</TableCell> */}
-                    <TableCell>{format(item.day, "dd/ MM /yyyy")}</TableCell>
-                    <TableCell>{item.schedulePackage}</TableCell>
-                    <TableCell>
+                    <TableCell className="max-w-[100px] max-sm:text-[9px] max-sm:text-nowrap">
+                      {format(item.day, "dd/ MM /yyyy")}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:text-pretty">
+                      {format(item.day, "EEEE")}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:text-left">
                       {fromTime} - {toTime}
                     </TableCell>
-                    <TableCell>{item.Package?.title}</TableCell>
-                    <TableCell>{item.scheduleStatus}</TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:text-pretty">
+                      {item.Package?.title}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:text-pretty max-sm:hidden">
+                      {item.schedulePackage}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:text-pretty">
+                      {item.scheduleStatus}
+                    </TableCell>
                   </TableRow>
                 );
               });

@@ -55,37 +55,66 @@ export default async function ViewBooking({
             icon={<ArrowLeft size={20} />}
             href={`/admin/booking`}
             label="Back"
-            className="flex gap-2 justify-between"
+            className="flex gap-2 justify-between max-md:hidden"
           />
         </div>
-        <div className="flex gap-5">
+        <div className="flex max-sm:justify-between max-sm:w-full sm:gap-5">
+          <RouterRefreshButton className="border" />
           <MoveAllBookingsButton
             disabled={!bookings?.length ? true : false}
             scheduleId={scheduleId}
-            className=""
+            className="max-sm:order-first"
           />
           <CustomLinkButton
             href={`/admin/booking/add/${scheduleId}`}
             label="Add Booking"
-            className=""
+            className="min-w-[140px]"
+            props={{
+              variant: "greenFlag",
+            }}
           />
-          <RouterRefreshButton />
         </div>
       </div>
-      <Table>
+      <Table className="border-2">
         <TableHeader>
           <TableRow className="text-center">
-            <TableHead className="text-center">Id</TableHead>
-            <TableHead className="text-center">Name</TableHead>
-            <TableHead className="text-center">Date of Booking</TableHead>
-            <TableHead className="text-center">Package</TableHead>
-            <TableHead className="text-center">Advance Paid</TableHead>
-            <TableHead className="text-center">Total Bill</TableHead>
-            <TableHead className="text-center">Phone</TableHead>
-            <TableHead className="text-center">Adults</TableHead>
-            <TableHead className="text-center">Child</TableHead>
-            <TableHead className="text-center">kids</TableHead>
-            <TableHead className="text-center">Description</TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+              Id
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
+              Name
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-0">
+              Date of Booking
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+              Package
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+              Advance Paid
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+              Total Bill
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
+              Phone
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
+              Count
+            </TableHead>
+
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+              Adults
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+              Child
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+              kids
+            </TableHead>
+            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+              Description
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -97,22 +126,45 @@ export default async function ViewBooking({
                     key={`aa-${booking.id}-view-booking-table-row-${i}`}
                     className="text-center cursor-pointer"
                   >
-                    <TableCell className="">{i + 1}</TableCell>
-                    <TableCell className="">{booking.user.name}</TableCell>
-                    <TableCell className="">{formattedDate}</TableCell>
-                    <TableCell>{booking.schedule.schedulePackage}</TableCell>
-                    <TableCell className="">
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                      {i + 1}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:text-nowrap">
+                      {booking.user.name}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-2">
+                      {formattedDate}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                      {booking.schedule.schedulePackage}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
                       {booking.payment.advancePaid}
                     </TableCell>
-                    <TableCell className="">
+                    <TableCell className="max-sm:text-[9px] max-sm:hidden">
                       {booking.payment.totalAmount}
                     </TableCell>
-                    <TableCell className="">{booking.user.contact}</TableCell>
-                    <TableCell className="">{booking.numOfAdults}</TableCell>
-                    <TableCell className="">{booking.numOfChildren}</TableCell>
-                    <TableCell className="">{booking.numOfBaby}</TableCell>
-                    <TableCell className="">{booking.description}</TableCell>
-                    <TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                      {booking.user.contact}
+                    </TableCell>
+                    <TableCell className="hidden max-sm:text-[9px] max-sm:block">
+                      {booking.numOfAdults +
+                        booking.numOfChildren +
+                        booking.numOfBaby}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                      {booking.numOfAdults}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                      {booking.numOfChildren}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                      {booking.numOfBaby}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                      {booking.description}
+                    </TableCell>
+                    <TableCell className="max-sm:p-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger>
                           <EllipsisVertical size={16} />

@@ -62,6 +62,7 @@ model FoodMenu {
 enum SCHEDULED_TIME {
   BREAKFAST
   LUNCH
+  SUNSET
   DINNER
   CUSTOM
 }
@@ -94,8 +95,10 @@ model Amenities {
 enum PACKAGE_CATEGORY {
   BREAKFAST
   LUNCH
+  SUNSET
   DINNER
   EXCLUSIVE
+  CUSTOM
 }
 
 model Package {

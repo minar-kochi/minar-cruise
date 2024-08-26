@@ -1,5 +1,5 @@
-import { Loader2, RefreshCw } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import { RefreshCw } from "lucide-react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,21 +12,27 @@ import {
 import { format } from "date-fns";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
-import CustomListDisk from "@/components/elements/CustomListDisk";
 import { TScheduleSelector } from "@/Types/type";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
-import { UpdatedDateScheduleSchema } from "@/lib/validators/ScheduleValidtor";
-import { isStatusCustom } from "@/lib/validators/Schedules";
-import { RemoveTimeStampFromDate, sleep, splitTimeColon } from "@/lib/utils";
-import { isPackageStatusExclusive } from "@/lib/validators/Package";
+import {
+  cn,
+  RemoveTimeStampFromDate,
+  sleep,
+  splitTimeColon,
+} from "@/lib/utils";
 import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
+import { isScheduleInputsChanged } from "@/lib/features/schedule/selector";
 export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
   const [isOpen, setIsOpen] = useState(false);
   const date = useAppSelector((state) => state.schedule.date);
 
   const updatedScheduleDatas = useAppSelector(
     (state) => state.schedule.updatedDateSchedule,
+  );
+
+  const isScheduleChanged = useAppSelector((state) =>
+    isScheduleInputsChanged(state, type),
   );
   const { invalidate } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
 
@@ -64,6 +70,7 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
 
   async function handleScheduleUpdate() {
     let updatedScheduleData = updatedScheduleDatas[type] ?? null;
+
     if (!updatedScheduleData) {
       toast.error(
         "There aren't any changes detected. sorry, Please try again.",
@@ -96,7 +103,7 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
       }}
     >
       <DialogTrigger
-        disabled={!updatedScheduleDatas[type].packageId}
+        disabled={!isScheduleChanged.isAnyChanged}
         className={buttonVariants({
           variant: "secondary",
           className: "w-full gap-1",
@@ -109,18 +116,36 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
         <DialogHeader>
           <DialogTitle>Change Schedule</DialogTitle>
           <DialogDescription>
+            {/*
+             * @TODO [Neil]  => getScheduleTitle go this function and fill in to recive and replace below text / ReactNode according to the function description.
+             */}
             Please make sure that you have already changed all the bookings at{" "}
-            {format(date, "dd-MM-yyyy")} before changing.
+            <span className="text-green-500">{format(date, "dd-MM-yyyy")}</span>{" "}
+            incase of you are changing packages.
           </DialogDescription>
         </DialogHeader>
-        <div className="">
+        <div className="text-sm">
           <p className="text-muted-foreground">
-            Note: before Changing Schedules:
+            <span className="text-red-500 font-medium">Note&apos;s</span>
           </p>
-          <div className="px-4 text-muted-foreground my-4">
+          <div className="px-4 text-muted-foreground my-2 text-sm">
             <ul className=" list-disc list-outside">
-              <li>This will move all the existing booking to new schedule.</li>
-              <li>This will change or update existing schedule packages.</li>
+              <li
+                className={cn({
+                  hidden: !isScheduleChanged.packageId,
+                })}
+              >
+                Changing Package will Change all Existing booking related to
+                this schedule.
+              </li>
+              <li
+                className={cn({
+                  hidden: !isScheduleChanged.isTimeChanged,
+                })}
+              >
+                Changing Schedule time only change the timing. it won&apos;t
+                update package. (feel free to change time.)
+              </li>
             </ul>
           </div>
           <div className="flex gap-1">

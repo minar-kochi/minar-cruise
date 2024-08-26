@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
+import { getPackageTitleWithTimeIfNotExists } from "@/lib/Data/manipulators/PackageManipulators";
 import { setUpdatableScheduleDate } from "@/lib/features/schedule/ScheduleSlice";
 import {
   DefaultMergedSchedule,
@@ -38,17 +39,15 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
           <div className="flex items-center gap-1">Select a Package</div>
         </SelectItem>
         {OrganizedPackage[type].map((item) => {
+          let title = getPackageTitleWithTimeIfNotExists(
+            item.title,
+            item.duration,
+            item.packageCategory,
+          );
           return (
-            <SelectItem
-              disabled={
-                currentDateSchedule &&
-                currentDateSchedule[type]?.packageId === item.id
-              }
-              value={item.id}
-              key={`select-item-${item.id}`}
-            >
+            <SelectItem value={item.id} key={`select-item-${item.id}`}>
               <div className="flex items-center gap-2">
-                {item.title}
+                {title}
                 <div
                   className={cn(
                     "w-1 h-1 bg-green-500 animate-pulse rounded-full hidden",

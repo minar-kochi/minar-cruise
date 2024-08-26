@@ -15,22 +15,18 @@ import CustomBookingBadge from "@/components/custom/CustomBookingBadge";
 import { useInView } from "react-intersection-observer";
 import { trpc } from "@/app/_trpc/client";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 const VIEW_BEFORE_PX = 50;
 
-export default function BookingScheduleTable(
-  {
-    //   schedules,
-  }: {
-    //   schedules: Exclude<TGetManySchedulesAndTotalBookingCount, null | undefined>;
-  },
-) {
+export default function BookingScheduleTable() {
   const {
     data: schedules,
     fetchNextPage,
     isFetching,
     isFetchingNextPage,
   } = trpc.admin.booking.bookingScheduleInfinity.useInfiniteQuery(
-    {},
+    { limit: null },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     },
@@ -44,16 +40,29 @@ export default function BookingScheduleTable(
       }
     },
   });
+  const router = useRouter();
   return (
-    <Table className="border ">
+    <Table className="max-sm:m-2">
       <TableHeader>
         <TableRow className="text-center">
-          <TableHead className="text-center border">Date</TableHead>
-          <TableHead className="text-center border">Day</TableHead>
-          <TableHead className="text-center border">Timing</TableHead>
-          <TableHead className="text-center border">Package</TableHead>
-          <TableHead className="text-center border">Booked seats</TableHead>
-          <TableHead className="text-center border">Remaining seats</TableHead>
+          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+            Date
+          </TableHead>
+          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+            Day
+          </TableHead>
+          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold max-sm:hidden">
+            Timing
+          </TableHead>
+          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+            Package
+          </TableHead>
+          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+            Booked seats
+          </TableHead>
+          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+            Remaining seats
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -66,19 +75,33 @@ export default function BookingScheduleTable(
                 <TableRow
                   ref={ref}
                   key={`${item.id}-booking-schedule-table`}
-                  className="text-center"
+                  className="max-sm:text-[9px] text-center"
+                  onClick={() => router.push(`/admin/booking/view/${item.id}`)}
                 >
-                  <TableCell>{formattedDate}</TableCell>
-                  <TableCell>{formattedDay}</TableCell>
-                  <TableCell>
+                  <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                    {formattedDate}
+                  </TableCell>
+                  <TableCell className="max-sm:text-[9px] ">
+                    {formattedDay}
+                  </TableCell>
+                  <TableCell className="max-sm:text-[9px] max-sm:hidden">
                     {item.fromTime} - {item.toTime}
                   </TableCell>
-                  <TableCell>{item.Package?.title}</TableCell>
-                  <TableCell>{item.Booking}</TableCell>
-                  <TableCell>{150 - item.Booking}</TableCell>
-                  <TableCell>
+                  <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:text-balance">
+                    {item.Package?.title}
+                  </TableCell>
+                  <TableCell className="max-sm:text-[9px] ">
+                    {item.Booking}
+                  </TableCell>
+                  <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                    {150 - item.Booking}
+                  </TableCell>
+                  <TableCell className="max-sm:text-[8px] p-0 ">
                     <Link href={`/admin/booking/view/${item.id}`}>
-                      <Button className="">
+                      {/* <Button className="max-sm:block hidden  p-0">
+                        view
+                      </Button> */}
+                      <Button className="max-sm:hidden">
                         <CustomBookingBadge
                           label="View Booking"
                           bookingId={""}

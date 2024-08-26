@@ -1,7 +1,7 @@
 // import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { type ClassValue, clsx } from "clsx";
-import { formatISO, isValid } from "date-fns";
+import { formatISO, isValid, isSameMonth, endOfMonth } from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { object } from "zod";
@@ -153,3 +153,35 @@ export function mergeTimeCycle(value: TTimeCycle): string | null {
 export const isValidMergeTimeCycle = (timeString: string) => {
   return moment(timeString, "hh:mm:A", true).isValid();
 };
+export const mergedTime = (timeString: string) => {
+  return moment(timeString, "hh:mm:A", true);
+};
+/**
+ *
+ * @param clientDate send in YYYYMMDD format
+ */
+export const isCurrentMonthSameAsRequestedMonth = (clientDate: string) => {
+  return isSameMonth(clientDate, new Date(Date.now()));
+};
+
+export function CapitalizeFirstLetterOfWord(value: string) {
+  if (value.length < 1) return value;
+
+  return `${value.charAt(0).toLocaleUpperCase()}${value.slice(1)}`;
+}
+
+export function combineDateWithSplitedTime(date: Date, time: TTimeCycle) {
+  let meridian = time.Cycle;
+  let hours = parseInt(time.hours);
+  let minutes = parseInt(time.min);
+  if (meridian === "PM" && hours !== 12) {
+    hours += 12;
+  } else if (meridian === "AM" && hours === 12) {
+    hours = 0;
+  }
+  const newDate = new Date(date);
+  newDate.setMinutes(minutes);
+  newDate.setHours(hours);
+  newDate.setSeconds(0);
+  return newDate;
+}
