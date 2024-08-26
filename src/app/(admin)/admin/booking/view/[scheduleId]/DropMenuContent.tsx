@@ -18,7 +18,7 @@ export default function DropMenuClient({
   return (
     <DropdownMenuContent align="end" className="">
       <DropdownMenuItem>
-        <Link href={`/admin/booking/update/${BookingId}`}>Update Schedule</Link>
+        <Link href={`/admin/booking/update/${BookingId}`}>Update Booking</Link>
       </DropdownMenuItem>
       <DropdownMenuItem>
         <Link
@@ -27,7 +27,7 @@ export default function DropMenuClient({
             query: { scheduleId },
           }}
         >
-          Change Schedule
+          Change Booking
         </Link>
       </DropdownMenuItem>
       <DeleteBookingButton BookingId={BookingId} ScheduleId={scheduleId} />

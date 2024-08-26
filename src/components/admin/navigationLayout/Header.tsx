@@ -7,6 +7,7 @@ import {
   Package,
   Package2,
   Search,
+  ShipIcon,
   ShoppingCart,
   Users,
 } from "lucide-react";
@@ -52,37 +53,37 @@ const Header = ({ children }: { children: React.ReactNode }) => {
           <SheetContent side="left" className="flex flex-col">
             <nav className="grid gap-2 text-lg font-medium">
               <Link
-                href="#"
-                className="flex items-center gap-2 text-lg font-semibold"
+                href="/admin"
+                className="flex items-center gap-3 text-lg font-semibold"
               >
-                <Package2 className="h-6 w-6" />
-                <span className="sr-only">Acme Inc</span>
+                <ShipIcon className="h-6 w-6" />
+                <span className=" text-white text-xl">Minar Cruise</span>
               </Link>
               <Link
-                href="#"
+                href="/admin"
                 className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
               >
                 <Home className="h-5 w-5" />
                 Dashboard
               </Link>
               <Link
-                href="#"
+                href="/admin/schedule"
                 className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
               >
                 <ShoppingCart className="h-5 w-5" />
-                Orders
+                Schedule
                 <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   6
                 </Badge>
               </Link>
               <Link
-                href="#"
+                href="/admin/booking"
                 className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
               >
                 <Package className="h-5 w-5" />
-                Products
+                Booking
               </Link>
-              <Link
+              {/* <Link
                 href="#"
                 className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
               >
@@ -95,7 +96,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
               >
                 <LineChart className="h-5 w-5" />
                 Analytics
-              </Link>
+              </Link> */}
             </nav>
             <div className="mt-auto"></div>
           </SheetContent>

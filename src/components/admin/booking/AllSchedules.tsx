@@ -27,10 +27,8 @@ export default async function AllSchedules({ className }: IAllSchedules) {
   // if (!schedules?.length) return <>No schedules found</>;
 
   return (
-    <div>
-      <div className="">
-        <BookingScheduleTable />
-      </div>
+    <div className="">
+      <BookingScheduleTable />
     </div>
   );
 }

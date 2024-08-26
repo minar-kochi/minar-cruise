@@ -154,8 +154,9 @@ export async function getPackageSearchItems() {
 
 export type PackageSelect = {
   id: string;
-  slug: string;
   title: string;
+  duration: number;
+  slug: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
 };
 
@@ -168,6 +169,7 @@ export const getOrganizedPackages = unstable_cache(
           title: true,
           id: true,
           packageCategory: true,
+          duration: true,
         },
       });
       if (!data.length) {

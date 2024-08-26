@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button, ButtonProps } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
@@ -8,15 +8,17 @@ export default function CustomLinkButton({
   label,
   className,
   icon,
+  props,
 }: {
   href: string;
   label: string;
   icon?: React.ReactNode;
   className?: string;
+  props?: ButtonProps;
 }) {
   return (
     <Link href={href}>
-      <Button className={cn("", className)}>
+      <Button {...props} className={cn("", className)}>
         {icon}
         {label}
       </Button>

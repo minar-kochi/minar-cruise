@@ -72,14 +72,19 @@ export default function ChangeBookingModal({
   };
 
   return (
-    <Modal className="min-w-[600px] ">
-      <div className="flex flex-col gap-8 p-5">
-        <h1 className="text-2xl font-semibold">
-          Select a schedule that you want to change
-        </h1>
-
+    <Modal className="sm:min-w-[600px]">
+      <div className="flex flex-col p-5 gap-9">
+        <div className="space-y-3">
+          <h1 className="text-2xl font-semibold ">
+            Select a schedule that you want to change
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Proceed with caution, make sure client is aware of the changes that
+            you are going to make
+          </p>
+        </div>
         <form
-          className="flex justify-between"
+          className="md:flex flex flex-col gap-5 justify-between"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="min-w-[200px]">
@@ -92,7 +97,7 @@ export default function ChangeBookingModal({
             rules={{ required: "Please select a schedule" }}
             render={({ field }) => (
               <Select onValueChange={field.onChange}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className=" ">
                   <SelectValue placeholder="Select a Package" />
                 </SelectTrigger>
                 <SelectContent>
@@ -114,7 +119,7 @@ export default function ChangeBookingModal({
             )}
           />
 
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending} variant={"destructive"}>
             {isPending ? <Loader2 /> : "Change"}
           </Button>
         </form>
