@@ -194,7 +194,7 @@ export default function AddBlog() {
               <DialogTrigger className="border-2  rounded-md p-2">
                 Choose Image
               </DialogTrigger>
-              <DialogContent className="max-h-[600px] max-w-[1800px] overflow-scroll overflow-x-hidden ">
+              <DialogContent className="max-h-[600px] max-w-[1000px] overflow-scroll overflow-x-hidden ">
                 <ChooseImg
                   onSelectImage={(imageId: string, url: string) => {
                     setValue("imageId", imageId);

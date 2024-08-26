@@ -44,6 +44,7 @@
     "@trpc/react-query": "^11.0.0-rc.364",
     "@trpc/server": "^11.0.0-rc.364",
     "@types/mdx": "^2.0.13",
+    "@uploadthing/react": "^6.7.2",
     "add": "^2.0.6",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

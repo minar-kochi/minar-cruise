@@ -29,4 +29,7 @@ export const ourFileRouter = {
     }),
 } satisfies FileRouter;
 
+
+ {/* add input for alt tag */}
+
 export type OurFileRouter = typeof ourFileRouter;

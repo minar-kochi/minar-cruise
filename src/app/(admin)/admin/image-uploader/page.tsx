@@ -1,7 +1,7 @@
 "use client";
 
+import ChooseImg from "@/components/admin/blog/ChooseImg";
 import { UploadButton, UploadDropzone } from "../../../../utils/uploadthing";
-
 
 export default function ImageUpload() {
   return (
@@ -18,8 +18,8 @@ export default function ImageUpload() {
           alert(`ERROR! ${error.message}`);
         }}
       />
-      <div className="">
-
+      <div>
+        <ChooseImg onSelectImage={(imageId: string, url: string) => {}} />
       </div>
     </main>
   );

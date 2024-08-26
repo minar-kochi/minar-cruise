@@ -57,7 +57,7 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
                       onClick={() => handleImageClick(item.id, item.url)}
                     >
                       <h1>{item.id}</h1>
-                      <DialogClose >
+                      {/* <DialogClose > */}
 
                       <Image
                         src={item.url}
@@ -65,7 +65,7 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
                         width={300}
                         height={300}
                         />
-                        </DialogClose>
+                        {/* </DialogClose> */}
                     </div>
                   </>
                 );

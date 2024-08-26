@@ -22,6 +22,7 @@ import {
   ShoppingCart,
   SquarePen,
   Users,
+  ImageUp,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -70,6 +71,14 @@ const MenuBar = () => {
               </Link>
 
               <Link
+                href="admin/image-uploader"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <ImageUp className="h-4 w-4" />
+                Upload Image
+              </Link>
+
+              <Link
                 href="/admin/createBlog"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
@@ -77,12 +86,6 @@ const MenuBar = () => {
                 Create Blog
               </Link>
 
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Users className="h-4 w-4" />-
-              </Link>
               <Link
                 href="#"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
