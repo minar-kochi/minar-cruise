@@ -6,13 +6,12 @@ import React from "react";
 import { useInView } from "react-intersection-observer";
 
 interface ChooseImgProps {
-  onSelectImage: (imageId: string, url: string) => void;
+  onSelectImage?: (imageId: string, url: string) => void;
 }
 
 const VIEW_BEFORE_PX = 10;
 
 export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
-
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: `${VIEW_BEFORE_PX}px 0px`,
@@ -34,7 +33,7 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
     );
 
   const handleImageClick = (id: string, url: string) => {
-    onSelectImage(id, url);
+    onSelectImage && onSelectImage(id, url);
 
     console.log(`${id}-choose-image`);
   };
@@ -56,16 +55,14 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
                       className="cursor-pointer"
                       onClick={() => handleImageClick(item.id, item.url)}
                     >
-                      <h1>{item.id}</h1>
-                      {/* <DialogClose > */}
+                      {/* <h1>{item.id}</h1> */}
 
                       <Image
                         src={item.url}
                         alt={item.alt}
                         width={300}
                         height={300}
-                        />
-                        {/* </DialogClose> */}
+                      />
                     </div>
                   </>
                 );

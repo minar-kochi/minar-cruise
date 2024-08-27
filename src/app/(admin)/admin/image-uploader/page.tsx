@@ -8,6 +8,7 @@ export default function ImageUpload() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <UploadDropzone
         endpoint="imageUploader"
+        className="w-80 cursor-pointer"
         onClientUploadComplete={(res) => {
           // Do something with the response
           console.log("Files: ", res);
@@ -18,8 +19,9 @@ export default function ImageUpload() {
           alert(`ERROR! ${error.message}`);
         }}
       />
-      <div>
-        <ChooseImg onSelectImage={(imageId: string, url: string) => {}} />
+      <div className="mt-20">
+        <h2 className="text-lg mb-2 font-medium">Images in your uploaded gallery</h2>
+        <ChooseImg  />
       </div>
     </main>
   );

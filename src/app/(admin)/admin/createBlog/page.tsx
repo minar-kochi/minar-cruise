@@ -41,6 +41,8 @@ import {
 import Image from "next/image";
 import { getBlogPostById } from "@/db/data/dto/blog";
 import { DialogClose } from "@radix-ui/react-dialog";
+import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
+import DisplayBlog from "@/components/admin/blog/DisplayBlog";
 
 export default function AddBlog() {
   const router = useRouter();
@@ -78,52 +80,31 @@ export default function AddBlog() {
   const onSubmitBlog = (data: TBlogFormValidators) => {
     addBlog(data);
   };
-
-  const shortDes = getValues("shortDes");
+  watch();
+  const title = getValues("title");
+  const author = getValues("author");
+  const content = getValues("content");
   return (
-    <>
-      <Bounded className="">
-        <div className="flex items-center justify-center flex-col text-center mt-12">
-          <div>
-            {selectedImageId ? (
-              <Image
-                src={selectedImageId}
-                alt="selected image"
-                width={380}
-                height={380}
-              />
-            ) : (
-              ""
-            )}
-          </div>
-          <div>
-            {shortDes ? (
-              <p>{shortDes}</p>
-            ) : (
-              <p>Short description about your blog will display here.</p>
-            )}
-          </div>
-        </div>
-        <div className="text-zinc-700">
-          <h1 className="text-center">By -{getValues("author")}</h1>
-        </div>
-        <div className="max-w-3xl mx-auto  prose mt-12 ">
-          <Markdown
-            className="break-words"
-            remarkPlugins={[remarkGfm, remarkToc]}
-          >
-            {/* {getValues("content")
-              ? `${getValues("content")}`
-              : `
-            \n  ## How to get most out of it this blog writer?
-            1. Confirm this Content before submitting and validate your content is fully displayed \t \t
-            2. If the content is not fully displayed. check the indentation of the last part that displayed here
-            3. Research about keywords to get best seo results
-              `} */}
-          </Markdown>
-        </div>
-      </Bounded>
-      <form onSubmit={handleSubmit(onSubmitBlog)} className="">
+    <div className="border-2">
+      <Dialog>
+        <DialogTrigger className="sticky top-[90%] left-full mr-10   z-30 bg-green-700 px-4 py-2 rounded-3xl hover:bg-green-600">
+          See blog
+        </DialogTrigger>
+        <DialogContent className="max-h-[600px] scroll-hidden scrollbar-w-4 scrollbar-track-orange-lighter bg-white max-w-[900px] overflow-scroll overflow-x-hidden ">
+          <DialogClose>
+            <DisplayBlog
+              author={author}
+              title={title}
+              selectedImg={selectedImageId}
+              content={content}
+            />
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+
+      <h2 className="text-2xl font-semibold text-center">Create Your Blog!</h2>
+
+      <form onSubmit={handleSubmit(onSubmitBlog)}>
         <div className="flex my-12 flex-col  gap-2 flex-wrap  items-center justify-center  "></div>
         <div className="flex gap-2 mx-auto flex-col  max-w-2xl flex-wrap items-center justify-center p-1.5">
           <div className="w-full flex gap-2">
@@ -146,9 +127,7 @@ export default function AddBlog() {
                 className={cn("text-sm text-muted-foreground my-1.5", {
                   "text-red-500": errors?.title?.message,
                 })}
-              >
-                Note: Add period in the end.
-              </p>
+              ></p>
             </Label>
           </div>
           <div className="w-full flex gap-2">
@@ -187,7 +166,6 @@ export default function AddBlog() {
                 Note: Add period in the end.
               </p>
             </Label>
-            {/* {JSON.stringify("getValues(imageId")} */}
           </div>
           <div className="w-full ">
             <Dialog>
@@ -195,17 +173,21 @@ export default function AddBlog() {
                 Choose Image
               </DialogTrigger>
               <DialogContent className="max-h-[600px] max-w-[1000px] overflow-scroll overflow-x-hidden ">
-                <ChooseImg
-                  onSelectImage={(imageId: string, url: string) => {
-                    setValue("imageId", imageId);
-                    setSelectedImageId(url);
-                  }}
-                />
+                <DialogClose>
+                  <Suspense fallback={<p>Loading Images..</p>}>
+                    <ChooseImg
+                      onSelectImage={(imageId: string, url: string) => {
+                        setValue("imageId", imageId);
+                        setSelectedImageId(url);
+                      }}
+                    />
+                  </Suspense>
+                </DialogClose>
               </DialogContent>
             </Dialog>
           </div>
         </div>
-        <div className="max-w-screen-xl mx-auto border-[1px] border-t-0 rounded-xl mb-4 p-1.5 overflow-hidden ">
+        <div className="max-w-screen-xl focus-within:bg-black/80 mx-auto border-[1px] border-t-0 rounded-xl mb-4 p-1.5 overflow-hidden ">
           <Suspense fallback={<p>Loading editor</p>}>
             <ForwardRefEditor
               ref={EditorRef}
@@ -215,7 +197,7 @@ export default function AddBlog() {
               autoFocus={{
                 defaultSelection: "rootEnd",
               }}
-              placeholder={<p>Write your Beautifull content here</p>}
+              placeholder={<p>Write your Beautiful content here</p>}
               markdown={``}
             />
             <div className="">
@@ -247,6 +229,10 @@ export default function AddBlog() {
             </p>
           </div>
 
+          <p className="text-center text-muted-foreground">
+            Confirm this Content before submitting and validate your content is
+            fully displayed
+          </p>
           <Button
             className="max-w-xs w-full"
             type="submit"
@@ -256,6 +242,6 @@ export default function AddBlog() {
           </Button>
         </Bounded>
       </form>
-    </>
+    </div>
   );
 }

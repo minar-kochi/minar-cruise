@@ -13,7 +13,8 @@ interface BlogPage {
     blogSlug: string;
   };
 }
-const defaultImage = "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-9-580x450.jpg"
+const defaultImage =
+  "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-9-580x450.jpg";
 export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
   const blogPost = await getBlogPostById({ id: blogSlug });
   if (!blogPost) {
@@ -22,9 +23,9 @@ export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
   // console.log(blogPost)
   return (
     <div className="bg-white">
-      <FacilitiesImageCard label="Blog" />
-      <Bounded className="pt-6 pb-28 grid 0 grid-flow-row-dense grid-cols-3 grid-rows-3 max-md:block gap-5">
-        <div className="col-span-2">
+      <FacilitiesImageCard label="Blog" overlapTitle={blogPost.title} author={`By~${blogPost.author}`}/>
+      <Bounded className="pt-6 pb-28 grid grid-flow-row-dense grid-cols-3 grid-rows-3 max-md:block gap-5">
+        <div className="col-span-2 ">
           <Image
             src={blogPost.image?.url ?? ""}
             alt={blogPost.title}
@@ -34,15 +35,15 @@ export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
           />
         </div>
 
-        <div>
+        <div className="">
           <RecentBlogPosts />
         </div>
 
-        <div className="col-span-2 mt-12">
+        <div className="col-span-2  prose">
           <MDXRemote source={blogPost.content} />
         </div>
 
-        <div className="mt-12">
+        <div className="">
           <PackagesInBlog />
         </div>
       </Bounded>

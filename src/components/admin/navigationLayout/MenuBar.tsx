@@ -30,7 +30,7 @@ import React from "react";
 const MenuBar = () => {
   return (
     <>
-      <div className="hidden border-r bg-muted/40 md:block">
+      <div className="hidden border-r  bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2 sticky top-0">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link
@@ -71,7 +71,7 @@ const MenuBar = () => {
               </Link>
 
               <Link
-                href="admin/image-uploader"
+                href="/admin/image-uploader"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
                 <ImageUp className="h-4 w-4" />
