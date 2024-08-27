@@ -39,7 +39,7 @@ interface IDownloadTable {
   tableData?: TGetBookingsByScheduleId;
 }
 
-export default function DownloadTable({ tableData }: IDownloadTable) {
+export default function DownloadBookingTable({ tableData }: IDownloadTable) {
   /**
    * @TODO
    * this download button should be hidden if table data is empty
@@ -52,84 +52,166 @@ export default function DownloadTable({ tableData }: IDownloadTable) {
     // workbook.creator='ASLAM'
     // workbook.created= new Date(Date.now())
 
-    const sheet = workbook.addWorksheet("Bookings", {
-      pageSetup: { paperSize: 9, orientation: "landscape" , },
+    const BookingTable = workbook.addWorksheet("Bookings", {
+      pageSetup: {
+        paperSize: 9,
+        orientation: "landscape",
+        fitToPage: true,
+        fitToWidth: 1,
+        fitToHeight: 1,
+        // margins: {
+        //   bottom: 2,
+        //   footer: 2,
+        //   header: 2,
+        //   left: 2,
+        //   right: 2,
+        //   top: 2
+        // },
+
+      },
     });
-    
+
     // sheet.properties.defaultColWidth = 10
 
-    sheet.getRow(1).font = {
+    BookingTable.getRow(1).font = {
       name: "header",
       family: 1,
       size: 12,
-      bold: true
-    }
-    sheet.columns = [
+      bold: true,
+
+    };
+    // BookingTable.eachRow(item)
+
+    BookingTable.columns = [
       {
         header: "Num",
         key: "num",
         width: 10,
         style: {
           alignment: {
-            vertical: "middle"
-          }
-        }
- 
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
       },
       {
         header: "Name",
         key: "name",
-        width: 15,
+        width: 20,
         style: {
           alignment: {
-            vertical: "middle"
-          }
-        }
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
       },
       {
         header: "Date Of Booking",
         key: "bookingDate",
-        width: 20,
+        width: 23,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
+
       },
       {
         header: "Package",
         key: "package",
         width: 15,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
       },
       {
         header: "Advance Paid",
         key: "advance",
         width: 20,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
       },
       {
         header: "Total Bill",
         key: "totalAmount",
-        width: 10,
+        width: 15,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
       },
       {
         header: "Phone",
         key: "phone",
         width: 15,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
       },
       {
-        header: "Adult",
+        header: "Adults",
         key: "adult",
         width: 10,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
       },
       {
         header: "Child",
         key: "child",
         width: 10,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
       },
       {
-        header: "Kids",
+        header: "Kid",
         key: "kids",
         width: 10,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
       },
       {
         header: "Description",
         key: "description",
-        width: 15,
+        width: 20,
+        style: {
+          alignment: {
+            vertical: "middle",
+            horizontal: "center"
+          },
+        },
+
       },
     ];
     // Do something here when table data in empty
@@ -145,7 +227,7 @@ export default function DownloadTable({ tableData }: IDownloadTable) {
         schedule,
         user,
       } = item;
-      sheet.addRow({
+      BookingTable.addRow({
         num: i + 1,
         name: user.name,
         bookingDate: createdAt,

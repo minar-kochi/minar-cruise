@@ -26,8 +26,63 @@ import { booking } from "./booking";
 import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
 import moment from "moment";
+import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
 export const schedule = router({
+  getSchedulesByDateRange: AdminProcedure.input(
+    z.object({
+      fromDate: z.string(),
+      toDate: z.string(),
+    }),
+  ).query(async ({ input: { fromDate, toDate } }) => {
+
+    const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
+    const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
+    if (!fromDateParser || !toDateParser) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Date Format is not valid YYYY-MM-DD",
+      });
+    }
+    const validatedFromDate = isDateValid(fromDateParser);
+    const validatedToDate = isDateValid(toDateParser);
+
+    if (!validatedToDate || !validatedFromDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates is invalid",
+      });
+    }
+
+    try {
+      const scheduleData = await db.schedule.findMany({
+        where: {
+          day: {
+            gte: fromDate,
+            lte: toDate,
+          },
+        },
+        select: {
+          day: true,
+          fromTime: true,
+          toTime: true,
+          schedulePackage: true,
+          scheduleStatus: true,
+          Package: {
+            select: {
+              title: true,
+            },
+          },
+        },
+      });
+
+      return scheduleData;
+    } catch (error) {
+      console.log(error);
+      ErrorLogger(error);
+      return null;
+    }
+  }),
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
     async ({ input: { ScheduleDate } }) => {
       // string that will receive is in the format YYYY-MM-DD
