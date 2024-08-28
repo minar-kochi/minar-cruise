@@ -15,36 +15,45 @@ interface BlogPage {
 }
 const defaultImage =
   "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-9-580x450.jpg";
+
 export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
   const blogPost = await getBlogPostById({ id: blogSlug });
   if (!blogPost) {
-    return <>Failed to load blog post</>;
+    console.log("could not fetch data");
+    return null;
   }
-  // console.log(blogPost)
   return (
     <div className="bg-white">
-      <FacilitiesImageCard label="Blog" overlapTitle={blogPost.title} author={`By~${blogPost.author}`}/>
-      <Bounded className="pt-6 pb-28 grid grid-flow-row-dense grid-cols-3 grid-rows-3 max-md:block gap-5">
-        <div className="col-span-2 ">
-          <Image
-            src={blogPost.image?.url ?? ""}
-            alt={blogPost.title}
-            width={600}
-            height={400}
-            className="w-full rounded-lg"
-          />
+      <FacilitiesImageCard
+        label="Blog"
+        overlapTitle={blogPost.title}
+        author={`By~${blogPost.author}`}
+      />
+      <Bounded className="pt-6 pb-52 grid grid-cols-[70%_30%]  max-lg:block gap-5">
+        <div className="grid grid-rows-[40%_60%] max-lg:block">
+          <div className="">
+            <Image
+              src={blogPost.image?.url ?? ""}
+              alt={blogPost.title}
+              width={1140}
+              height={760}
+              className="w-full max-h-[550px] rounded-max-lg"
+            />
+          </div>
+
+          <div className="prose w-full max-w-full">
+            <MDXRemote source={blogPost.content} />
+          </div>
         </div>
 
-        <div className="">
-          <RecentBlogPosts />
-        </div>
+        <div className="grid grid-rows-[40%_60%] max-lg:block">
+          <div className="">
+            <RecentBlogPosts />
+          </div>
 
-        <div className="col-span-2  prose">
-          <MDXRemote source={blogPost.content} />
-        </div>
-
-        <div className="">
-          <PackagesInBlog />
+          <div className="">
+            <PackagesInBlog />
+          </div>
         </div>
       </Bounded>
     </div>

@@ -294,3 +294,56 @@ export async function getPackageCardDetails() {
     return null;
   }
 }
+
+export type TGetPackagesForBlog = Exclude<
+  Awaited<ReturnType<typeof getPackagesForBlog>>,
+  null
+>;
+
+export async function getPackagesForBlog() {
+  try {
+    const data = await db.package.findMany({
+      where: {
+        packageCategory: {
+          not: "CUSTOM",
+        },
+      },
+      select: {
+        id: true,
+        adultPrice: true,
+        title: true,
+        slug:true,
+        packageImage: {
+          take: 1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getPackageCardDetails fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}

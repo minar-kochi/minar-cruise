@@ -1,53 +1,43 @@
+import { getPackagesForBlog } from "@/db/data/dto/package";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
-const packageDetails = [
-  {
-    packageName: "Morning Ride",
-    imgUrl: "https://cochincruiseline.com/wp-content/uploads/2022/12/minar.jpg",
-    price: "12000",
-  },
-  {
-    packageName: "Lunch Ride",
-    imgUrl: "https://cochincruiseline.com/wp-content/uploads/2022/12/minar.jpg",
-    price: "9000",
-  },
-  {
-    packageName: "Night Ride",
-    imgUrl: "https://cochincruiseline.com/wp-content/uploads/2022/12/minar.jpg",
-    price: "22000",
-  },
-];
-
-export default function PackagesInBlog() {
+export default async function PackagesInBlog() {
+  const data = await getPackagesForBlog();
+  if (!data) {
+    return <div>Failed to load recent blog posts</div>;
+  }
   return (
     <div className="ml-5">
       <h1 className="text-2xl font-bold ">Minar Cruise Packages</h1>
       <div className="mt-5">
-        {packageDetails.map((item, i) => (
+        {data.map((item, i) => (
           <>
-            <div key={i} className="flex gap-5">
+            <Link href={`/booking/${item.slug}`} key={i} className="flex gap-5">
               <Image
-                src={item.imgUrl}
+                src={item.packageImage[0].image.url}
                 width={400}
                 height={400}
-                alt={item.packageName}
+                alt={item.title}
                 className="w-[88px] h-[88px] object-cover rounded-xl"
               />
               <div className="flex flex-col gap-1 justify-center">
-                <h2 className="font-semibold">{item.packageName}</h2>
+                <h2 className="font-bold hover:text-red-600">{item.title}</h2>
                 <p className="text-muted-foreground">
                   From{" "}
-                  <span className="font-light text-red-600">{item.price}</span>{" "}
+                  <span className="font-normal text-red-600">
+                    {`₹${item.adultPrice}`}
+                  </span>{" "}
                 </p>
               </div>
-            </div>
+            </Link>
             <div
               className={cn(
                 "h-[0.1px] rounded-r-full rounded-l-full my-4 w-full bg-gray-300",
                 {
-                  hidden: i === packageDetails.length - 1,
+                  hidden: i === data.length - 1,
                 },
               )}
             />

@@ -2,21 +2,19 @@ import BlogCard from "@/components/blog/BlogCard";
 import Bounded from "@/components/elements/Bounded";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
 import { getBlogPosts } from "@/db/data/dto/blog";
+import Link from "next/link";
 
 const AllBlogsPage = async () => {
   const blogPosts = await getBlogPosts();
 
   if (!blogPosts) {
-    return (
-      // TODO:- Add a alternative to Image Gallery if not found / empty
-      <></>
-    );
+    console.log("could not fetch data");
+    return null;
   }
-  // console.log(blogPosts);
 
   return (
-    <div className="bg-white">
-      <FacilitiesImageCard label="Blog" />
+    <div  className="bg-white">
+      <FacilitiesImageCard label="Blog" overlapTitle="Blogs" />
       <Bounded className="grid grid-cols-3 pt-10 pb-28">
         {blogPosts.map((blog) => (
           <BlogCard

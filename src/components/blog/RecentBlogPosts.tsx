@@ -1,12 +1,12 @@
-import { getBlogPosts } from "@/db/data/dto/blog";
+import { getBlogPosts, getRecentPosts } from "@/db/data/dto/blog";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 export default async function RecentBlogPosts() {
-  const recentPosts = await getBlogPosts();
+  const recentPosts = await getRecentPosts();
   if (!recentPosts) {
-    return <>Failed to load recent blog posts</>;
+    return <div>Failed to load recent blog posts</div>;
   }
   return (
     <div className=" border-[1px] border-muted h-fit py-5 px-7 rounded-xl">
