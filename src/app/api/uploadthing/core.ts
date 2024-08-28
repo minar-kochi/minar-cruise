@@ -1,14 +1,20 @@
 import { db } from "@/db";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { z } from "zod";
+
+const fileInputSchema = z.object({
+  alt: z.string().nonempty("Alt tag is required"),
+});
 
 const f = createUploadthing();
 
 export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "1MB" } })
-    // .middleware(async ({ req }) => {
-    //   return {};
-    // })
+    .input(fileInputSchema)
+    .middleware(async ({ req, input }) => {
+      return { alt: input.alt };
+    })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Image Successfully Uploaded!", metadata);
       console.log("file url", file.url);
@@ -19,17 +25,14 @@ export const ourFileRouter = {
       const createdImage = await db.image.create({
         data: {
           url: file.url,
-          alt: file.name,
+          alt: metadata.alt,
         },
       });
       return { imageId: createdImage.id };
 
-      // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
+      // Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata };
     }),
 } satisfies FileRouter;
-
-
- {/* add input for alt tag */}
 
 export type OurFileRouter = typeof ourFileRouter;
