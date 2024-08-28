@@ -41,7 +41,7 @@ export const onlineBookingFormValidator = z
       .max(50, "Count cannot exceed 50"),
     packageId: z.string(),
     scheduleId: z.string().optional(),
-    selectedScheduleDate: z.date(),
+    selectedScheduleDate: z.string(),
   })
   .refine(
     (data) => {

@@ -23,8 +23,9 @@ import { z } from "zod";
 import { totalBookedSeats } from "@/db/data/dto/booking";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { InitRazorPay } from "@/lib/helpers/RazorPay";
 import Razorpay from "razorpay";
+import { $RazorPay } from "@/lib/helpers/RazorPay";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const user = router({
   getSchedulesByPackageIdAndDate: publicProcedure
@@ -122,6 +123,21 @@ export const user = router({
         }
       }
     }),
+    // exampleEndPoint: publicProcedure
+    // .mutation(async({ctx, input})=>{
+    //   try {
+    //     const order = await $RazorPay.orders.create({
+    //       amount: 1000,
+    //       currency: "INR",
+    //     });
+    //     console.log(order);
+    //     return order;
+    //   } catch (error) {
+    //     console.log(error);
+    //     return null;
+    //   }
+    // })
+    // ,
   createRazorPayIntent: publicProcedure
     .input(onlineBookingFormValidator)
     .mutation(
@@ -223,107 +239,117 @@ export const user = router({
          *
          *
          */
+        try {
+          if (scheduleId) {
+            const isSchedulePresentInDb = await findScheduleById(scheduleId);
 
-        if (scheduleId) {
-          const isSchedulePresentInDb = await findScheduleById(scheduleId);
+            if (!isSchedulePresentInDb) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Could not find schedule Id",
+              });
+            }
 
-          if (!isSchedulePresentInDb) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Could not find schedule Id",
+            const bookedCount = await totalBookedSeats(scheduleId);
+            const remainingSeats = MAX_BOAT_SEAT - bookedCount;
+            const totalSeatsSelected = numOfAdults + numOfChildren + numOfBaby;
+
+            if (totalSeatsSelected > remainingSeats) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message:
+                  "Selected Seats exceeds maximum capacity, please select a different schedule",
+              });
+            }
+
+            const packageDetails = await db.package.findUnique({
+              where: {
+                id: packageId,
+              },
+              select: {
+                adultPrice: true,
+                childPrice: true,
+                title: true,
+              },
             });
-          }
 
-          const bookedCount = await totalBookedSeats(scheduleId);
-          const remainingSeats = MAX_BOAT_SEAT - bookedCount;
-          const totalSeatsSelected = numOfAdults + numOfChildren + numOfBaby;
+            if (!packageDetails) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Could not get price details",
+              });
+            }
 
-          if (totalSeatsSelected > remainingSeats) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message:
-                "Selected Seats exceeds maximum capacity, please select a different schedule",
+            const TotalAdultPrice = packageDetails.adultPrice * numOfAdults;
+            const TotalChildPrice = packageDetails.childPrice * numOfChildren;
+            const GrandTotal = TotalAdultPrice + TotalChildPrice;
+
+            const createUser = await db.user.create({
+              data: {
+                name,
+                email,
+                contact: phone,
+              },
+              select: {
+                id: true,
+              },
             });
+
+            if (!createUser) {
+              throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not Complete request, failed to create user",
+              });
+            }
+            /**
+             * @TODO
+             *
+             * write code in FE to send total amount displayed to client and
+             * compare the GrantTotal calculated in the server , and make sure both amount are the same
+             *
+             *  */
+
+            // ----------CREATING OPTIONS USING RAZOR PAY -----------------------
+
+            // TODO: Make sure to handle your payment here.
+            // Create an order -> generate the OrderID -> Send it to the Front-end
+            // Also, check the amount and currency on the backend (Security measure)
+
+            const payment_capture = 1;
+            const amount = GrandTotal; // amount in paisa. In our case it's INR 1
+            const currency = "INR";
+            const nanoId = nanoid();
+            const options = {
+              amount: amount,
+              currency,
+              payment_capture,
+              notes: {
+                // These notes will be added to your transaction. So you can search it within their dashboard.
+                // Also, it's included in webhooks as well. So you can automate it.
+                paymentFor: `${packageDetails.title} on ${selectedScheduleDate}`,
+                userId: createUser.id,
+                packageId: packageId,
+              },
+            };
+
+            const order = await $RazorPay.orders.create(options);
+
+
+            const data = {
+              message: "success",
+              order,
+            };
+            console.log(data)
+            return data;
+            // ==============================================================================
           }
-
-          const packageDetails = await db.package.findUnique({
-            where: {
-              id: packageId,
-            },
-            select: {
-              adultPrice: true,
-              childPrice: true,
-              title: true,
-            },
-          });
-
-          if (!packageDetails) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Could not get price details",
-            });
+        } catch (error) {
+          if (error instanceof zodResolver) {
+            console.log("Zod error");
           }
-
-          const TotalAdultPrice = packageDetails.adultPrice * numOfAdults;
-          const TotalChildPrice = packageDetails.childPrice * numOfChildren;
-          const GrandTotal = TotalAdultPrice + TotalChildPrice;
-
-          const createUser = await db.user.create({
-            data: {
-              name,
-              email,
-              contact: phone,
-            },
-            select: {
-              id: true,
-            },
-          });
-
-          if (!createUser) {
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Could not Complete request, failed to create user",
-            });
-          }
-          /**
-           * @TODO
-           *
-           * write code in FE to send total amount displayed to client and
-           * compare the GrantTotal calculated in the server , and make sure both amount are the same
-           *
-           *  */
-
-          // ----------CREATING OPTIONS USING RAZOR PAY -----------------------
-
-          // TODO: Make sure to handle your payment here.
-          // Create an order -> generate the OrderID -> Send it to the Front-end
-          // Also, check the amount and currency on the backend (Security measure)
-
-          const InitRazorPay = new Razorpay({
-            key_id: "",
-            key_secret: "",
-          });
-
-          const payment_capture = 1;
-          const amount = GrandTotal; // amount in paisa. In our case it's INR 1
-          const currency = "INR";
-          const nanoId = nanoid();
-          const options = {
-            amount: amount.toString(),
-            currency,
-            receipt: nanoId,
-            payment_capture,
-            notes: {
-              // These notes will be added to your transaction. So you can search it within their dashboard.
-              // Also, it's included in webhooks as well. So you can automate it.
-              paymentFor: `${packageDetails.title} on ${selectedScheduleDate}`,
-              userId: createUser.id,
-              packageId: packageId,
-            },
-          };
-
-          return options;
-          // ==============================================================================
+          ErrorLogger(error);
+          console.log(error);
+          return null
         }
 
         // if(isLunch) {

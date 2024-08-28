@@ -12,10 +12,15 @@ import BookingFormCard from "./BookingFormCard";
 interface IUserBookingDateSelector {
   packageTitle: string;
   packageId: string;
+  packagePrice: {
+    child: number
+    adult: number
+  }
 }
 export default function UserBookingDateSelector({
   packageTitle,
   packageId,
+  packagePrice
 }: IUserBookingDateSelector) {
   const [date, setDate] = useState<Date>(new Date(Date.now()));
   const [month, setMonth] = useState<string>(
@@ -28,7 +33,6 @@ export default function UserBookingDateSelector({
   } | null>(null);
 
   // const { data, isLoading } = trpc.user.
-  // const scheduleData = trpc.useUtils().user.getSchedulesByPackageIdAndDate.getData();
 
   const { refetch, isFetching, data } =
     trpc.user.getSchedulesByPackageIdAndDate.useQuery({
@@ -100,6 +104,7 @@ export default function UserBookingDateSelector({
             scheduleStatus: selectedScheduleId?.scheduleStatus,
           }}
           packageId={packageId}
+          packagePrice={packagePrice}
         />
       )}
       <Button

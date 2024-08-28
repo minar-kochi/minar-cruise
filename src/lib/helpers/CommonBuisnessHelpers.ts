@@ -49,3 +49,21 @@ export const selectFromTimeAndToTimeFromScheduleOrPackages = ({
     toTime: "",
   };
 };
+
+export const phoneNumberParser = (contact: string | undefined) => {
+
+  if(!contact) {
+    return null
+  }
+  const countryCodePrefix = "+91";
+
+  if (!contact.startsWith("0", 0)) {
+    const countryCodePrefix = "+91";
+    const parsedPhoneNumber = countryCodePrefix + contact;
+    return parsedPhoneNumber;
+  }
+
+  const removedZeroFromPhoneNumber = contact.slice(1);
+  const parsedPhoneNumber = countryCodePrefix + removedZeroFromPhoneNumber;
+  return parsedPhoneNumber;
+};

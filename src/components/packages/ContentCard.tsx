@@ -31,8 +31,11 @@ const ContentCard = async ({
       <UserBookingDateSelector
         packageId={formData.id}
         packageTitle={formData.title}
+        packagePrice={{
+          adult: formData.adultPrice,
+          child: formData.childPrice,
+        }}
       />
-      {/* <BookingFormCard className="ml-5" formData={formData} /> */}
     </Bounded>
   );
 };
