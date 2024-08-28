@@ -33,7 +33,7 @@ export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
         <div className="grid grid-rows-[40%_60%] max-lg:block">
           <div className="">
             <Image
-              src={blogPost.image?.url ?? ""}
+              src={blogPost.image?.url || ""}
               alt={blogPost.title}
               width={1140}
               height={760}
