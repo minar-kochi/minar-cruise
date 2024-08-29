@@ -20,8 +20,6 @@ export const ourFileRouter = {
       return { alt: input.alt };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Image Successfully Uploaded!", metadata);
-      console.log("file url", file.url);
 
       const createdImage = await db.image.create({
         data: {
