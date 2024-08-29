@@ -24,6 +24,8 @@ import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import Link from "next/link";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "@radix-ui/react-label";
+import CustomCheckboxLabel from "../custom/CustomCheckboxLabel";
+import { ArrowLeft } from "lucide-react";
 
 interface IBookingFormCard {
   className?: string;
@@ -53,10 +55,12 @@ const BookingFormCard = ({
     handleSubmit,
     formState: { errors, isSubmitting, dirtyFields },
     reset,
+    watch,
     getValues,
   } = useForm<TOnlineBookingFormValidator>({
     resolver: zodResolver(onlineBookingFormValidator),
     defaultValues: {
+      numOfAdults: 0,
       numOfChildren: 0,
       numOfBaby: 0,
       packageId: packageId,
@@ -64,7 +68,8 @@ const BookingFormCard = ({
       selectedScheduleDate: RemoveTimeStampFromDate(selectedDate),
     },
   });
-
+  const adultCount = watch("numOfAdults");
+  const childCount = watch("numOfChildren");
   const { mutate: CreateRazorPayIntent } =
     trpc.user.createRazorPayIntent.useMutation({
       onMutate() {
@@ -125,7 +130,12 @@ const BookingFormCard = ({
       >
         {/* {formData?.adultPrice}
       {formData?.childPrice} */}
-        <h3 className=" text-2xl font-bold ">Book Now</h3>
+        <div className="text-2xl font-bold flex items-center relative">
+          {/* <Link>
+          </Link> */}
+          <ArrowLeft className="my-auto absolute" />
+          <h3 className="text-center w-full">Book Now</h3>
+        </div>
         <hr className="bg-gray-200  border-0 w-full h-px my-2 font-"></hr>
         {/* <BookingFormDatePicker /> */}
         <InputLabel
@@ -193,28 +203,30 @@ const BookingFormCard = ({
           }}
           errorMessage={errors.numOfBaby ? `${errors.numOfBaby.message}` : null}
         />
-        <div className="items-top flex space-x-2">
-          <Checkbox id="terms1" />
-          <div className="grid gap-1.5 leading-none">
-            <label
-              htmlFor="terms1"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Accept terms and conditions
-            </label>
-            <p className="text-sm text-muted-foreground">
-              You agree to our Terms of Service and Privacy Policy.
-            </p>
-          </div>
-        </div>
+        <CustomCheckboxLabel
+          className="pt-3"
+          label="Yes, I agree with the privacy policy and terms and conditions."
+          labelClassName="leading-5"
+        />
+        <CustomCheckboxLabel
+          className="pt-3"
+          label="Accept terms and conditions"
+          description="Only backwater travelling will be entertained in the month of June,
+          July and August due to Monsoon Restrictions."
+        />
         <p className="font-bold ml-2 text-gray-500 my-5 text-right">
-          Total Price: <span className="text-black">$720</span>
+          Total Price:{" "}
+          <span className="text-black">
+            {adultCount * (packagePrice.adult / 100) +
+              childCount * (packagePrice.child / 100)}
+          </span>
         </p>
-        <Button type="submit" className="w-full">
-          Submit
-        </Button>
-        Only backwater travelling will be entertained due to Monsoon
-        Restrictions.
+        <div className="space-y-5">
+          <Button type="submit" className="w-full">
+            Submit
+          </Button>
+          <Button className="w-full">back</Button>
+        </div>
       </form>
     </>
   );
