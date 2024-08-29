@@ -15,7 +15,7 @@ export default async function PackagesInBlog() {
       <div className="mt-5">
         {data.map((item, i) => (
           <>
-            <Link href={`/booking/${item.slug}`} key={i} className="flex gap-5">
+            <Link href={`/booking/${item.slug}`} key={`packages${i}`} className="flex gap-5">
               <Image
                 src={item.packageImage[0].image.url}
                 width={400}
