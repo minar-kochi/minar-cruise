@@ -14,18 +14,15 @@ export const ourFileRouter = {
     .input(fileInputSchema)
     .middleware(async ({ req, input }) => {
       /**
-       * @TODO 
+       * @TODO
        * Check Authentication for admin.
-       *  */       
+       *  */
       return { alt: input.alt };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Image Successfully Uploaded!", metadata);
       console.log("file url", file.url);
 
-      const imageId = metadata;
-      const res = await fetch(file.url);
-      
       const createdImage = await db.image.create({
         data: {
           // possible file key needs to be added.
