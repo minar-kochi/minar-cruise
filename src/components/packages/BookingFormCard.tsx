@@ -21,6 +21,9 @@ import { Orders } from "razorpay/dist/types/orders";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import Razorpay from "razorpay";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
+import Link from "next/link";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "@radix-ui/react-label";
 
 interface IBookingFormCard {
   className?: string;
@@ -32,9 +35,10 @@ interface IBookingFormCard {
   selectedDate: Date;
   packageId: string;
   packagePrice: {
-    child: number
-    adult: number
-  }}
+    child: number;
+    adult: number;
+  };
+}
 
 const BookingFormCard = ({
   className,
@@ -42,10 +46,8 @@ const BookingFormCard = ({
   selectedSchedule,
   packageId,
   selectedDate,
-  packagePrice
+  packagePrice,
 }: IBookingFormCard) => {
-
-  
   const {
     register,
     handleSubmit,
@@ -68,35 +70,33 @@ const BookingFormCard = ({
       onMutate() {
         toast.loading("creating razorpay intend");
       },
-
+      // @HOTFIX check callback url before deployment
       async onSuccess(res) {
-        
+        const notes = res?.order.notes;
         toast.dismiss();
         const options = {
           key: process.env.RAZORPAY_KEYID,
           name: "Developer Testing",
           currency: "INR",
-          amount:  res?.order.amount,
+          amount: res?.order.amount,
           order_id: res?.order.id,
+          callback_url: "http://localhost:3000/success",
           prefill: {
             name: "test",
-            phone: phoneNumberParser(getValues("phone"))
+            phone: phoneNumberParser(getValues("phone")),
           },
-        }
+        };
 
-        const paymentModal = new window.Razorpay(options)
+        const paymentModal = new window.Razorpay(options);
         paymentModal.open();
 
-        console.log(options.prefill.phone)
-
         paymentModal.on("success", function (data: any) {
-          console.log(data)
+          console.log(data);
           alert("Payment failed. Please try again.");
-          toast.error("payment failed")
+          toast.error("payment failed");
         });
 
         toast.success("intend created successfully");
-        
       },
       onError() {
         toast.error("something went wrong");
@@ -137,7 +137,6 @@ const BookingFormCard = ({
           }}
           errorMessage={errors.name ? `${errors.name.message}` : null}
         />
-
         <InputLabel
           InputProps={{
             placeholder: "Email",
@@ -157,7 +156,6 @@ const BookingFormCard = ({
           }}
           errorMessage={errors.phone ? `${errors.phone.message}` : null}
         />
-
         <InputLabel
           InputProps={{
             min: 0,
@@ -195,12 +193,28 @@ const BookingFormCard = ({
           }}
           errorMessage={errors.numOfBaby ? `${errors.numOfBaby.message}` : null}
         />
+        <div className="items-top flex space-x-2">
+          <Checkbox id="terms1" />
+          <div className="grid gap-1.5 leading-none">
+            <label
+              htmlFor="terms1"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Accept terms and conditions
+            </label>
+            <p className="text-sm text-muted-foreground">
+              You agree to our Terms of Service and Privacy Policy.
+            </p>
+          </div>
+        </div>
         <p className="font-bold ml-2 text-gray-500 my-5 text-right">
           Total Price: <span className="text-black">$720</span>
         </p>
         <Button type="submit" className="w-full">
           Submit
         </Button>
+        Only backwater travelling will be entertained due to Monsoon
+        Restrictions.
       </form>
     </>
   );

@@ -20,8 +20,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <>
@@ -38,6 +40,8 @@ export default function RootLayout({
             <Toaster />
 
             {children}
+            {modal}
+            <div id="modal-root" />
             <Footer />
             {/* </CounterStoreProvider> */}
           </Providers>

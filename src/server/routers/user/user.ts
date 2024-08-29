@@ -17,6 +17,7 @@ import {
   differenceInHours,
   differenceInMinutes,
   endOfMonth,
+  format,
   startOfMonth,
 } from "date-fns";
 import { z } from "zod";
@@ -123,21 +124,21 @@ export const user = router({
         }
       }
     }),
-    // exampleEndPoint: publicProcedure
-    // .mutation(async({ctx, input})=>{
-    //   try {
-    //     const order = await $RazorPay.orders.create({
-    //       amount: 1000,
-    //       currency: "INR",
-    //     });
-    //     console.log(order);
-    //     return order;
-    //   } catch (error) {
-    //     console.log(error);
-    //     return null;
-    //   }
-    // })
-    // ,
+  // exampleEndPoint: publicProcedure
+  // .mutation(async({ctx, input})=>{
+  //   try {
+  //     const order = await $RazorPay.orders.create({
+  //       amount: 1000,
+  //       currency: "INR",
+  //     });
+  //     console.log(order);
+  //     return order;
+  //   } catch (error) {
+  //     console.log(error);
+  //     return null;
+  //   }
+  // })
+  // ,
   createRazorPayIntent: publicProcedure
     .input(onlineBookingFormValidator)
     .mutation(
@@ -187,44 +188,6 @@ export const user = router({
          *          -
          *
          */
-
-        // const packageDetails = await db.package.findUnique({
-        //   where: {
-        //     id: packageId,
-        //   },
-        //   select: {
-        //     packageCategory: true,
-        //     title: true,
-        //   },
-        // });
-
-        // if (!packageDetails) {
-        //   throw new TRPCError({
-        //     code: "BAD_REQUEST",
-        //     message: "Could not receive package data",
-        //   });
-        // }
-        // // isStatusBreakfast(packageDetails.packageCategory)
-
-        // const serverDate = new Date(Date.now());
-        // const timeGapInHours = differenceInHours(
-        //   selectedScheduleDate,
-        //   serverDate,
-        // );
-        // const timeGapInMinutes = differenceInMinutes(
-        //   selectedScheduleDate,
-        //   serverDate,
-        // );
-
-        // if (isBreakFast(packageDetails.packageCategory)) {
-        //   if (timeGapInHours <= 16) {
-        //     throw new TRPCError({
-        //       code: "BAD_REQUEST",
-        //       message:
-        //         "Select a different package ,You need to book breakfast at least 16 hours before schedule time",
-        //     });
-        //   }
-        // }
         //=======================================================================================
 
         /**
@@ -314,32 +277,56 @@ export const user = router({
             // TODO: Make sure to handle your payment here.
             // Create an order -> generate the OrderID -> Send it to the Front-end
             // Also, check the amount and currency on the backend (Security measure)
+            const scheduleDetails = await db.schedule.findUnique({
+              where: {
+                id: scheduleId,
+              },
+              select: {
+                schedulePackage: true,
+                scheduleStatus: true,
+              },
+            });
+            
+            if (!scheduleDetails) {
+              throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not get schedule data",
+              });
+            }
 
             const payment_capture = 1;
             const amount = GrandTotal; // amount in paisa. In our case it's INR 1
             const currency = "INR";
-            const nanoId = nanoid();
             const options = {
-              amount: amount,
+              amount,
               currency,
               payment_capture,
               notes: {
-                // These notes will be added to your transaction. So you can search it within their dashboard.
-                // Also, it's included in webhooks as well. So you can automate it.
-                paymentFor: `${packageDetails.title} on ${selectedScheduleDate}`,
-                userId: createUser.id,
+                eventType: "create.schedule",
                 packageId: packageId,
+                Date: format(selectedScheduleDate, "yyyy-MM-dd"),
+                ScheduleTime: scheduleDetails.schedulePackage,
+                name: name,
+                // phone: phone,
+                email: email,
+                adultCount: numOfAdults,
+                childCount: numOfChildren,
+                babyCount: numOfBaby,
               },
             };
 
+            /**
+             * order_id 
+             * name 
+             * email
+             */
             const order = await $RazorPay.orders.create(options);
-
 
             const data = {
               message: "success",
               order,
             };
-            console.log(data)
+            console.log(data);
             return data;
             // ==============================================================================
           }
@@ -349,7 +336,7 @@ export const user = router({
           }
           ErrorLogger(error);
           console.log(error);
-          return null
+          return null;
         }
 
         // if(isLunch) {

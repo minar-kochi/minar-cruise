@@ -45,16 +45,17 @@ export default function UserBookingDateSelector({
   });
   return (
     <div className="flex flex-col items-center justify-center shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4 gap-4 rounded-2xl">
-      <h1 className="text-2xl font-bold text-center">Check Available Dates</h1>
-      {isFetching ? "Fetching...." : null}
+      {/* {isFetching ? "Fetching...." : null}
       {data?.length === 0 ? (
         "No schedules found for this month"
       ) : (
         <p>This many Schedules Found {data?.length}</p>
       )}
       {JSON.stringify(data?.map((item) => item.day))}
-      {JSON.stringify(selectedScheduleId)}
+      {JSON.stringify(selectedScheduleId)} */}
       {!isNextSlide ? (
+        <>
+        <h1 className="text-2xl font-bold text-center">Check Available Dates</h1>
         <Calendar
           className=""
           sizeMode="lg"
@@ -96,6 +97,7 @@ export default function UserBookingDateSelector({
             setMonth(RemoveTimeStampFromDate(month));
           }}
         />
+        </>
       ) : (
         <BookingFormCard
           selectedDate={date}
@@ -105,7 +107,7 @@ export default function UserBookingDateSelector({
           }}
           packageId={packageId}
           packagePrice={packagePrice}
-        />
+          />
       )}
       <Button
         onClick={() => setIsNextSlide((prev) => !prev)}
