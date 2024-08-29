@@ -277,22 +277,22 @@ export const user = router({
             // TODO: Make sure to handle your payment here.
             // Create an order -> generate the OrderID -> Send it to the Front-end
             // Also, check the amount and currency on the backend (Security measure)
-            const scheduleDetails = await db.schedule.findUnique({
-              where: {
-                id: scheduleId,
-              },
-              select: {
-                schedulePackage: true,
-                scheduleStatus: true,
-              },
-            });
-            
-            if (!scheduleDetails) {
-              throw new TRPCError({
-                code: "INTERNAL_SERVER_ERROR",
-                message: "Could not get schedule data",
-              });
-            }
+            // const scheduleDetails = await db.schedule.findUnique({
+            //   where: {
+            //     id: scheduleId,
+            //   },
+            //   select: {
+            //     schedulePackage: true,
+            //     scheduleStatus: true,
+            //   },
+            // });
+
+            // if (!scheduleDetails) {
+            //   throw new TRPCError({
+            //     code: "INTERNAL_SERVER_ERROR",
+            //     message: "Could not get schedule data",
+            //   });
+            // }
 
             const payment_capture = 1;
             const amount = GrandTotal; // amount in paisa. In our case it's INR 1
@@ -304,10 +304,8 @@ export const user = router({
               notes: {
                 eventType: "existing.schedule",
                 packageId: packageId,
-                Date: format(selectedScheduleDate, "yyyy-MM-dd"),
-                ScheduleTime: scheduleDetails.schedulePackage,
+                scheduleId: scheduleId,
                 name: name,
-                // phone: phone,
                 email: email,
                 adultCount: numOfAdults,
                 childCount: numOfChildren,
@@ -315,11 +313,6 @@ export const user = router({
               },
             };
 
-            /**
-             * order_id 
-             * name 
-             * email
-             */
             const order = await $RazorPay.orders.create(options);
 
             const data = {
