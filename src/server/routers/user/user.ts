@@ -302,7 +302,7 @@ export const user = router({
               currency,
               payment_capture,
               notes: {
-                eventType: "create.schedule",
+                eventType: "existing.schedule",
                 packageId: packageId,
                 Date: format(selectedScheduleDate, "yyyy-MM-dd"),
                 ScheduleTime: scheduleDetails.schedulePackage,
