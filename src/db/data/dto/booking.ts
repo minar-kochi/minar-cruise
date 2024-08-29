@@ -94,6 +94,9 @@ export const totalBookedSeats = async (scheduleId: string) => {
       scheduleId,
     },
     select: {
+      numOfAdults: true,
+      numOfBaby: true,
+      numOfChildren: true,
       totalBooking: true,
     },
   });
