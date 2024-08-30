@@ -48,7 +48,6 @@ export default function AddBlog() {
   const router = useRouter();
   const EditorRef = useRef<MDXEditorMethods | null>(null);
   const [selectedImageId, setSelectedImageId] = useState<string>("");
-  // console.log(selectedImageId);
 
   const { mutate: addBlog } = trpc.admin.blog.addBlog.useMutation({
     onMutate() {
@@ -77,9 +76,20 @@ export default function AddBlog() {
     resolver: zodResolver(BlogFormValidators),
   });
 
-  const onSubmitBlog = (data: TBlogFormValidators) => {
+  const { fetch } = trpc.useUtils().admin.blog.checkSlug
+
+  const onSubmitBlog = async (data: TBlogFormValidators) => {
+    // Check if the slug already exists
+    const slugExists = await fetch(data.blogSlug);
+
+    if (slugExists) {
+      toast.error("This slug is already taken. Please choose another one.");
+      return;
+    }
+
     addBlog(data);
   };
+
   watch();
   const title = getValues("title");
   const author = getValues("author");

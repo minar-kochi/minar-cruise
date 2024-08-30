@@ -11,7 +11,7 @@ export default function ImageUpload() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <input
         type="text"
-        placeholder="Enter alt text for the image"
+        placeholder="Enter alt text for SEO"
         value={altText}
         onChange={(e) => setAltText(e.target.value)}
         className="mt-4 p-2 border rounded-lg bg-black "
