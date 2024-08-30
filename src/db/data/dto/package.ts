@@ -13,6 +13,7 @@ import {
 } from "@/lib/validators/Package";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
+import { error } from "console";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { afterEach } from "node:test";
 
@@ -336,14 +337,14 @@ export async function getPackagesForBlog() {
 
     if (!data) {
       if (!isProd) {
-        console.log("getPackageCardDetails fetch failed");
+        console.log("getPackagesForBlog fetch failed");
       }
       return null;
     }
 
     return data;
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    ErrorLogger(error);
     return null;
   }
 }
