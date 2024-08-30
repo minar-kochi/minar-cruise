@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { Prisma } from "@prisma/client";
+import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
 export type TGetBlogPosts = Awaited<ReturnType<typeof getBlogPosts>>;
 export async function getBlogPosts() {
@@ -20,10 +20,11 @@ export async function getBlogPosts() {
     });
 
     if (!data) {
-      console.log("Failed to load blog posts");
+      return null;
     }
     return data;
-  } catch (e) {
+  } catch (error) {
+    ErrorLogger(error);
     return null;
   }
 }
@@ -48,11 +49,11 @@ export async function getBlogPostById({ id }: { id: string }) {
     });
 
     if (!data) {
-      console.log("Failed to load blog post");
       return null;
     }
     return data;
   } catch (error) {
+    ErrorLogger(error);
     return null;
   }
 }
@@ -61,40 +62,28 @@ export type TGetRecentPosts = Awaited<ReturnType<typeof getRecentPosts>>;
 export async function getRecentPosts() {
   try {
     const data = await db.blog.findMany({
+      where: {
+        blogStatus: "PUBLISHED",
+      },
       select: {
         id: true,
         title: true,
         image: true,
         blogSlug: true,
-        // createdAt: true
+        createdAt: true,
       },
       orderBy: {
         createdAt: "desc",
       },
       take: 3,
     });
+
     if (!data) {
-      console.log("Failed to load recent post");
       return null;
     }
     return data;
   } catch (error) {
-    // Handle the error appropriately
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      // Known errors, such as constraints violations or invalid queries
-      console.error("Prisma error:", error.message);
-    } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
-      // Unknown request errors
-      console.error("Unknown request error:", error.message);
-    } else if (error instanceof Prisma.PrismaClientInitializationError) {
-      // Errors during client initialization
-      console.error("Client initialization error:", error.message);
-    } else if (error instanceof Prisma.PrismaClientRustPanicError) {
-      // Rust panic errors
-      console.error("Rust panic error:", error.message);
-    } else {
-      // Other errors
-      console.error("Unexpected error:", error);
-    }
+    ErrorLogger(error);
+    return null;
   }
 }
