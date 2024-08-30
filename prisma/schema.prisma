@@ -117,6 +117,7 @@ model Package {
   createdAt       DateTime         @default(now()) @db.Timestamp()
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id])
+  packageTime     SCHEDULED_TIME
   packageCategory PACKAGE_CATEGORY
   Schedule        Schedule[]
   packageImage    PackageImage[]

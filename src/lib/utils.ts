@@ -185,3 +185,36 @@ export function combineDateWithSplitedTime(date: Date, time: TTimeCycle) {
   newDate.setSeconds(0);
   return newDate;
 }
+
+export function filterDateFromCalender({
+  dateArray,
+  date,
+}: {
+  date: Date;
+  dateArray: {
+    day: Date;
+  }[] | undefined;
+}) {
+  let currDate = getPrevTimeStamp(Date.now());
+  // let someOtherDate = new Date("2024-10-15");
+  // let a = [
+  //   { day: new Date(Date.now()) },
+  //   { day: new Date(someOtherDate) },
+  // ];
+  // const disabledDays = data?.blockedScheduleDateArray.map((item)=>({ day: new Date(item.day) }))
+  if (!dateArray) {
+    return false;
+  }
+  let fi = dateArray.findIndex(
+    (fv) => RemoveTimeStampFromDate(fv.day) === RemoveTimeStampFromDate(date),
+  );
+
+  // console.log(fi)
+  if (fi !== -1) {
+    return true;
+  }
+  if (date < new Date(currDate)) {
+    return true;
+  }
+  return false;
+}

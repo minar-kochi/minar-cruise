@@ -20,7 +20,7 @@ import {
   format,
   startOfMonth,
 } from "date-fns";
-import { z } from "zod";
+import { promise, z } from "zod";
 import { totalBookedSeats } from "@/db/data/dto/booking";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
@@ -28,15 +28,27 @@ import Razorpay from "razorpay";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+type TBlockedScheduleDateArray =  {
+  day: Date;
+}[]
+
+type TScheduleData = {
+  id: string;
+  day: Date;
+  packageId: string | null;
+  scheduleStatus: $Enums.SCHEDULE_STATUS;
+}[]
+
 export const user = router({
   getSchedulesByPackageIdAndDate: publicProcedure
     .input(
       z.object({
+        packageTime: z.string(),
         packageId: z.string(),
         date: z.string(),
       }),
     )
-    .query(async ({ ctx, input: { date: clientDate, packageId } }) => {
+    .query(async ({ ctx, input: { date: clientDate, packageId, packageTime } }) => {
       try {
         const isPackageExist = await db.package.count({
           where: {
@@ -93,31 +105,57 @@ export const user = router({
         //     };
         // console.log(day)
         // case 1
-        const schedules = await db.schedule.findMany({
-          select: {
-            id: true,
-            packageId: true,
-            day: true,
-            scheduleStatus: true,
-          },
-          where: {
-            packageId,
-            day: isSameMonth
-              ? {
-                  gte: new Date(currentServerDate),
-                  lte: new Date(endOfTheMonthServerDate),
-                }
-              : {
-                  gte: new Date(startOfMonthClientDate),
-                  lte: new Date(endOfMonthClientDate),
-                },
-          },
-          orderBy: {
-            day: "asc",
-          },
-        });
+         
+        const [schedules, blockedScheduleDateArray]: [TScheduleData,TBlockedScheduleDateArray]= await Promise.all([
+          db.schedule.findMany({
+            select: {
+              id: true,
+              packageId: true,
+              day: true,
+              scheduleStatus: true
+            },
+            where: {
+              packageId,
+              day: isSameMonth
+                ? {
+                    gte: new Date(currentServerDate),
+                    lte: new Date(endOfTheMonthServerDate),
+                  }
+                : {
+                    gte: new Date(startOfMonthClientDate),
+                    lte: new Date(endOfMonthClientDate),
+                  },
+            },
+            orderBy: {
+              day: "asc",
+            },
+          }),
+        
+
+          db.schedule.findMany({
+            where: {
+              // @ts-ignore
+              schedulePackage: packageTime,
+              scheduleStatus: "BLOCKED",
+              day: isSameMonth
+                ? {
+                    gte: new Date(currentServerDate),
+                    lte: new Date(endOfTheMonthServerDate),
+                  }
+                : {
+                    gte: new Date(startOfMonthClientDate),
+                    lte: new Date(endOfMonthClientDate),
+                  },
+            },
+            select: {
+              day: true
+            }
+          })
+        ]);
+        
+       
         // console.log(schedules);
-        return schedules;
+        return {schedules,blockedScheduleDateArray} ;
       } catch (error) {
         if (error instanceof TRPCError) {
           throw new TRPCError({ code: error.code, message: error.message });

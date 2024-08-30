@@ -128,16 +128,11 @@ const BookingFormCard = ({
           className,
         )}
       >
-        {/* {formData?.adultPrice}
-      {formData?.childPrice} */}
         <div className="text-2xl font-bold flex items-center relative">
-          {/* <Link>
-          </Link> */}
           <ArrowLeft className="my-auto absolute" />
           <h3 className="text-center w-full">Book Now</h3>
         </div>
         <hr className="bg-gray-200  border-0 w-full h-px my-2 font-"></hr>
-        {/* <BookingFormDatePicker /> */}
         <InputLabel
           InputProps={{
             placeholder: "Name",
@@ -167,6 +162,8 @@ const BookingFormCard = ({
           errorMessage={errors.phone ? `${errors.phone.message}` : null}
         />
         <InputLabel
+          label={`Adult Count ( ₹${packagePrice.adult/100}/- )`}
+          labelClassName=""
           InputProps={{
             min: 0,
             placeholder: "Adult (10+ years)",
@@ -180,6 +177,7 @@ const BookingFormCard = ({
           }
         />
         <InputLabel
+          label={`Child Count ( ₹${packagePrice.child/100}/- )`}
           InputProps={{
             min: 0,
             placeholder: "Children (3-10 years)",
@@ -193,6 +191,7 @@ const BookingFormCard = ({
           }
         />
         <InputLabel
+          label="Baby Count"
           InputProps={{
             min: 0,
             placeholder: "Below (3 years)",
@@ -225,7 +224,6 @@ const BookingFormCard = ({
           <Button type="submit" className="w-full">
             Submit
           </Button>
-          <Button className="w-full">back</Button>
         </div>
       </form>
     </>

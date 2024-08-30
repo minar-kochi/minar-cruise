@@ -74,6 +74,7 @@ export async function getPackageById({ slug }: { slug: string }) {
       },
       select: {
         id: true,
+        packageTime: true,
         adultPrice: true,
         title: true,
         description: true,

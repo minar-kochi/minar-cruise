@@ -22,6 +22,7 @@ const ContentCard = async ({
   amenitiesId,
   formData,
 }: TContentCard) => {
+  
   return (
     <Bounded className={cn("flex justify-between py-12", className)}>
       <article className="">
@@ -35,6 +36,7 @@ const ContentCard = async ({
           adult: formData.adultPrice,
           child: formData.childPrice,
         }}
+        packageTime={formData.packageTime}
       />
     </Bounded>
   );

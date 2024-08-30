@@ -16,6 +16,7 @@ export const packages: packagesPartialId = [
     fromTime: "09:30:AM", //09:30:PM
     toTime: "11:00:AM",
     packageCategory: "BREAKFAST",
+    packageTime: "BREAKFAST"
   },
   {
     id: "clqqx9xhp000108l5frrkhu8h",
@@ -32,6 +33,7 @@ export const packages: packagesPartialId = [
     fromTime: "12:00:PM",
     toTime: "02:00:PM",
     packageCategory: "LUNCH",
+    packageTime: "LUNCH"
   },
   {
     id: "clqqxa3wq000208l5enk651jd",
@@ -48,6 +50,7 @@ export const packages: packagesPartialId = [
     fromTime: "05:30:PM",
     toTime: "07:30:PM",
     packageCategory: "SUNSET",
+    packageTime: "SUNSET"
   },
   {
     id: "clqqxac8q000308l55rjn5nv8",
@@ -64,6 +67,7 @@ export const packages: packagesPartialId = [
     fromTime: "08:00:PM",
     toTime: "10:00:PM",
     packageCategory: "DINNER",
+    packageTime: "DINNER"
   },
   {
     id: "clqqxaklk000408l5cq6v8xfm",
@@ -80,6 +84,7 @@ export const packages: packagesPartialId = [
     fromTime: "05:30:PM",
     toTime: "08:30:PM",
     packageCategory: "DINNER",
+    packageTime: "DINNER"
   },
   {
     id: "clqqxasvi000508l59j1z4obt",
@@ -96,6 +101,7 @@ export const packages: packagesPartialId = [
     fromTime: "11:00:AM",
     toTime: "03:00:PM",
     packageCategory: "LUNCH",
+    packageTime: "LUNCH"
   },
   {
     id: "clqqxb1q1000608l5fdxf3lj9",
@@ -112,6 +118,7 @@ export const packages: packagesPartialId = [
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
     packageCategory: "DINNER",
+    packageTime: "DINNER"
   },
   {
     id: "clqqxbb7r000708l58m9f3ry2",
@@ -128,6 +135,7 @@ export const packages: packagesPartialId = [
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
     packageCategory: "EXCLUSIVE",
+    packageTime: "CUSTOM"
   },
   {
     id: "cm06nexn400000cl59cd4hz0m",
@@ -144,5 +152,6 @@ export const packages: packagesPartialId = [
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
     packageCategory: "CUSTOM",
+    packageTime: "CUSTOM"
   },
 ];
