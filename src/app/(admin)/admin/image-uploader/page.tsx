@@ -1,7 +1,7 @@
 "use client";
 
 import ChooseImg from "@/components/admin/blog/ChooseImg";
-import { UploadButton, UploadDropzone } from "../../../../utils/uploadthing";
+import { UploadButton, UploadDropzone } from "../../../../components/admin/uploadthing/uploadthing";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
