@@ -17,7 +17,7 @@ interface IUserBookingDateSelector {
     child: number;
     adult: number;
   };
-  packageTime: string;
+  packageTime: $Enums.SCHEDULED_TIME;
 }
 export default function UserBookingDateSelector({
   packageTitle,
@@ -108,6 +108,7 @@ export default function UserBookingDateSelector({
           }}
           packageId={packageId}
           packagePrice={packagePrice}
+          packageTime={packageTime}
         />
       )}
       <Button

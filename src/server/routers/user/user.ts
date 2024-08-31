@@ -1,7 +1,8 @@
 import { nanoid } from "nanoid";
 import { db } from "@/db";
-import { findScheduleById } from "@/db/data/dto/schedule";
+import { checkScheduleStatusForTheSelectedDate, findScheduleById } from "@/db/data/dto/schedule";
 import {
+  checkBookingTimeConstraint,
   isCurrentMonthSameAsRequestedMonth,
   isDateValid,
   parseDateFormatYYYMMDDToNumber,
@@ -27,6 +28,7 @@ import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import Razorpay from "razorpay";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { findPackageById } from "@/db/data/dto/package";
 
 type TBlockedScheduleDateArray =  {
   day: Date;
@@ -106,7 +108,7 @@ export const user = router({
         // console.log(day)
         // case 1
          
-        const [schedules, blockedScheduleDateArray]: [TScheduleData,TBlockedScheduleDateArray]= await Promise.all([
+        const [schedules, blockedScheduleDateArray]= await Promise.all([
           db.schedule.findMany({
             select: {
               id: true,
@@ -192,55 +194,45 @@ export const user = router({
           phone,
           scheduleId,
           selectedScheduleDate,
+          packageTime
         },
       }) => {
-        /**
-         * COMMON CHECK!
-         * - check if the package is breakfast ,if yes check if all request are coming before 16 hours
-         *      // Questionable. @{TODO}
-         *    - check if the package is package with food is before , 3 hours earlier
-         *
-         */
-
-        /**
-         * IF SCHEDULE ID EXISTS.
-         *  1. check if the schedule id exists
-         *       - if schedule exists then check  whether the seat is full or have enough seating capacity.
-         *              @success
-         *              - then create the razor-pay payment link
-         *
-         */
-
-        /**
-         * IF SCHEDULE NOT EXISTS > MEANING NEED TO ADD A NEW SCHEDULE AND UPDATE THE DATA.
-         * - if not exists then tedious task.
-         *    - make sure there isn't any schedule on selected Date with ENUM. or Package name ..... (Think more.)
-         *    - check if the packageId exists and not exclusive.
-         *    - check if the selected date is greater than today @see {Reuse-COMMON-CHECK}
-         *    - check if the request is before 16 hours. @see {Reuse-COMMON-CHECK}
-         *    - check if the request package is sunset cruise.
-         *          @[Think more about this.] -> we are adding new ENUM SUNSET.
-         *          - if it is sunset cruise then check-wether there is a a dinner cruise or sunset is blocked .
-         *          -if sunset is okay, then allow to create a razor-pay payment link and proceed.
-         *          - if not then return and throw error
-         *          -
-         *
-         */
-        //=======================================================================================
-
-        /**
-         * BEST CASE SCENARIO
-         *
-         * scheduleID received
-         * total count is received (adult + child)
-         * selected package id in received - from here we can fetch price of the adult and child
-         * total price from frontend is received - check if this matches Db price after fetching
-         *
-         * create new razorpay instance
-         *
-         *
-         */
         try {
+          if(!scheduleId){
+
+            const totalCount = numOfAdults + numOfChildren
+            if(totalCount < 25){
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Count Should of minimum 25, for a new created schedule"
+              })
+            }
+            
+            const packageIdExists = findPackageById(packageId)
+
+            if(!packageIdExists) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Could not find given packageId"
+              })
+            }            
+            
+            const bookingRequestCameBeforeTimeConstraint = checkBookingTimeConstraint({packageTime, selectedDate: selectedScheduleDate})
+
+            if(!bookingRequestCameBeforeTimeConstraint){
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Could not complete booking as it is too late for the selected data, please select a different package or date"
+              })
+            }
+
+            const isScheduleBlocked = checkScheduleStatusForTheSelectedDate({date: selectedScheduleDate, packageTime})
+
+            
+
+          }
+
+          // ==================================================================================================================
           if (scheduleId) {
             const isSchedulePresentInDb = await findScheduleById(scheduleId);
 

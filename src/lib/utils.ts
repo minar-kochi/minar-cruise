@@ -1,10 +1,12 @@
 // import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
+import { $Enums } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
-import { formatISO, isValid, isSameMonth, endOfMonth } from "date-fns";
+import { formatISO, isValid, isSameMonth, endOfMonth, differenceInHours } from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { object } from "zod";
+import { isDinner } from "./validators/Package";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -191,9 +193,11 @@ export function filterDateFromCalender({
   date,
 }: {
   date: Date;
-  dateArray: {
-    day: Date;
-  }[] | undefined;
+  dateArray:
+    | {
+        day: Date;
+      }[]
+    | undefined;
 }) {
   let currDate = getPrevTimeStamp(Date.now());
   // let someOtherDate = new Date("2024-10-15");
@@ -217,4 +221,49 @@ export function filterDateFromCalender({
     return true;
   }
   return false;
+}
+
+export function checkBookingTimeConstraint({
+  packageTime,
+  selectedDate
+}: {
+  packageTime: $Enums.SCHEDULED_TIME;
+  selectedDate: string
+}) {
+  const currentServerTime = new Date(Date.now());
+  const selectedPackageTime = new Date(selectedDate)
+  const timeGap = differenceInHours(currentServerTime, selectedPackageTime)
+
+  if (packageTime === "BREAKFAST") {
+    if(timeGap < 16){
+      return false
+    }
+    return true
+  }
+  if (packageTime === "LUNCH") {
+    if(timeGap < 2){
+      return false
+    }
+    return true
+  }
+  if (packageTime === "SUNSET") {
+    if(timeGap < 1){
+      return false
+    }
+    return true
+  }
+  if (packageTime === "DINNER") {
+    if(timeGap < 2){
+      return false
+    }
+    return true
+  }
+  // exclude exclusive ,custom
+  // if (packageTime === "CUSTOM") {
+  //   if(timeGap < 2){
+  //     return false
+  //   }
+  //   return true
+  // }
+   return false
 }

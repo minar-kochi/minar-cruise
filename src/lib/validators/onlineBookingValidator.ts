@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { error } from "console";
 import { setErrorMap, z } from "zod";
 
@@ -6,6 +7,7 @@ export type TOnlineBookingFormValidator = z.infer<
 >;
 
 const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+type ScheduleTime = typeof $Enums.SCHEDULED_TIME[keyof typeof $Enums.SCHEDULED_TIME]
 
 export const onlineBookingFormValidator = z
   .object({
@@ -42,6 +44,7 @@ export const onlineBookingFormValidator = z
     packageId: z.string(),
     scheduleId: z.string().optional(),
     selectedScheduleDate: z.string(),
+    packageTime: z.enum(Object.values($Enums.SCHEDULED_TIME) as [ScheduleTime, ...ScheduleTime[]])
   })
   .refine(
     (data) => {
@@ -54,7 +57,8 @@ export const onlineBookingFormValidator = z
       message: "Should select at least a total of 25 seats (adult + child)",
       path: ["numOfAdults"],
     },
-  );
+  )
+  
 
 // export type TOnlineBookingFormBackendValidator = z.infer<
 //   typeof onlineBookingFormBackendValidator

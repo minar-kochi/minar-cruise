@@ -295,3 +295,13 @@ export async function getPackageCardDetails() {
     return null;
   }
 }
+
+export async function findPackageById(packageId: string){
+  const packageFound = await db.package.count({
+    where: {
+      id: packageId
+    }
+  })
+  if(!packageFound) return false
+  return true
+} 

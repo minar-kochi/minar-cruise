@@ -40,6 +40,7 @@ interface IBookingFormCard {
     child: number;
     adult: number;
   };
+  packageTime: $Enums.SCHEDULED_TIME
 }
 
 const BookingFormCard = ({
@@ -49,6 +50,7 @@ const BookingFormCard = ({
   packageId,
   selectedDate,
   packagePrice,
+  packageTime
 }: IBookingFormCard) => {
   const {
     register,
@@ -66,6 +68,7 @@ const BookingFormCard = ({
       packageId: packageId,
       scheduleId: selectedSchedule?.scheduleId ?? "",
       selectedScheduleDate: RemoveTimeStampFromDate(selectedDate),
+      packageTime
     },
   });
   const adultCount = watch("numOfAdults");
