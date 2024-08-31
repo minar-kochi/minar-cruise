@@ -164,21 +164,6 @@ export const user = router({
         }
       }
     }),
-  // exampleEndPoint: publicProcedure
-  // .mutation(async({ctx, input})=>{
-  //   try {
-  //     const order = await $RazorPay.orders.create({
-  //       amount: 1000,
-  //       currency: "INR",
-  //     });
-  //     console.log(order);
-  //     return order;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return null;
-  //   }
-  // })
-  // ,
   createRazorPayIntent: publicProcedure
     .input(onlineBookingFormValidator)
     .mutation(
@@ -198,7 +183,27 @@ export const user = router({
         },
       }) => {
         try {
+
+          const packageIdExists = await findPackageById(packageId)
+  
+          if(!packageIdExists) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Could not find given packageId"
+            })
+          }            
+
           if(!scheduleId){
+            
+            const d = packageIdExists.fromTime
+            const isScheduleBlocked = await checkScheduleStatusForTheSelectedDate({date: selectedScheduleDate, packageTime})
+
+            if(isScheduleBlocked){
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Selected Schedule blocked, please select another date/Package "
+              })
+            }
 
             const totalCount = numOfAdults + numOfChildren
             if(totalCount < 25){
@@ -208,15 +213,6 @@ export const user = router({
               })
             }
             
-            const packageIdExists = findPackageById(packageId)
-
-            if(!packageIdExists) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message: "Could not find given packageId"
-              })
-            }            
-            
             const bookingRequestCameBeforeTimeConstraint = checkBookingTimeConstraint({packageTime, selectedDate: selectedScheduleDate})
 
             if(!bookingRequestCameBeforeTimeConstraint){
@@ -225,10 +221,6 @@ export const user = router({
                 message: "Could not complete booking as it is too late for the selected data, please select a different package or date"
               })
             }
-
-            const isScheduleBlocked = checkScheduleStatusForTheSelectedDate({date: selectedScheduleDate, packageTime})
-
-            
 
           }
 
@@ -325,7 +317,7 @@ export const user = router({
             // }
 
             const payment_capture = 1;
-            const amount = GrandTotal; // amount in paisa. In our case it's INR 1
+            const amount = GrandTotal; 
             const currency = "INR";
             const options = {
               amount,
@@ -343,6 +335,22 @@ export const user = router({
               },
             };
 
+            // {
+            //   "eventType": "create.schedule",
+            //   "packageId": "1515151",
+            //   "schedule": {
+            //     "Date": "YYYY-MM-DD",
+            //     "ScheduleTime": "BREAKFAST"
+            //   },
+            //   "booking": {
+            //     "name": "customer.name",
+            //     "phone": "customer.phone",
+            //     "email": "customer.email",
+            //     "adultCount": 1,
+            //     "childCount": 1,
+            //     "babyCount": 1
+            //   }
+            // },
             const order = await $RazorPay.orders.create(options);
 
             const data = {

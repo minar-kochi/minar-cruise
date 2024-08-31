@@ -299,13 +299,15 @@ export async function getPackageCardDetails() {
 
 
 export async function findPackageById(packageId: string){
-  const packageFound = await db.package.count({
+  const packageFound = await db.package.findFirst({
     where: {
-      id: packageId
+      id: packageId,
+      packageCategory: {
+        notIn: ["CUSTOM","EXCLUSIVE"]
+      }
     }
   })
-  if(!packageFound) return false
-  return true
+  return packageFound
 } 
 
 export type TGetPackagesForBlog = Exclude<

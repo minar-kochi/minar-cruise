@@ -21,20 +21,23 @@ export async function checkScheduleStatusForTheSelectedDate({
   date,
   packageTime,
 }: ICheckScheduleStatusForTheSelectedDate) {
+  
   const scheduleStatus = await db.schedule.findFirst({
     where: {
       day: new Date(date),
       schedulePackage: packageTime,
-      scheduleStatus: "BLOCKED"
+      scheduleStatus: {
+        in: ["EXCLUSIVE","BLOCKED"]
+      },
     },
     select: {
       scheduleStatus: true,
     },
   });
-  // scheduleStatus.findIndex((fv)=> fv.scheduleStatus)
+
+  
   return scheduleStatus;
 }
-
 
 export async function findScheduleById(scheduleId: string) {
   try {
