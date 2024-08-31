@@ -129,6 +129,21 @@ enum IMAGE_USE {
   COMMON
 }
 
+enum PROCESSING_STATUS {
+  PENDING
+  PROCESSING
+  FAILED
+  SUCCESS
+}
+
+model Events {
+  id          String            @id @unique @default(cuid())
+  eventId     String
+  description String?
+  FailedCount Int
+  status      PROCESSING_STATUS
+}
+
 model Image {
   id           String         @id @unique @default(cuid())
   url          String
