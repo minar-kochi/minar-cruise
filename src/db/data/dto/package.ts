@@ -13,6 +13,7 @@ import {
 } from "@/lib/validators/Package";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
+import { error } from "console";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { afterEach } from "node:test";
 
@@ -291,6 +292,59 @@ export async function getPackageCardDetails() {
     return data;
   } catch (e) {
     console.error(e);
+    return null;
+  }
+}
+
+export type TGetPackagesForBlog = Exclude<
+  Awaited<ReturnType<typeof getPackagesForBlog>>,
+  null
+>;
+
+export async function getPackagesForBlog() {
+  try {
+    const data = await db.package.findMany({
+      where: {
+        packageCategory: {
+          not: "CUSTOM",
+        },
+      },
+      select: {
+        id: true,
+        adultPrice: true,
+        title: true,
+        slug:true,
+        packageImage: {
+          take: 1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getPackagesForBlog fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    ErrorLogger(error);
     return null;
   }
 }

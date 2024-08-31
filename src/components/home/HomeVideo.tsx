@@ -1,9 +1,9 @@
-import SearchBarWrapper from "../searchbar/SearchBarWrapper";
+// import SearchBarWrapper from "../searchbar/SearchBarWrapper";
 
 const HomeVideo = () => {
   return (
     <div className="relative">
-      <SearchBarWrapper className="absolute bottom-0 w-full" />
+      {/* <SearchBarWrapper className=" absolute bottom-0 w-full" /> */}
 
       <video
         className="pointer-events-none object-cover h-[calc(100vh-80px)] w-full "

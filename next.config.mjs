@@ -19,6 +19,10 @@ const nextConfig = {
         hostname: "drive.google.com",
         protocol: "https",
       },
+      {
+        hostname: "utfs.io",
+        protocol: "https",
+      },
     ],
   },
 };

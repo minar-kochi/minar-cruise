@@ -134,6 +134,28 @@ model Image {
   alt          String
   ImageUse     IMAGE_USE[]    @default([COMMON])
   packageImage PackageImage[]
+  Blog         Blog[]
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Blog {
+  id         String     @id @default(cuid())
+  author     String
+  title      String
+  blogSlug   String     @unique
+  shortDes   String     @db.Text
+  content    String     @db.Text
+  image      Image     @relation(fields: [imageId], references: [id])
+  imageId    String
+  banner     String?
+  blogStatus BlogStatus
+  createdAt  DateTime   @default(now())
+
+  @@index([blogSlug])
 }
 
 model PackageImage {

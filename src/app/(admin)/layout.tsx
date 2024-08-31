@@ -27,6 +27,9 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ScheduleBarWrapper from "@/container/admin/schedule/ScheduleBarWrapper";
 import { ModalProvider } from "@/context/ModalProvider";
 import ModalStoreProvider from "@/providers/adminStore/ModalStoreProvider";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "../api/uploadthing/core";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -59,6 +62,9 @@ export default async function RootLayout({
               <Toaster />
               <Providers>
                 <Suspense fallback={<Skeleton className="h-full w-full" />}>
+                  <NextSSRPlugin
+                    routerConfig={extractRouterConfig(ourFileRouter)}
+                  />
                   {children}
                   <ScheduleBarWrapper />
                 </Suspense>
