@@ -71,13 +71,19 @@ export default async function MobileNavbar() {
 
               <hr className="border-gray-300 my-4" />
 
-              <Link href="/" className="cursor-pointer  hover:text-red-500 ">
+              <Link
+                href="/facilities"
+                className="cursor-pointer  hover:text-red-500 "
+              >
                 Facilities
               </Link>
 
               <hr className="border-gray-300 my-4" />
 
-              <Link href="/" className="cursor-pointer  hover:text-red-500 ">
+              <Link
+                href="/about"
+                className="cursor-pointer  hover:text-red-500 "
+              >
                 About
               </Link>
 
@@ -117,7 +123,10 @@ export default async function MobileNavbar() {
 
               <hr className="border-gray-300 my-4" />
 
-              <Link href="/" className="cursor-pointer  hover:text-red-500 ">
+              <Link
+                href="/contact"
+                className="cursor-pointer  hover:text-red-500 "
+              >
                 Contact
               </Link>
             </DrawerDescription>
