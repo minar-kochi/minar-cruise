@@ -44,7 +44,38 @@ export async function createEventorThrow({
     throw new Error("Failed to create");
   }
 }
-
+export async function updateEventToSucess({ id }: { id: string }) {
+  try {
+    const createdEvents = await db.events.update({
+      where: {
+        id: id,
+      },
+      data: {
+        status: "SUCCESS",
+      },
+    });
+    return createdEvents;
+  } catch (error) {
+    ErrorLogger(error);
+    throw new Error("Failed to create");
+  }
+}
+export async function updateEventToFailed({ id }: { id: string }) {
+  try {
+    const createdEvents = await db.events.update({
+      where: {
+        id: id,
+      },
+      data: {
+        status: "FAILED",
+      },
+    });
+    return createdEvents;
+  } catch (error) {
+    ErrorLogger(error);
+    throw new Error("Failed to create");
+  }
+}
 export async function UpdateFailedCount(id: string) {
   try {
     const data = await db.events.update({

@@ -10,13 +10,19 @@ import {
 } from "@/constants/config";
 import { Booking } from "@prisma/client";
 import { OrderPaidEventError } from "@/class/razorpay/OrderPaidError";
+import { updateEventToFailed, updateEventToSucess } from "../data/dto/events";
+import { NextResponse } from "next/server";
 
 export async function handleExistingScheduleOrder({
   events,
   orderBody,
 }: TOrderEvent<any>) {
   try {
-    const order = orderBody.payload.order;
+    console.log('Getting order')
+    const order = orderBody.payload.order.entity;
+    console.log('ORDER:', order)
+
+
     const paymentEntity = orderBody.payload.payment.entity;
     const {
       adultCount,
@@ -28,16 +34,20 @@ export async function handleExistingScheduleOrder({
       packageId,
       scheduleId,
       userId,
-    } = orderBody.payload.order.notes as TRazorPayEventsExistingSchedule;
+    } = order.notes as TRazorPayEventsExistingSchedule;
+    
     let booking: Booking | null = null;
+    
     let createEventRetryLoop = DATABASE_CREATE_RETRY_LOOP_STARTS_FROM;
+    
     let createEventFlag = false;
     while (
       createEventRetryLoop <= MAX_DATABASE_CREATE_RETRY_LOOP &&
       !createEventFlag
     ) {
+      console.log('Trying to create Booking')
       try {
-        booking = await db.booking.create({ 
+        booking = await db.booking.create({
           data: {
             schedule: {
               connect: {
@@ -70,6 +80,7 @@ export async function handleExistingScheduleOrder({
             },
           },
         });
+        console.log("booking created")
         createEventFlag = true;
         continue;
       } catch (error) {
@@ -77,6 +88,7 @@ export async function handleExistingScheduleOrder({
       }
     }
     if (!booking || !booking.id) {
+      console.log('Throwing Error if not Created')
       throw new OrderPaidEventError({
         code: "BOOKING_CREATE_FAILED",
         fatality: {
@@ -85,6 +97,13 @@ export async function handleExistingScheduleOrder({
         },
       });
     }
-    return true;
-  } catch (error) {}
+    console.log('Updating Events')
+    await updateEventToSucess({ id: events.id });
+    console.log('Returning 200 Response')
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    await updateEventToFailed({ id: events.id });
+    return NextResponse.json({ success: false }, { status: 400 });
+
+  }
 }

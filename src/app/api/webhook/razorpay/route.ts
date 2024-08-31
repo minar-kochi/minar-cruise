@@ -34,9 +34,9 @@ export async function POST(request: NextRequest, res: NextResponse) {
       return NextResponse.json({ success: false }, { status: 400 });
     }
     let body = await request.json();
-
     /// calculating signature from the body and secret
     const generatedSignature = generateSignature(body);
+    console.log(body)
 
     // check whether the generated and incomming are same, if so use the body and the body is securely send from razor-pay
     if (generatedSignature !== IncommingSignature) {
@@ -50,6 +50,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
     let DbEvent = await getEventById(eventId);
 
     if (DbEvent && DbEvent.id) {
+      console.log('Event has not found')
       /**
        *
        * Check the status of DbEvent.
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
          * Return as 200 Response. and end the loop of webhook
          */
         case "SUCCESS": {
+          console.log('Db event is sucessfull')
           return NextResponse.json({ success: true }, { status: 200 });
           break;
         }
@@ -73,6 +75,8 @@ export async function POST(request: NextRequest, res: NextResponse) {
          * notify the admin WhatsApp that the event has been failed with appropriate information
          */
         case "FAILED": {
+          console.log('Db event is Failed')
+
           if (DbEvent.FailedCount > MAX_EVENT_RETRY_WEBHOOK_COUNT) {
             /**
              * @TODO Add whats app pipeline Pipeline for event failed 5 times in a raw.
@@ -90,6 +94,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
          * so that it can go to retry loop.
          */
         case "PROCESSING": {
+          console.log('Db event is Processing')
           // No need to do this request awaiting for the current function to be completed.
           return NextResponse.json({ success: true }, { status: 425 });
           break;
@@ -100,6 +105,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
     let DbCreateEvent: Events | null;
     // There is no Event as of now, we could either create one
     if (!DbEvent?.id) {
+      console.log('Creating event.')
       /**
        * @CREATE_DB_EVENT
        */
@@ -122,7 +128,8 @@ export async function POST(request: NextRequest, res: NextResponse) {
         }
       }
     }
-    if (!DbEvent || DbEvent?.id) {
+    if (!DbEvent || !DbEvent?.id) {
+      console.log('Event still not created. returning Failed')
       /**
        *
        * @TODO Add whats app pipeline Pipeline for event failed
@@ -134,10 +141,9 @@ export async function POST(request: NextRequest, res: NextResponse) {
 
 
     
-    switch (body.events) {
+    switch (body.event) {
       case "order.paid": {
-        handleOrderPaidEvent({ events: DbEvent, orderBody: body });
-        break;
+        return await handleOrderPaidEvent({ events: DbEvent, orderBody: body });
       }
     }
     return NextResponse.json({ success: true }, { status: 200 });
