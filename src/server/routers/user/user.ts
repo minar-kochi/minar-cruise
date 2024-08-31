@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import { db } from "@/db";
-import { checkScheduleStatusForTheSelectedDate, findScheduleById } from "@/db/data/dto/schedule";
+import {
+  checkScheduleStatusForTheSelectedDate,
+  findScheduleById,
+} from "@/db/data/dto/schedule";
 import {
   checkBookingTimeConstraint,
   isCurrentMonthSameAsRequestedMonth,
@@ -30,16 +33,16 @@ import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { findPackageById } from "@/db/data/dto/package";
 
-type TBlockedScheduleDateArray =  {
+type TBlockedScheduleDateArray = {
   day: Date;
-}[]
+}[];
 
 type TScheduleData = {
   id: string;
   day: Date;
   packageId: string | null;
   scheduleStatus: $Enums.SCHEDULE_STATUS;
-}[]
+}[];
 
 export const user = router({
   getSchedulesByPackageIdAndDate: publicProcedure
@@ -50,120 +53,122 @@ export const user = router({
         date: z.string(),
       }),
     )
-    .query(async ({ ctx, input: { date: clientDate, packageId, packageTime } }) => {
-      try {
-        const isPackageExist = await db.package.count({
-          where: {
-            id: packageId,
-          },
-        });
-        if (!isPackageExist) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Package not found!",
-          });
-        }
-        const date = parseDateFormatYYYMMDDToNumber(clientDate);
-        if (!date) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Date Format is not valid YYYY-MM-DD",
-          });
-        }
-
-        const validatedDate = isDateValid(date);
-
-        if (!validatedDate) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Requested date is invalid",
-          });
-        }
-
-        const isSameMonth = isCurrentMonthSameAsRequestedMonth(clientDate);
-
-        const currentServerDate = RemoveTimeStampFromDate(new Date(Date.now()));
-        const endOfTheMonthServerDate = RemoveTimeStampFromDate(
-          endOfMonth(currentServerDate),
-        );
-        const startOfMonthClientDate = RemoveTimeStampFromDate(
-          startOfMonth(clientDate),
-        );
-        const endOfMonthClientDate = RemoveTimeStampFromDate(
-          endOfMonth(clientDate),
-        );
-
-        /**
-         * Change this Logic to another func.
-         */
-        // const day = isSameMonth
-        //   ? {
-        //       gte: new Date(currentServerDate),
-        //       lte: new Date(endOfTheMonthServerDate),
-        //     }
-        //   : {
-        //       gte: new Date(startOfMonthClientDate),
-        //       lte: new Date(endOfMonthClientDate),
-        //     };
-        // console.log(day)
-        // case 1
-         
-        const [schedules, blockedScheduleDateArray]= await Promise.all([
-          db.schedule.findMany({
-            select: {
-              id: true,
-              packageId: true,
-              day: true,
-              scheduleStatus: true
-            },
+    .query(
+      async ({ ctx, input: { date: clientDate, packageId, packageTime } }) => {
+        try {
+          const isPackageExist = await db.package.count({
             where: {
-              packageId,
-              day: isSameMonth
-                ? {
-                    gte: new Date(currentServerDate),
-                    lte: new Date(endOfTheMonthServerDate),
-                  }
-                : {
-                    gte: new Date(startOfMonthClientDate),
-                    lte: new Date(endOfMonthClientDate),
-                  },
+              id: packageId,
             },
-            orderBy: {
-              day: "asc",
-            },
-          }),
-        
+          });
+          if (!isPackageExist) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Package not found!",
+            });
+          }
+          const date = parseDateFormatYYYMMDDToNumber(clientDate);
+          if (!date) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Date Format is not valid YYYY-MM-DD",
+            });
+          }
 
-          db.schedule.findMany({
-            where: {
-              // @ts-ignore
-              schedulePackage: packageTime,
-              scheduleStatus: "BLOCKED",
-              day: isSameMonth
-                ? {
-                    gte: new Date(currentServerDate),
-                    lte: new Date(endOfTheMonthServerDate),
-                  }
-                : {
-                    gte: new Date(startOfMonthClientDate),
-                    lte: new Date(endOfMonthClientDate),
-                  },
-            },
-            select: {
-              day: true
-            }
-          })
-        ]);
-        
-       
-        // console.log(schedules);
-        return {schedules,blockedScheduleDateArray} ;
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw new TRPCError({ code: error.code, message: error.message });
+          const validatedDate = isDateValid(date);
+
+          if (!validatedDate) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Requested date is invalid",
+            });
+          }
+
+          const isSameMonth = isCurrentMonthSameAsRequestedMonth(clientDate);
+
+          const currentServerDate = RemoveTimeStampFromDate(
+            new Date(Date.now()),
+          );
+          const endOfTheMonthServerDate = RemoveTimeStampFromDate(
+            endOfMonth(currentServerDate),
+          );
+          const startOfMonthClientDate = RemoveTimeStampFromDate(
+            startOfMonth(clientDate),
+          );
+          const endOfMonthClientDate = RemoveTimeStampFromDate(
+            endOfMonth(clientDate),
+          );
+
+          /**
+           * Change this Logic to another func.
+           */
+          // const day = isSameMonth
+          //   ? {
+          //       gte: new Date(currentServerDate),
+          //       lte: new Date(endOfTheMonthServerDate),
+          //     }
+          //   : {
+          //       gte: new Date(startOfMonthClientDate),
+          //       lte: new Date(endOfMonthClientDate),
+          //     };
+          // console.log(day)
+          // case 1
+
+          const [schedules, blockedScheduleDateArray] = await Promise.all([
+            db.schedule.findMany({
+              select: {
+                id: true,
+                packageId: true,
+                day: true,
+                scheduleStatus: true,
+              },
+              where: {
+                packageId,
+                day: isSameMonth
+                  ? {
+                      gte: new Date(currentServerDate),
+                      lte: new Date(endOfTheMonthServerDate),
+                    }
+                  : {
+                      gte: new Date(startOfMonthClientDate),
+                      lte: new Date(endOfMonthClientDate),
+                    },
+              },
+              orderBy: {
+                day: "asc",
+              },
+            }),
+
+            db.schedule.findMany({
+              where: {
+                // @ts-ignore
+                schedulePackage: packageTime,
+                scheduleStatus: "BLOCKED",
+                day: isSameMonth
+                  ? {
+                      gte: new Date(currentServerDate),
+                      lte: new Date(endOfTheMonthServerDate),
+                    }
+                  : {
+                      gte: new Date(startOfMonthClientDate),
+                      lte: new Date(endOfMonthClientDate),
+                    },
+              },
+              select: {
+                day: true,
+              },
+            }),
+          ]);
+
+          // console.log(schedules);
+          return { schedules, blockedScheduleDateArray };
+        } catch (error) {
+          if (error instanceof TRPCError) {
+            throw new TRPCError({ code: error.code, message: error.message });
+          }
         }
-      }
-    }),
+      },
+    ),
   createRazorPayIntent: publicProcedure
     .input(onlineBookingFormValidator)
     .mutation(
@@ -179,49 +184,56 @@ export const user = router({
           phone,
           scheduleId,
           selectedScheduleDate,
-          packageTime
+          packageTime,
         },
       }) => {
         try {
+          const packageIdExists = await findPackageById(packageId);
 
-          const packageIdExists = await findPackageById(packageId)
-  
-          if(!packageIdExists) {
+          if (!packageIdExists) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Could not find given packageId"
-            })
-          }            
+              message: "Could not find given packageId",
+            });
+          }
 
-          if(!scheduleId){
-            
-            const d = packageIdExists.fromTime
-            const isScheduleBlocked = await checkScheduleStatusForTheSelectedDate({date: selectedScheduleDate, packageTime})
+          if (!scheduleId) {
+            const isScheduleBlocked =
+              await checkScheduleStatusForTheSelectedDate({
+                date: selectedScheduleDate,
+                packageTime,
+              });
 
-            if(isScheduleBlocked){
+            if (isScheduleBlocked) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
-                message: "Selected Schedule blocked, please select another date/Package "
-              })
+                message:
+                  "Selected Schedule blocked, please select another date/Package ",
+              });
             }
 
-            const totalCount = numOfAdults + numOfChildren
-            if(totalCount < 25){
+            const totalCount = numOfAdults + numOfChildren;
+            if (totalCount < 25) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
-                message: "Count Should of minimum 25, for a new created schedule"
-              })
+                message:
+                  "Count Should of minimum 25, for a new created schedule",
+              });
             }
-            
-            const bookingRequestCameBeforeTimeConstraint = checkBookingTimeConstraint({packageTime, selectedDate: selectedScheduleDate})
 
-            if(!bookingRequestCameBeforeTimeConstraint){
+            const bookingRequestCameBeforeTimeConstraint = checkBookingTimeConstraint({
+                packageTime,
+                selectedDate: selectedScheduleDate,
+                startFrom: packageIdExists.fromTime,
+              });
+
+            if (!bookingRequestCameBeforeTimeConstraint) {
               throw new TRPCError({
                 code: "BAD_REQUEST",
-                message: "Could not complete booking as it is too late for the selected data, please select a different package or date"
-              })
+                message:
+                  "Could not complete booking as it is too late for the selected data, please select a different package or date",
+              });
             }
-
           }
 
           // ==================================================================================================================
@@ -317,7 +329,7 @@ export const user = router({
             // }
 
             const payment_capture = 1;
-            const amount = GrandTotal; 
+            const amount = GrandTotal;
             const currency = "INR";
             const options = {
               amount,

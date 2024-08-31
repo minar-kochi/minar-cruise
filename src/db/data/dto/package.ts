@@ -297,18 +297,21 @@ export async function getPackageCardDetails() {
   }
 }
 
-
-export async function findPackageById(packageId: string){
-  const packageFound = await db.package.findFirst({
-    where: {
-      id: packageId,
-      packageCategory: {
-        notIn: ["CUSTOM","EXCLUSIVE"]
-      }
-    }
-  })
-  return packageFound
-} 
+export async function findPackageById(packageId: string) {
+  try {
+    const packageFound = await db.package.findFirst({
+      where: {
+        id: packageId,
+        packageCategory: {
+          notIn: ["CUSTOM", "EXCLUSIVE"],
+        },
+      },
+    });
+    return packageFound;
+  } catch (error) {
+    return null;
+  }
+}
 
 export type TGetPackagesForBlog = Exclude<
   Awaited<ReturnType<typeof getPackagesForBlog>>,
@@ -327,7 +330,7 @@ export async function getPackagesForBlog() {
         id: true,
         adultPrice: true,
         title: true,
-        slug:true,
+        slug: true,
         packageImage: {
           take: 1,
           where: {
@@ -362,4 +365,3 @@ export async function getPackagesForBlog() {
     return null;
   }
 }
-

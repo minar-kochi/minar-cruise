@@ -2,11 +2,28 @@
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { $Enums } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
-import { formatISO, isValid, isSameMonth, endOfMonth, differenceInHours } from "date-fns";
+import {
+  formatISO,
+  isValid,
+  isSameMonth,
+  endOfMonth,
+  differenceInHours,
+} from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { object } from "zod";
 import { isDinner } from "./validators/Package";
+import { DateTime } from "luxon";
+import {
+  isStatusBreakfast,
+  isStatusDinner,
+  isStatusLunch,
+} from "./validators/Schedules";
+import {
+  MIN_BREAKFAST_BOOKING_HOUR,
+  MIN_DINNER_BOOKING_HOUR,
+  MIN_LUNCH_BOOKING_HOUR,
+} from "@/constants/config/business";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -187,6 +204,16 @@ export function combineDateWithSplitedTime(date: Date, time: TTimeCycle) {
   newDate.setSeconds(0);
   return newDate;
 }
+export function getISTDateFromZ(date: Date) {
+  return date.toLocaleDateString(undefined, {
+    timeZone: "Asia/Kolkata",
+  });
+}
+export function getISTDateAndTimeFromZ(date: Date) {
+  return date.toLocaleString(undefined, {
+    timeZone: "Asia/Kolkata",
+  });
+}
 
 export function filterDateFromCalender({
   dateArray,
@@ -225,45 +252,74 @@ export function filterDateFromCalender({
 
 export function checkBookingTimeConstraint({
   packageTime,
-  selectedDate
+  startFrom,
+  selectedDate,
 }: {
   packageTime: $Enums.SCHEDULED_TIME;
-  selectedDate: string
+  startFrom: string;
+  selectedDate: string;
 }) {
-  const currentServerTime = new Date(Date.now());
-  const selectedPackageTime = new Date(selectedDate)
-  const timeGap = differenceInHours(currentServerTime, selectedPackageTime)
+  const UTCISTDATE = convertYYYMMDDStringAndTimeStringToUTCDate(
+    selectedDate,
+    startFrom,
+  );
+  if (!UTCISTDATE) {
+    return false;
+  }
+  const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
+  if (isStatusBreakfast(packageTime)) {
+    return timeGap > MIN_BREAKFAST_BOOKING_HOUR;
+  }
+  if (isStatusLunch(packageTime)) {
+    return timeGap > MIN_LUNCH_BOOKING_HOUR;
+  }
+  if (isStatusDinner(packageTime)) {
+    return timeGap > MIN_DINNER_BOOKING_HOUR;
+  }
+  return false;
+}
 
-  if (packageTime === "BREAKFAST") {
-    if(timeGap < 16){
-      return false
-    }
-    return true
+export function convert12HourTo24Hour({
+  hours: hour,
+  min,
+  Cycle,
+}: TTimeCycle): { hour: number; minute: number } {
+  let hourInt = parseInt(hour);
+  let minInt = parseInt(min);
+
+  if (Cycle === "AM" && hourInt === 12) {
+    hourInt = 0; // Convert 12:00 AM to 00:00
+  } else if (Cycle === "PM" && hourInt !== 12) {
+    hourInt += 12; // Convert PM hour to 24-hour format, except for 12:00 PM
   }
-  if (packageTime === "LUNCH") {
-    if(timeGap < 2){
-      return false
+
+  return { hour: hourInt, minute: minInt };
+}
+
+export function convertYYYMMDDStringAndTimeStringToUTCDate(
+  dates: string,
+  time: string,
+) {
+  try {
+    const DateCycle = parseDateFormatYYYMMDDToNumber(dates);
+    const timeCycle = splitTimeColon(time);
+    if (!timeCycle || !DateCycle) {
+      return null;
     }
-    return true
+    const TwentyFourHourFormat = convert12HourTo24Hour(timeCycle);
+    console.log(TwentyFourHourFormat);
+    let zo = DateTime.fromObject(
+      {
+        ...DateCycle,
+        ...TwentyFourHourFormat,
+      },
+      { zone: "Asia/Kolkata" },
+    );
+    return {
+      LuxObj: zo,
+      parsedDate: zo.toJSDate(),
+    };
+  } catch (error) {
+    return null;
   }
-  if (packageTime === "SUNSET") {
-    if(timeGap < 1){
-      return false
-    }
-    return true
-  }
-  if (packageTime === "DINNER") {
-    if(timeGap < 2){
-      return false
-    }
-    return true
-  }
-  // exclude exclusive ,custom
-  // if (packageTime === "CUSTOM") {
-  //   if(timeGap < 2){
-  //     return false
-  //   }
-  //   return true
-  // }
-   return false
 }

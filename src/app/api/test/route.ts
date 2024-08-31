@@ -6,40 +6,48 @@ import {
 } from "@/constants/config";
 import { ThrowTemplate } from "@/db/data/dto/events";
 import { handleOrderPaidEvent } from "@/db/hooks/razorpay";
-import { sleep } from "@/lib/utils";
+import {
+  combineDateWithSplitedTime,
+  convert12HourTo24Hour,
+  convertYYYMMDDStringAndTimeStringToUTCDate,
+  getISTDateAndTimeFromZ,
+  getUTCDate,
+  parseDateFormatYYYMMDDToNumber,
+  RemoveTimeStampFromDate,
+  sleep,
+  splitTimeColon,
+} from "@/lib/utils";
 import { PROCESSING_STATUS } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import moment from "moment";
 import { NextRequest, NextResponse } from "next/server";
-
+import luxon, { DateTime, Zone } from "luxon";
+import { isStatusBreakfast } from "@/lib/validators/Schedules";
+import { MIN_BREAKFAST_BOOKING_HOUR } from "@/constants/config/business";
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    let createEventRetryLoop = DATABASE_CREATE_RETRY_LOOP_STARTS_FROM;
+    const dates = "2024-09-01";
+    const time = "09:00:AM";
+    const dateTimeString = `${dates} ${time}`;
+    const serverDate = new Date(Date.now());
 
-    let createEventFlag = false;
-
-    let triggerCount = 2;
-
-    let data = await req.json();
-
-    const DbEvent: PROCESSING_STATUS = data.event;
-
-    switch (DbEvent) {
-      case "SUCCESS": {
-        return NextResponse.json({ success: true }, { status: 200 });
-        break;
-      }
-      case "FAILED": {
-        await handleOrderPaidEvent({ events: "world" });
-        // throw new handleOrderPaidEvent({ code: "BAD_REQUEST", message: "FAILED" });
-        break;
-      }
-      case "PROCESSING": {
-        return NextResponse.json({ success: true }, { status: 425 });
-        break;
-      }
+    const UTCISTDATE = convertYYYMMDDStringAndTimeStringToUTCDate(dates, time);
+    if(!UTCISTDATE){
+      throw new Error('something is not wright')
     }
-    console.log("Sucessfully returned");
-    return NextResponse.json({ order: true }, { status: 425 });
+    const timeGap = UTCISTDATE?.LuxObj.diffNow("hour").hours;
+    console.log(timeGap)
+    if (isStatusBreakfast("BREAKFAST")) {
+      console.log(timeGap > MIN_BREAKFAST_BOOKING_HOUR)
+    }
+    return NextResponse.json(
+      {
+        state: dateTimeString,
+        answer: UTCISTDATE,
+        currentTime: new Date(Date.now()),
+      },
+      { status: 425 },
+    );
   } catch (error) {
     console.log(error);
     if (error instanceof TRPCError) {
@@ -51,3 +59,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
   }
 }
+
+// export async function GET() {
+
+// }
