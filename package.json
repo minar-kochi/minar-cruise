@@ -73,6 +73,7 @@
     "redux": "^5.0.1",
     "remark-gfm": "^4.0.0",
     "remark-toc": "^9.0.0",
+    "resend": "^4.0.0",
     "server-only": "^0.0.1",
     "shadcn-ui": "^0.2.3",
     "sharp": "^0.33.4",
@@ -81,6 +82,7 @@
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.15.7",
     "vaul": "^0.9.1",
+    "whatsapp": "^0.0.5-Alpha",
     "zod": "^3.23.8"
   },
   "devDependencies": {
