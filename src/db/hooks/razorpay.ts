@@ -32,17 +32,6 @@ export async function handleOrderPaidEvent({
         return await handleExistingScheduleOrder({ events, orderBody });
         break
       }
-      case "schedule.create.sunset": {
-        console.log("Handing schedule create sunset event");
-        throw new OrderPaidEventError({
-          code: "NOT_IMPLIMENTED",
-          fatality: {
-            fatal: true,
-            message: `schedule.create.sunset is not implimented for order ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Contact: ${orderBody.payload.payment.entity.contact}  `,
-          },
-        });
-        break
-      }
       case "UNKNOWN": {
         console.log("UNKNOWN ERROR OCCURRED");
         throw new OrderPaidEventError({
