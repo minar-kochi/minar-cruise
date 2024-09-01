@@ -1,38 +1,30 @@
-import { nanoid } from "nanoid";
 import { db } from "@/db";
+
 import {
-  checkScheduleStatusForTheSelectedDate,
-  findScheduleById,
-} from "@/db/data/dto/schedule";
-import {
-  checkBookingTimeConstraint,
   isCurrentMonthSameAsRequestedMonth,
   isDateValid,
   parseDateFormatYYYMMDDToNumber,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import { onlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
-import { isBreakFast } from "@/lib/validators/Package";
-import { isStatusBreakfast } from "@/lib/validators/Schedules";
 import { publicProcedure, router } from "@/server/trpc";
-import { $Enums } from "@prisma/client";
+import { $Enums, PrismaClient, SCHEDULED_TIME } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import {
-  differenceInHours,
-  differenceInMinutes,
-  endOfMonth,
-  format,
-  startOfMonth,
-} from "date-fns";
-import { promise, z } from "zod";
-import { totalBookedSeats } from "@/db/data/dto/booking";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import { endOfMonth, startOfMonth } from "date-fns";
+import { z } from "zod";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import Razorpay from "razorpay";
-import { $RazorPay } from "@/lib/helpers/RazorPay";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { findPackageById } from "@/db/data/dto/package";
-
+import { findPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
+import { decideCreateOrExisting } from "@/lib/helpers/RequestToCreateSchedule";
+import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
+import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
+import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
+import { isStatusSunset } from "@/lib/validators/Schedules";
+// import { CreateBookingForExistingSchedule } from "./userBookingCreateScheduleTRPC";
+// import { CreateBookingForNewSchedule } from "./userBookingExistingScheduleTRPC";
+export type QueryObj = [
+  { id: string | undefined },
+  { day: Date; schedulePackage: SCHEDULED_TIME },
+];
 type TBlockedScheduleDateArray = {
   day: Date;
 }[];
@@ -48,416 +40,313 @@ export const user = router({
   getSchedulesByPackageIdAndDate: publicProcedure
     .input(
       z.object({
-        packageTime: z.string(),
         packageId: z.string(),
         date: z.string(),
       }),
     )
-    .query(
-      async ({ ctx, input: { date: clientDate, packageId, packageTime } }) => {
-        try {
-          const isPackageExist = await db.package.count({
-            where: {
-              id: packageId,
-            },
+    .query(async ({ ctx, input: { date: clientDate, packageId } }) => {
+      try {
+        const isPackageExist = await db.package.findFirst({
+          where: {
+            id: packageId,
+          },
+          select: {
+            id: true,
+            packageCategory: true,
+          },
+        });
+
+        if (!isPackageExist) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Package not found!",
           });
-          if (!isPackageExist) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Package not found!",
-            });
-          }
-          const date = parseDateFormatYYYMMDDToNumber(clientDate);
-          if (!date) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Date Format is not valid YYYY-MM-DD",
-            });
-          }
-
-          const validatedDate = isDateValid(date);
-
-          if (!validatedDate) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Requested date is invalid",
-            });
-          }
-
-          const isSameMonth = isCurrentMonthSameAsRequestedMonth(clientDate);
-
-          const currentServerDate = RemoveTimeStampFromDate(
-            new Date(Date.now()),
-          );
-          const endOfTheMonthServerDate = RemoveTimeStampFromDate(
-            endOfMonth(currentServerDate),
-          );
-          const startOfMonthClientDate = RemoveTimeStampFromDate(
-            startOfMonth(clientDate),
-          );
-          const endOfMonthClientDate = RemoveTimeStampFromDate(
-            endOfMonth(clientDate),
-          );
-
-          /**
-           * Change this Logic to another func.
-           */
-          // const day = isSameMonth
-          //   ? {
-          //       gte: new Date(currentServerDate),
-          //       lte: new Date(endOfTheMonthServerDate),
-          //     }
-          //   : {
-          //       gte: new Date(startOfMonthClientDate),
-          //       lte: new Date(endOfMonthClientDate),
-          //     };
-          // console.log(day)
-          // case 1
-
-          const [schedules, blockedScheduleDateArray] = await Promise.all([
-            db.schedule.findMany({
-              select: {
-                id: true,
-                packageId: true,
-                day: true,
-                scheduleStatus: true,
-              },
-              where: {
-                packageId,
-                day: isSameMonth
-                  ? {
-                      gte: new Date(currentServerDate),
-                      lte: new Date(endOfTheMonthServerDate),
-                    }
-                  : {
-                      gte: new Date(startOfMonthClientDate),
-                      lte: new Date(endOfMonthClientDate),
-                    },
-              },
-              orderBy: {
-                day: "asc",
-              },
-            }),
-
-            db.schedule.findMany({
-              where: {
-                // @ts-ignore
-                schedulePackage: packageTime,
-                scheduleStatus: "BLOCKED",
-                day: isSameMonth
-                  ? {
-                      gte: new Date(currentServerDate),
-                      lte: new Date(endOfTheMonthServerDate),
-                    }
-                  : {
-                      gte: new Date(startOfMonthClientDate),
-                      lte: new Date(endOfMonthClientDate),
-                    },
-              },
-              select: {
-                day: true,
-              },
-            }),
-          ]);
-
-          // console.log(schedules);
-          return { schedules, blockedScheduleDateArray };
-        } catch (error) {
-          if (error instanceof TRPCError) {
-            throw new TRPCError({ code: error.code, message: error.message });
-          }
         }
-      },
-    ),
+        let packageTime = isPackageExist.packageCategory;
+        if (packageTime === "CUSTOM" || packageTime === "EXCLUSIVE") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "This package Cannot booked.",
+          });
+        }
+        const date = parseDateFormatYYYMMDDToNumber(clientDate);
+        if (!date) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Date Format is not valid YYYY-MM-DD",
+          });
+        }
+
+        const validatedDate = isDateValid(date);
+
+        if (!validatedDate) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Requested date is invalid",
+          });
+        }
+
+        const isSameMonth = isCurrentMonthSameAsRequestedMonth(clientDate);
+
+        const currentServerDate = RemoveTimeStampFromDate(new Date(Date.now()));
+
+        const endOfTheMonthServerDate = RemoveTimeStampFromDate(
+          endOfMonth(currentServerDate),
+        );
+
+        const startOfMonthClientDate = RemoveTimeStampFromDate(
+          startOfMonth(clientDate),
+        );
+
+        const endOfMonthClientDate = RemoveTimeStampFromDate(
+          endOfMonth(clientDate),
+        );
+        const dateRange = isSameMonth
+          ? {
+              gte: new Date(currentServerDate),
+              lte: new Date(endOfTheMonthServerDate),
+            }
+          : {
+              gte: new Date(startOfMonthClientDate),
+              lte: new Date(endOfMonthClientDate),
+            };
+
+        const data = await db.schedule.findMany({
+          where: {
+            day: dateRange,
+            OR: [
+              { packageId },
+              {
+                scheduleStatus: { in: ["BLOCKED", "EXCLUSIVE"] },
+                schedulePackage: packageTime,
+              },
+            ],
+          },
+          select: {
+            packageId: true,
+            day: true,
+            id: true,
+            scheduleStatus: true,
+            schedulePackage: true,
+          },
+          orderBy: {
+            day: "asc",
+          },
+        });
+        const schedules = data.filter((fv) => fv.packageId === packageId);
+        const blockedScheduleDateArray = data
+          .filter(
+            (fv) =>
+              fv.scheduleStatus === "BLOCKED" ||
+              fv.scheduleStatus === "EXCLUSIVE",
+          )
+          .map((item) => ({ day: item.day }));
+
+        return { schedules, blockedScheduleDateArray };
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
+        }
+        if (error instanceof PrismaClient) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong while retrieving data",
+          });
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something unexpected happened.",
+        });
+      }
+    }),
   createRazorPayIntent: publicProcedure
     .input(onlineBookingFormValidator)
-    .mutation(
-      async ({
-        ctx,
-        input: {
-          email,
-          name,
-          numOfAdults,
-          numOfBaby,
-          numOfChildren,
-          packageId,
-          phone,
-          scheduleId,
-          selectedScheduleDate,
-          packageTime,
-        },
-      }) => {
-        try {
-          const packageIdExists = await findPackageById(packageId);
+    .mutation(async ({ ctx, input }) => {
+      const { packageId, scheduleId, selectedScheduleDate } = input;
 
-          if (!packageIdExists) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Could not find given packageId",
-            });
-          }
+      try {
+        // Check if the package trying to book is either exist or it is available for public to book
+        const packageIdExists =
+          await findPackageByIdExcludingCustomAndExclusive(packageId);
 
-          if (!scheduleId) {
-            const isScheduleBlocked =
-              await checkScheduleStatusForTheSelectedDate({
-                date: selectedScheduleDate,
-                packageTime,
-              });
-
-            if (isScheduleBlocked) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message:
-                  "Selected Schedule blocked, please select another date/Package ",
-              });
-            }
-
-            const totalCount = numOfAdults + numOfChildren;
-            if (totalCount < 25) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message:
-                  "Count Should of minimum 25, for a new created schedule",
-              });
-            }
-
-            const bookingRequestCameBeforeTimeConstraint = checkBookingTimeConstraint({
-                packageTime,
-                selectedDate: selectedScheduleDate,
-                startFrom: packageIdExists.fromTime,
-              });
-
-            if (!bookingRequestCameBeforeTimeConstraint) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message:
-                  "Could not complete booking as it is too late for the selected data, please select a different package or date",
-              });
-            }
-          }
-
-          // ==================================================================================================================
-          if (scheduleId) {
-            const isSchedulePresentInDb = await findScheduleById(scheduleId);
-
-            if (!isSchedulePresentInDb) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message: "Could not find schedule Id",
-              });
-            }
-
-            const bookedCount = await totalBookedSeats(scheduleId);
-            const remainingSeats = MAX_BOAT_SEAT - bookedCount;
-            const totalSeatsSelected = numOfAdults + numOfChildren + numOfBaby;
-
-            if (totalSeatsSelected > remainingSeats) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message:
-                  "Selected Seats exceeds maximum capacity, please select a different schedule",
-              });
-            }
-
-            const packageDetails = await db.package.findUnique({
-              where: {
-                id: packageId,
-              },
-              select: {
-                adultPrice: true,
-                childPrice: true,
-                title: true,
-              },
-            });
-
-            if (!packageDetails) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message: "Could not get price details",
-              });
-            }
-
-            const TotalAdultPrice = packageDetails.adultPrice * numOfAdults;
-            const TotalChildPrice = packageDetails.childPrice * numOfChildren;
-            const GrandTotal = TotalAdultPrice + TotalChildPrice;
-
-            const createUser = await db.user.create({
-              data: {
-                name,
-                email,
-                contact: phone,
-              },
-              select: {
-                id: true,
-              },
-            });
-
-            if (!createUser) {
-              throw new TRPCError({
-                code: "INTERNAL_SERVER_ERROR",
-                message: "Could not Complete request, failed to create user",
-              });
-            }
-            /**
-             * @TODO
-             *
-             * write code in FE to send total amount displayed to client and
-             * compare the GrantTotal calculated in the server , and make sure both amount are the same
-             *
-             *  */
-
-            // ----------CREATING OPTIONS USING RAZOR PAY -----------------------
-
-            // TODO: Make sure to handle your payment here.
-            // Create an order -> generate the OrderID -> Send it to the Front-end
-            // Also, check the amount and currency on the backend (Security measure)
-            // const scheduleDetails = await db.schedule.findUnique({
-            //   where: {
-            //     id: scheduleId,
-            //   },
-            //   select: {
-            //     schedulePackage: true,
-            //     scheduleStatus: true,
-            //   },
-            // });
-
-            // if (!scheduleDetails) {
-            //   throw new TRPCError({
-            //     code: "INTERNAL_SERVER_ERROR",
-            //     message: "Could not get schedule data",
-            //   });
-            // }
-
-            const payment_capture = 1;
-            const amount = GrandTotal;
-            const currency = "INR";
-            const options = {
-              amount,
-              currency,
-              payment_capture,
-              notes: {
-                eventType: "existing.schedule",
-                packageId: packageId,
-                scheduleId: scheduleId,
-                name: name,
-                email: email,
-                adultCount: numOfAdults,
-                childCount: numOfChildren,
-                babyCount: numOfBaby,
-              },
-            };
-
-            // {
-            //   "eventType": "create.schedule",
-            //   "packageId": "1515151",
-            //   "schedule": {
-            //     "Date": "YYYY-MM-DD",
-            //     "ScheduleTime": "BREAKFAST"
-            //   },
-            //   "booking": {
-            //     "name": "customer.name",
-            //     "phone": "customer.phone",
-            //     "email": "customer.email",
-            //     "adultCount": 1,
-            //     "childCount": 1,
-            //     "babyCount": 1
-            //   }
-            // },
-            const order = await $RazorPay.orders.create(options);
-
-            const data = {
-              message: "success",
-              order,
-            };
-            console.log(data);
-            return data;
-            // ==============================================================================
-          }
-        } catch (error) {
-          if (error instanceof zodResolver) {
-            console.log("Zod error");
-          }
-          ErrorLogger(error);
-          console.log(error);
-          return null;
+        if (!packageIdExists) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Could not find given packageId",
+          });
         }
 
-        // if(isLunch) {
-        //   if(timeGapInMinutes <= 15) {
-        //     throw new TRPCError({
-        //       code: "BAD_REQUEST",
-        //       message:
-        //         "Select a different package ,You need to book lunch at least 2 hours before schedule time",
-        //     });
-        //   }
-        // }
+        // Mapping Package to specific schedule timing
+        const scheduleTimeForPackage =
+          findCorrespondingScheduleTimeFromPackageCategory(
+            packageIdExists.packageCategory,
+          );
+        if (!scheduleTimeForPackage) {
+          throw new TRPCError({
+            code: "UNPROCESSABLE_CONTENT",
+            message: "Couldn't find any package that are available to public",
+          });
+        }
+        // check whether the status is sunset
+        let isSunset = isStatusSunset(scheduleTimeForPackage);
+        /**
+         * check in query object to check whether the schedule already exists or to be created.
+         */
+        let queryObj: QueryObj = [
+          // This Could be Undefined
+          { id: scheduleId },
+          // This will be known, we know the date the user Whats to book, and the package they are preffered to book
+          {
+            day: new Date(selectedScheduleDate),
+            schedulePackage: scheduleTimeForPackage,
+          },
+        ];
 
-        // if(isDinner && packageDetails.title === "sunset cruise"){
+        /**
+         *  Random Id is passed then there wont be a schedule and it will go to schedule create event assuming there are no schedule.
+         *  if there are and if its set to blocked or exlusive should throw a error response
+         */
+        const schedule = await db.schedule.findFirst({
+          where: {
+            OR: queryObj,
+          },
+        });
 
-        // }
-        // if(isDinner && packageDetails.title === "Dinner cruise"){
+        // If the schedule is set to blocked then throw that time is already booked or blocked.
+        if (
+          //
+          schedule?.scheduleStatus === "BLOCKED" ||
+          schedule?.scheduleStatus === "EXCLUSIVE"
+        ) {
+          throw new TRPCError({
+            code: "UNPROCESSABLE_CONTENT",
+            message:
+              "Schedule for selected date is blocked, Please try diffrent date.",
+          });
+        }
 
-        // }
-        // if(isDinner && packageDetails.title === "Sunset with Dinner cruise"){
+        // If there is no schedule then event will try to generate a event.
+        const decider = decideCreateOrExisting(schedule?.id);
 
-        // }
-        // if(isDinner && packageDetails.title === "Special 4 Hours Dinner Cruise"){
+        switch (decider) {
+          // No schedule found.
+          case "schedule.create": {
+            // add schedule create event
+            return await CreateBookingForCreateSchedule({
+              input,
+              packageIdExists,
+              scheduleTime: scheduleTimeForPackage,
+            });
+          }
+          case "schedule.existing": {
+            // add schedule Existing event here
+            if (!schedule || !schedule.id) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message:
+                  "Sorry, We didn't find the schedule appropriate to what you are looking for..",
+              });
+            }
+            return await CreateBookingForExistingSchedule({
+              input,
+              packageIdExists,
+              schedule,
+            });
+          }
+          default: {
+            throw new TRPCError({
+              code: "NOT_IMPLEMENTED",
+              message: "Cat and Mouse ;)",
+            });
+          }
+        }
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
+        }
+        ErrorLogger(error);
+        console.log(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something unexpected Happened, Please contact Admins",
+        });
+      }
 
-        // }
+      // if(isLunch) {
+      //   if(timeGapInMinutes <= 15) {
+      //     throw new TRPCError({
+      //       code: "BAD_REQUEST",
+      //       message:
+      //         "Select a different package ,You need to book lunch at least 2 hours before schedule time",
+      //     });
+      //   }
+      // }
 
-        // if(isExclusive){
+      // if(isDinner && packageDetails.title === "sunset cruise"){
 
-        // }
+      // }
+      // if(isDinner && packageDetails.title === "Dinner cruise"){
 
-        // // ----------------------------------------------------------------------------
-        //         if (scheduleId) {
-        //           const scheduleIdExists = findScheduleById(scheduleId);
-        //           if (!scheduleIdExists)
-        //             throw new TRPCError({
-        //               code: "BAD_REQUEST",
-        //               message:
-        //                 "need at least a total of 25 seat count to confirm a new booking",
-        //             });
+      // }
+      // if(isDinner && packageDetails.title === "Sunset with Dinner cruise"){
 
-        //           const scheduleDetails = await db.schedule.findUnique({
-        //             where: {
-        //               id: scheduleId,
-        //             },
-        //             select: {
-        //               day: true,
-        //             },
-        //           });
+      // }
+      // if(isDinner && packageDetails.title === "Special 4 Hours Dinner Cruise"){
 
-        //           if (!scheduleDetails) {
-        //             throw new TRPCError({
-        //               code: "BAD_REQUEST",
-        //               message: "could not get schedule details",
-        //             });
-        //           }
+      // }
 
-        //           const packageExists = await db.package.count({
-        //             where: {
-        //               id: packageId,
-        //             },
-        //           });
+      // if(isExclusive){
 
-        //           if (!packageExists) {
-        //             throw new TRPCError({
-        //               code: "BAD_REQUEST",
-        //               message: "Selected package does not exists",
-        //             });
-        //           }
-        //         }
+      // }
 
-        //         if (!scheduleId) {
-        //           if (numOfAdults + numOfChildren < 25) {
-        //             throw new TRPCError({
-        //               code: "BAD_REQUEST",
-        //               message:
-        //                 "need at least a total of 25 seat count to confirm a new booking",
-        //             });
-        //           }
-        // }
-      },
-    ),
+      // // ----------------------------------------------------------------------------
+      //         if (scheduleId) {
+      //           const scheduleIdExists = findScheduleById(scheduleId);
+      //           if (!scheduleIdExists)
+      //             throw new TRPCError({
+      //               code: "BAD_REQUEST",
+      //               message:
+      //                 "need at least a total of 25 seat count to confirm a new booking",
+      //             });
+
+      //           const scheduleDetails = await db.schedule.findUnique({
+      //             where: {
+      //               id: scheduleId,
+      //             },
+      //             select: {
+      //               day: true,
+      //             },
+      //           });
+
+      //           if (!scheduleDetails) {
+      //             throw new TRPCError({
+      //               code: "BAD_REQUEST",
+      //               message: "could not get schedule details",
+      //             });
+      //           }
+
+      //           const packageExists = await db.package.count({
+      //             where: {
+      //               id: packageId,
+      //             },
+      //           });
+
+      //           if (!packageExists) {
+      //             throw new TRPCError({
+      //               code: "BAD_REQUEST",
+      //               message: "Selected package does not exists",
+      //             });
+      //           }
+      //         }
+
+      //         if (!scheduleId) {
+      //           if (numOfAdults + numOfChildren < 25) {
+      //             throw new TRPCError({
+      //               code: "BAD_REQUEST",
+      //               message:
+      //                 "need at least a total of 25 seat count to confirm a new booking",
+      //             });
+      //           }
+      // }
+    }),
 });

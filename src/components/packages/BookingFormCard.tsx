@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, RemoveTimeStampFromDate } from "@/lib/utils";
+import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
 import { InputLabel } from "../cnWrapper/InputLabel";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,7 +40,7 @@ interface IBookingFormCard {
     child: number;
     adult: number;
   };
-  packageTime: $Enums.SCHEDULED_TIME
+  packageCategory: $Enums.PACKAGE_CATEGORY;
 }
 
 const BookingFormCard = ({
@@ -50,7 +50,8 @@ const BookingFormCard = ({
   packageId,
   selectedDate,
   packagePrice,
-  packageTime
+  packageCategory,
+  // packageTime,
 }: IBookingFormCard) => {
   const {
     register,
@@ -68,7 +69,7 @@ const BookingFormCard = ({
       packageId: packageId,
       scheduleId: selectedSchedule?.scheduleId ?? "",
       selectedScheduleDate: RemoveTimeStampFromDate(selectedDate),
-      packageTime
+      packageCategory: packageCategory,
     },
   });
   const adultCount = watch("numOfAdults");
@@ -80,18 +81,18 @@ const BookingFormCard = ({
       },
       // @HOTFIX check callback url before deployment
       async onSuccess(res) {
-        const notes = res?.order.notes;
         toast.dismiss();
+        const notes = res?.order.notes!;
         const options = {
-          key: process.env.RAZORPAY_KEYID,
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEYID,
           name: "Developer Testing",
           currency: "INR",
           amount: res?.order.amount,
           order_id: res?.order.id,
-          callback_url: "http://localhost:3000/success",
+          callback_url: absoluteUrl("/success"),
           prefill: {
-            name: "test",
-            phone: phoneNumberParser(getValues("phone")),
+            name: notes.name ?? undefined,
+            // phone: phoneNumberParser(res?.phone),
           },
         };
 
@@ -106,8 +107,15 @@ const BookingFormCard = ({
 
         toast.success("intend created successfully");
       },
-      onError() {
-        toast.error("something went wrong");
+      onError(error, variables, context) {
+        toast.dismiss();
+        toast.error(error.message, {
+          duration: 6000,
+          ariaProps: {
+            "aria-live": "polite",
+            role: "alert",
+          },
+        });
       },
     });
 
@@ -165,7 +173,7 @@ const BookingFormCard = ({
           errorMessage={errors.phone ? `${errors.phone.message}` : null}
         />
         <InputLabel
-          label={`Adult Count ( ₹${packagePrice.adult/100}/- )`}
+          label={`Adult Count ( ₹${packagePrice.adult / 100}/- )`}
           labelClassName=""
           InputProps={{
             min: 0,
@@ -180,7 +188,7 @@ const BookingFormCard = ({
           }
         />
         <InputLabel
-          label={`Child Count ( ₹${packagePrice.child/100}/- )`}
+          label={`Child Count ( ₹${packagePrice.child / 100}/- )`}
           InputProps={{
             min: 0,
             placeholder: "Children (3-10 years)",

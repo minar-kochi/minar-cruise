@@ -2,14 +2,14 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 
 
-const { RAZORPAY_KEYID, RAZORPAY_KEY_SECRET } = process.env;
-if (!RAZORPAY_KEYID || !RAZORPAY_KEY_SECRET) {
+const { NEXT_PUBLIC_RAZORPAY_KEYID, RAZORPAY_KEY_SECRET } = process.env;
+if (!NEXT_PUBLIC_RAZORPAY_KEYID || !RAZORPAY_KEY_SECRET) {
   throw new Error(
-    "Please ensure RAZORPAY_KEYID or RAZORPAY_KEY_SECRET  is defined in env",
+    "Please ensure NEXT_PUBLIC_RAZORPAY_KEYID or RAZORPAY_KEY_SECRET  is defined in env",
   );
 }
 export const $RazorPay = new Razorpay({
-  key_id: RAZORPAY_KEYID,
+  key_id: NEXT_PUBLIC_RAZORPAY_KEYID,
   key_secret: RAZORPAY_KEY_SECRET,
 });
 

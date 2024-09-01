@@ -22,22 +22,26 @@ const ContentCard = async ({
   amenitiesId,
   formData,
 }: TContentCard) => {
-  
   return (
     <Bounded className={cn("flex justify-between py-12", className)}>
       <article className="">
         <MDXRemote source={description} />
         <Amenities amenitiesId={amenitiesId} />
       </article>
-      <UserBookingDateSelector
-        packageId={formData.id}
-        packageTitle={formData.title}
-        packagePrice={{
-          adult: formData.adultPrice,
-          child: formData.childPrice,
-        }}
-        packageTime={formData.packageTime}
-      />
+      {formData.packageCategory === "CUSTOM" ||
+      formData.packageCategory === "EXCLUSIVE" ? (
+        <></>
+      ) : (
+        <UserBookingDateSelector
+          packageCategory={formData.packageCategory}
+          packageId={formData.id}
+          packageTitle={formData.title}
+          packagePrice={{
+            adult: formData.adultPrice,
+            child: formData.childPrice,
+          }}
+        />
+      )}
     </Bounded>
   );
 };

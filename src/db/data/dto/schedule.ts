@@ -25,7 +25,7 @@ export async function checkScheduleStatusForTheSelectedDate({
   const scheduleStatus = await db.schedule.findFirst({
     where: {
       day: new Date(date),
-      schedulePackage: packageTime,
+      // schedulePackage: packageTime,
       scheduleStatus: {
         in: ["EXCLUSIVE","BLOCKED"]
       },

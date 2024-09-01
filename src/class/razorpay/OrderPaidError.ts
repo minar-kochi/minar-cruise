@@ -1,6 +1,6 @@
 import { db } from "@/db";
 
-export type OrderPaidEventErrorCode = "UNKNOWN_ERROR" | "NOT_IMPLIMENTED" | "BOOKING_CREATE_FAILED";
+export type OrderPaidEventErrorCode = "UNKNOWN_ERROR" | "NOT_IMPLIMENTED" | "BOOKING_CREATE_FAILED" | "SCHEDULE_TIME_NOT_FOUND" | "FAILED_CREATING_SCHEDULE_TIME";;
 
 export class OrderPaidEventError extends Error {
   readonly code: OrderPaidEventErrorCode;

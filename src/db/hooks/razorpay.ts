@@ -7,33 +7,41 @@ import { Events } from "@prisma/client";
 import { handleExistingScheduleOrder } from "./handleExistingScheduleOrder";
 import { TOrderEvent } from "@/Types/razorpay/type";
 import { NextResponse } from "next/server";
+import { handleCreateScheduleOrder } from "./handleCreateScheduleOrder";
+import { updateEventToFailed } from "../data/dto/events";
 export async function handleOrderPaidEvent({
   events,
   orderBody,
 }: TOrderEvent<any>) {
-  console.log(orderBody)
-  // orderBody.payload.order.entity
-  let event = getEvents(orderBody.payload.order.entity.notes.eventType) 
-  // let event = "schedule.exists"
-  /**
-   * Add in check where to send the event to even if the state is to be created check whether the schedule exists,
-   * and if the
-   * */
   try {
+    console.log(orderBody);
+    // orderBody.payload.order.entity
+    let event = getEvents(orderBody.payload.order.entity.notes.eventType);
+    // let event = "schedule.exists"
+    /**
+     * Add in check where to send the event to even if the state is to be created check whether the schedule exists,
+     * and if the
+     * */
     switch (event) {
       case "schedule.create": {
-        //
+        return await handleCreateScheduleOrder({ events, orderBody });
+        break
+      }
+      case "schedule.existing": {
+        console.log("Handing schedule Existing event");
+        return await handleExistingScheduleOrder({ events, orderBody });
+        break
+      }
+      case "schedule.create.sunset": {
+        console.log("Handing schedule create sunset event");
         throw new OrderPaidEventError({
           code: "NOT_IMPLIMENTED",
           fatality: {
             fatal: true,
-            message: `schedule.create is not implimented for order ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Email: ${orderBody.payload.payment.entity.contact}  `,
+            message: `schedule.create.sunset is not implimented for order ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Contact: ${orderBody.payload.payment.entity.contact}  `,
           },
         });
-      }
-      case "schedule.exists": {
-        console.log("Handing schedule Existing event");
-        return await handleExistingScheduleOrder({ events, orderBody });
+        break
       }
       case "UNKNOWN": {
         console.log("UNKNOWN ERROR OCCURRED");
@@ -41,19 +49,26 @@ export async function handleOrderPaidEvent({
           code: "NOT_IMPLIMENTED",
           fatality: {
             fatal: true,
-            message: `schedule.create is not implimented for order ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Email: ${orderBody.payload.payment.entity.contact}  `,
+            message: `Some Unknown event Occured is not implimented for order ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n  Contact: ${orderBody.payload.payment.entity.contact}  `,
           },
         });
       }
     }
+
   } catch (error) {
-    console.log(error);
     if (error instanceof OrderPaidEventError) {
       if (error.fatal) {
-        // send in admin Message and get the description about it.
+        await updateEventToFailed({
+          id: events.id,
+          description: error.message,
+          failedCountSetter: 6
+        });
+        return NextResponse.json({ success: false }, { status: 502 });
       }
+      await updateEventToFailed({ id: events.id, description: error.message });
+      return NextResponse.json({ success: false }, { status: 402 });
     }
-    // Update the event to Failed.
-    return NextResponse.json({ success: false }, { status: 400 });
+    await updateEventToFailed({ id: events.id });
+    return NextResponse.json({ success: false }, { status: 406 });
   }
 }

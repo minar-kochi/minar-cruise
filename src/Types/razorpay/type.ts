@@ -5,23 +5,31 @@ export type TOrderEvent<T> = {
   //type is any because of Razorpay doesn't actually give out types.
   orderBody: T;
 };
+export type TEventType = {
+  "schedule.existing": "schedule.existing";
+  "schedule.create": "schedule.create";
+};
 
+export type TMode = {
+  Mode: "production" | "development";
+};
 export type TRazorPayEventsExistingSchedule = {
-  eventType: "schedule.existing";
+  eventType: TEventType["schedule.existing"];
   packageId: string;
-  userId: string;
   scheduleId: string;
-} & TOrderBooking;
+} & TOrderBooking &
+  TMode;
 
 export type TRazorPayEventsCreateSchedule = {
-  eventType: "schedule.create";
+  eventType: TEventType["schedule.create"];
   packageId: string;
-  userId: string;
   date: string;
-  ScheduleTime: typeof $Enums.PACKAGE_CATEGORY
-} & TOrderBooking;
+  ScheduleTime: $Enums.PACKAGE_CATEGORY;
+} & TOrderBooking &
+  TMode;
 
 export type TOrderBooking = {
+  userId: string;
   name: string;
   email: string;
   adultCount: number;

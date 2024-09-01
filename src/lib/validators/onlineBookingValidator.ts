@@ -1,13 +1,22 @@
 import { $Enums } from "@prisma/client";
 import { error } from "console";
 import { setErrorMap, z } from "zod";
+import { isStatusSunset } from "./Schedules";
 
 export type TOnlineBookingFormValidator = z.infer<
   typeof onlineBookingFormValidator
 >;
 
 const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
-type ScheduleTime = typeof $Enums.SCHEDULED_TIME[keyof typeof $Enums.SCHEDULED_TIME]
+
+const packageCategory = [
+  "BREAKFAST",
+  "CUSTOM",
+  "DINNER",
+  "EXCLUSIVE",
+  "LUNCH",
+  "SUNSET",
+] as const;
 
 export const onlineBookingFormValidator = z
   .object({
@@ -28,27 +37,51 @@ export const onlineBookingFormValidator = z
       .optional(),
     numOfAdults: z
       .number({ message: "Please provide a valid number" })
-      .min(1, "Adult count cannot be less than 1")
-      .max(150, "Count cannot exceed 150"),
+      .max(150, "Adult Count cannot exceed 150"),
 
     numOfChildren: z
       .number({
         message: "Please Enter a valid number",
       })
-      .max(120, "Count cannot exceed 120"),
+      .max(120, "Child Count cannot exceed 120"),
     numOfBaby: z
       .number({
         message: "Please Enter a valid number",
       })
-      .max(50, "Count cannot exceed 50"),
+      .max(50, "Baby Count cannot exceed 50"),
     packageId: z.string(),
     scheduleId: z.string().optional(),
     selectedScheduleDate: z.string(),
-    packageTime: z.enum(Object.values($Enums.SCHEDULED_TIME) as [ScheduleTime, ...ScheduleTime[]])
+    packageCategory: z.enum(packageCategory),
   })
   .refine(
     (data) => {
-      if (!data.scheduleId && data.numOfAdults + data.numOfChildren < 25) {
+      let totalCount = data.numOfAdults + data.numOfChildren;
+
+      if (!data.scheduleId && isStatusSunset(data.packageCategory)) {
+        if (totalCount < 1) {
+          return false;
+        }
+        return true;
+      }
+      if (totalCount < 1) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Please select atleast 1 Seat to proceed",
+      path: ["numOfAdults"],
+    },
+  )
+  .refine(
+    (data) => {
+      let totalCount = data.numOfAdults + data.numOfChildren;
+      if (
+        !data.scheduleId &&
+        totalCount < 25 &&
+        !isStatusSunset(data.packageCategory)
+      ) {
         return false;
       }
       return true;
@@ -57,8 +90,20 @@ export const onlineBookingFormValidator = z
       message: "Should select at least a total of 25 seats (adult + child)",
       path: ["numOfAdults"],
     },
-  )
-  
+  );
+// .refine(
+//   (data) => {
+//     let totalCount = data.numOfAdults + data.numOfChildren;
+//     if (totalCount >= 1) {
+//       return true;
+//     }
+//     return false;
+//   },
+//   {
+//     message: "Total Count should be atleast greater than one",
+//     path: ["numOfAdults"],
+//   },
+// );
 
 // export type TOnlineBookingFormBackendValidator = z.infer<
 //   typeof onlineBookingFormBackendValidator

@@ -1,19 +1,21 @@
+import { getDescription, getEvents } from "@/lib/helpers/razorpay/utils";
 import {
   TOrderEvent,
-  TRazorPayEventsExistingSchedule,
+  TRazorPayEventsCreateSchedule,
 } from "@/Types/razorpay/type";
 import { db } from "..";
-import { getDescription } from "@/lib/helpers/razorpay/utils";
 import {
   DATABASE_CREATE_RETRY_LOOP_STARTS_FROM,
   MAX_DATABASE_CREATE_RETRY_LOOP,
 } from "@/constants/config";
-import { Booking } from "@prisma/client";
+import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { OrderPaidEventError } from "@/class/razorpay/OrderPaidError";
+import { Booking } from "@prisma/client";
 import { updateEventToFailed, updateEventToSucess } from "../data/dto/events";
 import { NextResponse } from "next/server";
+import { CreateSchedule } from "../data/creator/schedule";
 
-export async function handleExistingScheduleOrder({
+export async function handleCreateScheduleOrder({
   events,
   orderBody,
 }: TOrderEvent<any>) {
@@ -21,22 +23,52 @@ export async function handleExistingScheduleOrder({
     console.log("Getting order");
     const order = orderBody.payload.order.entity;
     console.log("ORDER:", order);
-
     const paymentEntity = orderBody.payload.payment.entity;
     const {
       adultCount,
       babyCount,
       childCount,
       email,
+      eventType,
       name,
-      scheduleId,
+      packageId,
+      ScheduleTime,
+      Mode,
+      date,
       userId,
-    } = order.notes as TRazorPayEventsExistingSchedule;
+    } = order.notes as TRazorPayEventsCreateSchedule;
+    const scheduleTimeForPackage =
+      findCorrespondingScheduleTimeFromPackageCategory(ScheduleTime);
 
+    // This error wont throw unless Sender route messed up anything. ;)
+    if (!scheduleTimeForPackage) {
+      throw new OrderPaidEventError({
+        code: "SCHEDULE_TIME_NOT_FOUND",
+        fatality: {
+          message: "Couldn't find corresponding ScheduleTime",
+          fatal: true,
+        },
+      });
+    }
+
+    const createSchedule = await CreateSchedule({
+      packageId,
+      date,
+      scheduleTimeForPackage,
+      scheduleStatus: "AVAILABLE",
+    });
+    if (!createSchedule) {
+      throw new OrderPaidEventError({
+        code: "FAILED_CREATING_SCHEDULE_TIME",
+        fatality: {
+          message: "Couldn't able to Create a schedule.",
+          fatal: true,
+        },
+      });
+    }
+    const scheduleId = createSchedule.id;
     let booking: Booking | null = null;
-
     let createEventRetryLoop = DATABASE_CREATE_RETRY_LOOP_STARTS_FROM;
-
     let createEventFlag = false;
     while (
       createEventRetryLoop <= MAX_DATABASE_CREATE_RETRY_LOOP &&
@@ -70,8 +102,9 @@ export async function handleExistingScheduleOrder({
             payment: {
               create: {
                 advancePaid: 0,
-                discount: 0,
-                totalAmount: order.amount_paid,
+                discount: 100,
+                // Amount paid recieved sa paise: convert by 100 to make to ruppe
+                totalAmount: order.amount_paid / 100,
                 modeOfPayment: "ONLINE",
               },
             },
@@ -89,11 +122,12 @@ export async function handleExistingScheduleOrder({
       throw new OrderPaidEventError({
         code: "BOOKING_CREATE_FAILED",
         fatality: {
-          fatal: true,
-          message: `schedule.create is not implimented for order ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Email: ${orderBody.payload.payment.entity.contact}  `,
+          // fatal: true,
+          message: `Failed to Create Booking for orderID: ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Email: ${orderBody.payload.payment.entity.contact}  `,
         },
       });
     }
+
     console.log("Updating Events");
     await updateEventToSucess({ id: events.id });
     console.log("Returning 200 Response");

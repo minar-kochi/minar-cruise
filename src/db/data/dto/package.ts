@@ -75,8 +75,9 @@ export async function getPackageById({ slug }: { slug: string }) {
       },
       select: {
         id: true,
-        packageTime: true,
+        // packageTime: true,
         adultPrice: true,
+        packageCategory: true,
         title: true,
         description: true,
         amenitiesId: true,
@@ -98,13 +99,13 @@ export async function getPackageById({ slug }: { slug: string }) {
         },
       },
     });
-
     if (!data) {
       console.log("Failed to load package details");
       return null;
     }
     return data;
   } catch (error) {
+    console.log(error)
     return null;
   }
 }
@@ -297,7 +298,9 @@ export async function getPackageCardDetails() {
   }
 }
 
-export async function findPackageById(packageId: string) {
+export async function findPackageByIdExcludingCustomAndExclusive(
+  packageId: string,
+) {
   try {
     const packageFound = await db.package.findFirst({
       where: {
@@ -312,7 +315,10 @@ export async function findPackageById(packageId: string) {
     return null;
   }
 }
-
+export type TFindPackageByIdExcludingCustomAndExclusive = Exclude<
+  Awaited<ReturnType<typeof findPackageByIdExcludingCustomAndExclusive>>,
+  null
+>;
 export type TGetPackagesForBlog = Exclude<
   Awaited<ReturnType<typeof getPackagesForBlog>>,
   null

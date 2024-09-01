@@ -4,7 +4,12 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { trpc } from "@/app/_trpc/client";
-import { cn, filterDateFromCalender, getPrevTimeStamp, RemoveTimeStampFromDate } from "@/lib/utils";
+import {
+  cn,
+  filterDateFromCalender,
+  getPrevTimeStamp,
+  RemoveTimeStampFromDate,
+} from "@/lib/utils";
 import ClientCalenderScheduleDay from "../calender/ClientCalenderScheduleDay";
 import { $Enums } from "@prisma/client";
 import BookingFormCard from "./BookingFormCard";
@@ -17,13 +22,13 @@ interface IUserBookingDateSelector {
     child: number;
     adult: number;
   };
-  packageTime: $Enums.SCHEDULED_TIME;
+  packageCategory: $Enums.PACKAGE_CATEGORY;
 }
 export default function UserBookingDateSelector({
   packageTitle,
   packageId,
   packagePrice,
-  packageTime,
+  packageCategory
 }: IUserBookingDateSelector) {
   const [date, setDate] = useState<Date>(new Date(Date.now()));
   const [month, setMonth] = useState<string>(
@@ -39,7 +44,6 @@ export default function UserBookingDateSelector({
 
   const { refetch, isFetching, data } =
     trpc.user.getSchedulesByPackageIdAndDate.useQuery({
-      packageTime,
       packageId: packageId,
       date: month,
     });
@@ -48,8 +52,9 @@ export default function UserBookingDateSelector({
     return item.day;
   });
 
-  
-  const disabledDays = data?.blockedScheduleDateArray.map((item)=>({ day: new Date(item.day) }))
+  const disabledDays = data?.blockedScheduleDateArray.map((item) => ({
+    day: new Date(item.day),
+  }));
 
   return (
     <div className="flex flex-col items-center justify-center shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4 gap-4 rounded-2xl">
@@ -61,7 +66,9 @@ export default function UserBookingDateSelector({
           <Calendar
             className=""
             sizeMode="lg"
-            disabled={(date) => filterDateFromCalender({date, dateArray: disabledDays})}
+            disabled={(date) =>
+              filterDateFromCalender({ date, dateArray: disabledDays })
+            }
             mode="single"
             components={{
               DayContent: (props) =>
@@ -73,8 +80,7 @@ export default function UserBookingDateSelector({
             selected={date}
             onSelect={(date) => {
               if (!date) return;
-              if (!data) return;
-
+              if (!data || !data.schedules) return;
               setDate(date);
 
               let scheduleIndex = data?.schedules.findIndex(
@@ -82,7 +88,6 @@ export default function UserBookingDateSelector({
                   RemoveTimeStampFromDate(new Date(fv.day)) ===
                   RemoveTimeStampFromDate(date),
               );
-
               let schedule =
                 scheduleIndex !== -1 ? data.schedules[scheduleIndex] : null;
               if (!schedule) {
@@ -108,7 +113,7 @@ export default function UserBookingDateSelector({
           }}
           packageId={packageId}
           packagePrice={packagePrice}
-          packageTime={packageTime}
+          packageCategory={packageCategory}
         />
       )}
       <Button

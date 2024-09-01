@@ -18,11 +18,13 @@ import {
   isStatusBreakfast,
   isStatusDinner,
   isStatusLunch,
+  isStatusSunset,
 } from "./validators/Schedules";
 import {
   MIN_BREAKFAST_BOOKING_HOUR,
   MIN_DINNER_BOOKING_HOUR,
   MIN_LUNCH_BOOKING_HOUR,
+  MIN_SUNSET_BOOKING_HOUR,
 } from "@/constants/config/business";
 
 export function cn(...inputs: ClassValue[]) {
@@ -30,7 +32,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const isProd = process.env.NODE_ENV !== "development";
-
+export const isProduction = isProd ? "production" : "development";
 /**
  * @description sajdhasjdfjk hjsdb hjavdjhv asjhdv asfnhasvfhgv asfvshag v
  * @example absoluteUrl('/api/get')
@@ -227,12 +229,7 @@ export function filterDateFromCalender({
     | undefined;
 }) {
   let currDate = getPrevTimeStamp(Date.now());
-  // let someOtherDate = new Date("2024-10-15");
-  // let a = [
-  //   { day: new Date(Date.now()) },
-  //   { day: new Date(someOtherDate) },
-  // ];
-  // const disabledDays = data?.blockedScheduleDateArray.map((item)=>({ day: new Date(item.day) }))
+
   if (!dateArray) {
     return false;
   }
@@ -240,7 +237,6 @@ export function filterDateFromCalender({
     (fv) => RemoveTimeStampFromDate(fv.day) === RemoveTimeStampFromDate(date),
   );
 
-  // console.log(fi)
   if (fi !== -1) {
     return true;
   }
@@ -251,11 +247,11 @@ export function filterDateFromCalender({
 }
 
 export function checkBookingTimeConstraint({
-  packageTime,
+  scheduleTime,
   startFrom,
   selectedDate,
 }: {
-  packageTime: $Enums.SCHEDULED_TIME;
+  scheduleTime: $Enums.SCHEDULED_TIME;
   startFrom: string;
   selectedDate: string;
 }) {
@@ -267,13 +263,16 @@ export function checkBookingTimeConstraint({
     return false;
   }
   const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
-  if (isStatusBreakfast(packageTime)) {
+  if (isStatusBreakfast(scheduleTime)) {
     return timeGap > MIN_BREAKFAST_BOOKING_HOUR;
   }
-  if (isStatusLunch(packageTime)) {
+  if (isStatusLunch(scheduleTime)) {
     return timeGap > MIN_LUNCH_BOOKING_HOUR;
   }
-  if (isStatusDinner(packageTime)) {
+  if (isStatusSunset(scheduleTime)) {
+    return timeGap > MIN_SUNSET_BOOKING_HOUR;
+  }
+  if (isStatusDinner(scheduleTime)) {
     return timeGap > MIN_DINNER_BOOKING_HOUR;
   }
   return false;

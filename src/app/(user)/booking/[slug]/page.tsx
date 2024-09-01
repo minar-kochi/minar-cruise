@@ -32,11 +32,12 @@ export async function generateStaticParams({ params: { slug } }: BookingPage) {
 }
 export default async function PackagePage({ params: { slug } }: BookingPage) {
   const data = await getPackageById({ slug });
+
   if (!data) {
     if (isProd) {
       return;
     }
-    return <>Failed to fetch package details</>;
+    return isProd ? null : <>Failed to fetch package details</>;
   }
 
   return (
