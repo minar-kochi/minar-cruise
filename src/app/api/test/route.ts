@@ -38,10 +38,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
     /**
      * check in query object to check whether the schedule already exists or to be created.
      */
-    let queryObj: QueryObj = {
-      day: new Date(dates),
-      schedulePackage: "DINNER",
-    };
+    // let queryObj: QueryObj = {
+    //   day: new Date(dates),
+    //   schedulePackage: "DINNER",
+    // };
     // Confirming Query Params using switch case to generate the event query
     switch (UnsafeDecider) {
       case "schedule.create": {
@@ -58,11 +58,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
           });
         }
         // creating a schedule query event
-        queryObj = {
-          id: packageId,
-          day: undefined,
-          schedulePackage: undefined,
-        };
+        // queryObj = {
+        //   id: packageId,
+        //   day: undefined,
+        //   schedulePackage: undefined,
+        // };
         break;
       }
     }
