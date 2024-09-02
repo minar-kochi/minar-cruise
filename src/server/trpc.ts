@@ -1,4 +1,5 @@
-import { initTRPC } from "@trpc/server";
+import { auth } from "@/auth/auth";
+import { initTRPC, TRPCError } from "@trpc/server";
 
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
@@ -23,15 +24,16 @@ export const middleware = t.middleware;
  */
 
 export const isAdmin = middleware(async (opts) => {
-  /** @TODO Admin Authorization */
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Please Log-in to continue",
+    });
+  }
 
-  /** Pass-in Data that is needed for all the admin routes
-   * @example
-   * role,
-   * name, etc...
-   */
   return opts.next({
-    ctx: {},
+    ctx: { AdminUser: session.user },
   });
 });
 
