@@ -1,5 +1,6 @@
 import VercelInviteUserEmail from "@/components/services/EmailService";
-import { sendConfirmationEmail } from "@/lib/helpers/CommonBuisnessHelpers";
+import { sendConfirmationEmail } from "@/lib/helpers/resend";
+// import { sendConfirmationEmail } from "@/lib/helpers/CommonBuisnessHelpers";
 
 export async function POST() {
   try {
