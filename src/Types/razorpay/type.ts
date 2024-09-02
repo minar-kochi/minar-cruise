@@ -4,6 +4,7 @@ export type TOrderEvent<T> = {
   events: Events;
   //type is any because of Razorpay doesn't actually give out types.
   orderBody: T;
+ 
 };
 export type TEventType = {
   "schedule.existing": "schedule.existing";
@@ -11,7 +12,7 @@ export type TEventType = {
 };
 
 export type TMode = {
-  Mode: "production" | "development";
+  Mode?: "production" | "development";
 };
 export type TRazorPayEventsExistingSchedule = {
   eventType: TEventType["schedule.existing"];

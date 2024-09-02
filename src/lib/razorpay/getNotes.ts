@@ -6,9 +6,7 @@ import {
 } from "@/Types/razorpay/type";
 import { isProd, isProduction } from "../utils";
 export function getNotes(
-  data:
-    | Omit<TRazorPayEventsExistingSchedule, "Mode">
-    | Omit<TRazorPayEventsCreateSchedule, "Mode">,
+  data: TRazorPayEventsExistingSchedule | TRazorPayEventsCreateSchedule,
 ): TRazorPayEventsExistingSchedule | TRazorPayEventsCreateSchedule {
   if (data.eventType === "schedule.create") {
     return {

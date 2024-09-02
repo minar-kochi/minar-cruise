@@ -16,7 +16,8 @@ import { NextResponse } from "next/server";
 export async function handleExistingScheduleOrder({
   events,
   orderBody,
-}: TOrderEvent<any>) {
+  notes
+}: TOrderEvent<any> & {notes: TRazorPayEventsExistingSchedule}) {
   try {
     console.log("Getting order");
     const order = orderBody.payload.order.entity;
@@ -31,7 +32,7 @@ export async function handleExistingScheduleOrder({
       name,
       scheduleId,
       userId,
-    } = order.notes as TRazorPayEventsExistingSchedule;
+    } = notes
 
     let booking: Booking | null = null;
 

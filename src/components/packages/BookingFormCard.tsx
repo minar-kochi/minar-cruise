@@ -85,14 +85,16 @@ const BookingFormCard = ({
         const notes = res?.order.notes!;
         const options = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEYID,
-          name: "Developer Testing",
+          name: notes?.name ?? undefined,
           currency: "INR",
-          amount: res?.order.amount,
+          amount: res?.order?.amount,
           order_id: res?.order.id,
           callback_url: absoluteUrl("/success"),
           prefill: {
             name: notes.name ?? undefined,
-            // phone: phoneNumberParser(res?.phone),
+            phone: phoneNumberParser(
+              res?.phone ? res.phone.toString() : undefined,
+            ),
           },
         };
 

@@ -42,14 +42,13 @@ export async function CreateBookingForExistingSchedule({
 
   const totalSeatsSelected = numOfAdults + numOfChildren + numOfBaby;
   let exceededSeatCount = totalSeatsSelected - remainingSeats;
-  console.log(totalSeatsSelected)
-  console.log(remainingSeats)
-  console.log(exceededSeatCount)
+  console.log(totalSeatsSelected);
+  console.log(remainingSeats);
+  console.log(exceededSeatCount);
   if (totalSeatsSelected > remainingSeats) {
     throw new TRPCError({
       code: "UNPROCESSABLE_CONTENT",
-      message:
-        `Seat Capacity exceeded by ${exceededSeatCount}, Please select a different schedule`,
+      message: `Seat Capacity exceeded by ${exceededSeatCount}, Please select a different schedule`,
     });
   }
 
@@ -106,6 +105,7 @@ export async function CreateBookingForExistingSchedule({
   const data = {
     message: "success",
     order,
+    phone: user.contact,
   };
 
   return data;

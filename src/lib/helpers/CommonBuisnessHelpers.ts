@@ -51,10 +51,10 @@ export const selectFromTimeAndToTimeFromScheduleOrPackages = ({
 };
 
 export const phoneNumberParser = (contact: string | undefined) => {
-
-  if(!contact) {
-    return null
+  if (!contact) {
+    return null;
   }
+
   const countryCodePrefix = "+91";
 
   if (!contact.startsWith("0", 0)) {

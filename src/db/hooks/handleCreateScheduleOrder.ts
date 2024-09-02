@@ -18,7 +18,8 @@ import { CreateSchedule } from "../data/creator/schedule";
 export async function handleCreateScheduleOrder({
   events,
   orderBody,
-}: TOrderEvent<any>) {
+  notes
+}: TOrderEvent<any> & { notes: TRazorPayEventsCreateSchedule }) {
   try {
     console.log("Getting order");
     const order = orderBody.payload.order.entity;
@@ -36,7 +37,7 @@ export async function handleCreateScheduleOrder({
       Mode,
       date,
       userId,
-    } = order.notes as TRazorPayEventsCreateSchedule;
+    } = notes
     const scheduleTimeForPackage =
       findCorrespondingScheduleTimeFromPackageCategory(ScheduleTime);
 
@@ -57,6 +58,7 @@ export async function handleCreateScheduleOrder({
       scheduleTimeForPackage,
       scheduleStatus: "AVAILABLE",
     });
+
     if (!createSchedule) {
       throw new OrderPaidEventError({
         code: "FAILED_CREATING_SCHEDULE_TIME",

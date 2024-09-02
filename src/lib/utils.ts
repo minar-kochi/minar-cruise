@@ -45,7 +45,7 @@ export const isProduction = isProd ? "production" : "development";
 export function absoluteUrl(path: string): string {
   if (typeof window !== "undefined") return path;
   if (process.env.NODE_ENV === "production") {
-    return `${process.env.DOMAIN as string}${path}`;
+    return `${process.env.NEXT_PUBLIC_DOMAIN as string}${path}`;
   } else {
     return `http://localhost:${process.env.PORT ?? 3002}${path}`;
   }

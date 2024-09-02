@@ -135,6 +135,7 @@ export async function CreateBookingForCreateSchedule({
   const data = {
     message: "success",
     order,
+    phone: user.contact,
   };
 
   return data;

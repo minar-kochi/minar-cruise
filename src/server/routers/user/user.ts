@@ -187,8 +187,6 @@ export const user = router({
             message: "Couldn't find any package that are available to public",
           });
         }
-        // check whether the status is sunset
-        let isSunset = isStatusSunset(scheduleTimeForPackage);
         /**
          * check in query object to check whether the schedule already exists or to be created.
          */

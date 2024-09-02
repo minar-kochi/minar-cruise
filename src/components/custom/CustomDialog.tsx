@@ -8,8 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 interface ICustomDialog {
   ButtonLabel: string;
@@ -49,11 +47,14 @@ export default function CustomDialog({
       </DialogTrigger>
       <DialogContent className="lg:min-w-[900px] py-8">
         <DialogHeader>
-          <DialogTitle className="text-center text-4xl ">Booking Information</DialogTitle>
+          <DialogTitle className="text-center text-4xl ">
+            Booking Information
+          </DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="">
-          Name, contact, email,  bookingId, total amount, time: 9-11, total count, date of booking , date of event , package selected  
+          Name, contact, email, bookingId, total amount, time: 9-11, total
+          count, date of booking , date of event , package selected
         </div>
         <DialogFooter>
           <Button>Download</Button>
