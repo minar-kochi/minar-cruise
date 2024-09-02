@@ -1,17 +1,38 @@
 // import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
+import { $Enums } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
-import { formatISO, isValid, isSameMonth, endOfMonth } from "date-fns";
+import {
+  formatISO,
+  isValid,
+  isSameMonth,
+  endOfMonth,
+  differenceInHours,
+} from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { object } from "zod";
+import { isDinner } from "./validators/Package";
+import { DateTime } from "luxon";
+import {
+  isStatusBreakfast,
+  isStatusDinner,
+  isStatusLunch,
+  isStatusSunset,
+} from "./validators/Schedules";
+import {
+  MIN_BREAKFAST_BOOKING_HOUR,
+  MIN_DINNER_BOOKING_HOUR,
+  MIN_LUNCH_BOOKING_HOUR,
+  MIN_SUNSET_BOOKING_HOUR,
+} from "@/constants/config/business";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export const isProd = process.env.NODE_ENV !== "development";
-
+export const isProduction = isProd ? "production" : "development";
 /**
  * @description sajdhasjdfjk hjsdb hjavdjhv asjhdv asfnhasvfhgv asfvshag v
  * @example absoluteUrl('/api/get')
@@ -24,7 +45,7 @@ export const isProd = process.env.NODE_ENV !== "development";
 export function absoluteUrl(path: string): string {
   if (typeof window !== "undefined") return path;
   if (process.env.NODE_ENV === "production") {
-    return `${process.env.DOMAIN as string}${path}`;
+    return `${process.env.NEXT_PUBLIC_DOMAIN as string}${path}`;
   } else {
     return `http://localhost:${process.env.PORT ?? 3002}${path}`;
   }
@@ -184,4 +205,120 @@ export function combineDateWithSplitedTime(date: Date, time: TTimeCycle) {
   newDate.setHours(hours);
   newDate.setSeconds(0);
   return newDate;
+}
+export function getISTDateFromZ(date: Date) {
+  return date.toLocaleDateString(undefined, {
+    timeZone: "Asia/Kolkata",
+  });
+}
+export function getISTDateAndTimeFromZ(date: Date) {
+  return date.toLocaleString(undefined, {
+    timeZone: "Asia/Kolkata",
+  });
+}
+
+export function filterDateFromCalender({
+  dateArray,
+  date,
+}: {
+  date: Date;
+  dateArray:
+    | {
+        day: Date;
+      }[]
+    | undefined;
+}) {
+  let currDate = getPrevTimeStamp(Date.now());
+
+  if (!dateArray) {
+    return false;
+  }
+  let fi = dateArray.findIndex(
+    (fv) => RemoveTimeStampFromDate(fv.day) === RemoveTimeStampFromDate(date),
+  );
+
+  if (fi !== -1) {
+    return true;
+  }
+  if (date < new Date(currDate)) {
+    return true;
+  }
+  return false;
+}
+
+export function checkBookingTimeConstraint({
+  scheduleTime,
+  startFrom,
+  selectedDate,
+}: {
+  scheduleTime: $Enums.SCHEDULED_TIME;
+  startFrom: string;
+  selectedDate: string;
+}) {
+  const UTCISTDATE = convertYYYMMDDStringAndTimeStringToUTCDate(
+    selectedDate,
+    startFrom,
+  );
+  if (!UTCISTDATE) {
+    return false;
+  }
+  const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
+  if (isStatusBreakfast(scheduleTime)) {
+    return timeGap > MIN_BREAKFAST_BOOKING_HOUR;
+  }
+  if (isStatusLunch(scheduleTime)) {
+    return timeGap > MIN_LUNCH_BOOKING_HOUR;
+  }
+  if (isStatusSunset(scheduleTime)) {
+    return timeGap > MIN_SUNSET_BOOKING_HOUR;
+  }
+  if (isStatusDinner(scheduleTime)) {
+    return timeGap > MIN_DINNER_BOOKING_HOUR;
+  }
+  return false;
+}
+
+export function convert12HourTo24Hour({
+  hours: hour,
+  min,
+  Cycle,
+}: TTimeCycle): { hour: number; minute: number } {
+  let hourInt = parseInt(hour);
+  let minInt = parseInt(min);
+
+  if (Cycle === "AM" && hourInt === 12) {
+    hourInt = 0; // Convert 12:00 AM to 00:00
+  } else if (Cycle === "PM" && hourInt !== 12) {
+    hourInt += 12; // Convert PM hour to 24-hour format, except for 12:00 PM
+  }
+
+  return { hour: hourInt, minute: minInt };
+}
+
+export function convertYYYMMDDStringAndTimeStringToUTCDate(
+  dates: string,
+  time: string,
+) {
+  try {
+    const DateCycle = parseDateFormatYYYMMDDToNumber(dates);
+    const timeCycle = splitTimeColon(time);
+    if (!timeCycle || !DateCycle) {
+      return null;
+    }
+    const TwentyFourHourFormat = convert12HourTo24Hour(timeCycle);
+    console.log(TwentyFourHourFormat);
+    let zo = DateTime.fromObject(
+      {
+        ...DateCycle,
+        ...TwentyFourHourFormat,
+      },
+      { zone: "Asia/Kolkata" },
+    );
+    return {
+      LuxObj: zo,
+      parsedDate: zo.toJSDate(),
+    };
+  } catch (error) {
+    return null;
+  }
 }

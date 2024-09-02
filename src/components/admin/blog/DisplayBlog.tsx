@@ -38,7 +38,7 @@ export default function DisplayBlog({
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto  prose mt-12 ">
+      <div className="max-w-3xl mx-auto text-left  prose mt-12 ">
         <Markdown
           className="break-words"
           remarkPlugins={[remarkGfm, remarkToc]}

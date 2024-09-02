@@ -11,6 +11,7 @@ export interface TInputLabel {
   InputProps?: InputProps;
   errorMessage?: string | null;
   containerClassName?: string;
+  labelClassName?: string
 }
 
 const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
@@ -18,6 +19,7 @@ const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
     {
       TextAreaClassName,
       InputBox,
+      labelClassName,
       label,
       errorMessage,
       TextAreaProps,
@@ -30,8 +32,8 @@ const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
     return (
       <div className={cn("space-y-2 py-2", containerClassName)}>
         <label
-          className={cn("pl-2 font-semibold ", {
-            hidden: !label?.length,
+          className={cn("pl-2 font-semibold ",labelClassName, {
+            hidden: !label,
           })}
         >
           {label}
