@@ -28,11 +28,20 @@ const ContentCard = async ({
         <MDXRemote source={description} />
         <Amenities amenitiesId={amenitiesId} />
       </article>
-      <UserBookingDateSelector
-        packageId={formData.id}
-        packageTitle={formData.title}
-      />
-      {/* <BookingFormCard className="ml-5" formData={formData} /> */}
+      {formData.packageCategory === "CUSTOM" ||
+      formData.packageCategory === "EXCLUSIVE" ? (
+        <></>
+      ) : (
+        <UserBookingDateSelector
+          packageCategory={formData.packageCategory}
+          packageId={formData.id}
+          packageTitle={formData.title}
+          packagePrice={{
+            adult: formData.adultPrice,
+            child: formData.childPrice,
+          }}
+        />
+      )}
     </Bounded>
   );
 };

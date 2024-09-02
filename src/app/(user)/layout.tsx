@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
+import Script from "next/script";
+import { Toaster } from "react-hot-toast";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -18,25 +20,34 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-        )}
-      >
-        <Providers>
-          {/* <CounterStoreProvider> */}
-          <Navbar />
-          {children}
-          <Footer />
-          {/* </CounterStoreProvider> */}
-        </Providers>
-      </body>
-    </html>
+    <>
+      <html lang="en">
+        <body
+          className={cn(
+            "min-h-screen bg-background font-sans antialiased",
+            fontSans.variable,
+          )}
+        >
+          <Providers>
+            {/* <CounterStoreProvider> */}
+            <Navbar />
+            <Toaster />
+
+            {children}
+            {modal}
+            <div id="modal-root" />
+            <Footer />
+            {/* </CounterStoreProvider> */}
+          </Providers>
+        </body>
+      </html>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+    </>
   );
 }

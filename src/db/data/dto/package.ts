@@ -13,6 +13,7 @@ import {
 } from "@/lib/validators/Package";
 import { $Enums } from "@prisma/client";
 import assert from "assert";
+import { error } from "console";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { afterEach } from "node:test";
 
@@ -74,7 +75,9 @@ export async function getPackageById({ slug }: { slug: string }) {
       },
       select: {
         id: true,
+        // packageTime: true,
         adultPrice: true,
+        packageCategory: true,
         title: true,
         description: true,
         amenitiesId: true,
@@ -96,13 +99,13 @@ export async function getPackageById({ slug }: { slug: string }) {
         },
       },
     });
-
     if (!data) {
       console.log("Failed to load package details");
       return null;
     }
     return data;
   } catch (error) {
+    console.log(error)
     return null;
   }
 }
@@ -291,6 +294,80 @@ export async function getPackageCardDetails() {
     return data;
   } catch (e) {
     console.error(e);
+    return null;
+  }
+}
+
+export async function findPackageByIdExcludingCustomAndExclusive(
+  packageId: string,
+) {
+  try {
+    const packageFound = await db.package.findFirst({
+      where: {
+        id: packageId,
+        packageCategory: {
+          notIn: ["CUSTOM", "EXCLUSIVE"],
+        },
+      },
+    });
+    return packageFound;
+  } catch (error) {
+    return null;
+  }
+}
+export type TFindPackageByIdExcludingCustomAndExclusive = Exclude<
+  Awaited<ReturnType<typeof findPackageByIdExcludingCustomAndExclusive>>,
+  null
+>;
+export type TGetPackagesForBlog = Exclude<
+  Awaited<ReturnType<typeof getPackagesForBlog>>,
+  null
+>;
+
+export async function getPackagesForBlog() {
+  try {
+    const data = await db.package.findMany({
+      where: {
+        packageCategory: {
+          not: "CUSTOM",
+        },
+      },
+      select: {
+        id: true,
+        adultPrice: true,
+        title: true,
+        slug: true,
+        packageImage: {
+          take: 1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getPackagesForBlog fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    ErrorLogger(error);
     return null;
   }
 }
