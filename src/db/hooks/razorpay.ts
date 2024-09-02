@@ -64,18 +64,6 @@ export async function handleOrderPaidEvent({
         }
       }
     }
-    const {
-      Mode,
-      adultCount,
-      babyCount,
-      childCount,
-      email,
-      eventType,
-      name,
-      packageId,
-      scheduleId,
-      userId,
-    } = order.notes as TRazorPayEventsExistingSchedule;
 
     switch (event) {
       case "schedule.create": {
@@ -109,7 +97,6 @@ export async function handleOrderPaidEvent({
           throw new OrderPaidEventError({
             code: "SCHEDULE_TIME_NOT_FOUND",
             fatality: {
-              // ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Email: ${orderBody.payload.payment.entity.contact}
               message: `Schedule Creation has conflict with other Package schedule Please review admin dasboard and Razorpay, Email: ${orderBody.payload.payment.entity.email} \n Email: ${orderBody.payload.payment.entity.contact}:`,
               fatal: true,
             },
