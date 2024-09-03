@@ -26,6 +26,19 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "@radix-ui/react-label";
 import CustomCheckboxLabel from "../custom/CustomCheckboxLabel";
 import { ArrowLeft } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { format } from "date-fns";
+import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
+import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
+import PackageScheduleDialogs from "./PackageScheduleDialogs";
 
 interface IBookingFormCard {
   className?: string;
@@ -41,6 +54,7 @@ interface IBookingFormCard {
     adult: number;
   };
   packageCategory: $Enums.PACKAGE_CATEGORY;
+  isNextSlideState: Dispatch<SetStateAction<boolean>>;
 }
 
 const BookingFormCard = ({
@@ -49,10 +63,14 @@ const BookingFormCard = ({
   selectedSchedule,
   packageId,
   selectedDate,
+  isNextSlideState,
   packagePrice,
   packageCategory,
   // packageTime,
 }: IBookingFormCard) => {
+  const [ScheduleError, setScheduleError] =
+    useState<ScheduleConflictError | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -97,10 +115,8 @@ const BookingFormCard = ({
             ),
           },
         };
-
         const paymentModal = new window.Razorpay(options);
         paymentModal.open();
-
         paymentModal.on("success", function (data: any) {
           console.log(data);
           alert("Payment failed. Please try again.");
@@ -111,6 +127,36 @@ const BookingFormCard = ({
       },
       onError(error, variables, context) {
         toast.dismiss();
+        if (error.data?.code === "CONFLICT") {
+          try {
+            const message = error.message;
+            const ParsedMessage = ParseScheduleConflicError(message);
+            if (!ParsedMessage) {
+              toast.error(message, {
+                duration: 6000,
+                ariaProps: {
+                  "aria-live": "polite",
+                  role: "alert",
+                },
+              });
+              return;
+            }
+            toast.error(ParsedMessage.message, {
+              duration: 6000,
+              ariaProps: {
+                "aria-live": "polite",
+                role: "alert",
+              },
+            });
+            setIsOpen(true);
+            setScheduleError(ParsedMessage);
+            return;
+          } catch (error) {
+            console.log(error);
+            toast.error("something went wrong");
+            return;
+          }
+        }
         toast.error(error.message, {
           duration: 6000,
           ariaProps: {
@@ -131,6 +177,8 @@ const BookingFormCard = ({
     }
   }
 
+  const handleParagraph = () => {};
+
   return (
     <>
       <form
@@ -142,7 +190,13 @@ const BookingFormCard = ({
         )}
       >
         <div className="text-2xl font-bold flex items-center relative">
-          <ArrowLeft className="my-auto absolute" />
+          <Button
+            onClick={() => isNextSlideState(false)}
+            variant={"ghost"}
+            size={"icon"}
+          >
+            <ArrowLeft className="my-auto absolute" />
+          </Button>
           <h3 className="text-center w-full">Book Now</h3>
         </div>
         <hr className="bg-gray-200  border-0 w-full h-px my-2 font-"></hr>
@@ -183,7 +237,7 @@ const BookingFormCard = ({
             ...register("numOfAdults", { valueAsNumber: true }),
             className:
               "border-0 placeholder:font-semibold placeholder:text-gray-500",
-            type: "number",
+            type: "string",
           }}
           errorMessage={
             errors.numOfAdults ? `${errors.numOfAdults.message}` : null
@@ -197,7 +251,7 @@ const BookingFormCard = ({
             ...register("numOfChildren", { valueAsNumber: true }),
             className:
               "border-0 placeholder:font-semibold placeholder:text-gray-500",
-            type: "number",
+            type: "string",
           }}
           errorMessage={
             errors.numOfChildren ? `${errors.numOfChildren.message}` : null
@@ -211,7 +265,7 @@ const BookingFormCard = ({
             ...register("numOfBaby", { valueAsNumber: true }),
             className:
               "border-0 placeholder:font-semibold placeholder:text-gray-500",
-            type: "number",
+            type: "string",
           }}
           errorMessage={errors.numOfBaby ? `${errors.numOfBaby.message}` : null}
         />
@@ -219,12 +273,6 @@ const BookingFormCard = ({
           className="pt-3"
           label="Yes, I agree with the privacy policy and terms and conditions."
           labelClassName="leading-5"
-        />
-        <CustomCheckboxLabel
-          className="pt-3"
-          label="Accept terms and conditions"
-          description="Only backwater travelling will be entertained in the month of June,
-          July and August due to Monsoon Restrictions."
         />
         <p className="font-bold ml-2 text-gray-500 my-5 text-right">
           Total Price:{" "}
@@ -239,6 +287,14 @@ const BookingFormCard = ({
           </Button>
         </div>
       </form>
+
+      <PackageScheduleDialogs
+        isNextSlideState={isNextSlideState}
+        ScheduleError={ScheduleError}
+        isOpen={isOpen}
+        selectedDate={selectedDate}
+        setIsOpen={setIsOpen}
+      />
     </>
   );
 };
