@@ -59,14 +59,12 @@ interface IBookingFormCard {
 
 const BookingFormCard = ({
   className,
-  formData,
   selectedSchedule,
   packageId,
   selectedDate,
   isNextSlideState,
   packagePrice,
   packageCategory,
-  // packageTime,
 }: IBookingFormCard) => {
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
@@ -92,7 +90,7 @@ const BookingFormCard = ({
   });
   const adultCount = watch("numOfAdults");
   const childCount = watch("numOfChildren");
-  const { mutate: CreateRazorPayIntent } =
+  const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
       onMutate() {
         toast.loading("creating razorpay intend");
@@ -282,7 +280,7 @@ const BookingFormCard = ({
           </span>
         </p>
         <div className="space-y-5">
-          <Button type="submit" className="w-full">
+          <Button disabled={isSubmitting || isPending} type="submit" className="w-full">
             Submit
           </Button>
         </div>
