@@ -6,7 +6,10 @@ import Services from "@/components/home/Services";
 import HomePageGallery from "@/components/home/HomePageGallery";
 import HomeVideo from "@/components/home/HomeVideo";
 import { PackageCarousel } from "@/components/packages/PackageCarousel";
+import { constructMetadata } from "@/lib/helpers/constructMetadata";
 
+export const metadata = constructMetadata({});
+// console.log(metadata)
 export default function Home() {
   return (
     <main className="embla__viewport">
