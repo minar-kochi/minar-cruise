@@ -1,32 +1,11 @@
 import type { Metadata } from "next";
-import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { Inter as FontSans, Inter } from "next/font/google";
-import { cn, getUTCDate, RemoveTimeStampFromDate } from "@/lib/utils";
-import Providers from "@/context/TrpcProvider";
-import Navbar from "@/components/navbar/Navbar";
-import Footer from "@/components/footer/Footer";
-import MenuBar from "@/components/admin/navigationLayout/MenuBar";
-import Header from "@/components/admin/navigationLayout/Header";
-import HeaderNav from "@/components/admin/navigationLayout/HeaderNav";
-import StoreProvider from "@/providers/adminStore/StoreProvider";
-import { getOrganizedPackages } from "@/db/data/dto/package";
-import {
-  getSchedulesByDateOrNow,
-  getUpcommingScheduleDates,
-  TgetUpcommingScheduleDates,
-} from "@/db/data/dto/schedule";
-import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
-import { revalidateTag } from "next/cache";
-import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
-import { Suspense } from "react";
-import InitialStateDispatcher from "@/wrapper/admin/Schedule/initial-state-dispatcher";
-import CustomAlertDialog from "@/components/custom/CustomAlertDialog";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import ScheduleBarWrapper from "@/container/admin/schedule/ScheduleBarWrapper";
-import { ModalProvider } from "@/context/ModalProvider";
-import ModalStoreProvider from "@/providers/adminStore/ModalStoreProvider";
+import { cn } from "@/lib/utils";
+import NextAuthProvider from "@/providers/auth/NextAuthProvider";
+import { auth } from "@/auth/auth";
+import { Toaster } from "react-hot-toast";
+// import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -44,6 +23,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="en">
       <body
@@ -52,20 +32,8 @@ export default async function RootLayout({
           fontSans.variable,
         )}
       >
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-          <InitialStateDispatcher>
-            <MenuBar />
-            <Header>
-              <Toaster />
-              <Providers>
-                <Suspense fallback={<Skeleton className="h-full w-full" />}>
-                  {children}
-                  <ScheduleBarWrapper />
-                </Suspense>
-              </Providers>
-            </Header>
-          </InitialStateDispatcher>
-        </div>
+        <Toaster />
+        <NextAuthProvider session={session}>{children}</NextAuthProvider>
       </body>
     </html>
   );

@@ -37,17 +37,21 @@ const FooterContactCard = ({
         </div>
         <div className=" flex gap-2 w-full justify-between md:max-w-fit">
           <Mail color="red" />
-          <p className=" text-center  w-full text-slate-400 font-semibold">
-            {email}
-          </p>
+          <a href="info@cochincruiseline.com">
+            <p className=" text-center  w-full text-slate-400 font-semibold">
+              {email}
+            </p>
+          </a>
         </div>
         <div className="flex gap-2 ">
           <div className="">
             <MapPin className="" color="red" />
           </div>
-          <p className=" text-justify text-slate-400 font-semibold max-w-xs">
-            {address}
-          </p>
+          <a href="https://maps.app.goo.gl/aj9HE3CBcnD8sTQc6">
+            <p className=" text-justify text-slate-400 font-semibold max-w-xs">
+              {address}
+            </p>
+          </a>
         </div>
       </section>
     </>

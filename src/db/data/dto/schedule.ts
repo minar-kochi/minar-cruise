@@ -13,12 +13,31 @@ import { TScheduleWithBookingCountWithId } from "@/Types/Schedule/ScheduleSelect
 import { $Enums, Schedule } from "@prisma/client";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
-/**
- * checks if the bookingId exists or not
- *
- * @param scheduleId
- * @returns true | false
- */
+interface ICheckScheduleStatusForTheSelectedDate {
+  date: string;
+  packageTime: $Enums.SCHEDULED_TIME;
+}
+export async function checkScheduleStatusForTheSelectedDate({
+  date,
+  packageTime,
+}: ICheckScheduleStatusForTheSelectedDate) {
+  
+  const scheduleStatus = await db.schedule.findFirst({
+    where: {
+      day: new Date(date),
+      // schedulePackage: packageTime,
+      scheduleStatus: {
+        in: ["EXCLUSIVE","BLOCKED"]
+      },
+    },
+    select: {
+      scheduleStatus: true,
+    },
+  });
+
+  
+  return scheduleStatus;
+}
 
 export async function findScheduleById(scheduleId: string) {
   try {

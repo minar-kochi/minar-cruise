@@ -42,10 +42,10 @@ const NavigationContents = async () => {
         </div>
       </div>
 
-      <Link href="/" className="cursor-pointer  hover:text-red-500">
+      <Link href="/facilities" className="cursor-pointer  hover:text-red-500">
         Facilities
       </Link>
-      <Link href="/" className="cursor-pointer  hover:text-red-500">
+      <Link href="/about" className="cursor-pointer  hover:text-red-500">
         About
       </Link>
 
@@ -74,7 +74,7 @@ const NavigationContents = async () => {
         </div>
       </div>
 
-      <Link href="/" className="cursor-pointer  hover:text-red-500">
+      <Link href="/contact" className="cursor-pointer  hover:text-red-500">
         Contact
       </Link>
     </div>

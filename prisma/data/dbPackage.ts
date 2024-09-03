@@ -13,7 +13,7 @@ export const packages: packagesPartialId = [
     slug: "breakfast-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clj9r7rku0000356cql29f673",
-    fromTime: "09:30:AM", //09:30:PM
+    fromTime: "09:00:AM",
     toTime: "11:00:AM",
     packageCategory: "BREAKFAST",
   },

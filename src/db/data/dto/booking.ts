@@ -89,26 +89,30 @@ export async function getBookedDetails(bookingId: string) {
 }
 
 export const totalBookedSeats = async (scheduleId: string) => {
-  const unformattedCount = await db.booking.findMany({
-    where: {
-      scheduleId,
-    },
-    select: {
-      totalBooking: true,
-    },
-  });
-
-  if (!unformattedCount) {
-    throw new TRPCError({
-      code: "BAD_GATEWAY",
-      message: "Couldn't get count of all bookings from schedule",
+  try {
+    const unformattedCount = await db.booking.findMany({
+      where: {
+        scheduleId,
+      },
+      select: {
+        numOfAdults: true,
+        numOfBaby: true,
+        numOfChildren: true,
+        totalBooking: true,
+      },
     });
+    
+    if (!unformattedCount.length) {
+      return 0;
+    }
+    let formattedCount = unformattedCount.reduce(
+      (total, booking) => total + booking.totalBooking,
+      0,
+    );
+
+    return formattedCount;
+  } catch (error) {
+    ErrorLogger(error);
+    return -1
   }
-
-  let formattedCount = unformattedCount.reduce(
-    (total, booking) => total + booking.totalBooking,
-    0,
-  );
-
-  return formattedCount;
 };

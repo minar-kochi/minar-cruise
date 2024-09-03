@@ -17,7 +17,12 @@ export function ShouldStatusBeAvaiablePublicWithPackage({
   }
   return "AVAILABLE";
 }
-
+export function ShouldPackageBeAvailableForPublicToSchedule(packageCategory:$Enums.PACKAGE_CATEGORY) {
+  if(packageCategory === 'CUSTOM' || packageCategory === 'EXCLUSIVE' ){
+    return false
+  }
+  return true
+}
 export type IsPackageTypeOrExclusiveChecker = {
   packageStatus: string;
   exlcusive?: boolean;
@@ -68,6 +73,10 @@ export function isPackageStatusSunSet({
 
 export function isBreakFast(packageCategory: string) {
   if (packageCategory === $Enums.PACKAGE_CATEGORY.BREAKFAST) return true;
+  return false;
+}
+export function isSunset(packageCategory: string) {
+  if (packageCategory === $Enums.PACKAGE_CATEGORY.SUNSET) return true;
   return false;
 }
 export function isLunch(packageCategory: string) {

@@ -1,6 +1,7 @@
-import { router } from "@/server/trpc";
+import { AdminProcedure, router } from "@/server/trpc";
 import { booking } from "./booking";
 import { schedule } from "./schedule";
+import { blog } from "./blog";
 
 export const admin = router({
   /**
@@ -10,5 +11,9 @@ export const admin = router({
    *
    */
   booking,
+  blog,
   schedule,
+  isAdminTest: AdminProcedure.query(({ ctx: { AdminUser } }) => {
+    return AdminUser
+  }),
 });
