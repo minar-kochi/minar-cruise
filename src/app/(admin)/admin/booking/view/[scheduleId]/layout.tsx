@@ -30,7 +30,7 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import DownloadTable from "@/components/admin/booking/DownloadBookingTable";
+import DownloadTable from "@/components/excel/DownloadBookingButton";
 
 export default function layout({ children }: { children: React.ReactNode }) {
     

@@ -24,16 +24,34 @@ import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
+import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { $Enums } from "@prisma/client";
+import {
+  getSchedulesByDateRange,
+  getSchedulesByDateRangeWithBookingCount,
+  TGetSchedulesByDateRange,
+} from "@/db/data/dto/schedule";
+import { toDate } from "date-fns";
+import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
 
+// export type TGetScheduleByDateRange = {
+//   Package: {
+//       fromTime: string;
+//       toTime: string;
+//       title: string;
+//   } | null;
+//   day: Date;
+//   schedulePackage: $Enums.SCHEDULED_TIME;
+//   scheduleStatus: $Enums.SCHEDULE_STATUS;
+//   fromTime: string | null;
+//   toTime: string | null;
+// }[]
 
 export const schedule = router({
-  getSchedulesByDateRange: AdminProcedure.input(
-    z.object({
-      fromDate: z.string(),
-      toDate: z.string(),
-    }),
-  ).query(async ({ input: { fromDate, toDate } }) => {
-
+  // 
+  getSchedulesByDateRange: AdminProcedure
+  .input(scheduleDateRangeValidator)
+  .query(async ({ input: { fromDate, toDate, type } }) => {
     const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
     const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
     if (!fromDateParser || !toDateParser) {
@@ -51,30 +69,19 @@ export const schedule = router({
         message: "Requested dates is invalid",
       });
     }
+    const FromDate = new Date(fromDate);
+    const ToDate = new Date(toDate);
 
     try {
-      const scheduleData = await db.schedule.findMany({
-        where: {
-          day: {
-            gte: fromDate,
-            lte: toDate,
-          },
-        },
-        select: {
-          day: true,
-          fromTime: true,
-          toTime: true,
-          schedulePackage: true,
-          scheduleStatus: true,
-          Package: {
-            select: {
-              title: true,
-            },
-          },
-        },
-      });
+      if (type === "scheduleWithoutBookingCount") {
+        const data = await getSchedulesByDateRange(FromDate, ToDate);
+        if (!data) return null;
+        return data;
+      }
+      const data = await getSchedulesByDateRangeWithBookingCount(FromDate, ToDate);
+      if (!data) return null;
+      return data;
 
-      return scheduleData;
     } catch (error) {
       console.log(error);
       ErrorLogger(error);

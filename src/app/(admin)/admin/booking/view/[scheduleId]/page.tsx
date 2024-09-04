@@ -29,8 +29,8 @@ import { Dialog } from "@/components/ui/dialog";
 import MoveAllSchedulesButton from "@/components/admin/booking/MoveAllBookingsButton";
 import MoveAllBookingsButton from "@/components/admin/booking/MoveAllBookingsButton";
 import { booking } from "@/server/routers/admin/booking";
-import DownloadTable from "@/components/admin/booking/DownloadBookingTable";
-import DownloadBookingTable from "@/components/admin/booking/DownloadBookingTable";
+import DownloadTable from "@/components/excel/DownloadBookingButton";
+import DownloadBookingButton from "@/components/excel/DownloadBookingButton";
 
 interface IViewBooking {
   params: {
@@ -75,7 +75,8 @@ export default async function ViewBooking({
               variant: "greenFlag",
             }}
           />
-          <DownloadBookingTable tableData={bookings}/>
+          <DownloadBookingButton tableData={bookings}/>
+          
         </div>
       </div>
       <Table className="border-2">

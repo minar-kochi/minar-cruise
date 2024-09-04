@@ -76,7 +76,7 @@ enum SCHEDULE_STATUS {
 
 model Schedule {
   id              String          @id @default(cuid())
-  day             DateTime        @db.Date()
+  day             DateTime        @db.Date() 
   fromTime        String?
   toTime          String?
   packageId       String?

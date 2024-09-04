@@ -39,7 +39,7 @@ interface IDownloadTable {
   tableData?: TGetBookingsByScheduleId;
 }
 
-export default function DownloadBookingTable({ tableData }: IDownloadTable) {
+export default function DownloadBookingButton({ tableData }: IDownloadTable) {
   /**
    * @TODO
    * this download button should be hidden if table data is empty
@@ -82,11 +82,13 @@ export default function DownloadBookingTable({ tableData }: IDownloadTable) {
     };
     // BookingTable.eachRow(item)
 
+    // const customTableDataColumns = workbook.addWorksheet().columns   
+    
     BookingTable.columns = [
       {
         header: "Num",
         key: "num",
-        width: 10,
+        width: 12,
         style: {
           alignment: {
             vertical: "middle",
@@ -215,7 +217,7 @@ export default function DownloadBookingTable({ tableData }: IDownloadTable) {
       },
     ];
     // Do something here when table data in empty
-    tableData?.map((item, i) => {
+    tableData?.map((item,index) => {
       const {
         createdAt,
         description,
@@ -228,7 +230,7 @@ export default function DownloadBookingTable({ tableData }: IDownloadTable) {
         user,
       } = item;
       BookingTable.addRow({
-        num: i + 1,
+        num: index-1,
         name: user.name,
         bookingDate: createdAt,
         package: schedule.schedulePackage,
@@ -242,7 +244,7 @@ export default function DownloadBookingTable({ tableData }: IDownloadTable) {
       });
     });
 
-    workbook.xlsx.writeBuffer().then((data) => {
+    workbook.xlsx.writeBuffer().then((data:any) => {
       const blob = new Blob([data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheet.sheet",
       });
