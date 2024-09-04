@@ -20,12 +20,12 @@ export const ourFileRouter = {
       return { alt: input.alt };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-
       const createdImage = await db.image.create({
         data: {
           // possible file key needs to be added.
           url: file.url,
           alt: metadata.alt,
+          fileKey: file.key,
         },
       });
       return { imageId: createdImage.id };
