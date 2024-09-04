@@ -8,19 +8,17 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 import ScheduleBar from "@/container/admin/schedule/ScheduleContainer";
+import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescription";
 
 export default async function ScheduleAdminPage() {
   return (
     <main className="">
-      <div className="flex justify-center  flex-col items-center gap-2 my-6">
-        <h1 className="text-4xl font-bold">Schedule Page</h1>
-        <p className="max-w-prose text-center text-muted-foreground">
-          Manage and add schedules effortlessly. View existing schedules, create
+      <HeaderTitleDescription
+        title="Schedule Page"
+        description="Manage and add schedules effortlessly. View existing schedules, create
           or update time slots, and select packages for various events like
-          breakfast, lunch, and more.
-        </p>
-      </div>
-
+          breakfast, lunch, and more."
+      />
       <div className=" lg:grid">
         <div className="px-2">
           <div className="hidden lg:block px-2  group schedule-page">
