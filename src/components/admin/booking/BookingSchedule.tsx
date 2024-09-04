@@ -69,7 +69,7 @@ export default function BookingScheduleTable() {
       <TableBody>
         {schedules?.pages.map((pages) => {
           return pages.response.map((item) => {
-            const formattedDate = format(item.day, "dd/MM/yyyy");
+            const formattedDate = format(item.day, "dd-MMM-yy");
             const formattedDay = format(item.day, "cccc");
             const { fromTime, toTime } =
             selectFromTimeAndToTimeFromScheduleOrPackages({

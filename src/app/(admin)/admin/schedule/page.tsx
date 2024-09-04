@@ -12,19 +12,19 @@ import ScheduleBar from "@/container/admin/schedule/ScheduleContainer";
 export default async function ScheduleAdminPage() {
   return (
     <main className="">
-      <div className=" lg:grid grid-cols-[75%_25%]">
+      <div className=" lg:grid">
         <div className="px-2">
+          <div className="hidden lg:block px-2  group schedule-page">
+            <ScheduleBar />
+          </div>
           <div className="flex mt-12  items-center justify-center">
             <div className="">
               <h1 className=" text-2xl  font-bold">Recent Schedules</h1>
             </div>
           </div>
-          <div className="relative z-10">
+          <div className="relative z-10 mb-96 schedule-page">
             <ScheduleTable />
           </div>
-        </div>
-        <div className="hidden lg:block px-2 border-l">
-          <ScheduleBar />
         </div>
       </div>
     </main>

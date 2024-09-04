@@ -24,6 +24,7 @@ export default function ScheduleDatePicker({
   return (
     <PopOverDatePicker
       date={date}
+      
       calenderProps={{
         components: {
           DayContent: (props) => CustomDayContentWithScheduleIndicator(props),
@@ -43,7 +44,7 @@ export default function ScheduleDatePicker({
               const data = await fetch({
                 ScheduleDate: DateStringFormated,
               });
-
+              console.log(data)
               dispatch(setCurrentScheduleDate(data));
             }
           } catch (error) {

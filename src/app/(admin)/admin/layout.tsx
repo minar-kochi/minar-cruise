@@ -35,7 +35,7 @@ export default async function RootLayout({
   if (!session?.user) {
     redirect("/api/auth/signin");
   }
-  console.log(session.user);
+  
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <InitialStateDispatcher>
@@ -48,6 +48,7 @@ export default async function RootLayout({
                 routerConfig={extractRouterConfig(ourFileRouter)}
               />
               {children}
+
               <ScheduleBarWrapper />
             </Suspense>
           </Providers>

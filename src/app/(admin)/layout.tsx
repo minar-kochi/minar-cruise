@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import NextAuthProvider from "@/providers/auth/NextAuthProvider";
 import { auth } from "@/auth/auth";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "@/providers/theme-provider";
 // import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({
@@ -25,15 +26,22 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "dark min-h-screen bg-background font-sans antialiased",
+          " min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
-        <Toaster />
-        <NextAuthProvider session={session}>{children}</NextAuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster />
+          <NextAuthProvider session={session}>{children}</NextAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

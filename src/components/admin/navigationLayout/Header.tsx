@@ -35,11 +35,13 @@ import React from "react";
 import RouterRefreshButton from "../booking/RouterRefresh";
 import OpenScheduleButton from "../dashboard/Schedule/OpenScheduleButton";
 import HeaderAdminDropDownMenu from "./HeaderAdminDropDownMenu";
+import { ModeToggle } from "./theme-changer";
+import ViewSelectedDate from "../dashboard/home/ViewSelectedDate";
 
 const Header = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
-      <header className="flex h-14  top-0 sticky items-center gap-4 border-b bg-black px-4 lg:h-[60px] lg:px-6">
+      <header className="flex h-14  bg-background  top-0 sticky items-center gap-4 border-b  px-4 lg:h-[60px] lg:px-6">
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -103,6 +105,8 @@ const Header = ({ children }: { children: React.ReactNode }) => {
           </SheetContent>
         </Sheet>
         <div className="w-full flex-1">
+        <ViewSelectedDate />
+
           {/* <form>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -114,8 +118,9 @@ const Header = ({ children }: { children: React.ReactNode }) => {
             </div>
           </form> */}
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <OpenScheduleButton />
+          <ModeToggle />
           <HeaderAdminDropDownMenu />
         </div>
       </header>

@@ -147,25 +147,25 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
           <DialogTitle>Create a Schedule</DialogTitle>
           <DialogDescription className="">
             Please verify the following details before creating a{" "}
-            <span className="bg-muted text-white py-1 rounded-full font-medium px-2">
+            <span className="bg-muted text-primary py-1 rounded-full font-medium px-2">
               {type}
             </span>{" "}
             schedule for{" "}
-            <span className="inline-block bg-muted text-white  rounded-full font-medium px-2">
+            <span className="inline-block bg-muted text-primary  rounded-full font-medium px-2">
               {format(date, "dd-MM-yyyy")}
             </span>
             {true ? (
               <>
                 {" "}
                 from
-                <span className="inline-block bg-muted text-white  rounded-full font-medium px-2 mx-0.5">
+                <span className="inline-block bg-muted text-primary  rounded-full font-medium px-2 mx-0.5">
                   {" "}
                   {updatedDateSchedule[type].fromTime
                     ? `${updatedDateSchedule[type].fromTime}`
                     : null}
                 </span>{" "}
                 to
-                <span className="inline-block bg-muted text-white  rounded-full font-medium px-2 mx-0.5">
+                <span className="inline-block bg-muted text-primary  rounded-full font-medium px-2 mx-0.5">
                   {" "}
                   {updatedDateSchedule[type].toTime
                     ? `${updatedDateSchedule[type].toTime}`
@@ -176,7 +176,7 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
             under the
             <span
               className={cn(
-                "px-2 py-0.5 my-0.5 mx-1 bg-muted text-white  rounded-full font-medium inline-block ",
+                "px-2 py-0.5 my-0.5 mx-1 bg-muted text-primary  rounded-full font-medium inline-block ",
                 {
                   "bg-destructive": !PackageDetails,
                 },
