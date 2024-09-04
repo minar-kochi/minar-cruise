@@ -60,7 +60,6 @@ export function getPrevTimeStamp(timestamp: number) {
 }
 
 export function isSameDay(date: Date, fromDate: Date) {
-  console.log(date.getMonth())
   return (
     date.getDate() === fromDate.getDate() &&
     date.getMonth() === fromDate.getMonth() &&

@@ -17,17 +17,6 @@ import { trpc } from "@/app/_trpc/client";
 import Link from "next/link";
 
 export default function ScheduleBar() {
-  const { invalidate } = trpc.useUtils();
-  const { mutate: deleteSchedules } =
-    trpc.admin.schedule.clearSchedule.useMutation({
-      onSuccess(data, variables, context) {
-        invalidate();
-        toast.success("Cleared Database");
-      },
-      onError(error, variables, context) {
-        toast.error("Something went wrong");
-      },
-    });
   return (
     <div className="w-full py-12 ">
       <Card className="">

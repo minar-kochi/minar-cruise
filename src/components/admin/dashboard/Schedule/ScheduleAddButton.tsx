@@ -24,6 +24,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { SelectPackageById } from "@/lib/features/Package/selector";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
+import { ShouldPackageBeAvailableForPublicToSchedule } from "@/lib/validators/Package";
 
 export default function ScheduleAddButton({ type }: TScheduleSelector) {
   const { invalidate } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
@@ -97,13 +98,19 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
           `Could not Found the package for ${type}. Please try again.`,
         );
       }
-      if (isStatusCustom(updatedDateSchedule[type].scheduleTime)) {
+
+      if (
+        PackageDetails?.packageCategory &&
+        !ShouldPackageBeAvailableForPublicToSchedule(
+          PackageDetails?.packageCategory,
+        )
+      ) {
         if (
           !updatedDateSchedule[type].fromTime ||
           !updatedDateSchedule[type].toTime
         ) {
           return toast.error(
-            `Please Select a Time for ${updatedDateSchedule[type].scheduleTime.toLocaleLowerCase()} Schedule and  try again.`,
+            `Please Select a 'from' and 'To' for ${type} Schedule and  try again.`,
           );
         }
       }

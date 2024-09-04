@@ -24,7 +24,6 @@ export default function ScheduleDatePicker({
   return (
     <PopOverDatePicker
       date={date}
-      
       calenderProps={{
         components: {
           DayContent: (props) => CustomDayContentWithScheduleIndicator(props),

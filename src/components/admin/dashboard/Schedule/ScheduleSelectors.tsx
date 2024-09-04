@@ -3,7 +3,7 @@ import ScheduleSelector from "./ScheduleSelector";
 
 export default function ScheduleSelectors() {
   return (
-    <div className="group-[.schedule-page]:grid gap-4 grid-cols-3">
+    <div className="group-[.schedule-page]:grid gap-4 items-start grid-cols-1 md:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4">
       <div className="rounded-md  basis-full group-[.schedule-sheet]:border-b  group-[.schedule-page]:border-2 group-[.schedule-page]:max-w-[365px] p-4  w-full    py-2">
         <div className="">
           <ScheduleSelector
