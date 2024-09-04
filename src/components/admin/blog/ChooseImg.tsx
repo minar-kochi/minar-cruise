@@ -1,3 +1,4 @@
+'use client'
 import { trpc } from "@/app/_trpc/client";
 import { getBlogPostById } from "@/db/data/dto/blog";
 import { DialogClose } from "@radix-ui/react-dialog";

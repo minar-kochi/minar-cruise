@@ -20,7 +20,7 @@ export default function OpenScheduleButton({ title }: { title?: string }) {
         dispatch(setIsModalToggle());
       }}
     >
-      {title ? title : "Add Schedule"}
+      {title ? title : "Schedule"}
     </Button>
   );
 }

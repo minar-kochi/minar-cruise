@@ -91,7 +91,7 @@ export default function ScheduleUnblockButton({
             onClick={handleUnblock}
             variant={"destructive"}
           >
-            unblock Lunch at {format(date, "dd/MM/yyyy")}{" "}
+            Unblock {type} at {format(date, "dd/MM/yyyy")}{" "}
           </Button>
         </div>
       </DialogContent>

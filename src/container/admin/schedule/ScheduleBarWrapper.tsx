@@ -20,7 +20,7 @@ export default function ScheduleBarWrapper() {
         className="sm:max-w-lg max-w-full w-full overflow-scroll  scrollbar-w-2 scrollbar-track-orange-lighter scrollbar-thumb-rounded "
       >
         {/* <OpenScheduleButton /> */}
-        <div className="  h-full w-full">
+        <div className="group schedule-sheet h-full w-full">
           <ScheduleBar />
         </div>
       </SheetContent>

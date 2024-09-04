@@ -51,7 +51,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
 
     if (DbEvent && DbEvent.id) {
       console.log("Event has  found");
-      console.log(DbEvent)
+      console.log(DbEvent);
       /**
        *
        * Check the status of DbEvent.
@@ -119,7 +119,6 @@ export async function POST(request: NextRequest, res: NextResponse) {
           DbEvent = await createEventorThrow({
             eventId,
             status: "PROCESSING",
-            // description: "Razor Pay Event Processing",
           });
           createEventFlag = true;
           continue;
@@ -128,8 +127,8 @@ export async function POST(request: NextRequest, res: NextResponse) {
         }
       }
     }
+
     if (!DbEvent || !DbEvent?.id) {
-      console.log("Event still not created. returning Failed");
       return NextResponse.json({ success: true }, { status: 425 });
     }
 
