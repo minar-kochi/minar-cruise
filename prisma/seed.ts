@@ -21,6 +21,8 @@ import {
 import { exit } from "node:process";
 import { ClearDb } from "./functions/utils";
 import moment from "moment";
+import { seoSeedData } from "./data/dbSeo";
+import { dbPackageSeo } from "./data/dbPackageSeo";
 
 const db = new PrismaClient();
 
@@ -59,13 +61,34 @@ async function main() {
         data: foodMenu,
       });
       console.log("Completed foodMenu \n");
+      console.log("Inserting Seo...");
 
+      await tx.seo.createMany({
+        data: seoSeedData.map((item) => {
+          return {
+            canonicalUrl: item.canonicalUrl,
+            description: item.description,
+            metaRobots: item.metaRobots,
+            ogDescription: item.ogDescription,
+            ogImage: item.ogImage,
+            ogTitle: item.ogTitle,
+            title: item.title,
+            keywords: item.keywords,
+            id: item.id,
+            structuredData: item.structuredData,
+          };
+        }),
+      });
+
+      console.log("Completed SEO \n");
       console.log("Inserting image...");
 
       await tx.image.createMany({
         data: image,
       });
       console.log("Completed image \n");
+
+    
 
       console.log("Inserting package...");
 
@@ -79,21 +102,10 @@ async function main() {
       await tx.packageImage.createMany({
         data: packageImage,
       });
+      await tx.packageSeo.createMany({
+        data: dbPackageSeo,
+      });
       console.log("Completed packageImage \n");
-
-      // console.log("Inserting schedule...");
-
-      // await tx.schedule.createMany({
-      //   data: schedule,
-      // });
-      // console.log("Completed schedule \n");
-
-      // console.log("Inserting booking...");
-
-      // await tx.booking.createMany({
-      //   data: booking,
-      // });
-      // console.log("Completed booking \n");
 
       console.log("Seeding completed!");
     } catch (error) {

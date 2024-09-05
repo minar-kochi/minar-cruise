@@ -1,32 +1,8 @@
-// import { $RazorPay } from "@/lib/helpers/RazorPay";
-import {
-  DATABASE_CREATE_RETRY_LOOP_STARTS_FROM,
-  MAX_DATABASE_CREATE_RETRY_LOOP,
-  MAX_EVENT_RETRY_WEBHOOK_COUNT,
-} from "@/constants/config";
-import { ThrowTemplate } from "@/db/data/dto/events";
-import { handleOrderPaidEvent } from "@/db/hooks/razorpay";
-import {
-  combineDateWithSplitedTime,
-  convert12HourTo24Hour,
-  convertYYYMMDDStringAndTimeStringToUTCDate,
-  getISTDateAndTimeFromZ,
-  getUTCDate,
-  parseDateFormatYYYMMDDToNumber,
-  RemoveTimeStampFromDate,
-  sleep,
-  splitTimeColon,
-} from "@/lib/utils";
-import { PROCESSING_STATUS } from "@prisma/client";
+
 import { TRPCError } from "@trpc/server";
-import moment from "moment";
 import { NextRequest, NextResponse } from "next/server";
-import luxon, { DateTime, Zone } from "luxon";
-import { isStatusBreakfast } from "@/lib/validators/Schedules";
-import { MIN_BREAKFAST_BOOKING_HOUR } from "@/constants/config/business";
 import { db } from "@/db";
 import { decideCreateOrExisting } from "@/lib/helpers/RequestToCreateSchedule";
-import { QueryObj } from "@/server/routers/user/user";
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const dates = "2024-09-01";

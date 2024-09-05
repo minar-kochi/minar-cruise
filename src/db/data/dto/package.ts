@@ -105,7 +105,7 @@ export async function getPackageById({ slug }: { slug: string }) {
     }
     return data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return null;
   }
 }
@@ -266,10 +266,8 @@ export async function getPackageCardDetails() {
         packageImage: {
           take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
+            ImageUse: {
+              has: "PROD_FEATURED",
             },
           },
           select: {

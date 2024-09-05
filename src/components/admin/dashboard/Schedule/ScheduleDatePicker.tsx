@@ -43,7 +43,7 @@ export default function ScheduleDatePicker({
               const data = await fetch({
                 ScheduleDate: DateStringFormated,
               });
-
+              console.log(data)
               dispatch(setCurrentScheduleDate(data));
             }
           } catch (error) {

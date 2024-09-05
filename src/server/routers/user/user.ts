@@ -18,13 +18,13 @@ import { decideCreateOrExisting } from "@/lib/helpers/RequestToCreateSchedule";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
-import { isStatusSunset } from "@/lib/validators/Schedules";
-// import { CreateBookingForExistingSchedule } from "./userBookingCreateScheduleTRPC";
-// import { CreateBookingForNewSchedule } from "./userBookingExistingScheduleTRPC";
+import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
+
 export type QueryObj = [
   { id: string | undefined },
   { day: Date; schedulePackage: SCHEDULED_TIME },
 ];
+
 type TBlockedScheduleDateArray = {
   day: Date;
 }[];
@@ -205,6 +205,21 @@ export const user = router({
          *  if there are and if its set to blocked or exlusive should throw a error response
          */
         const schedule = await db.schedule.findFirst({
+          select: {
+            id: true,
+            schedulePackage: true,
+            packageId: true,
+            day: true,
+            fromTime: true,
+            scheduleStatus: true,
+            toTime: true,
+            Package: {
+              select: {
+                title: true,
+                slug: true,
+              },
+            },
+          },
           where: {
             OR: queryObj,
           },
@@ -222,7 +237,6 @@ export const user = router({
               "Schedule for selected date is blocked, Please try diffrent date.",
           });
         }
-
         // If there is no schedule then event will try to generate a event.
         const decider = decideCreateOrExisting(schedule?.id);
 
@@ -244,6 +258,23 @@ export const user = router({
                 message:
                   "Sorry, We didn't find the schedule appropriate to what you are looking for..",
               });
+            }
+            if (schedule.packageId !== packageIdExists.id) {
+              let ScheduleConflictError: ScheduleConflictError = {
+                title: schedule.Package?.title ?? "",
+                slug: schedule.Package?.slug ?? "",
+                subCode: "SCHEDULE_CONFLICT_WITH_PACKAGE",
+                message: `There is Another Schedule at this Date and Time, Please Check ${schedule.Package?.title} to book for this date`,
+              };
+              throw new TRPCError({
+                code: "CONFLICT",
+                message: JSON.stringify(ScheduleConflictError),
+              });
+
+              // throw new TRPCError({
+              //   code: "CONFLICT",
+              //   message: `There is Another Schedule at this Date and Time, Please Check ${schedule.Package?.title} to book for this date`,
+              // });
             }
             return await CreateBookingForExistingSchedule({
               input,

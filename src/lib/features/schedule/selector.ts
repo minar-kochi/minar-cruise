@@ -41,11 +41,13 @@ export const scheduleIdAndPackageTitleSelector = createSelector(
 
     let data: TSelectBoxValueLableSelector[] = filteredNull.map((item) => {
       const packageName = AllPackages.find((fv) => fv.id === item.packageId);
-        let title = packageName ?  getPackageTitleWithTimeIfNotExists(
-          packageName.title,
-          packageName.duration,
-          packageName.packageCategory,
-        ): ""
+      let title = packageName
+        ? getPackageTitleWithTimeIfNotExists(
+            packageName.title,
+            packageName.duration,
+            packageName.packageCategory,
+          )
+        : "";
       return {
         value: item.id,
         label: title ?? item.scheduleStatus,
@@ -195,10 +197,6 @@ export const isScheduleInputsChanged = createSelector(
       isAnyChanged: false,
     };
     // if package id is changed.
-    console.log(
-      updatedDateSchedule[type]?.packageId !==
-        currentDateSchedule[type]?.packageId,
-    );
     if (
       currentDateSchedule[type]?.packageId !==
       updatedDateSchedule[type]?.packageId
@@ -207,13 +205,16 @@ export const isScheduleInputsChanged = createSelector(
     }
     // if from time is changed
     if (
+      updatedDateSchedule[type]?.fromTime &&
       currentDateSchedule[type]?.fromTime !==
       updatedDateSchedule[type]?.fromTime
     ) {
       Changed.isTimeChanged = true;
     }
     // if to time is changed
+    // console.log(currentDateSchedule[type]?.toTime,updatedDateSchedule[type]?.toTime)
     if (
+      updatedDateSchedule[type]?.toTime &&
       currentDateSchedule[type]?.toTime !== updatedDateSchedule[type]?.toTime
     ) {
       Changed.isTimeChanged = true;
@@ -237,6 +238,7 @@ export const isScheduleInputsChanged = createSelector(
     if (Changed.packageId || Changed.isTimeOnlyChanged) {
       Changed.isAnyChanged = true;
     }
+    console.log(Changed);
     return Changed;
   },
 );

@@ -6,12 +6,52 @@ import PackageGalleryCard from "@/components/packages/PackageGalleryCard";
 import { getPackageById } from "@/db/data/dto/package";
 import { isProd } from "@/lib/utils";
 import { db } from "@/db";
-import { Metadata } from "next";
+import { Metadata, MetadataRoute } from "next";
+import { constructMetadata } from "@/lib/helpers/constructMetadata";
 
 interface BookingPage {
   params: {
     slug: string;
   };
+}
+
+export async function generateMetadata({
+  params: { slug },
+}: BookingPage): Promise<Metadata> {
+  const packageMetadata = await db.package.findUnique({
+    where: {
+      slug,
+    },
+    select: {
+      title: true,
+      PackageSeo: {
+        select: {
+          seo: true,
+        },
+      },
+    },
+  });
+  if (!packageMetadata) {
+    return constructMetadata({
+      MetaHeadtitle: {
+        default: "Packages",
+        template: "| Minar Cruise",
+      },
+    });
+  }
+  const seo = packageMetadata.PackageSeo[0].seo;
+  const data = JSON.parse(JSON.stringify(seo.structuredData));
+  return constructMetadata({
+    MetaHeadtitle: seo.title,
+    description: seo.description,
+    keywords: seo.keywords,
+    alternates: {
+      canonical: seo.canonicalUrl,
+    },
+    Ogimage: seo.ogImage,
+    robots: seo.metaRobots,
+    other: data,
+  });
 }
 
 export async function generateStaticParams({ params: { slug } }: BookingPage) {

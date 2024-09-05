@@ -94,7 +94,7 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
             onClick={handleBlockButton}
             variant={"destructive"}
           >
-            Block Lunch at {format(date, "dd/MM")}{" "}
+            Block {type} at {format(date, "dd/MM")}{" "}
           </Button>
         </div>
       </DialogContent>

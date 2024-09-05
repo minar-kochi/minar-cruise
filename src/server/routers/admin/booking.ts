@@ -4,7 +4,7 @@ import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
 import { findBookingById, findScheduleById } from "@/db/data/dto/schedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { sleep } from "@/lib/utils";
+import { combineDateWithSplitedTime, sleep, splitTimeColon } from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
 import {
   offlineBookingFormSchema,
@@ -671,12 +671,14 @@ export const booking = router({
         id: true,
         day: true,
         fromTime: true,
+        toTime: true,
         schedulePackage: true,
         scheduleStatus: true,
-        toTime: true,
         Package: {
           select: {
             title: true,
+            fromTime:true,
+            toTime:true,
           },
         },
         Booking: {
@@ -692,6 +694,20 @@ export const booking = router({
       },
     });
 
+    try {
+      data.sort((a, b) => {
+        let Atime = splitTimeColon(a.fromTime ?? a.Package?.fromTime ?? "");
+        let Btime = splitTimeColon(b.fromTime ?? b.Package?.fromTime ?? "");
+
+        if (!Btime || !Atime) return 0;
+
+        let ADate = combineDateWithSplitedTime(a.day, Atime);
+        let BDate = combineDateWithSplitedTime(b.day, Btime);
+        return ADate.getTime() - BDate.getTime();
+      });
+    } catch (error) {
+      console.log(error);
+    }
     let nextCursor: typeof cursor | undefined = undefined;
 
     let scheduleBookingData = data.map((item) => ({

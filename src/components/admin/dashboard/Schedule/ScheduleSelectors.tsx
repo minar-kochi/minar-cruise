@@ -3,8 +3,8 @@ import ScheduleSelector from "./ScheduleSelector";
 
 export default function ScheduleSelectors() {
   return (
-    <div>
-      <div className="border-y   py-2">
+    <div className="group-[.schedule-page]:grid gap-4 items-start grid-cols-1 md:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="rounded-md  basis-full group-[.schedule-sheet]:border-b  group-[.schedule-page]:border-2 group-[.schedule-page]:max-w-[365px] p-4  w-full    py-2">
         <div className="">
           <ScheduleSelector
             label="Breakfast"
@@ -13,7 +13,7 @@ export default function ScheduleSelectors() {
           />
         </div>
       </div>{" "}
-      <div className="border-b   py-2">
+      <div className="group-[.schedule-page]:border-2  group-[.schedule-sheet]:border-b  rounded-md  basis-full w-full group-[.schedule-page]:max-w-[365px] p-4   py-2">
         <div className="">
           <ScheduleSelector
             label="Lunch"
@@ -22,7 +22,7 @@ export default function ScheduleSelectors() {
           />{" "}
         </div>
       </div>
-      <div className="border-b   py-2">
+      <div className="group-[.schedule-page]:border-2 group-[.schedule-sheet]:border-b rounded-md  basis-full w-full group-[.schedule-page]:max-w-[365px] p-4   py-2">
         <div className="">
           <ScheduleSelector
             label="Sunset"
@@ -31,7 +31,7 @@ export default function ScheduleSelectors() {
           />
         </div>
       </div>
-      <div className="border-b   py-2">
+      <div className="group-[.schedule-page]:border-2 group-[.schedule-sheet]:border-b rounded-md  basis-full w-full group-[.schedule-page]:max-w-[365px] p-4   py-2">
         <div className="">
           <ScheduleSelector
             label="Dinner"
@@ -40,7 +40,7 @@ export default function ScheduleSelectors() {
           />{" "}
         </div>
       </div>
-      <div className="border-b   py-2">
+      <div className="group-[.schedule-page]:border-2 group-[.schedule-sheet]:border-b rounded-md  basis-full w-full group-[.schedule-page]:max-w-[365px] p-4   py-2">
         <div className="">
           <ScheduleSelector
             label="Custom"

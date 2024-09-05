@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { TScheduleBooking } from "@/db/types/TBookingSchedule";
-import { isProd } from "@/lib/utils";
+import { isProd, RemoveTimeStampFromDate } from "@/lib/utils";
 import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
 import {
   isStatusBreakfast,
@@ -295,44 +295,34 @@ export const getUpcommingScheduleDates = async () => {
     for (const item of data) {
       if (isStatusLunch(item.schedulePackage)) {
         scheduledDate.lunch.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusSunset(item.schedulePackage)) {
         scheduledDate.sunset.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusDinner(item.schedulePackage)) {
         scheduledDate.dinner.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusBreakfast(item.schedulePackage)) {
         scheduledDate.breakfast.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       scheduledDate.custom.push({
-        date: item.day.toLocaleDateString(undefined, {
-          timeZone: "Asia/Kolkata",
-        }),
+        date: RemoveTimeStampFromDate(item.day),
         status: item.scheduleStatus,
       });
     }

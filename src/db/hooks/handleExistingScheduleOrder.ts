@@ -43,7 +43,6 @@ export async function handleExistingScheduleOrder({
       createEventRetryLoop <= MAX_DATABASE_CREATE_RETRY_LOOP &&
       !createEventFlag
     ) {
-      console.log("Trying to create Booking");
       try {
         booking = await db.booking.create({
           data: {
@@ -95,7 +94,6 @@ export async function handleExistingScheduleOrder({
         },
       });
     }
-    console.log("Updating Events");
     await updateEventToSucess({ id: events.id });
     console.log("Returning 200 Response");
     return NextResponse.json({ success: true }, { status: 200 });
