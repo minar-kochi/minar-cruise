@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 import ScheduleBar from "@/container/admin/schedule/ScheduleContainer";
+import ScheduleDownloadButton from "@/components/admin/dashboard/Schedule/scheduleTable/ScheduleDownloadButton";
 import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescription";
 
 export default async function ScheduleAdminPage() {
@@ -27,6 +28,13 @@ export default async function ScheduleAdminPage() {
           <div className="flex mt-12  items-center justify-center">
             <div className="">
               <h1 className=" text-2xl  font-bold">Recent Schedule&apos;s</h1>
+            </div>
+            <div className="absolute right-0">
+              {/* @TODO
+
+                  Hide this button if no schedules are present
+              */}
+              <ScheduleDownloadButton type="scheduleWithoutBookingCount"/>
             </div>
           </div>
           <div
