@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescription";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 export default async function CruisePackage() {
   const data = await db.package.findMany({
     select: {
@@ -67,7 +68,10 @@ export default async function CruisePackage() {
                   {item.packageCategory.toLocaleLowerCase()}
                 </TableCell>
                 <TableCell className="max-sm:text-[9px] max-sm:text-pretty">
-                  <Link href={`/admin/cruise-packages/${item.id}`}>
+                  <Link
+                    className={buttonVariants({ variant: "outline" })}
+                    href={`/admin/cruise-packages/${item.id}`}
+                  >
                     Update Image
                   </Link>
                 </TableCell>

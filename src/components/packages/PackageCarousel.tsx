@@ -22,10 +22,10 @@ export const PackageCarousel = async () => {
                 key={item.id}
                 className="embla__slide select-none first-of-type:ml-2"
                 adultPrice={item.adultPrice}
-                alt={item.packageImage[0].image.alt}
+                alt={item.packageImage[0]?.image.alt}
                 duration={item.duration}
                 title={item.title}
-                url={item.packageImage[0].image.url}
+                url={item.packageImage[0]?.image.url}
               />
             );
           })}
