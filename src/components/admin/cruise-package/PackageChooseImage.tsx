@@ -45,6 +45,9 @@ export default function PackageChooseImage({
         setNext(false);
         setSelectedImage(defaultState);
       },
+      async onError(error, variables, context) {
+        toast.error(error.message);
+      },
     });
   const handleMutate = () => {
     if (!selectImage.id) {
@@ -127,7 +130,9 @@ export default function PackageChooseImage({
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <Button className="mt-2 w-full" onClick={() => handleMutate()}>Submit</Button>
+              <Button className="mt-2 w-full" onClick={() => handleMutate()}>
+                Submit
+              </Button>
             </div>
           </DialogHeader>
         </DialogContent>

@@ -56,9 +56,9 @@ export default function PackageImageCard({
     },
   });
   return (
-    <div className="max-w-[320px] p-4 border-2 relative  rounded-2xl m-2">
+    <div className="max-w-[320px] bg-accent border  rounded-md overflow-hidden p-2  relative   m-2">
       <div className="relative  w-full h-full">
-        <div className="absolute max-w-[200px] bg-black/80 p-2 rounded-tl-xl text-white font-medium">
+        <div className="absolute max-w-[200px] rounded-md bg-black/80 p-2  text-white font-medium">
           {getPackageImageUseCaseToHumanized(dbImage.ImageUse)}
         </div>
         <Image
@@ -66,9 +66,10 @@ export default function PackageImageCard({
           src={dbImage.image.url}
           width={350}
           height={350}
-          className="w-full h-full rounded-xl"
+          className="w-full h-full rounded-md  "
         />
       </div>
+
       <p className="p-2">{dbImage.image.alt}</p>
       <Dialog>
         <DialogTrigger

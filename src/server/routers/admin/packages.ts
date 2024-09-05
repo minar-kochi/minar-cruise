@@ -3,6 +3,7 @@ import { getPackageAllImage } from "@/db/data/dto/package";
 import { AddPackageImageSchema } from "@/lib/validators/adminAddPackageImageValidator";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export const packages = router({
@@ -14,7 +15,13 @@ export const packages = router({
     try {
       return await getPackageAllImage(id);
     } catch (error) {
-      return null;
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went wrong",
+      });
     }
   }),
   setPackageImage: AdminProcedure.input(
@@ -23,13 +30,27 @@ export const packages = router({
     }),
   ).mutation(async ({ input: { data } }) => {
     try {
-      const isImageFound = await db.packageImage.count({
+      const packageSlug = await db.package.findFirst({
         where: {
-          imageId: data.imageId,
-          packageId: data.packageId,
+          id: data.packageId,
+        },
+        select: {
+          slug: true,
+          packageImage: {
+            where: {
+              imageId: data.imageId,
+            },
+          },
         },
       });
-      if (isImageFound) {
+      if (!packageSlug) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Couldn't find the package.",
+        });
+      }
+      // console.log(packageSlug)
+      if (packageSlug?.packageImage.length) {
         throw new TRPCError({
           code: "CONFLICT",
           message: "This Image has Already been used for this package",
@@ -38,9 +59,17 @@ export const packages = router({
       const upserted = await db.packageImage.create({
         data,
       });
+      revalidatePath(`/booking/${packageSlug.slug}`);
+      revalidatePath(`/`);
       return { success: true };
     } catch (error) {
-      return null;
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went wrong",
+      });
     }
   }),
   removeImage: AdminProcedure.input(
@@ -65,6 +94,8 @@ export const packages = router({
           id,
         },
       });
+      revalidatePath("/booking");
+      revalidatePath(`/`);
       return { success: true };
     } catch (error) {
       if (error instanceof TRPCError) {
