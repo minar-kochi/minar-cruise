@@ -27,3 +27,22 @@ export function getPackageTitleWithTimeIfNotExists(
     : `${title} ${durations / 60} hr`;
   return prefix;
 }
+
+export function getPackageImageUseCaseToHumanized(
+  imageUse: $Enums.IMAGE_USE,
+): string {
+  switch (imageUse) {
+    case "COMMON":
+      return "Common";
+      break;
+    case "PROD_FEATURED":
+      return "Featured";
+      break;
+    case "PROD_THUMBNAIL":
+      return "Thumbnail";
+      break;
+    default: {
+      return "";
+    }
+  }
+}
