@@ -1,12 +1,5 @@
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
-import { db } from "@/db";
 import { CreateUser } from "@/db/data/creator/user";
-import { totalBookedSeats } from "@/db/data/dto/booking";
 import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
-import {
-  checkScheduleStatusForTheSelectedDate,
-  findScheduleById,
-} from "@/db/data/dto/schedule";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { checkBookingTimeConstraint } from "@/lib/utils";
@@ -22,10 +15,8 @@ export async function CreateBookingForCreateSchedule({
     numOfAdults,
     numOfBaby,
     numOfChildren,
-    packageId,
     selectedScheduleDate,
     phone,
-    scheduleId,
   },
   scheduleTime,
   packageIdExists,

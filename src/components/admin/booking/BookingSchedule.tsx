@@ -17,6 +17,7 @@ import { trpc } from "@/app/_trpc/client";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 const VIEW_BEFORE_PX = 50;
 
 export default function BookingScheduleTable() {
@@ -68,14 +69,25 @@ export default function BookingScheduleTable() {
       <TableBody>
         {schedules?.pages.map((pages) => {
           return pages.response.map((item) => {
-            const formattedDate = format(item.day, "MM/dd/yyyy");
+            const formattedDate = format(item.day, "dd-MMM-yy");
             const formattedDay = format(item.day, "cccc");
+            const { fromTime, toTime } =
+            selectFromTimeAndToTimeFromScheduleOrPackages({
+              Packages: {
+                packageFromTime: item.Package?.fromTime ?? "",
+                packageToTime: item.Package?.toTime ?? "",
+              },
+              schedule: {
+                scheduleFromTime: item.fromTime,
+                scheduleToTime: item.toTime,
+              },
+            });
             return (
               <>
                 <TableRow
                   ref={ref}
                   key={`${item.id}-booking-schedule-table`}
-                  className="max-sm:text-[9px] text-center"
+                  className="max-sm:text-[9px] text-center cursor-pointer"
                   onClick={() => router.push(`/admin/booking/view/${item.id}`)}
                 >
                   <TableCell className="max-sm:text-[9px] max-sm:p-0">
@@ -85,7 +97,7 @@ export default function BookingScheduleTable() {
                     {formattedDay}
                   </TableCell>
                   <TableCell className="max-sm:text-[9px] max-sm:hidden">
-                    {item.fromTime} - {item.toTime}
+                    {fromTime} - {toTime}
                   </TableCell>
                   <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:text-balance">
                     {item.Package?.title}
@@ -97,17 +109,6 @@ export default function BookingScheduleTable() {
                     {150 - item.Booking}
                   </TableCell>
                   <TableCell className="max-sm:text-[8px] p-0 ">
-                    <Link href={`/admin/booking/view/${item.id}`}>
-                      {/* <Button className="max-sm:block hidden  p-0">
-                        view
-                      </Button> */}
-                      <Button className="max-sm:hidden">
-                        <CustomBookingBadge
-                          label="View Booking"
-                          bookingId={""}
-                        />
-                      </Button>
-                    </Link>
                   </TableCell>
                 </TableRow>
               </>

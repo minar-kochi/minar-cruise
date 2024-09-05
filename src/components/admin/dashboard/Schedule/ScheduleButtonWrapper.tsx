@@ -21,7 +21,9 @@ export default function ScheduleButtonWrapper({ type }: TScheduleSelector) {
       <div className="my-2">
         <ScheduleAddButton type={type} />
       </div>
-      <ScheduleBlockButton type={type} />
+      <div className="">
+        <ScheduleBlockButton type={type} />
+      </div>
     </>
   ) : (
     <>

@@ -105,7 +105,7 @@ export async function getPackageById({ slug }: { slug: string }) {
     }
     return data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return null;
   }
 }
@@ -123,11 +123,7 @@ export async function getPackageSearchItems() {
         packageImage: {
           take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
@@ -266,11 +262,7 @@ export async function getPackageCardDetails() {
         packageImage: {
           take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
@@ -340,11 +332,7 @@ export async function getPackagesForBlog() {
         packageImage: {
           take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
@@ -371,3 +359,32 @@ export async function getPackagesForBlog() {
     return null;
   }
 }
+
+export type TGetPackageAllImage = Awaited<
+  ReturnType<typeof getPackageAllImage>
+>;
+export type ExcludeNullTgetPackageAllImage = Exclude<TGetPackageAllImage, null>;
+export type TSingularTGetPackageAllImage =
+ExcludeNullTgetPackageAllImage["packageImage"][number];
+export const getPackageAllImage = async (id: string) => {
+  try {
+    const data = await db.package.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        title: true,
+        packageImage: {
+          include: {
+            image: true,
+          },
+        },
+      },
+    });
+
+    if (!data || !data?.packageImage) return null;
+    return data;
+  } catch (error) {
+    return null;
+  }
+};

@@ -6,13 +6,21 @@ import ContactNumber from "@/components/contact/ContactNumber";
 import ContactMessageCard from "@/components/contact/ContactMessageCard";
 import ContactCard from "@/components/contact/ContactCard";
 import MapView from "@/components/contact/MapView";
+import { constructMetadata } from "@/lib/helpers/constructMetadata";
 
 const badScript = Bad_Script({
   weight: "400",
   style: ["normal"],
   subsets: ["latin"],
 });
-
+export const metadata = constructMetadata({
+  MetaHeadtitle: {
+    default: "Contact Page",
+    template: "%s | Minar Cruise",
+  },
+  description:
+    "Contact admin or owner throught the easy contact form! Contact and schedule a exclusive booking right now!",
+});
 const page = () => {
   return (
     <div>

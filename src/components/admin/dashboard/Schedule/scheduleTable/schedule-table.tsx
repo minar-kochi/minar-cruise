@@ -37,7 +37,7 @@ export default function ScheduleTable() {
     );
 
   return (
-    <div className="max-w-7xl  mt-12 mx-auto">
+    <div className="  mt-12 mx-auto">
       <Table>
         <TableHeader>
           <TableRow className="">
@@ -72,8 +72,8 @@ export default function ScheduleTable() {
                 return (
                   <TableRow ref={ref} key={`${item.id}-table-row`}>
                     {/* <TableCell>{i}</TableCell> */}
-                    <TableCell className="max-w-[100px] max-sm:text-[9px] max-sm:text-nowrap">
-                      {format(item.day, "dd/ MM /yyyy")}
+                    <TableCell className="max-w-[100px]  min-w-[100px] max-sm:text-[9px] ">
+                      <p className="text-nowrap">{format(item.day, "dd/ MMM / yy")}</p>
                     </TableCell>
                     <TableCell className="max-sm:text-[9px] max-sm:text-pretty">
                       {format(item.day, "EEEE")}

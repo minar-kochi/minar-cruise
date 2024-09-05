@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { TScheduleBooking } from "@/db/types/TBookingSchedule";
-import { isProd } from "@/lib/utils";
+import { isProd, RemoveTimeStampFromDate } from "@/lib/utils";
 import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
 import {
   isStatusBreakfast,
@@ -21,13 +21,12 @@ export async function checkScheduleStatusForTheSelectedDate({
   date,
   packageTime,
 }: ICheckScheduleStatusForTheSelectedDate) {
-  
   const scheduleStatus = await db.schedule.findFirst({
     where: {
       day: new Date(date),
       // schedulePackage: packageTime,
       scheduleStatus: {
-        in: ["EXCLUSIVE","BLOCKED"]
+        in: ["EXCLUSIVE", "BLOCKED"],
       },
     },
     select: {
@@ -35,10 +34,98 @@ export async function checkScheduleStatusForTheSelectedDate({
     },
   });
 
-  
   return scheduleStatus;
 }
 
+
+export type TGetSchedulesByDateRange= Awaited<ReturnType<typeof getSchedulesByDateRange>>
+export type TGetSchedulesByDateRangeExcludingNull = Exclude<TGetSchedulesByDateRange, null>
+
+export async function getSchedulesByDateRange(FromDate: Date, ToDate: Date) {
+  try {
+    const scheduleData = await db.schedule.findMany({
+      where: {
+        day: {
+          gte: FromDate,
+          lte: ToDate,
+        },
+      },
+      select: {
+        day: true,
+        schedulePackage: true,
+        scheduleStatus: true,
+        fromTime: true,
+        toTime: true,
+        Package: {
+          select: {
+            title: true,
+            fromTime: true,
+            toTime: true,
+          },
+        },
+      },
+      orderBy: {
+        day: "asc",
+      },
+    });
+    return scheduleData;
+  } catch (error) {
+    console.error(error);
+    ErrorLogger(error);
+    return null;
+  }
+}
+
+export type TGetSchedulesByDateRangeWithBookingCount = Exclude<Awaited<ReturnType<typeof getSchedulesByDateRangeWithBookingCount>>, null>
+
+export async function getSchedulesByDateRangeWithBookingCount(FromDate: Date, ToDate: Date){
+
+  const data = await db.schedule.findMany({
+    where: {
+      day: {
+        gte: new Date(Date.now()),
+      },
+      scheduleStatus: {
+        in: ["AVAILABLE", "EXCLUSIVE"],
+      },
+    },
+    select: {
+      // id: true,
+      day: true,
+      fromTime: true,
+      // schedulePackage: true,
+      // scheduleStatus: true,
+      toTime: true,
+      Package: {
+        select: {
+          title: true,
+          fromTime: true,
+          toTime: true
+        },
+      },
+      Booking: {
+        select: {
+          totalBooking: true,
+        },
+      },
+    },
+    
+    orderBy: {
+      day: "asc",
+    },
+  });
+
+
+  let scheduleBookingData = data.map((item) => ({
+    ...item,
+    Booking: item.Booking.reduce(
+      (total, booking) => total + booking.totalBooking,
+      0,
+    ),
+  }));
+
+  return scheduleBookingData
+}
 export async function findScheduleById(scheduleId: string) {
   try {
     const data = await db.schedule.count({
@@ -208,44 +295,34 @@ export const getUpcommingScheduleDates = async () => {
     for (const item of data) {
       if (isStatusLunch(item.schedulePackage)) {
         scheduledDate.lunch.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusSunset(item.schedulePackage)) {
         scheduledDate.sunset.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusDinner(item.schedulePackage)) {
         scheduledDate.dinner.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusBreakfast(item.schedulePackage)) {
         scheduledDate.breakfast.push({
-          date: item.day.toLocaleDateString(undefined, {
-            timeZone: "Asia/Kolkata",
-          }),
+          date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       scheduledDate.custom.push({
-        date: item.day.toLocaleDateString(undefined, {
-          timeZone: "Asia/Kolkata",
-        }),
+        date: RemoveTimeStampFromDate(item.day),
         status: item.scheduleStatus,
       });
     }

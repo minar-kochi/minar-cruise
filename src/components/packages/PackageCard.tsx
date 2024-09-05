@@ -42,7 +42,7 @@ const PackageCard = async ({
           />
         </div>
         <Image
-          src={url}
+          src={url ?? "/assets/world-map.png"}
           width={500}
           height={600}
           className="object-cover aspect-[4/3]"

@@ -1,4 +1,5 @@
 import { trpc } from "@/app/_trpc/client";
+import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { isSameDay } from "date-fns";
 import { DayProps } from "react-day-picker";
 
@@ -16,7 +17,7 @@ export default function ClientCalenderScheduleDay({
   const { date } = props;
 
   const isAvailableDateFound = AvailableDate
-    ? AvailableDate.findIndex((item) => isSameDay(new Date(item), date))
+    ? AvailableDate.findIndex((item) => isSameDay(RemoveTimeStampFromDate(new Date(item)), RemoveTimeStampFromDate(date)))
     : -1;
 
   return (
