@@ -87,7 +87,7 @@ export default function BookingScheduleTable() {
                 <TableRow
                   ref={ref}
                   key={`${item.id}-booking-schedule-table`}
-                  className="max-sm:text-[9px] text-center"
+                  className="max-sm:text-[9px] text-center cursor-pointer"
                   onClick={() => router.push(`/admin/booking/view/${item.id}`)}
                 >
                   <TableCell className="max-sm:text-[9px] max-sm:p-0">
@@ -109,17 +109,6 @@ export default function BookingScheduleTable() {
                     {150 - item.Booking}
                   </TableCell>
                   <TableCell className="max-sm:text-[8px] p-0 ">
-                    <Link href={`/admin/booking/view/${item.id}`}>
-                      {/* <Button className="max-sm:block hidden  p-0">
-                        view
-                      </Button> */}
-                      <Button className="max-sm:hidden">
-                        <CustomBookingBadge
-                          label="View Booking"
-                          bookingId={""}
-                        />
-                      </Button>
-                    </Link>
                   </TableCell>
                 </TableRow>
               </>
