@@ -1,12 +1,7 @@
 "use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 // import from "@/src"
 import Dropzone from "react-dropzone";
-// import { useImageStore } from "@/store/BlogImageStore";
-// import { useUploadThing } from "@/lib/uploadThing/uploadthing";
-import { useToast } from "./ui/use-toast";
-import { UseFormSetValue } from "react-hook-form";
-// import { TBlogFormValidator } from "@/lib/validators/BlogFormValidators";
 import { CloudIcon, Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -21,10 +16,7 @@ import toast from "react-hot-toast";
 import { Textarea } from "./ui/textarea";
 import { Button, buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
-// interface UploadBlogImage {
-//   setValue:  Dispatch<SetStateAction<string>>;
-//   alt:
-// }
+import Image from "next/image";
 const UploadBlogImage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // const { toast } = useToast();
@@ -74,7 +66,7 @@ const UploadBlogImage = () => {
             <DialogTitle>Upload Image</DialogTitle>
             <DialogDescription>
               Please add in
-              <span className="font-medium text-black"> Alt Tag's </span>a
+              <span className="font-medium text-black"> Alt Tag&apos;s </span>a
               descriptive text for SEO, as it will boost the image to linking
               the image to website
             </DialogDescription>
@@ -86,14 +78,6 @@ const UploadBlogImage = () => {
             onDrop={async (acceptedFiles) => {
               setImage(acceptedFiles);
               setImagePreview(URL.createObjectURL(acceptedFiles[0]));
-              // try {
-              //   if (altText.length < 20) {
-              //     toast.error("Please enter something Larger than 20");
-              //   }
-              //   await startUpload(acceptedFiles, { alt: altText });
-              // } catch (error) {
-              //   console.log(error);
-              // }
             }}
           >
             {({ getRootProps, getInputProps, acceptedFiles }) => (
@@ -101,8 +85,11 @@ const UploadBlogImage = () => {
                 <div className="flex transition-all items-center relative border  border-dashed rounded-lg bg-primary-foreground  justify-center h-full w-full">
                   {image?.length ? (
                     <>
-                      <img
+                      <Image
+                        alt="Image Preview"
                         src={imagePreview}
+                        width={720}
+                        height={480}
                         className="w-full h-full absolute z-[2] rounded-xl"
                       />
                     </>

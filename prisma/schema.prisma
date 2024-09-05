@@ -179,7 +179,7 @@ model Blog {
 model PackageImage {
   id        String      @id @unique @default(cuid())
   packageId String
-  ImageUse  IMAGE_USE[] @default([COMMON])
+  ImageUse  IMAGE_USE @default(COMMON)
   imageId   String
   package   Package     @relation(fields: [packageId], references: [id])
   image     Image       @relation(fields: [imageId], references: [id])
