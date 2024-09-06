@@ -53,6 +53,7 @@
     "embla-carousel-autoplay": "^8.1.7",
     "embla-carousel-react": "^8.1.5",
     "exceljs": "^4.4.0",
+    "framer-motion": "^11.5.4",
     "label": "^0.2.2",
     "lint-staged": "^15.2.7",
     "lucide-react": "^0.395.0",
