@@ -177,7 +177,7 @@ export async function handleCreateScheduleOrder({
         });
       }
       await Promise.all([
-        //@TODO Add Booking confirmation to admin.
+        //@TODO Add Booking confirmation Email to admin.
 
 
         // Send Email to Client

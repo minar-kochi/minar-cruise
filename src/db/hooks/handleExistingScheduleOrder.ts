@@ -150,7 +150,8 @@ export async function handleExistingScheduleOrder({
         console.log(error);
       }
     }
-
+    // @TODO Add admin Notification Email.
+    // Change these below func to Promise. 
     await SendMessageViaWhatsapp({
       recipientNumber: process.env.WHATS_APP_CONTACT!,
       message: sendAdminBookingUpdateNotification({
