@@ -5,6 +5,8 @@ export type OrderPaidEventErrorCode = "UNKNOWN_ERROR" | "NOT_IMPLIMENTED" | "BOO
 export class OrderPaidEventError extends Error {
   readonly code: OrderPaidEventErrorCode;
   readonly fatal: boolean = false;
+  // readonly message: string
+
   constructor({
     code,
     fatality: { fatal = false, message = "" },
@@ -18,5 +20,8 @@ export class OrderPaidEventError extends Error {
     super();
     this.code = code;
     this.fatal = fatal;
+    this.message = message
   }
 }
+
+

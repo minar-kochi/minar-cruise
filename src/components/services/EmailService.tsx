@@ -18,7 +18,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface VercelInviteUserEmailProps {
+interface EmailSendBookingConfirmationProps {
   customerName?: string;
   date?: string;
   packageTitle: string;
@@ -30,10 +30,8 @@ interface VercelInviteUserEmailProps {
 }
 
 
-const domain = "minar-cruise.vercel.app";
-const companyName = "";
 
-export const VercelInviteUserEmail = ({
+export const EmailSendBookingConfirmation = ({
   customerName,
   date,
   packageTitle,
@@ -42,7 +40,7 @@ export const VercelInviteUserEmail = ({
   duration,
   totalAmount,
   status
-}: VercelInviteUserEmailProps) => {
+}: EmailSendBookingConfirmationProps) => {
   const Subject = `here is your Booking ID: ${BookingId}`;
 
   return (
@@ -53,11 +51,12 @@ export const VercelInviteUserEmail = ({
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
             <Section className="my-[10px] ">
+              {/* @TODO Need to change this URL */}
               <Img
-                src={`https://cochincruiseline.com/wp-content/uploads/2022/12/logo.png`}
+                src={`${process.env.NEXT_PUBLIC_DOMAIN}/assets/logo.png`}
                 width="1920"
                 height="1080"
-                alt="Vercel"
+                alt="Minar Logo"
                 className="my-0 mx-auto object-contain w-[180px] h-[50px]"
               />
             </Section>
@@ -135,7 +134,7 @@ export const VercelInviteUserEmail = ({
               Thank you for choosing <strong>Minar</strong>. We are committed to
               making your cruise a memorable experience. If you have any
               questions or need further assistance, feel free to
-              <Link href="https://minar-cruise.vercel.app/contact">
+              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/contact`}>
                 {" "}
                 contact us.{" "}
               </Link>
@@ -145,8 +144,8 @@ export const VercelInviteUserEmail = ({
               <strong>Minar Cruise Services</strong>, Inc., GF,40/6185, Marine
               Drive, Ernakulam, Kerala 682031. © 2022, All rights reserved.
               Minar cruise is a registered trademark of{" "}
-              <Link href={domain}>{domain}</Link>, Inc. View our{" "}
-              <Link href={`${domain}/privacy-policy`}>privacy policy</Link>.
+              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>{process.env.NEXT_PUBLIC_DOMAIN}</Link>, Inc. View our{" "}
+              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>privacy policy</Link>.
             </Text>
           </Container>
         </Body>
@@ -155,7 +154,7 @@ export const VercelInviteUserEmail = ({
   );
 };
 
-// VercelInviteUserEmail.PreviewProps = {
+// EmailSendBookingConfirmationProps.PreviewProps = {
 //   customerName: "Customer",
 //   BookingId: "#12as2d158ssads",
 //   packageTitle: "Sunset Cruise",
@@ -166,5 +165,5 @@ export const VercelInviteUserEmail = ({
 //   date: "18/08/24"
 // } as VercelInviteUserEmailProps;
 
-export default VercelInviteUserEmail;
+export default EmailSendBookingConfirmation;
 
