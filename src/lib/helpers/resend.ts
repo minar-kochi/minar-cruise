@@ -28,10 +28,12 @@ export async function sendConfirmationEmail({
       react: emailComponent,
     });
 
+    console.log(data);
+    console.log(error);
+
     if (error) {
       return { error };
     }
-
     return data;
   } catch (error) {
     return { error };

@@ -365,7 +365,7 @@ export type TGetPackageAllImage = Awaited<
 >;
 export type ExcludeNullTgetPackageAllImage = Exclude<TGetPackageAllImage, null>;
 export type TSingularTGetPackageAllImage =
-ExcludeNullTgetPackageAllImage["packageImage"][number];
+  ExcludeNullTgetPackageAllImage["packageImage"][number];
 export const getPackageAllImage = async (id: string) => {
   try {
     const data = await db.package.findUnique({
@@ -388,3 +388,23 @@ export const getPackageAllImage = async (id: string) => {
     return null;
   }
 };
+
+export async function getPackageTimeAndDuration(id: string) {
+  try {
+    const packageDetails = await db.package.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        title:true,
+        duration: true,
+        fromTime: true,
+      },
+    });
+    return packageDetails;
+  } catch (error) {
+    return null;
+  }
+}
+
+export type TGetPackageTimeAndDuration = Exclude<Awaited<ReturnType<typeof getPackageTimeAndDuration>>,null>
