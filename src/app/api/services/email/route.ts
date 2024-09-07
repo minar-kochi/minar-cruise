@@ -34,7 +34,9 @@ export async function POST() {
     //     scheduleDate: "12-sep-24",
     //     totalAmount: 7820,
     //     BookingDate: "22/4/24",
-    //     Duration: 120
+    //     adultCount:5,
+    //     childCount:2,
+    //     babyCount:2
     //   }),
     // });
 

@@ -27,7 +27,10 @@ import {
     totalAmount: number;
     scheduleDate: string;
     BookingDate: string;
-    Duration: number
+    adultCount: number;
+    childCount: number;
+    babyCount: number
+    // Duration: number
   }
   
   const domain = process.env.NEXT_PUBLIC_DOMAIN;
@@ -42,7 +45,10 @@ import {
     totalCount,
     BookingId,
     BookingDate,
-    Duration
+    adultCount,
+    babyCount,
+    childCount
+    // Duration
   }: BookingConfirmationEmailForAdmin) => {
     const Subject = `New Booking Confirmation! for ${packageTitle} on ${scheduleDate}`;
   
@@ -95,31 +101,7 @@ import {
                   </li>
                   <li className=" pl-0 font-sans tracking-wide">
                     <Text>
-                      <strong>Phone - </strong> {phone}
-                    </Text>
-                  </li>
-                  <li className=" pl-0 font-sans tracking-wide">
-                    <Text>
-                      <strong>Booking Number - </strong>
-                      {"  "}
-                      {BookingId}
-                    </Text>
-                  </li>
-                  <li className=" pl-0 font-sans tracking-wide">
-                    <Text>
-                      <strong>Number of Guests - </strong> {totalCount}
-                    </Text>
-                  </li>
-                  <li className=" pl-0 font-sans tracking-wide">
-                    <Text>
-                      <strong>Package Name - </strong>
-                      {packageTitle}
-                    </Text>
-                  </li>
-  
-                  <li className=" pl-0 font-sans tracking-wide">
-                    <Text>
-                      <strong>Total - </strong> {totalAmount}
+                      <strong>Contact - </strong> {phone}
                     </Text>
                   </li>
                   <li className=" pl-0 font-sans tracking-wide">
@@ -129,9 +111,45 @@ import {
                   </li>
                   <li className=" pl-0 font-sans tracking-wide">
                     <Text>
-                      <strong>Duration</strong> {Duration/60} hrs
+                      <strong>Package Name - </strong>
+                      {packageTitle}
                     </Text>
                   </li>
+
+                  <li className=" pl-0 font-sans tracking-wide">
+                    <Text>
+                      <strong>Adult - </strong> {adultCount}
+                    </Text>
+                  </li>
+                  <li className=" pl-0 font-sans tracking-wide">
+                    <Text>
+                      <strong>Child - </strong> {childCount}
+                    </Text>
+                  </li>
+                  <li className=" pl-0 font-sans tracking-wide">
+                    <Text>
+                      <strong>Baby - </strong> {babyCount}
+                    </Text>
+                  </li>
+
+                  <li className=" pl-0 font-sans tracking-wide">
+                    <Text>
+                      <strong>Total - </strong> {totalAmount}/-
+                    </Text>
+                  </li>
+                  <li className=" pl-0 font-sans tracking-wide">
+                    <Text>
+                      <strong>Booking Number - </strong>
+                      {"  "}
+                      {BookingId}
+                    </Text>
+                  </li>
+  
+                  {/* <li className=" pl-0 font-sans tracking-wide">
+                    <Text>
+                      <strong>Duration</strong> {Duration/60} hrs
+                    </Text>
+                  </li> */}
                   
                 </ul>
               </div>
@@ -161,7 +179,9 @@ import {
 //     scheduleDate: "12-sep-24",
 //     totalAmount: 7820,
 //     BookingDate: "22/4/24",
-//      Duration: 120
+//     adultCount: 2,
+//     childCount: 5,
+//     babyCount: 5
 //   } as BookingConfirmationProps;
   
   export default BookingConfirmationEmailForAdmin;
