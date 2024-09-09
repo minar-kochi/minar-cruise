@@ -62,6 +62,42 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
   }
 }
 
+export type TGetPackageDetails = Exclude<Awaited<ReturnType<typeof getPackageDetails>>, null>
+export type TAmenities = TGetPackageDetails["amenities"]
+export type TBookingDateSelector = Pick<TGetPackageDetails, 'adultPrice' | 'childPrice' | 'packageCategory' | 'id' | 'title'> 
+export async function getPackageDetails(slug: string) {
+  try {
+    
+    const data = await db.package.findUnique({
+      where: {
+      slug 
+    },
+    select: {
+      id: true,
+      adultPrice: true,
+      packageCategory: true,
+      title: true,
+      description: true,
+      amenitiesId: true,
+      duration: true,
+      fromTime: true,
+      toTime: true,
+      childPrice: true,
+      amenities: {
+        select: {
+          description: true
+        }
+      }
+    },
+  })
+  
+  return data
+} catch (error) {
+  console.log(error)
+  return null
+}
+}
+
 export type TGetPackageById = Exclude<
   Awaited<ReturnType<typeof getPackageById>>,
   null
