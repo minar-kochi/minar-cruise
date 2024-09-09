@@ -1,5 +1,6 @@
 import HeroCard from "@/components/package/HeroCard";
 import PackageDescriptionCard from "@/components/package/PackageDescriptionCard";
+import { PackageCarousel } from "@/components/packages/PackageCarousel";
 import TermsAndConditionsCard from "@/components/packages/TermsAndConditionsCard";
 import { db } from "@/db";
 import { getPackageDetails } from "@/db/data/dto/package";
@@ -27,6 +28,7 @@ export default async function page({ params: { slug } }: IBookPage) {
         amenities={data.amenities}
         description={data.description}
       />
+      <PackageCarousel/>
       <TermsAndConditionsCard />
     </main>
   );

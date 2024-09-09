@@ -102,8 +102,9 @@ export default function DownloadScheduleTable({
   return (
     <Button
       onClick={handleDownload}
-      className="relative bg-transparent text-white w-[8.5em] h-[2.9em] border border-[#3654ff] rounded-[11px]
-       text-right transition-all duration-600 ease-in-out hover:bg-[#3654ff] cursor-pointer"
+      variant={"confirm"}
+      className="hover:text-white hover:bg-green-600"
+
     >
       Download
     </Button>

@@ -38,8 +38,8 @@ export const EmblaCarouselProvider = ({
 
   return (
     <div className="relative">
-      <div className="embla py-10 relative" ref={emblaRef}>
-        <div className="embla__container relative gap-5 ">{data}</div>
+      <div className="embla relative" ref={emblaRef}>
+        <div className="embla__container relative gap-5">{data}</div>
         {/* <div className=" flex justify-center">
           <button onClick={onNextButtonClick} className="h-full bg-red-600 text-white">
             next
