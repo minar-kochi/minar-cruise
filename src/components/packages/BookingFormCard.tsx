@@ -61,6 +61,7 @@ const BookingFormCard = ({
   className,
   selectedSchedule,
   packageId,
+  formData,
   selectedDate,
   isNextSlideState,
   packagePrice,
@@ -105,7 +106,7 @@ const BookingFormCard = ({
           currency: "INR",
           amount: res?.order?.amount,
           order_id: res?.order.id,
-          callback_url: absoluteUrl("/success"),
+          callback_url: absoluteUrl(`/success?email=${""}&time=${formData?.fromTime}`),
           prefill: {
             name: notes.name ?? undefined,
             phone: phoneNumberParser(
