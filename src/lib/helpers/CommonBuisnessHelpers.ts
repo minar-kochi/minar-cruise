@@ -1,5 +1,4 @@
 import { isValidMergeTimeCycle } from "../utils";
-import { VercelInviteUserEmail } from "@/components/services/EmailService";
 import { error } from "console";
 import { Resend } from "resend";
 
