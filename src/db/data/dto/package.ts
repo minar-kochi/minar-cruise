@@ -298,6 +298,8 @@ export async function getPackageCardDetails() {
         adultPrice: true,
         childPrice:true,
         title: true,
+        packageCategory:true,
+        slug:true,
         amenities: {
           select: {
             description: true

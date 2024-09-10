@@ -4,6 +4,7 @@ import PackageImage from "@/components/package/new-page/PackageImage";
 import ProductCarousalIndexProvider from "@/components/package/new-page/ProductCarousalContextProvider";
 import ProductCarousalProvider from "@/components/package/new-page/ProductCarousalProvider";
 import ProductCarousalThumbButton from "@/components/package/new-page/ProductCarousalThumbButton";
+import { PackageCarousel } from "@/components/packages/PackageCarousel";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -104,17 +105,18 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
   return (
     <Bounded className=" my-4 md:my-12 rounded-2xl ">
       <div className="  rounded-2xl">
-        <div className="w-full h-full grid md:grid-cols-2   ">
-          <PackageImage data={data} />
-
-          <PackageForm
-            packageData={(() => {
-              let { packageImage, description, ...rest } = data;
-              return rest;
-            })()}
-            packageId={data.id}
-            packageCategory={data.packageCategory}
-          />
+        <div className="w-full h-full  grid md:grid-cols-2   ">
+          <div className="">
+            <PackageImage data={data} />
+          </div>
+          <div className="px-0.5 mt-2 bg-white md:bg-transparent rounded-md md:rounded-none py-2">
+            <PackageForm
+              adultPrice={data.adultPrice}
+              childPrice={data.childPrice}
+              packageId={data.id}
+              packageCategory={data.packageCategory}
+            />
+          </div>
         </div>
 
         {/* <div className="mt-12">{"Content"}</div> */}
@@ -129,7 +131,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
             package offers unique amenities to suit your preferences.
           </p>
           <div className="grid md:grid-cols-2 place-content-center gap-y-4 mt-3   ">
-            {data.amenities.description.map((item,i) => {
+            {data.amenities.description.map((item, i) => {
               return (
                 <p key={`${item}-${i}`} className="flex items-center gap-2  ">
                   <CheckCircle2 className="w-5 h-5  stroke-red-500" />
@@ -159,10 +161,8 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
                 </DialogTrigger>
                 <DialogContent>
                   <PackageForm
-                    packageData={(() => {
-                      let { packageImage, description, ...rest } = data;
-                      return rest;
-                    })()}
+                    adultPrice={data.adultPrice}
+                    childPrice={data.childPrice}
                     packageId={data.id}
                     packageCategory={data.packageCategory}
                   />
@@ -184,6 +184,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
       <div className="mt-6 prose max-w-full w-full">
         <MDXRemote source={data.description} />
       </div>
+      <PackageCarousel />
     </Bounded>
   );
 }

@@ -1,5 +1,12 @@
 import Image from "next/image";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   ArrowRight,
   Baby,
   CameraIcon,
@@ -10,10 +17,13 @@ import {
   TicketIcon,
   UserRound,
 } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { TAmenitiesGetPackageCardDetails } from "@/db/data/dto/package";
 import Link from "next/link";
+import PackageForm from "../package/new-page/PackageForm";
+import { PACKAGE_CATEGORY } from "@prisma/client";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 
 interface IPackageCard {
   url: string;
@@ -21,19 +31,24 @@ interface IPackageCard {
   title: string;
   adultPrice: number;
   childPrice: number;
+  PackageId: string;
   className?: string;
   amenities: TAmenitiesGetPackageCardDetails;
+  packageCategory: PACKAGE_CATEGORY;
+  slug:string
 }
 const PackageCard = async ({
   adultPrice,
   childPrice,
+  slug,
   alt,
   title,
   url,
   className,
   amenities,
+  PackageId,
+  packageCategory,
 }: IPackageCard) => {
-
   return (
     <div className={cn("max-w-[400px] w-full ", className)}>
       <div className="relative overflow-hidden rounded-sm ">
@@ -74,8 +89,9 @@ const PackageCard = async ({
               <p className="font-bold">{childPrice / 100}/-</p>
             </div>
           </div>
-          <Link href={'#'}>
-          <Button className="rounded-full">Book Now</Button>
+
+          <Link href={`/booking/${slug}`}>
+            <Button className="rounded-full">Book Now</Button>
           </Link>
         </div>
       </div>

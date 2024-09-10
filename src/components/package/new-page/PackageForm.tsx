@@ -26,12 +26,14 @@ import { format } from "date-fns";
 type TPackageForm = {
   packageId: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
-  packageData: Omit<TGetPackageById, "packageImage" | "description">;
+  adultPrice: number;
+  childPrice: number;
 };
 export default function PackageForm({
   packageId,
   packageCategory,
-  packageData,
+  adultPrice,
+  childPrice,
 }: TPackageForm) {
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
@@ -53,7 +55,6 @@ export default function PackageForm({
       numOfChildren: 0,
       numOfBaby: 0,
       packageId: packageId,
-      // scheduleId: selectedSchedule?.scheduleId ?? "",
       selectedScheduleDate: RemoveTimeStampFromDate(new Date(Date.now())),
       packageCategory: packageCategory,
     },
@@ -145,27 +146,28 @@ export default function PackageForm({
   const numofAdults = watch("numOfAdults");
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
-  const date = watch('selectedScheduleDate')
+  const date = watch("selectedScheduleDate");
   const total =
-    numofAdults * (packageData.adultPrice / 100) +
-    numOfChild * (packageData.childPrice / 100);
+    numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   return (
     <article className=" sm:pl-2 ">
-      <div className="mt-2 max-w-sm mx-auto">
+      <div className=" max-w-sm mx-auto">
         <h3 className="text-xl  font-medium">Check Dates & Availability</h3>
         <p className="text-sm text-muted-foreground">
           Choose a date to check availability and reserve your spot for the
           cruise.{" "}
         </p>
-        <div className="flex items-center justify-center gap-4 my-4">
-          <ColorRepresentationInfo className="bg-muted " title="Blocked" />
+        <div className="flex flex-col items-center justify-center gap-2 ">
+          <div className="flex gap-2">
+            <ColorRepresentationInfo className="bg-muted " title="Blocked" />
+            <ColorRepresentationInfo
+              className="bg-green-600 "
+              title="Available"
+            />
+          </div>
           <ColorRepresentationInfo
-            className="bg-green-600 "
-            title="Available"
-          />
-          <ColorRepresentationInfo
-            className="bg-white border"
-            title="Min 25 Pax"
+            className="bg-white border "
+            title="Rest of the days Minimum 25 Pax"
           />
         </div>
       </div>
@@ -202,7 +204,7 @@ export default function PackageForm({
             onClick={() => {
               setIsNext(true);
             }}
-            className="w-full max-w-sm mt-2"
+            className="w-full relative z-10 max-w-sm mt-2"
           >
             Fill in Booking form {format(new Date(date), "do/MMM")}
           </Button>

@@ -17,6 +17,9 @@ export const PackageCarousel = async () => {
             return (
               <PackageCard
                 key={item.id}
+                packageCategory={item.packageCategory}
+                PackageId={item.id}
+                slug={item.slug}
                 amenities={item.amenities}
                 className="embla__slide select-none first-of-type:ml-2"
                 adultPrice={item.adultPrice}

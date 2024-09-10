@@ -114,7 +114,7 @@ const ProductCarousalProvider = ({
             />
           </button>
         </div>
-        <div className="embla  relative overflow-hidden h-full" ref={emblaRef}>
+        <div className="embla  relative  overflow-hidden h-full" ref={emblaRef}>
           <div className="embla__container   relative gap-2 h-full ">{data}</div>
         </div>
       </div>
