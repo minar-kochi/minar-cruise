@@ -57,7 +57,7 @@ const ProductCarousalProvider = ({
         setIndex(emblaApi.selectedScrollSnap());
       });
     }
-  }, [emblaApi]);
+  }, [emblaApi,setIndex]);
   useEffect(() => {
     if (emblaApi) {
       emblaApi.scrollTo(currentIndex);

@@ -97,7 +97,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
   if (!data)
     return (
       <>
-        <h1>Package doesn't Found</h1>
+        <h1>Package doesn&apos;t Found</h1>
       </>
     );
 
@@ -129,9 +129,9 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
             package offers unique amenities to suit your preferences.
           </p>
           <div className="grid md:grid-cols-2 place-content-center gap-y-4 mt-3   ">
-            {data.amenities.description.map((item) => {
+            {data.amenities.description.map((item,i) => {
               return (
-                <p className="flex items-center gap-2  ">
+                <p key={`${item}-${i}`} className="flex items-center gap-2  ">
                   <CheckCircle2 className="w-5 h-5  stroke-red-500" />
                   <span>{item}</span>
                 </p>
