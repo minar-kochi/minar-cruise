@@ -11,7 +11,8 @@ export interface TInputLabel {
   InputProps?: InputProps;
   errorMessage?: string | null;
   containerClassName?: string;
-  labelClassName?: string
+  labelClassName?: string;
+  errorClassName?: string;
 }
 
 const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
@@ -19,6 +20,7 @@ const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
     {
       TextAreaClassName,
       InputBox,
+      errorClassName,
       labelClassName,
       label,
       errorMessage,
@@ -30,9 +32,9 @@ const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
     ref,
   ) => {
     return (
-      <div className={cn("space-y-2 py-2", containerClassName)}>
+      <div className={cn("my-1", containerClassName)}>
         <label
-          className={cn("pl-2 font-semibold ",labelClassName, {
+          className={cn("pl-2 font-semibold ", labelClassName, {
             hidden: !label,
           })}
         >
@@ -47,7 +49,14 @@ const InputLabel = React.forwardRef<HTMLInputElement, TInputLabel>(
         ) : (
           <Input ref={ref} {...InputProps} />
         )}
-        <p className="text-red-500 flex justify-center">{errorMessage}</p>
+        <p
+          className={cn(
+            "text-red-600 flex justify-center text-sm mt-0.5",
+            errorClassName,
+          )}
+        >
+          {errorMessage}
+        </p>
       </div>
     );
   },

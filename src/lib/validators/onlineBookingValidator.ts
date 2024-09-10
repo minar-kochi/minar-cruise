@@ -22,17 +22,19 @@ export const onlineBookingFormValidator = z
   .object({
     name: z
       .string()
-      .min(3, "name should have min 3 letters")
+      .min(3, "Name should have min 3 letters")
       .max(25, "Name should be maximum of 25 letters"),
-    email: z.string().email(),
+    email: z.string().email({
+      message: "Please Enter a Valid Email"
+    }),
     phone: z
       .string()
       .refine((num) => num === "" || num.length > 0, {
-        message: "Phone number must be at least 3 digits long if provided",
+        message: "Phone number must be at least 10 digits long if provided",
       })
       .refine((num) => num === "" || indianPhoneRegex.test(num), {
         message:
-          "Should be a valid Phone number, only indian number are allowed",
+          "Please Enter a valid Indian Mobile Number",
       })
       .optional(),
     numOfAdults: z

@@ -7,7 +7,7 @@ export default function ImageUpload() {
   return (
     <main className="">
       <HeaderTitleDescription
-        title="Images in your Uploaded Gallery"
+        title="Upload Gallery"
         description="Upload the image to your Storage and use Around package Images multiple times."
       />
       <div className="flex  justify-center my-4 mb-12">

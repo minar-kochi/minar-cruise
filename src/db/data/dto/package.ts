@@ -121,6 +121,9 @@ export async function getPackageById({ slug }: { slug: string }) {
         fromTime: true,
         toTime: true,
         childPrice: true,
+        amenities:true,
+        food:true,
+        slug:true,
         packageImage: {
           select: {
             image: {
