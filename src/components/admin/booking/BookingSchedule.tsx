@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
-import { format } from "date-fns";
+
+import { trpc } from "@/app/_trpc/client";
+import LoadingState from "@/components/custom/Loading";
 import {
   Table,
   TableBody,
@@ -9,19 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TGetManySchedulesAndTotalBookingCount } from "@/db/data/dto/schedule";
-import { Button } from "@/components/ui/button";
-import CustomBookingBadge from "@/components/custom/CustomBookingBadge";
-import { useInView } from "react-intersection-observer";
-import { trpc } from "@/app/_trpc/client";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { useRouter } from "next/navigation";
+import { VIEW_BEFORE_PX } from "@/constants/config";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
-const VIEW_BEFORE_PX = 50;
+import { format } from "date-fns";
+import { useRouter } from "next/navigation";
+import { useInView } from "react-intersection-observer";
 
-export default function BookingScheduleTable() {
+export default function BookingSchedule() {
+  const router = useRouter();
   const {
+    isLoading,
     data: schedules,
     fetchNextPage,
     isFetching,
@@ -41,82 +39,87 @@ export default function BookingScheduleTable() {
       }
     },
   });
-  const router = useRouter();
+
   return (
-    <Table className="max-sm:m-2">
-      <TableHeader>
-        <TableRow className="text-center">
-          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
-            Date
-          </TableHead>
-          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
-            Day
-          </TableHead>
-          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold max-sm:hidden">
-            Timing
-          </TableHead>
-          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
-            Package
-          </TableHead>
-          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
-            Booked seats
-          </TableHead>
-          <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
-            Remaining seats
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {schedules?.pages.map((pages) => {
-          return pages.response.map((item) => {
-            const formattedDate = format(item.day, "dd-MMM-yy");
-            const formattedDay = format(item.day, "cccc");
-            const { fromTime, toTime } =
-            selectFromTimeAndToTimeFromScheduleOrPackages({
-              Packages: {
-                packageFromTime: item.Package?.fromTime ?? "",
-                packageToTime: item.Package?.toTime ?? "",
-              },
-              schedule: {
-                scheduleFromTime: item.fromTime,
-                scheduleToTime: item.toTime,
-              },
-            });
-            return (
-              <>
-                <TableRow
-                  ref={ref}
-                  key={`${item.id}-booking-schedule-table`}
-                  className="max-sm:text-[9px] text-center cursor-pointer"
-                  onClick={() => router.push(`/admin/booking/view/${item.id}`)}
-                >
-                  <TableCell className="max-sm:text-[9px] max-sm:p-0">
-                    {formattedDate}
-                  </TableCell>
-                  <TableCell className="max-sm:text-[9px] ">
-                    {formattedDay}
-                  </TableCell>
-                  <TableCell className="max-sm:text-[9px] max-sm:hidden">
-                    {fromTime} - {toTime}
-                  </TableCell>
-                  <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:text-balance">
-                    {item.Package?.title}
-                  </TableCell>
-                  <TableCell className="max-sm:text-[9px] ">
-                    {item.Booking}
-                  </TableCell>
-                  <TableCell className="max-sm:text-[9px] max-sm:p-0">
-                    {150 - item.Booking}
-                  </TableCell>
-                  <TableCell className="max-sm:text-[8px] p-0 ">
-                  </TableCell>
-                </TableRow>
-              </>
-            );
-          });
-        })}
-        {isFetching}
-      </TableBody>
-    </Table>
+    <>
+      <Table className="max-sm:m-2">
+        <TableHeader>
+          <TableRow className="text-center">
+            <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+              Date
+            </TableHead>
+            <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+              Day
+            </TableHead>
+            <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold max-sm:hidden">
+              Timing
+            </TableHead>
+            <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+              Package
+            </TableHead>
+            <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+              Booked seats
+            </TableHead>
+            <TableHead className="max-sm:text-[9px] text-center max-sm:text-balance center font-bold ">
+              Remaining seats
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          { schedules?.pages.map((pages) => {
+              return pages.response.map((item) => {
+                const formattedDate = format(item.day, "dd-MMM-yy");
+                const formattedDay = format(item.day, "cccc");
+                const { fromTime, toTime } =
+                  selectFromTimeAndToTimeFromScheduleOrPackages({
+                    Packages: {
+                      packageFromTime: item.Package?.fromTime ?? "",
+                      packageToTime: item.Package?.toTime ?? "",
+                    },
+                    schedule: {
+                      scheduleFromTime: item.fromTime,
+                      scheduleToTime: item.toTime,
+                    },
+                  });
+                return (
+                  <TableRow
+                    ref={ref}
+                    key={`${item.id}-booking-schedule-table`}
+                    className="max-sm:text-[9px] text-center cursor-pointer"
+                    onClick={() =>
+                      router.push(`/admin/booking/view/${item.id}`)
+                    }
+                  >
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                      {formattedDate}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] ">
+                      {formattedDay}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:hidden">
+                      {fromTime} - {toTime}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:text-balance">
+                      {item.Package?.title}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] ">
+                      {item.Booking}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                      {150 - item.Booking}
+                    </TableCell>
+                    <TableCell className="max-sm:text-[8px] p-0 "></TableCell>
+                  </TableRow>
+                );
+              });
+            })}
+        </TableBody>
+      </Table>
+      {isLoading ? (
+        <>
+          <LoadingState />
+        </>
+      ) : null}
+    </>
   );
 }

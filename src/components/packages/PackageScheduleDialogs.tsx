@@ -27,10 +27,9 @@ export default function PackageScheduleDialogs({
   selectedDate,
   isNextSlideState,
 }: TPackageScheduleDialogs) {
-  console.log(ScheduleError && ScheduleError.slug)
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger>OpenTHis</DialogTrigger>
+      {/* <DialogTrigger>OpenTHis</DialogTrigger> */}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Another Package found at same Date and time</DialogTitle>
@@ -56,14 +55,20 @@ export default function PackageScheduleDialogs({
                 {ScheduleError.slug ? (
                   <Link
                     className={cn(buttonVariants({ variant: "default" }))}
-                    href={`/booking/${ScheduleError.slug}`}
+                    href={`/package/${ScheduleError.slug}`}
                   >
                     Book now
                   </Link>
                 ) : null}
               </>
             ) : null}
-            <Button variant={"ghost"} onClick={() => isNextSlideState(false)}>
+            <Button
+              variant={"ghost"}
+              onClick={() => {
+                isNextSlideState(false);
+                setIsOpen(false);
+              }}
+            >
               select Diffrent Date
             </Button>
           </div>

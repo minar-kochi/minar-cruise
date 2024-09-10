@@ -1,36 +1,30 @@
 import { z } from "zod";
 
 export async function SendMessageViaWhatsapp({
-  messageTemplate = "hello_world",
   recipientNumber,
+  message,
 }: {
-  messageTemplate?: string;
-  recipientNumber: number;
+  recipientNumber: string;
+  message?: string;
 }) {
   let ACCESS_TOKEN = process.env.CLOUD_API_ACCESS_TOKEN;
-  
   try {
+    console.log("Called Send Message \n", message);
     const myHeaders = new Headers();
-    myHeaders.append(
-      "Authorization",
-      `Bearer ${ACCESS_TOKEN}`,
-    );
+    myHeaders.append("Authorization", `Bearer ${ACCESS_TOKEN}`);
     myHeaders.append("Content-Type", "application/json");
-
     const raw = JSON.stringify({
       messaging_product: "whatsapp",
+      recipient_type: "individual",
       to: `${recipientNumber}`,
-      type: "template",
-      template: {
-        name: `${messageTemplate}`,
-        language: {
-          code: "en_US",
-        },
+      preview_url: "true",
+      type: "text",
+      text: {
+        preview_url: true,
+        body: message,
       },
     });
-
-
-    let data = fetch(
+    let data = await fetch(
       "https://graph.facebook.com/v20.0/427706937087618/messages",
       {
         body: raw,
@@ -42,8 +36,8 @@ export async function SendMessageViaWhatsapp({
       .then((response) => response.text())
       .then((result) => result)
       .catch((error) => console.error(error));
-      return data
-
+    console.log(data);
+    return data;
   } catch (error) {
     console.log(error);
   }

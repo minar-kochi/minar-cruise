@@ -41,39 +41,32 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
 
   return (
     <div>
-      <div className="">
+      <div className="flex gap-2 flex-wrap items-center justify-center">
         {data &&
           data.pages &&
-          data.pages.map((page,i) => {
-            // let id = nanoid(16)
+          data.pages.map((page, i) => {
             return (
-              // <div key={`${page.nextCursor}-ChooseImg-${nanoid()}`}>
-              <div ref={ref} key={`${i}-page-ChooseImg-${page.nextCursor}`} >
-                {page &&
-                  page.response.map((item) => {
-                    return (
-                      <>
-                        <button
-                          // ref={ref}
-                          key={`${item.id}-choose-image`}
-                          className="cursor-pointer max-w-[150px] border-2 w-full"
-                          onClick={() => handleImageClick(item.id, item.url)}
-                        >
-                          <Image
-                            className="rounded-md"
-                            src={item.url}
-                            alt={item.alt}
-                            width={720}
-                            height={480}
-                          />
-                        </button>
-                      </>
-                    );
-                  })}
-              </div>
-              // </div>
+              page &&
+              page.response.map((item) => {
+                return (
+                  <button
+                    key={`${item.id}-choose-image-${i}`}
+                    className="cursor-pointer max-w-[150px]  group-[.image-upload]:max-w-[350px] w-full"
+                    onClick={() => handleImageClick(item.id, item.url)}
+                  >
+                    <Image
+                      className="rounded-md w-full h-full object-cover"
+                      src={item.url}
+                      alt={item.alt}
+                      width={720}
+                      height={480}
+                    />
+                  </button>
+                );
+              })
             );
           })}
+        <div ref={ref} className="w-full h-2" />
       </div>
     </div>
   );

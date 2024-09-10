@@ -14,6 +14,7 @@ import { extractRouterConfig } from "uploadthing/server";
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
+import LoadingState from "../../../components/custom/Loading";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -43,7 +44,7 @@ export default async function RootLayout({
         <Header>
           <Toaster />
           <Providers>
-            <Suspense fallback={<Skeleton className="h-full w-full" />}>
+            <Suspense fallback={<LoadingState/>}>
               <NextSSRPlugin
                 routerConfig={extractRouterConfig(ourFileRouter)}
               />

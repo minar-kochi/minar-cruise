@@ -1,6 +1,7 @@
 import { getPackageCardDetails } from "@/db/data/dto/package";
 import { EmblaCarouselProvider } from "../Carousel/EmblaCarousel";
 import PackageCard from "./PackageCard";
+import Bounded from "../elements/Bounded";
 
 export const PackageCarousel = async () => {
   const data = await getPackageCardDetails();
@@ -9,21 +10,21 @@ export const PackageCarousel = async () => {
     return null;
   }
   return (
-    <section className="flex flex-col items-center py-20 ">
-      <h6 className="text-sm tracking-widest text-primary font-medium">
-        PACKAGES
-      </h6>
-      <h1 className="font-bold text-5xl pt-5">Most Popular Cruises</h1>
+    <Bounded className="flex flex-col items-center embla__viewport ">
       <div className="overflow-hidden">
         <EmblaCarouselProvider>
           {data.map((item, i) => {
             return (
               <PackageCard
                 key={item.id}
+                packageCategory={item.packageCategory}
+                PackageId={item.id}
+                slug={item.slug}
+                amenities={item.amenities}
                 className="embla__slide select-none first-of-type:ml-2"
                 adultPrice={item.adultPrice}
+                childPrice={item.childPrice}
                 alt={item.packageImage[0]?.image.alt}
-                duration={item.duration}
                 title={item.title}
                 url={item.packageImage[0]?.image.url}
               />
@@ -31,6 +32,6 @@ export const PackageCarousel = async () => {
           })}
         </EmblaCarouselProvider>
       </div>
-    </section>
+    </Bounded>
   );
 };

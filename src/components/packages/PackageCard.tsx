@@ -1,98 +1,98 @@
 import Image from "next/image";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   ArrowRight,
+  Baby,
   CameraIcon,
+  Check,
   Clock,
   Heart,
   Star,
+  TicketIcon,
   UserRound,
 } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { TAmenitiesGetPackageCardDetails } from "@/db/data/dto/package";
+import Link from "next/link";
+import PackageForm from "../package/new-page/PackageForm";
+import { PACKAGE_CATEGORY } from "@prisma/client";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 
 interface IPackageCard {
   url: string;
   alt: string;
   title: string;
   adultPrice: number;
-  duration: number;
+  childPrice: number;
+  PackageId: string;
   className?: string;
+  amenities: TAmenitiesGetPackageCardDetails;
+  packageCategory: PACKAGE_CATEGORY;
+  slug:string
 }
 const PackageCard = async ({
   adultPrice,
+  childPrice,
+  slug,
   alt,
-  duration,
   title,
   url,
   className,
+  amenities,
+  PackageId,
+  packageCategory,
 }: IPackageCard) => {
-  /**
-   *
-   * @TODO Add image galley related to the package name on camera button with notification count as number of images
-   *
-   */
-
   return (
-    <div className={cn("mt-5 max-w-[355px] w-full group ", className)}>
-      <div className="relative rounded-t-xl overflow-hidden">
-        <div className="absolute right-4 top-4">
-          <Heart
-            className="bg-black/25 rounded-md p-1 stroke-white active:fill-red-600 active:stroke-none"
-            size={34}
+    <div className={cn("max-w-[400px] w-full ", className)}>
+      <div className="relative overflow-hidden rounded-sm ">
+        <div className="relative border-4 border-white ">
+          <Image
+            src={url ?? "/assets/world-map.png"}
+            width={500}
+            height={600}
+            className="object-fill aspect-[6/4] rounded-sm"
+            alt={alt}
           />
-        </div>
-        <Image
-          src={url ?? "/assets/world-map.png"}
-          width={500}
-          height={600}
-          className="object-cover aspect-[4/3]"
-          alt={alt}
-        />
-      </div>
-      <div className="relative -mt-12  py-4 px-4 rounded-t-2xl rounded-b-lg bg-white min-h-[150px] shadow-md hover:shadow-xl ">
-        <div className="flex items-center  justify-between overflow-hidden h-[30px]  relative">
-          <div className="flex relative	py-2 ">
-            <div className="overflow-hidden w-full flex group-hover:w-0  flex-shrink-0 transition-all duration-500 ease-linear">
-              <Star size={20} className="fill-[#f7931e] stroke-0" />
-              <Star size={20} className="fill-[#f7931e] stroke-0" />
-              <Star size={20} className="fill-[#f7931e] stroke-0" />
-              <Star size={20} className="fill-[#f7931e] stroke-0" />
-              <Star size={20} className="fill-[#f7931e] stroke-0" />
-            </div>
-            <div className="flex items-center justify-center">
-              <Star className="fill-[#f7931e] stroke-0 w-0 group-hover:w-6  transition-all ease-linear" />
-              4.6
-            </div>
-          </div>
-          <div>
-            <CameraIcon />
+          <div className="absolute  top-0 border w-full h-full bg-black/50 z-0 rounded-sm"></div>
+          <div className="absolute top-2 sm:top-5 left-2 sm:left-5 text-white space-y-2">
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <ul className="space-y-2">
+              {amenities.description.map((item, i) => {
+                return (
+                  <li
+                    key={item + i}
+                    className="text-xs  font-bold flex gap-2 items-center tracking-wider"
+                  >
+                    <Check size={12} />
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex">
-            <h6 className="text-xl text-wrap flex flex-wrap font-semibold">
-              {title}
-            </h6>
-          </div>
-          <p className="text-muted-foreground font-medium">
-            For Adult <span className="text-red-400">{adultPrice}</span>
-          </p>
-          <div className="flex items-center justify-between  bg-orange-50 p-2 rounded-lg">
-            <div className="flex gap-2 items-center justify-center">
-              <Clock size={18} className="stroke-primary" />
-              <p className="text-sm text-gray-500 font-medium">
-                {duration} hours
-              </p>
+        <div className="absolute flex justify-between items-center px-5 bottom-0 h-[60px] bg-white w-full rounded-xl z-10">
+          <div className=" w-full flex gap-4">
+            <div className=" flex gap-2">
+              <UserRound stroke="red" />
+              <p className="font-bold">{adultPrice / 100}/-</p>
             </div>
-            <div className="flex gap-2 items-center justify-center">
-              <UserRound size={17} className="stroke-primary" />
-              <p className="text-sm text-gray-500 font-medium">150</p>
+            <div className=" flex gap-2">
+              <Baby stroke="red" />
+              <p className="font-bold">{childPrice / 100}/-</p>
             </div>
-            <Button className="tracking-wider">
-              Book Now
-              <ArrowRight size={20} />
-            </Button>
           </div>
+
+          <Link href={`/package/${slug}`}>
+            <Button className="rounded-full">Book Now</Button>
+          </Link>
         </div>
       </div>
     </div>

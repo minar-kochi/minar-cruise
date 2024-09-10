@@ -59,7 +59,7 @@ export const packages = router({
       const upserted = await db.packageImage.create({
         data,
       });
-      revalidatePath(`/booking/${packageSlug.slug}`);
+      revalidatePath(`/package/[slug]`);
       revalidatePath(`/`);
       return { success: true };
     } catch (error) {
@@ -94,7 +94,7 @@ export const packages = router({
           id,
         },
       });
-      revalidatePath("/booking");
+      revalidatePath("/package");
       revalidatePath(`/`);
       return { success: true };
     } catch (error) {

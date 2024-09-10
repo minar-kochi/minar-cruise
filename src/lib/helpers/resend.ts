@@ -28,6 +28,44 @@ export async function sendConfirmationEmail({
       react: emailComponent,
     });
 
+    console.log(data);
+    console.log(error);
+
+    if (error) {
+      return { error };
+    }
+    return data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+type TSendEmail = {
+  subject: string;
+  fromEmail?: string;
+  toEmail: string;
+  reactEmailComponent: JSX.Element;
+};
+
+export async function sendEmail({
+  fromEmail,
+  reactEmailComponent,
+  subject,
+  toEmail,
+}: TSendEmail) {
+  const { BUSINESS_EMAIL } = process.env;
+  if (!BUSINESS_EMAIL) {
+    return { error: "Business email not found" };
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: fromEmail ?? BUSINESS_EMAIL,
+      to: [toEmail],
+      subject,
+      react: reactEmailComponent,
+    });
+
     if (error) {
       return { error };
     }

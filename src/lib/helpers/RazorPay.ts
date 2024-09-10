@@ -9,7 +9,7 @@ if (!NEXT_PUBLIC_RAZORPAY_KEYID || !RAZORPAY_KEY_SECRET) {
   );
 }
 export const $RazorPay = new Razorpay({
-  key_id: NEXT_PUBLIC_RAZORPAY_KEYID,
+  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEYID!,
   key_secret: RAZORPAY_KEY_SECRET,
 });
 

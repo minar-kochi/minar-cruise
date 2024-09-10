@@ -14,12 +14,26 @@ import { Booking } from "@prisma/client";
 import { updateEventToFailed, updateEventToSucess } from "../data/dto/events";
 import { NextResponse } from "next/server";
 import { CreateSchedule } from "../data/creator/schedule";
+import { SendMessageViaWhatsapp } from "@/lib/helpers/whatsapp";
+import {
+  CreateBookingFailed,
+  getInvalidScheduleTemplateWhatsApp,
+  sendWhatsAppBookingMessageToClient,
+} from "@/lib/helpers/retrieveWhatsAppMessage";
+import { TGetPackageTimeAndDuration } from "../data/dto/package";
+import { sendConfirmationEmail } from "@/lib/helpers/resend";
+import EmailSendBookingConfirmation from "@/components/services/EmailService";
+import { getSendAdminCreateNotificationMessage } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 
 export async function handleCreateScheduleOrder({
   events,
   orderBody,
-  notes
-}: TOrderEvent<any> & { notes: TRazorPayEventsCreateSchedule }) {
+  notes,
+  packageDetails,
+}: TOrderEvent<any> & {
+  notes: TRazorPayEventsCreateSchedule;
+  packageDetails: TGetPackageTimeAndDuration | null;
+}) {
   try {
     console.log("Getting order");
     const order = orderBody.payload.order.entity;
@@ -37,7 +51,7 @@ export async function handleCreateScheduleOrder({
       Mode,
       date,
       userId,
-    } = notes
+    } = notes;
     const scheduleTimeForPackage =
       findCorrespondingScheduleTimeFromPackageCategory(ScheduleTime);
 
@@ -46,7 +60,16 @@ export async function handleCreateScheduleOrder({
       throw new OrderPaidEventError({
         code: "SCHEDULE_TIME_NOT_FOUND",
         fatality: {
-          message: "Couldn't find corresponding ScheduleTime",
+          message: getInvalidScheduleTemplateWhatsApp({
+            ScheduleTime,
+            packageTitle: packageDetails?.title ?? "",
+            date,
+            adultCount: `${adultCount}`,
+            babyCount: `${babyCount}`,
+            childCount: `${childCount}`,
+            email: email,
+            name: name,
+          }),
           fatal: true,
         },
       });
@@ -63,7 +86,12 @@ export async function handleCreateScheduleOrder({
       throw new OrderPaidEventError({
         code: "FAILED_CREATING_SCHEDULE_TIME",
         fatality: {
-          message: "Couldn't able to Create a schedule.",
+          message: CreateBookingFailed({
+            orderId: orderBody?.payload?.payment?.entity?.id,
+            contact: paymentEntity.contact ?? "",
+            email: paymentEntity.email ?? email,
+            packageTitle: packageDetails?.title ?? "",
+          }),
           fatal: true,
         },
       });
@@ -104,7 +132,7 @@ export async function handleCreateScheduleOrder({
             payment: {
               create: {
                 advancePaid: 0,
-                discount: 100,
+                discount: 0,
                 // Amount paid recieved sa paise: convert by 100 to make to ruppe
                 totalAmount: order.amount_paid / 100,
                 modeOfPayment: "ONLINE",
@@ -124,24 +152,81 @@ export async function handleCreateScheduleOrder({
       throw new OrderPaidEventError({
         code: "BOOKING_CREATE_FAILED",
         fatality: {
-          // fatal: true,
-          message: `Failed to Create Booking for orderID: ${orderBody.payload.payment.entity.id} \n Email: ${orderBody.payload.payment.entity.email} \n Email: ${orderBody.payload.payment.entity.contact}  `,
+          message: CreateBookingFailed({
+            orderId: orderBody?.payload?.payment?.entity?.id,
+            contact: paymentEntity.contact ?? "",
+            email: paymentEntity.email ?? email,
+            packageTitle: packageDetails?.title ?? "",
+          }),
         },
       });
     }
 
-    console.log("Updating Events");
+    try {
+      if (paymentEntity.contact) {
+       await SendMessageViaWhatsapp({
+          recipientNumber: paymentEntity.contact,
+          message: sendWhatsAppBookingMessageToClient({
+            bookingId: booking.id,
+            dateOfBooking: date,
+            email: paymentEntity.email ?? email,
+            name,
+            packageName: packageDetails?.title ?? "--",
+            time: packageDetails?.fromTime ?? "--",
+          }),
+        });
+      }
+      await Promise.all([
+        //@TODO Add Booking confirmation Email to admin.
+
+
+        // Send Email to Client
+        sendConfirmationEmail({
+          recipientEmail: paymentEntity.email ?? email,
+          fromEmail: process.env.BUSINESS_EMAIL!,
+          emailSubject: "Minar: Your Booking has Confirmed",
+          emailComponent: EmailSendBookingConfirmation({
+            duration: `${packageDetails?.duration ?? "-"}`,
+            packageTitle: `${packageDetails?.title ?? "-"} `,
+            status: "Confirmed",
+            totalAmount: order.amount_paid,
+            totalCount: adultCount + babyCount + childCount,
+            BookingId: booking.id.slice(8),
+            customerName: name,
+            date,
+          }),
+        }),
+
+        //Send admin Notification to whats appp
+        SendMessageViaWhatsapp({
+          recipientNumber: process.env.OWNER_CONTACT!,
+          message: getSendAdminCreateNotificationMessage({
+            date,
+            packageName: `${packageDetails?.title ?? "-"} `,
+            time: `${packageDetails?.fromTime}`,
+          }),
+        }),
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+
     await updateEventToSucess({ id: events.id });
     console.log("Returning 200 Response");
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     if (error instanceof OrderPaidEventError) {
       if (error.fatal) {
+        await SendMessageViaWhatsapp({
+          recipientNumber: process.env.OWNER_CONTACT!,
+          message: error.message,
+        });
         await updateEventToFailed({
           id: events.id,
           description: error.message,
           failedCountSetter: 6,
         });
+
         return NextResponse.json({ success: false }, { status: 400 });
       }
       await updateEventToFailed({ id: events.id, description: error.message });

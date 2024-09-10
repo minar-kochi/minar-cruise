@@ -4,9 +4,10 @@ import { Inter as FontSans, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
-import Footer from "@/components/footer/Footer";
 import Script from "next/script";
 import { Toaster } from "react-hot-toast";
+import Footer from "@/components/footer/Footer";
+// import Footer from "@/components/footer/Footer";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -42,7 +43,8 @@ export default function RootLayout({
             {children}
             {modal}
             <div id="modal-root" />
-            <Footer />
+            <Footer/>
+            
             {/* </CounterStoreProvider> */}
           </Providers>
         </body>

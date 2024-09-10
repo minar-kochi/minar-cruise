@@ -62,6 +62,42 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
   }
 }
 
+export type TGetPackageDetails = Exclude<Awaited<ReturnType<typeof getPackageDetails>>, null>
+export type TAmenities = TGetPackageDetails["amenities"]
+export type TBookingDateSelector = Pick<TGetPackageDetails, 'adultPrice' | 'childPrice' | 'packageCategory' | 'id' | 'title'> 
+export async function getPackageDetails(slug: string) {
+  try {
+    
+    const data = await db.package.findUnique({
+      where: {
+      slug 
+    },
+    select: {
+      id: true,
+      adultPrice: true,
+      packageCategory: true,
+      title: true,
+      description: true,
+      amenitiesId: true,
+      duration: true,
+      fromTime: true,
+      toTime: true,
+      childPrice: true,
+      amenities: {
+        select: {
+          description: true
+        }
+      }
+    },
+  })
+  
+  return data
+} catch (error) {
+  console.log(error)
+  return null
+}
+}
+
 export type TGetPackageById = Exclude<
   Awaited<ReturnType<typeof getPackageById>>,
   null
@@ -85,6 +121,9 @@ export async function getPackageById({ slug }: { slug: string }) {
         fromTime: true,
         toTime: true,
         childPrice: true,
+        amenities:true,
+        food:true,
+        slug:true,
         packageImage: {
           select: {
             image: {
@@ -245,20 +284,26 @@ export type TGetPackageCardDetails = Exclude<
   Awaited<ReturnType<typeof getPackageCardDetails>>,
   null
 >;
-
+export type TAmenitiesGetPackageCardDetails = TGetPackageCardDetails[number]['amenities']
 export async function getPackageCardDetails() {
   try {
     const data = await db.package.findMany({
       where: {
-        packageCategory: {
-          not: "CUSTOM",
-        },
+     
+        packageType: "normal",
       },
       select: {
         id: true,
         adultPrice: true,
+        childPrice:true,
         title: true,
-        duration: true,
+        packageCategory:true,
+        slug:true,
+        amenities: {
+          select: {
+            description: true
+          }
+        },
         packageImage: {
           take: 1,
           where: {
@@ -279,6 +324,115 @@ export async function getPackageCardDetails() {
     if (!data) {
       if (!isProd) {
         console.log("getPackageCardDetails fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
+export type TGetNormalPackageCard = Exclude<
+  Awaited<ReturnType<typeof getNormalPackageCard>>,
+  null
+>;
+
+export async function getNormalPackageCard() {
+  try {
+    const data = await db.package.findMany({
+      where: {
+     
+        packageType: "normal",
+      },
+      select: {
+        id: true,
+        slug: true,
+        adultPrice: true,
+        title: true,
+        duration: true,
+        packageImage: {
+          take: 1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getNormalPackageCard fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
+export type TGetSpecialPackageCard = Exclude<
+  Awaited<ReturnType<typeof getSpecialPackageCard>>,
+  null
+>;
+
+export async function getSpecialPackageCard() {
+  try {
+    const data = await db.package.findMany({
+      where: {
+     
+        packageType: "special",
+      },
+     
+      select: {
+        id: true,
+        adultPrice: true,
+        slug: true,
+        title: true,
+        duration: true,
+        packageImage: {
+          take: 1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getSpecialPackageCard fetch failed");
       }
       return null;
     }
@@ -365,7 +519,7 @@ export type TGetPackageAllImage = Awaited<
 >;
 export type ExcludeNullTgetPackageAllImage = Exclude<TGetPackageAllImage, null>;
 export type TSingularTGetPackageAllImage =
-ExcludeNullTgetPackageAllImage["packageImage"][number];
+  ExcludeNullTgetPackageAllImage["packageImage"][number];
 export const getPackageAllImage = async (id: string) => {
   try {
     const data = await db.package.findUnique({
@@ -388,3 +542,23 @@ export const getPackageAllImage = async (id: string) => {
     return null;
   }
 };
+
+export async function getPackageTimeAndDuration(id: string) {
+  try {
+    const packageDetails = await db.package.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        title:true,
+        duration: true,
+        fromTime: true,
+      },
+    });
+    return packageDetails;
+  } catch (error) {
+    return null;
+  }
+}
+
+export type TGetPackageTimeAndDuration = Exclude<Awaited<ReturnType<typeof getPackageTimeAndDuration>>,null>

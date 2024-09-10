@@ -17,7 +17,7 @@ export default async function Admin() {
           <Button>Booking</Button>
         </Link>
       </article>
-      <div className="schedule-page p-4 py-8 m-2 bg-secondary rounded-2xl group my-12">
+      <div className="schedule-page p-4 py-8 m-2 rounded-2xl group my-12">
         <div className="text-xl  font-medium">
           <div className="flex gap-1 my-2">
             Selected Date:

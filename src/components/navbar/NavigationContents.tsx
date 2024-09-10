@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 
 import Link from "next/link";
+import { Button, buttonVariants } from "../ui/button";
 
 const NavigationContents = async () => {
   const packageDetails = await getPackageNavigation();
@@ -15,7 +16,7 @@ const NavigationContents = async () => {
   }
   // TODO: enhance this navigation
   return (
-    <div className="flex gap-9">
+    <div className="flex items-center gap-9">
       <Link href="/" className="cursor-pointer  hover:text-red-500">
         Home
       </Link>
@@ -30,7 +31,7 @@ const NavigationContents = async () => {
         </Link>
         <div className="absolute pt-6 pb-3 px-5 rounded-lg hidden w-[250px] bg-white  shadow-lg z-10 group-hover:block">
           {packageDetails.map((item, i) => (
-            <Link className="" key={item.id} href={`/booking/${item.slug}`}>
+            <Link className="" key={item.id} href={`/package/${item.slug}`}>
               <p className="hover:text-red-500 text-sm py-3">{item.title}</p>
               <hr
                 className={cn("border-gray-200 group-last-of-type:hidden", {
@@ -76,6 +77,15 @@ const NavigationContents = async () => {
 
       <Link href="/contact" className="cursor-pointer  hover:text-red-500">
         Contact
+      </Link>
+      <Link
+        href="/#package-section"
+        className={buttonVariants({
+          className: "px-4  tracking-widest  text-xs rounded-full ",
+          size: "sm",
+        })}
+      >
+        BOOK NOW
       </Link>
     </div>
   );
