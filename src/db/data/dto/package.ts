@@ -284,7 +284,7 @@ export type TGetPackageCardDetails = Exclude<
   Awaited<ReturnType<typeof getPackageCardDetails>>,
   null
 >;
-
+export type TAmenitiesGetPackageCardDetails = TGetPackageCardDetails[number]['amenities']
 export async function getPackageCardDetails() {
   try {
     const data = await db.package.findMany({
@@ -296,8 +296,13 @@ export async function getPackageCardDetails() {
       select: {
         id: true,
         adultPrice: true,
+        childPrice:true,
         title: true,
-        duration: true,
+        amenities: {
+          select: {
+            description: true
+          }
+        },
         packageImage: {
           take: 1,
           where: {

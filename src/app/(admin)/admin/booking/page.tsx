@@ -1,4 +1,5 @@
 import AllSchedules from "@/components/admin/booking/AllSchedules";
+import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
 import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 import ScheduleDownloadButton from "@/components/admin/dashboard/Schedule/scheduleTable/ScheduleDownloadButton";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ export default function page() {
             <Button className="">Back</Button>
           </Link>
           <div className="flex gap-3">
+            <RouterRefreshButton/>
             <ScheduleDownloadButton type="scheduleWithBookingCount"/>
             <OpenScheduleButton />
           </div>
