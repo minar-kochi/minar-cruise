@@ -99,14 +99,23 @@ export async function CreateBookingForExistingSchedule({
     payment_capture,
     notes,
   };
+  try {
+    
+    const order = await $RazorPay.orders.create(options);
 
-  const order = await $RazorPay.orders.create(options);
+    const data = {
+      message: "success",
+      order,
+      phone: user.contact,
+    };
 
-  const data = {
-    message: "success",
-    order,
-    phone: user.contact,
-  };
-
-  return data;
+    return data;
+  } catch (error) {
+    console.log(error)
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message:
+        "Failed to create Order from Razorpay Please Contact Us for booking",
+    });
+  }
 }

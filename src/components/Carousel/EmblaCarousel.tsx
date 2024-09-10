@@ -20,13 +20,13 @@ export const EmblaCarouselProvider = ({
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
-      align: "start",
+      align: "center",
       active: true,
       loop: true,
       dragFree: true,
       startIndex: 1,
     },
-    [Autoplay({ playOnInit: false, delay: 3000 })],
+    [Autoplay({ playOnInit: true, delay: 3000 })],
   );
 
   useEffect(() => {
@@ -45,19 +45,10 @@ export const EmblaCarouselProvider = ({
   const data = useMemo(() => children, [children]);
 
   return (
-    <section
-      className=" max-w-[45rem] mx-auto rounded-lg"
-      style={
-        {
-          "--slide-height": "19rem",
-          "--slide-spacing": "1rem",
-          "--slide-size": "100%",
-        } as React.CSSProperties
-      }
-    >
+    <section className="  mx-auto rounded-lg">
       <div className="embla__viewport py-10  overflow-hidden " ref={emblaRef}>
         <div className="embla__container flex gap-5 ">{data}</div>
-        <div className="">
+        {/* <div className="">
           <button
             onClick={onNextButtonClick}
             className=" text-black  absolute right-0 top-1/2"
@@ -74,7 +65,7 @@ export const EmblaCarouselProvider = ({
               <ChevronLeft className="w-8 h-8 hover:scale-110 duration-300" />
             </div>
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

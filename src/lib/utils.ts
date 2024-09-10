@@ -67,7 +67,7 @@ export function isSameDay(date: Date, fromDate: Date) {
   );
 }
 export function isSameDayString(date: string, fromDate: string) {
-  return date === fromDate
+  return date === fromDate;
 }
 export function convertLocalDateToUTC(date: Date | string) {
   if (!date) {
@@ -308,7 +308,6 @@ export function convertYYYMMDDStringAndTimeStringToUTCDate(
       return null;
     }
     const TwentyFourHourFormat = convert12HourTo24Hour(timeCycle);
-    console.log(TwentyFourHourFormat);
     let zo = DateTime.fromObject(
       {
         ...DateCycle,
@@ -323,4 +322,52 @@ export function convertYYYMMDDStringAndTimeStringToUTCDate(
   } catch (error) {
     return null;
   }
+}
+
+export function flattenObject(obj: any, prefix = ""): Record<string, string> {
+  if (obj === null || typeof obj === "undefined") {
+    return { [prefix]: obj === null ? "null" : "undefined" };
+  }
+
+  if (typeof obj !== "object") {
+    return { [prefix]: String(obj) };
+  }
+
+  return Object.keys(obj).reduce(
+    (acc, key) => {
+      const pre = prefix.length ? `${prefix}.` : "";
+      const value = obj[key];
+
+      if (value === null) {
+        acc[pre + key] = "null";
+      } else if (typeof value === "undefined") {
+        acc[pre + key] = "undefined";
+      } else if (typeof value === "object") {
+        if (Array.isArray(value)) {
+          // Handle arrays, including nested arrays and null/undefined elements
+          value.forEach((item, index) => {
+            const newKey = `${pre}${key}[${index}]`;
+            if (item === null) {
+              acc[newKey] = "null";
+            } else if (typeof item === "undefined") {
+              acc[newKey] = "undefined";
+            } else if (typeof item === "object" && item !== null) {
+              Object.assign(acc, flattenObject(item, newKey));
+            } else {
+              acc[newKey] = String(item);
+            }
+          });
+        } else {
+          // Recurse for nested objects
+          Object.assign(acc, flattenObject(value, pre + key));
+        }
+      } else {
+        // Handle primitive types
+        acc[pre + key] = String(value);
+      }
+
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 }

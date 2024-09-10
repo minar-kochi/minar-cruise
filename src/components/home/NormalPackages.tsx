@@ -26,7 +26,7 @@ export default async function NormalPackages() {
                 alt={item.packageImage[0].image.alt}
                 title={item.title}
                 url={item.packageImage[0].image.url}
-                slug={`/booking/${item.slug}`}
+                slug={`/package/${item.slug}`}
                 adultPrice={item.adultPrice}
                 duration={item.duration}
               />
@@ -44,7 +44,7 @@ export default async function NormalPackages() {
               Ideal for unforgettable moments with loved ones!
             </p>
           </div>
-          <div className="hidden lg:flex w-[300px] h-[120px]">
+          <div className="hidden lg:flex ">
             <ReachOutToUs />
           </div>
         </div>

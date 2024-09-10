@@ -12,7 +12,7 @@
     --popover-foreground: 354 95% 0%;
     --primary: 354 81% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 354 10% 70%;
+    --secondary: 217 73% 93%;
     --secondary-foreground: 0 0% 0%;
     --muted: 316 10% 85%;
     --muted-foreground: 354 0% 35%;
@@ -66,6 +66,8 @@
   max-width: 100%;
   margin: auto;
   --slide-spacing: 1rem;
+  --slider-product-size: 100%;
+
 }
 
 
@@ -95,4 +97,11 @@
 .scroll-hidden {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+
+.embla__slide:has(.slider-product) {
+  flex: 0 0 var(--slider-product-size);
+  min-width: 0;
+  /* padding-left: var(--slide-spacing); */
 }

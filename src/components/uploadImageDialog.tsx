@@ -92,6 +92,7 @@ const UploadBlogImage = () => {
                 {image?.length ? (
                   <>
                     <Image
+                      // unoptimized
                       alt="Image Preview"
                       src={imagePreview}
                       width={720}

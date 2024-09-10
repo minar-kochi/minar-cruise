@@ -55,6 +55,7 @@ interface IBookingFormCard {
   };
   packageCategory: $Enums.PACKAGE_CATEGORY;
   isNextSlideState: Dispatch<SetStateAction<boolean>>;
+
 }
 
 const BookingFormCard = ({

@@ -7,14 +7,18 @@ import MinarSec from "@/components/home/MinarSec";
 import PackagesBento from "@/components/home/PackagesBento";
 import Services from "@/components/home/Services";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
+import { Suspense } from "react";
 
 export const metadata = constructMetadata({});
 // console.log(metadata)
 export default function page() {
   return (
     <main className="embla__viewport">
-      <HomeVideo />
+      <Suspense fallback={<>Loading....</>}>
+        <HomeVideo />
+      </Suspense>
       <MinarSec />
+
       <PackagesBento />
       <ExclusivePackage />
       <Services />

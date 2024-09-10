@@ -1,10 +1,9 @@
 // import SearchBarWrapper from "../searchbar/SearchBarWrapper";
 
-const HomeVideo = () => {
+const HomeVideo = async () => {
   return (
     <div className="relative ">
       {/* <SearchBarWrapper className=" absolute bottom-0 w-full" /> */}
-
       <video
         className="pointer-events-none object-contain lg:object-cover lg:h-[calc(100vh-65px)] w-full "
         playsInline

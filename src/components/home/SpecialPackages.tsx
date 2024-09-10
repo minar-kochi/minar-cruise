@@ -28,7 +28,7 @@ export default async function SpecialPackages() {
               alt={item.packageImage[0].image.alt}
               title={item.title}
               url={item.packageImage[0].image.url}
-              slug={`/booking/${item.slug}`}
+              slug={`/package/${item.slug}`}
               adultPrice={item.adultPrice}
               duration={item.duration}
             />
