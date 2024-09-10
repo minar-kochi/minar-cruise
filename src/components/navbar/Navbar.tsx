@@ -6,7 +6,7 @@ import MobileNavbar from "./MobileNavbar";
 
 const Navbar = async () => {
   return (
-    <div className="sticky top-0 w-full bg-white z-50 ">
+    <div className="sticky top-0 w-full bg-white z-50 shadow-sm">
       <Bounded
         as={"nav"}
         className="w-full flex justify-between md:justify-around h-16 items-center"

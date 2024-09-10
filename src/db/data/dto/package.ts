@@ -286,9 +286,8 @@ export async function getPackageCardDetails() {
   try {
     const data = await db.package.findMany({
       where: {
-        packageCategory: {
-          not: "CUSTOM",
-        },
+     
+        packageType: "normal",
       },
       select: {
         id: true,
@@ -320,6 +319,115 @@ export async function getPackageCardDetails() {
     if (!data) {
       if (!isProd) {
         console.log("getPackageCardDetails fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
+export type TGetNormalPackageCard = Exclude<
+  Awaited<ReturnType<typeof getNormalPackageCard>>,
+  null
+>;
+
+export async function getNormalPackageCard() {
+  try {
+    const data = await db.package.findMany({
+      where: {
+     
+        packageType: "normal",
+      },
+      select: {
+        id: true,
+        slug: true,
+        adultPrice: true,
+        title: true,
+        duration: true,
+        packageImage: {
+          take: 1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getNormalPackageCard fetch failed");
+      }
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
+export type TGetSpecialPackageCard = Exclude<
+  Awaited<ReturnType<typeof getSpecialPackageCard>>,
+  null
+>;
+
+export async function getSpecialPackageCard() {
+  try {
+    const data = await db.package.findMany({
+      where: {
+     
+        packageType: "special",
+      },
+     
+      select: {
+        id: true,
+        adultPrice: true,
+        slug: true,
+        title: true,
+        duration: true,
+        packageImage: {
+          take: 1,
+          where: {
+            image: {
+              ImageUse: {
+                has: "PROD_FEATURED",
+              },
+            },
+          },
+          select: {
+            image: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      if (!isProd) {
+        console.log("getSpecialPackageCard fetch failed");
       }
       return null;
     }
