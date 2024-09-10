@@ -102,9 +102,8 @@ export default function DownloadScheduleTable({
   return (
     <Button
       onClick={handleDownload}
-      variant={"confirm"}
-      className="hover:text-white hover:bg-green-600"
-
+      variant={"greenFlag"}
+      className="text-white hover:bg-white hover:text-green-600 hover:border border-green-600"
     >
       Download
     </Button>

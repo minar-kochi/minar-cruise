@@ -1,53 +1,49 @@
-import Image from "next/image";
+import Bounded from "@/components/elements/Bounded";
 import { entertainment } from "@/constants/home/landingData";
-import { Bad_Script } from "next/font/google";
-import { cn } from "@/lib/utils";
-import { Disc2 } from "lucide-react";
+import Image from "next/image";
+import React from "react";
 
-const badScript = Bad_Script({
-  weight: "400",
-  style: ["normal"],
-  subsets: ["latin"],
-});
-const Entertainments = () => {
+export default function Entertainments() {
   const { image, activities } = entertainment;
   return (
-    <section className="flex ">
-      <article className="max-sm:hidden basis-[50%] object-bottom">
+    <Bounded className="min-h-[40vh] my-20">
+      <h2 className="text-center font-light my-5 text-3xl">
+        Planning to Enjoy{" "}
+        <span className="font-medium text-red-700">Party</span>?
+      </h2>
+      <div className=" flex justify-center rounded-xl  relative bg-black mx-auto ">
+        <div>
+          <Image
+            src={image.logo}
+            alt="logo"
+            width={200}
+            height={200}
+            className="absolute top-6 left-6 bg-white rounded-2xl py-2 px-3 md:px-4 w-20 md:w-32"
+          />
+        </div>
         <Image
+          alt="cruise"
           src={image.url}
-          alt=""
           width={1920}
           height={1080}
-          className="min-w-full min-h-full object-cover"
+          className="min-w-full min-h-[35rem] object-cover rounded-lg"
         />
-      </article>
-      <article className="flex justify-center md:justify-start items-center py-4 md:pl-20 max-sm:basis-full basis-[50%] w-full bg-red-700 text-white">
-        <div className="max-w-fit space-y-10 my-3 ">
-          <h1 className="text-5xl max-md:text-2xl font-bold  ">
-            Entertainments
-          </h1>
-          <ul
-            className={cn(
-              "text-2xl max-md:text-xl space-y-7 ",
-              badScript.className,
-            )}
-          >
-            {activities.map((item) => {
-              return (
-                <>
-                  <li className="flex font-medium gap-4 ">
-                    <item.icon width={64} />
-                    {item.description}
-                  </li>
-                </>
-              );
-            })}
-          </ul>
+        <h1 className="lg:text-5xl md:text-2xl font-bold absolute bg-white top-24 lg:top-16 lg:right-0 px-4 lg:px-10 py-4 rounded-sm">
+          Entertainments
+        </h1>
+        <div className="absolute top-1/3 lg:top-1/3 lg:right-32">
+          {activities.map((item, i) => {
+            return (
+              <div className="mb-6" key={`${i}${item.description}`}>
+                <li className="flex font-medium  text-white">
+                  <item.icon width={64} />
+                  <p className="text-xl tracking-wide">{item.description}</p>
+                </li>
+              </div>
+            );
+          })}
         </div>
-      </article>
-    </section>
+      </div>
+    </Bounded>
   );
-};
-
-export default Entertainments;
+}
