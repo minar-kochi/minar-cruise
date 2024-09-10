@@ -7,7 +7,7 @@ import Image from "next/image";
 export default function PackagesBento() {
   return (
     <Bounded>
-      <section className="my-14 md:my-20">
+      <section id="package-section" className="my-14 md:my-20">
         <h2 className="text-4xl text-[#0D3A62] font-semibold flex items-center my-5">
           <span className="mr-1">
             <Image

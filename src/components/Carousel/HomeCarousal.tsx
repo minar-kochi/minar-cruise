@@ -13,7 +13,7 @@ import { useEffect, useMemo } from "react";
 import { usePrevNextButtons } from "./EmblaButton";
 import Autoplay from "embla-carousel-autoplay";
 
-export const EmblaCarouselProvider = ({
+export const HomeCarousalProvider = ({
   children,
 }: {
   children?: React.ReactNode;
@@ -48,7 +48,7 @@ export const EmblaCarouselProvider = ({
     <section className="  mx-auto rounded-lg">
       <div className="embla__viewport py-10  overflow-hidden " ref={emblaRef}>
         <div className="embla__container flex gap-5 ">{data}</div>
-        {/* <div className="">
+        <div className="">
           <button
             onClick={onNextButtonClick}
             className=" text-black  absolute right-0 top-1/2"
@@ -65,7 +65,7 @@ export const EmblaCarouselProvider = ({
               <ChevronLeft className="w-8 h-8 hover:scale-110 duration-300" />
             </div>
           </button>
-        </div> */}
+        </div>
       </div>
     </section>
   );

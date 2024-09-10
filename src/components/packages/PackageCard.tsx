@@ -90,7 +90,7 @@ const PackageCard = async ({
             </div>
           </div>
 
-          <Link href={`/booking/${slug}`}>
+          <Link href={`/package/${slug}`}>
             <Button className="rounded-full">Book Now</Button>
           </Link>
         </div>

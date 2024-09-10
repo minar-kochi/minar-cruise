@@ -33,16 +33,16 @@ export default function ExclusivePackage() {
         {/* <div className="absolute w-full h-full  bg-[radial-gradient(circle,_rgba(0,0,0,0)_20%,rgba(0,0,0,1)_100%)] "></div> */}
 
         <video
-          className=" object-cover  w-full mx-auto h-[35rem] rounded-lg"
+          className="  object-cover  w-full mx-auto h-[35rem] rounded-lg"
           playsInline
           preload="true"
           muted
           autoPlay
           loop
-          width={1080}
-          height={1920}
+          // width={1080}
+          // height={1920}
         >
-          <source src="/assets/IMG_9229.MP4" type="video/mp4" />
+          <source src={video1.url} type="video/mp4" />
         </video>
         {/* <div className="w-[90%] ">
           <div className="w-96  absolute bottom-[15%] right-[5%]">

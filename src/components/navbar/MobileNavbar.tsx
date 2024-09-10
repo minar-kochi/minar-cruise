@@ -58,7 +58,7 @@ export default async function MobileNavbar() {
                     </AccordionTrigger>
                     <AccordionContent>
                       {packageDetails.map((item, i) => (
-                        <Link key={item.id} href={`/booking/${item.slug}`}>
+                        <Link key={item.id} href={`/package/${item.slug}`}>
                           <p className="hover:text-red-500  py-2">
                             {item.title}
                           </p>

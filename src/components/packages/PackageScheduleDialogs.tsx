@@ -55,7 +55,7 @@ export default function PackageScheduleDialogs({
                 {ScheduleError.slug ? (
                   <Link
                     className={cn(buttonVariants({ variant: "default" }))}
-                    href={`/booking/${ScheduleError.slug}`}
+                    href={`/package/${ScheduleError.slug}`}
                   >
                     Book now
                   </Link>
