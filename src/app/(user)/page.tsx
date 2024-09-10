@@ -1,23 +1,23 @@
-import LandingDescription from "@/components/home/LandingDescription";
 import BookingDescription from "@/components/home/BookingDescription";
+import ExclusivePackage from "@/components/home/ExclusivePackage";
 import Facilities from "@/components/home/Facilities";
-import Entertainments from "@/components/home/Entertainments";
-import Services from "@/components/home/Services";
-import HomePageGallery from "@/components/home/HomePageGallery";
+import GalleryCarousel from "@/components/home/GalleryCarousel";
 import HomeVideo from "@/components/home/HomeVideo";
-import { PackageCarousel } from "@/components/packages/PackageCarousel";
+import MinarSec from "@/components/home/MinarSec";
+import PackagesBento from "@/components/home/PackagesBento";
+import Services from "@/components/home/Services";
 
-export default function Home() {
+export default function page() {
   return (
     <main className="embla__viewport">
       <HomeVideo />
-      <LandingDescription />
-      <PackageCarousel />
+      <MinarSec />
+      <PackagesBento />
+      <ExclusivePackage />
+      <Services />
       <BookingDescription />
       <Facilities />
-      <Entertainments />
-      <Services />
-      <HomePageGallery />
+      <GalleryCarousel />
     </main>
   );
 }

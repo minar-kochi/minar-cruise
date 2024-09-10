@@ -57,6 +57,12 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      boxShadow: {
+        'inner-custom': 'inset 7px 35px 60px -15px rgba(0, 0, 0, 0.3)',
+      },
+      gridTemplateColumns: {
+        'auto-fit-minmax': 'repeat(auto-fit, minmax(250px, 1fr))',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
