@@ -28,13 +28,13 @@ export function PopOverDatePicker({
   const dispatch = useAppDispatch();
   return (
     <Popover
-      open={isPopOverDateOpened}
-      onOpenChange={(open) => {
-        dispatch(setPopOverDateToggle(open));
-      }}
+      // open={isPopOverDateOpened}
+      // onOpenChange={(open) => {
+      //   dispatch(setPopOverDateToggle(open));
+      // }}
     >
       <PopoverTrigger
-        onClick={() => dispatch(setPopOverDateToggle(true))}
+        // onClick={() => dispatch(setPopOverDateToggle(true))}
         asChild
       >
         <Button

@@ -45,7 +45,6 @@ export const {
       return token;
     },
     async session({ session, user, token, newSession, trigger }) {
-      console.log(newSession);
       session.user = token.user as any;
       return session;
     },

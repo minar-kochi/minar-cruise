@@ -82,6 +82,7 @@ export const packages: packagesPartialId = [
     packageCategory: "DINNER",
   },
   {
+
     id: "clqqxasvi000508l59j1z4obt",
     title: "Special 4 Hours Lunch Cruise",
     packageType: "special",
@@ -98,6 +99,7 @@ export const packages: packagesPartialId = [
     packageCategory: "LUNCH",
   },
   {
+
     id: "clqqxb1q1000608l5fdxf3lj9",
     title: "Special 4 Hours Dinner Cruise",
     packageType: "special",
@@ -114,6 +116,7 @@ export const packages: packagesPartialId = [
     packageCategory: "DINNER",
   },
   {
+
     id: "clqqxbb7r000708l58m9f3ry2",
     title: "Exlusive Packages",
     packageType: "premium",

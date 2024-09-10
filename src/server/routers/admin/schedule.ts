@@ -9,8 +9,6 @@ import {
   isValidMergeTimeCycle,
   mergeTimeCycle,
   parseDateFormatYYYMMDDToNumber,
-  RemoveTimeStampFromDate,
-  sleep,
   splitTimeColon,
 } from "@/lib/utils";
 import {
@@ -24,9 +22,70 @@ import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
+import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { $Enums } from "@prisma/client";
+import {
+  getSchedulesByDateRange,
+  getSchedulesByDateRangeWithBookingCount,
+  TGetSchedulesByDateRange,
+} from "@/db/data/dto/schedule";
+import { toDate } from "date-fns";
+import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
 
+// export type TGetScheduleByDateRange = {
+//   Package: {
+//       fromTime: string;
+//       toTime: string;
+//       title: string;
+//   } | null;
+//   day: Date;
+//   schedulePackage: $Enums.SCHEDULED_TIME;
+//   scheduleStatus: $Enums.SCHEDULE_STATUS;
+//   fromTime: string | null;
+//   toTime: string | null;
+// }[]
 
 export const schedule = router({
+  // 
+  getSchedulesByDateRange: AdminProcedure
+  .input(scheduleDateRangeValidator)
+  .query(async ({ input: { fromDate, toDate, type } }) => {
+    const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
+    const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
+    if (!fromDateParser || !toDateParser) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Date Format is not valid YYYY-MM-DD",
+      });
+    }
+    const validatedFromDate = isDateValid(fromDateParser);
+    const validatedToDate = isDateValid(toDateParser);
+
+    if (!validatedToDate || !validatedFromDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates is invalid",
+      });
+    }
+    const FromDate = new Date(fromDate);
+    const ToDate = new Date(toDate);
+
+    try {
+      if (type === "scheduleWithoutBookingCount") {
+        const data = await getSchedulesByDateRange(FromDate, ToDate);
+        if (!data) return null;
+        return data;
+      }
+      const data = await getSchedulesByDateRangeWithBookingCount(FromDate, ToDate);
+      if (!data) return null;
+      return data;
+
+    } catch (error) {
+      console.log(error);
+      ErrorLogger(error);
+      return null;
+    }
+  }),
   getSchedulesByDateOrNow: AdminProcedure.input(ScheduleSchema).query(
     async ({ input: { ScheduleDate } }) => {
       // string that will receive is in the format YYYY-MM-DD

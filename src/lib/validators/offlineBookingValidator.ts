@@ -1,7 +1,7 @@
 import z from "zod";
 //Put this into a regix file.
 
-const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+export const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
 
 export const offlineBookingFormSchema = z.object({
   name: z.string().min(3, "Name should have min 3 letters").max(40),

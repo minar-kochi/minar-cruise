@@ -72,7 +72,7 @@ export const blog = router({
 
   getImagesInfinity: AdminProcedure.input(
     z.object({
-      limit: z.number().min(1).max(100).nullish(),
+      limit: z.number().nullish(),
       cursor: z.string().nullish(),
     }),
   ).query(async ({ ctx, input }) => {

@@ -6,7 +6,10 @@ import HomeVideo from "@/components/home/HomeVideo";
 import MinarSec from "@/components/home/MinarSec";
 import PackagesBento from "@/components/home/PackagesBento";
 import Services from "@/components/home/Services";
+import { constructMetadata } from "@/lib/helpers/constructMetadata";
 
+export const metadata = constructMetadata({});
+// console.log(metadata)
 export default function page() {
   return (
     <main className="embla__viewport">

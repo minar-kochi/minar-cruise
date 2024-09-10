@@ -24,6 +24,7 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
   const dispatch = useAppDispatch();
   return currentDateSchedule[type]?.scheduleStatus === "BLOCKED" ? null : (
     <Select
+      key={`select-ScheduleSelect-select-button-${type}`}
       defaultValue={currentDateSchedule[type]?.packageId ?? "false"}
       value={defaultSelect.packageId ?? "false"}
       onValueChange={(value) => {
@@ -34,7 +35,7 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
       <SelectTrigger value={"false"} className="w-full">
         <SelectValue placeholder={"Select a Package"} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent sticky="always" >
         <SelectItem value={"false"} key={`select-item-empty`}>
           <div className="flex items-center gap-1">Select a Package</div>
         </SelectItem>

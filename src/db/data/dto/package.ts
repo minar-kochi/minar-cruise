@@ -62,6 +62,42 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
   }
 }
 
+export type TGetPackageDetails = Exclude<Awaited<ReturnType<typeof getPackageDetails>>, null>
+export type TAmenities = TGetPackageDetails["amenities"]
+export type TBookingDateSelector = Pick<TGetPackageDetails, 'adultPrice' | 'childPrice' | 'packageCategory' | 'id' | 'title'> 
+export async function getPackageDetails(slug: string) {
+  try {
+    
+    const data = await db.package.findUnique({
+      where: {
+      slug 
+    },
+    select: {
+      id: true,
+      adultPrice: true,
+      packageCategory: true,
+      title: true,
+      description: true,
+      amenitiesId: true,
+      duration: true,
+      fromTime: true,
+      toTime: true,
+      childPrice: true,
+      amenities: {
+        select: {
+          description: true
+        }
+      }
+    },
+  })
+  
+  return data
+} catch (error) {
+  console.log(error)
+  return null
+}
+}
+
 export type TGetPackageById = Exclude<
   Awaited<ReturnType<typeof getPackageById>>,
   null
@@ -123,11 +159,7 @@ export async function getPackageSearchItems() {
         packageImage: {
           take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
@@ -249,7 +281,7 @@ export type TGetPackageCardDetails = Exclude<
   Awaited<ReturnType<typeof getPackageCardDetails>>,
   null
 >;
-
+export type TAmenitiesGetPackageCardDetails = TGetPackageCardDetails[number]['amenities']
 export async function getPackageCardDetails() {
   try {
     const data = await db.package.findMany({
@@ -260,16 +292,17 @@ export async function getPackageCardDetails() {
       select: {
         id: true,
         adultPrice: true,
+        childPrice:true,
         title: true,
-        duration: true,
+        amenities: {
+          select: {
+            description: true
+          }
+        },
         packageImage: {
           take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
@@ -448,11 +481,7 @@ export async function getPackagesForBlog() {
         packageImage: {
           take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
@@ -479,3 +508,52 @@ export async function getPackagesForBlog() {
     return null;
   }
 }
+
+export type TGetPackageAllImage = Awaited<
+  ReturnType<typeof getPackageAllImage>
+>;
+export type ExcludeNullTgetPackageAllImage = Exclude<TGetPackageAllImage, null>;
+export type TSingularTGetPackageAllImage =
+  ExcludeNullTgetPackageAllImage["packageImage"][number];
+export const getPackageAllImage = async (id: string) => {
+  try {
+    const data = await db.package.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        title: true,
+        packageImage: {
+          include: {
+            image: true,
+          },
+        },
+      },
+    });
+
+    if (!data || !data?.packageImage) return null;
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
+
+export async function getPackageTimeAndDuration(id: string) {
+  try {
+    const packageDetails = await db.package.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        title:true,
+        duration: true,
+        fromTime: true,
+      },
+    });
+    return packageDetails;
+  } catch (error) {
+    return null;
+  }
+}
+
+export type TGetPackageTimeAndDuration = Exclude<Awaited<ReturnType<typeof getPackageTimeAndDuration>>,null>

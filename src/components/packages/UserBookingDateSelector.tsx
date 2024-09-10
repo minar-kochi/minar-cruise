@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
@@ -7,14 +6,11 @@ import { trpc } from "@/app/_trpc/client";
 import {
   cn,
   filterDateFromCalender,
-  getPrevTimeStamp,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import ClientCalenderScheduleDay from "../calender/ClientCalenderScheduleDay";
 import { $Enums } from "@prisma/client";
 import BookingFormCard from "./BookingFormCard";
-import { Item } from "@radix-ui/react-select";
-
 interface IUserBookingDateSelector {
   packageTitle: string;
   packageId: string;
@@ -23,12 +19,14 @@ interface IUserBookingDateSelector {
     adult: number;
   };
   packageCategory: $Enums.PACKAGE_CATEGORY;
+  className?: string
 }
 export default function UserBookingDateSelector({
   packageTitle,
   packageId,
   packagePrice,
-  packageCategory
+  packageCategory,
+  className
 }: IUserBookingDateSelector) {
   const [date, setDate] = useState<Date>(new Date(Date.now()));
   const [month, setMonth] = useState<string>(
@@ -39,8 +37,6 @@ export default function UserBookingDateSelector({
     scheduleId: string;
     scheduleStatus: $Enums.SCHEDULE_STATUS;
   } | null>(null);
-
-  // const { data, isLoading } = trpc.user.
 
   const { refetch, isFetching, data } =
     trpc.user.getSchedulesByPackageIdAndDate.useQuery({
@@ -57,14 +53,13 @@ export default function UserBookingDateSelector({
   }));
 
   return (
-    <div className="flex flex-col items-center justify-center shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4 gap-4 rounded-2xl">
+    <div className={cn("flex flex-col items-center justify-center shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4 gap-4 rounded-2xl", className)}>
       {!isNextSlide ? (
         <>
           <h1 className="text-2xl font-bold text-center">
             Check Available Dates
           </h1>
           <Calendar
-            className=""
             sizeMode="lg"
             disabled={(date) =>
               filterDateFromCalender({ date, dateArray: disabledDays })
@@ -76,13 +71,13 @@ export default function UserBookingDateSelector({
                   AvailableDate: availableDateArray,
                   props,
                 }),
+                
             }}
             selected={date}
             onSelect={(date) => {
               if (!date) return;
-              if (!data || !data.schedules) return;
               setDate(date);
-
+              if (!data || !data.schedules) return;
               let scheduleIndex = data?.schedules.findIndex(
                 (fv) =>
                   RemoveTimeStampFromDate(new Date(fv.day)) ===
@@ -106,6 +101,7 @@ export default function UserBookingDateSelector({
         </>
       ) : (
         <BookingFormCard
+          isNextSlideState={setIsNextSlide}
           selectedDate={date}
           selectedSchedule={{
             scheduleId: selectedScheduleId?.scheduleId,

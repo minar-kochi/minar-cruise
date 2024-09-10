@@ -20,8 +20,9 @@ export type schedulePartialId = (Omit<Schedule, "id"> & { id?: string })[];
 export type amenitiesPartialId = (Omit<Amenities, "id"> & { id?: string })[];
 export type userPartialId = (Omit<User, "id"> & { id?: string })[];
 export type imagesPartialId = (Omit<Image, "id"> & { id?: string })[];
-export type packageImagePartialId = (Omit<PackageImage, "id"> & {
+export type packageImagePartialId = (Omit<PackageImage, "id" | "ImageUse"> & {
   id?: string;
+  ImageUse?: "COMMON" | "PROD_FEATURED" | "PROD_THUMBNAIL"
 })[];
 
 import { amenities } from "./data/dbAmenities";

@@ -1,18 +1,4 @@
-import {
-  Accordion,
-  AccordionTrigger,
-  AccordionContent,
-  AccordionItem,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Bell,
   Home,
@@ -21,7 +7,6 @@ import {
   Package2,
   ShoppingCart,
   SquarePen,
-  Users,
   ImageUp,
 } from "lucide-react";
 import Link from "next/link";
@@ -87,10 +72,11 @@ const MenuBar = () => {
               </Link>
 
               <Link
-                href="#"
+                href="/admin/cruise-packages"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
-                <LineChart className="h-4 w-4" />-
+                <LineChart className="h-4 w-4" />
+                View Package&apos;s
               </Link>
             </nav>
           </div>

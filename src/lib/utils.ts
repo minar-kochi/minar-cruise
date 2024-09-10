@@ -66,7 +66,9 @@ export function isSameDay(date: Date, fromDate: Date) {
     date.getFullYear() === fromDate.getFullYear()
   );
 }
-
+export function isSameDayString(date: string, fromDate: string) {
+  return date === fromDate
+}
 export function convertLocalDateToUTC(date: Date | string) {
   if (!date) {
     return date;
