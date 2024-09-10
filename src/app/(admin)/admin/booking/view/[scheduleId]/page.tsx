@@ -70,7 +70,7 @@ export default async function ViewBooking({
           <CustomLinkButton
             href={`/admin/booking/add/${scheduleId}`}
             label="Add Booking"
-            className="min-w-[140px]"
+            className="min-w-[140px] text-white"
             props={{
               variant: "greenFlag",
             }}
