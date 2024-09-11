@@ -29,7 +29,7 @@ interface IPackagePage {
     slug: string;
   };
 }
-
+export const maxDuration = 25
 export async function generateMetadata({
   params: { slug },
 }: IPackagePage): Promise<Metadata> {
