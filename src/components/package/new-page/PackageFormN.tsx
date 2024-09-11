@@ -1,35 +1,33 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React, { useState } from "react";
-import BookingFormCalender from "./BookingFormCalender";
-import ColorRepresentationInfo from "./ColorRepresentationInfo";
-import { useForm } from "react-hook-form";
+
+import { trpc } from "@/app/_trpc/client";
+import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
+import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
+import { absoluteUrl, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
 } from "@/lib/validators/onlineBookingValidator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, SendToBackIcon } from "lucide-react";
-import BookingFormCard from "./BookingFormCard";
-import { absoluteUrl, RemoveTimeStampFromDate } from "@/lib/utils";
-import { $Enums } from "@prisma/client";
-import { trpc } from "@/app/_trpc/client";
-import toast from "react-hot-toast";
-import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
-import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { $Enums } from "@prisma/client";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import BookingFormCalender from "./BookingFormCalender";
+import ColorRepresentationInfo from "./ColorRepresentationInfo";
+import BookingFormCard from "./BookingFormCard";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
-import { TGetPackageById } from "@/db/data/dto/package";
-import { Checkbox } from "@/components/ui/checkbox";
-import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+
 type TPackageForm = {
   packageId: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
   adultPrice: number;
   childPrice: number;
 };
-export default function PackageForm({
+
+export default function PackageFormN({
   packageId,
   packageCategory,
   adultPrice,
@@ -38,8 +36,8 @@ export default function PackageForm({
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
 
-  const [isNext, setIsNext] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -59,6 +57,7 @@ export default function PackageForm({
       packageCategory: packageCategory,
     },
   });
+
   const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
       onMutate() {
@@ -143,6 +142,7 @@ export default function PackageForm({
       }
     }
   }
+
   const numofAdults = watch("numOfAdults");
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
@@ -150,13 +150,24 @@ export default function PackageForm({
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   return (
-    <article className=" sm:pl-2 ">
-      <div className=" max-w-sm mx-auto">
-        <h3 className="text-xl  font-medium">Check Dates & Availability</h3>
-        <p className="text-sm text-muted-foreground">
-          Choose a date to check availability and reserve your spot for the
-          cruise.{" "}
-        </p>
+    <article className="flex flex-col pt-2  items-center justify-center">
+      <p className="font-semibold text-lg pb-4  ">
+        Check Cruise
+        <span className="text-red-500 "> Availability </span>
+      </p>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col items-center justify-center"
+      >
+        <BookingFormCalender
+          setFormDateValue={(value: string) => {
+            setValue("selectedScheduleDate", value);
+          }}
+          setScheduleId={(value: string | undefined) => {
+            setValue("scheduleId", value);
+          }}
+          packageId={packageId}
+        />
         <div className="flex flex-col items-center justify-center gap-2 ">
           <div className="flex gap-2">
             <ColorRepresentationInfo className="bg-muted " title="Blocked" />
@@ -170,83 +181,26 @@ export default function PackageForm({
             title="Rest of the days Minimum 25 Pax"
           />
         </div>
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex  flex-col items-center justify-center "
-      >
-        {/* {!isNext ? ( */}
-          <BookingFormCalender
-            setFormDateValue={(value: string) => {
-              setValue("selectedScheduleDate", value);
-            }}
-            setScheduleId={(value: string | undefined) => {
-              setValue("scheduleId", value);
-            }}
-            packageId={packageId}
-          />
-        {/* ) : ( */}
-          <BookingFormCard
-            getValues={getValues}
-            setValues={setValue}
-            watch={watch}
-            register={register}
-            errors={errors}
-          />
-       
-        {/* <div className="w-full flex items-center justify-center flex-col">
-          <div className="w-full max-w-sm mt-3 bg-gray-900 p-2 text-white rounded-md">
-            <Checkbox required />
+        <div className="my-5 h-[2px] w-[95%] bg-black" />
+        <BookingFormCard
+          getValues={getValues}
+          setValues={setValue}
+          watch={watch}
+          register={register}
+          errors={errors}
+        />
+        <div className="flex w-full  justify-evenly items-center">
+          <div>
+            <p className="text-xs ">Total:</p>
+            <p className="text-2xl font-semibold ">₹{total}</p>
           </div>
-        </div> */}
-        {!isNext ? (
-          <Button
-            onClick={() => {
-              setIsNext(true);
-            }}
-            className="w-full relative z-10 max-w-sm mt-2"
-          >
-            Fill in Booking form {format(new Date(date), "do/MMM")}
-          </Button>
-        ) : null}
-
-        {isNext ? (
-          <>
-            <div className="w-full flex items-center justify-center flex-col">
-              <div className="w-full max-w-sm mt-3 bg-slate-800 p-2 text-white rounded-md">
-                <p className="font-medium">
-                  Total : ₹{total}
-                  <sup className="text-green-400 font-medium">
-                    * GST Included
-                  </sup>
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4 flex items-center gap-2 max-w-sm w-full">
-              <Button
-                onClick={() => {
-                  setIsNext(false);
-                }}
-                variant={"secondary"}
-                // className="max-w-fit p-2 border border-black "
-              >
-                <ChevronLeft />
-                <p>Back</p>
-              </Button>
-              <Button
-                type="submit"
-                className="w-full text-white"
-                variant={"default"}
-              >
-                Book now {total ? `@ ₹${total}` : null}
-              </Button>
-            </div>
-          </>
-        ) : null}
+          <div className="w-[2px] h-12 bg-black"></div>
+          <div>
+            <Button>Book Now</Button>
+          </div>
+        </div>
       </form>
       <PackageScheduleDialogs
-        isNextSlideState={setIsNext}
         ScheduleError={ScheduleError}
         isOpen={isOpen}
         selectedDate={new Date(getValues("selectedScheduleDate"))}

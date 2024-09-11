@@ -15,7 +15,8 @@ type TBookingFormCalender = {
   setScheduleId: (value: string | undefined) => void;
   packageId: string;
 };
-export default function BookingFormCalender({
+export default function 
+BookingFormCalender({
   setFormDateValue,
   setScheduleId,
   packageId,
