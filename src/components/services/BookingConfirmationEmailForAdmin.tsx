@@ -35,7 +35,7 @@ import {
   
   const domain = process.env.NEXT_PUBLIC_DOMAIN;
   
-  const BookingConfirmationEmailForAdmin = ({
+ export function BookingConfirmationEmailForAdmin ({
     Name,
     email,
     packageTitle,
@@ -49,7 +49,7 @@ import {
     babyCount,
     childCount
     // Duration
-  }: BookingConfirmationEmailForAdmin) => {
+  }: BookingConfirmationEmailForAdmin) {
     const Subject = `New Booking Confirmation! for ${packageTitle} on ${scheduleDate}`;
   
     return (
@@ -184,6 +184,6 @@ import {
 //     babyCount: 5
 //   } as BookingConfirmationProps;
   
-  export default BookingConfirmationEmailForAdmin;
+  // export default BookingConfirmationEmailForAdmin;
   
   

@@ -8,6 +8,12 @@ export async function SendMessageViaWhatsapp({
   message?: string;
 }) {
   let ACCESS_TOKEN = process.env.CLOUD_API_ACCESS_TOKEN;
+  let isWhatsAppEnabled = process.env.WHATS_APP_ENABLE;
+
+  if (!isWhatsAppEnabled) {
+    return null;
+  }
+
   try {
     console.log("Called Send Message \n", message);
     const myHeaders = new Headers();
