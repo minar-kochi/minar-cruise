@@ -1,4 +1,5 @@
 import Bounded from "@/components/elements/Bounded";
+import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
 import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageFormN from "@/components/package/new-page/PackageFormN";
 import PackageImageN from "@/components/package/new-page/PackageImageN";
@@ -37,7 +38,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
   return (
     <div>
       <div>
-        <header className="ml-6 md:ml-9  text-white  flex flex-col  pt-3 pb-3">
+        <header className="ml-6 md:ml-[5.5rem]  text-white  flex flex-col  pt-3 pb-3">
           <h1 className="text-xl md:text-3xl text-[#0D3A62] font-semibold">
             {data.title}
           </h1>
@@ -45,88 +46,17 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
             ({data.fromTime} - {data.toTime})
           </p>
         </header>
-        <div className="mx-10 grid grid-cols-3 gap-2  rounded-2xl ">
+        <div className="mx-[1rem] md:mx-[3rem] lg:mx-[5.5rem] max-md:block grid grid-cols-3 gap-2 rounded-2xl ">
           <div className="col-span-2  rounded-xl ">
-            <div>
+            <div className="rounded-2xl">
               <PackageImageN data={data} />
             </div>
-            <Bounded>
-              <div className="rounded-2xl px-4    ">
-                <div className="max-w-4xl mx-auto w-full">
-                  <h4 className="text-2xl font-bold ">Amenities</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Enjoy a variety of thoughtfully curated services and
-                    features, including dining, entertainment, and leisure
-                    activities, all designed to make your experience comfortable
-                    and memorable. Each package offers unique amenities to suit
-                    your preferences.
-                  </p>
-                  <div className="grid md:grid-cols-2 place-content-center gap-y-4 mt-3   ">
-                    {data.amenities.description.map((item, i) => {
-                      return (
-                        <p
-                          key={`${item}-${i}`}
-                          className="flex items-center gap-2  "
-                        >
-                          <CheckCircle2 className="w-5 h-5  stroke-red-500" />
-                          <span>{item}</span>
-                        </p>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="flex mx-auto bg-white rounded-2xl overflow-hidden justify-between">
-                  <Card className="border-none bg-white">
-                    <CardHeader>
-                      <CardTitle> Reserve Your Spot Today!</CardTitle>
-                      <CardDescription className="max-w-2xl w-full">
-                        Embark on a unique and entertaining
-                        <span className="font-medium text-black">
-                          {" "}
-                          {data.title}{" "}
-                        </span>
-                        that combines scenic views, great food, and live
-                        performances, all while sailing through the tranquil
-                        Arabian Sea.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Dialog>
-                        <DialogTrigger className={cn(buttonVariants(), "")}>
-                          Book your Seats Now
-                        </DialogTrigger>
-                        <DialogContent>
-                          <PackageForm
-                            adultPrice={data.adultPrice}
-                            childPrice={data.childPrice}
-                            packageId={data.id}
-                            packageCategory={data.packageCategory}
-                          />
-                        </DialogContent>
-                      </Dialog>
-                    </CardContent>
-                  </Card>
-                  <div className="max-w-sm ">
-                    <Image
-                      src={data.packageImage[0].image.url}
-                      alt={data.packageImage[0].image.alt}
-                      width={1280}
-                      height={720}
-                      className="object-cover aspect-video"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-6 prose max-w-full w-full">
-                <MDXRemote source={data.description} />
-              </div>
-              <PackageCarousel />
+            <Bounded className="max-md:hidden block ">
+              <PackageAmmenties data={data} />
             </Bounded>
           </div>
           <div className="col-span-1 row-span-1      ">
-            <div className="bg-white sticky -top-96 mb-8 rounded-xl">
+            <div className="bg-white sticky -top-96 mb-8 rounded-xl min-w-fit ">
               <PackageFormN
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
@@ -135,7 +65,14 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
               />
             </div>
           </div>
+          <div className="col-span-2 max-md:block hidden">
+            <Bounded className="">
+              <PackageAmmenties data={data} />
+            </Bounded>
+          </div>
         </div>
+        <PackageCarousel />
+
         {/* <div className="flex mx-auto col-span-2 bg-white rounded-2xl overflow-hidden justify-between">
           <Card className="border-none bg-white">
             <CardHeader>

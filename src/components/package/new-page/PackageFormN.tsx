@@ -151,7 +151,7 @@ export default function PackageFormN({
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   return (
-    <article className="flex flex-col pt-3  items-center justify-center  pb-5">
+    <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full">
       <p className="font-semibold text-lg py-1  ">
         Check Cruise
         <span className="text-red-500 "> Availability </span>
@@ -192,18 +192,18 @@ export default function PackageFormN({
         />
         <div className="flex w-full mt-3 justify-evenly items-center">
           {/* <div> */}
-            {/* <p className="text-xs">Total:</p> */}
-            {/* <p className="text-2xl font-semibold ">₹{total}</p> */}
+          {/* <p className="text-xs">Total:</p> */}
+          {/* <p className="text-2xl font-semibold ">₹{total}</p> */}
           {/* </div> */}
           {/* <div className="w-[2px] h-12 bg-black"></div> */}
           <div>
-          <Button
-                type="submit"
-                className="w-full text-white"
-                variant={"default"}
-              >
-                Pay Now {total ? `@ ₹${total}` : null}
-              </Button>
+            <Button
+              type="submit"
+              className="w-full text-white"
+              variant={"default"}
+            >
+              Pay Now {total ? `@ ₹${total}` : null}
+            </Button>
           </div>
         </div>
       </form>

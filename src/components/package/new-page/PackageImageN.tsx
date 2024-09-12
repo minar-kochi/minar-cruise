@@ -9,7 +9,7 @@ import { TGetPackageById } from "@/db/data/dto/package";
 
 export default function PackageImageN({ data }: { data: TGetPackageById }) {
   return (
-    <div className="h-full mx-auto  rounded-md overflow-hidden max-w-md md:max-w-full">
+    <div className="max-h-fit mx-auto   rounded-xl overflow-hidden max-md:mb-4 md:max-w-full">
       <ProductCarousalIndexProvider>
         <div className="w-full  relative h-full ">
          
@@ -18,12 +18,12 @@ export default function PackageImageN({ data }: { data: TGetPackageById }) {
               return (
                 <div
                   key={`${item.image.alt}-${item.image.id}-${index}`}
-                  className="embla__slide   overflow-hidden aspect-square relative"
+                  className="embla__slide rounded-xl  overflow-hidden aspect-[14/9] relative "
                 >
                   <Image
                     alt={item.image.alt}
                     src={item.image.url}
-                    className="slider-product top-0 rounded-xl w-full h-full object-contain lg:max-h-[calc(100vh-65px)]"
+                    className="slider-product top-0 absolute rounded-xl w-full h-full  object-cover  "
                     width={2148}
                     height={1596}
                   />

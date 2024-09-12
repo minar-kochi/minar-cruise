@@ -36,7 +36,7 @@ export default function BookingFormCard({
         <InputLabel
           errorClassName="justify-start ml-1"
           label="Name"
-          labelClassName=""
+          labelClassName="text-sm"
           InputProps={{
             placeholder: "Your Name",
             ...register("name"),
@@ -50,7 +50,7 @@ export default function BookingFormCard({
       <div className="w-[90%]  max-w-sm">
         <InputLabel
         label="Email"
-          labelClassName=""
+          labelClassName="text-sm"
           errorClassName="justify-start ml-1"
           InputProps={{
             placeholder: "john@gmail.com",
@@ -65,7 +65,7 @@ export default function BookingFormCard({
       <div className="w-[90%]  max-w-sm">
         <InputLabel
         label="Phone Number"
-          labelClassName=""
+          labelClassName="text-sm"
           errorClassName="justify-start ml-1"
           InputProps={{
             placeholder: "9399779908",
@@ -79,7 +79,7 @@ export default function BookingFormCard({
 
         <div className="flex flex-wrap items-center justify-start gap-10 md:mt-4">
           <div className="flex items-center">
-            <div>
+            <div className=" leading-4">
               <Label
                 className="mx-1.5 text-xs font-semibold "
                 htmlFor="numOfAdults-count"
@@ -91,7 +91,7 @@ export default function BookingFormCard({
             <div className="max-w-[80px] bg-slate-800  rounded-full  w-full flex items-center justify-center">
               <button
                 // size={"icon"}
-                className=" left-0 text-white hover:text-red-500 w-4 h-8 "
+                className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                 type="button"
                 onClick={() => {
                   let Currvalue = getValues("numOfAdults");
@@ -112,7 +112,7 @@ export default function BookingFormCard({
                 })}
               />
               <button
-                className=" right-0 text-white hover:text-green-500 w-4 h-8"
+                className=" right-0 text-white hover:text-green-500 w-5 h-8"
                 type="button"
                 onClick={() => {
                   let Currvalue = getValues("numOfAdults");
@@ -128,7 +128,7 @@ export default function BookingFormCard({
           </div>
 
           <div className="flex items-center mr-8">
-            <div>
+            <div className="leading-4">
               <Label
                 htmlFor="numOfBaby-count"
                 className="mx-1.5 text-xs font-semibold"
@@ -140,7 +140,7 @@ export default function BookingFormCard({
             <div className="max-w-[80px] bg-slate-800 rounded-full  w-full  flex items-center justify-center">
               <button
                 // size={"icon"}
-                className=" left-0 text-white hover:text-red-500 w-4 h-8 "
+                className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                 type="button"
                 onClick={() => {
                   let Currvalue = getValues("numOfBaby");
@@ -161,7 +161,7 @@ export default function BookingFormCard({
                 })}
               />
               <button
-                className=" right-0 text-white hover:text-green-500  w-4 h-8 "
+                className=" right-0 text-white hover:text-green-500  w-5 h-8 "
                 type="button"
                 onClick={() => {
                   let Currvalue = getValues("numOfBaby");
@@ -176,8 +176,8 @@ export default function BookingFormCard({
             </div>
           </div>
         </div>
-        <div className="flex items-center mt-2">
-          <div>
+        <div className="flex items-center mt-4">
+          <div className="leading-4">
             <Label
               htmlFor="numOfChildren-count"
               className="mx-1.5 text-xs font-semibold"
@@ -189,7 +189,7 @@ export default function BookingFormCard({
           <div className="max-w-[80px] bg-slate-800 rounded-full  ml-1  flex items-center justify-center">
             <button
               // size={"icon"}
-              className=" left-0 text-white hover:text-red-500 w-4 h-8 "
+              className=" left-0 text-white hover:text-red-500 w-5 h-8 "
               type="button"
               onClick={() => {
                 let Currvalue = getValues("numOfChildren");
@@ -210,7 +210,7 @@ export default function BookingFormCard({
               })}
             />
             <button
-              className=" right-0 text-white hover:text-green-500 w-4 h-8"
+              className=" right-0 text-white hover:text-green-500 w-5 h-8"
               type="button"
               onClick={() => {
                 let Currvalue = getValues("numOfChildren");

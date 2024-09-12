@@ -20,8 +20,8 @@ const Page = () => {
       <FacilitiesImageCard label="Facilities" />
       <Services />
       <Bounded>
-        <Entertainments />
         <Facilities />
+        {/* <Entertainments /> */}
       </Bounded>
     </main>
   );
