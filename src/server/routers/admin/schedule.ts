@@ -76,7 +76,8 @@ export const schedule = router({
         if (!data) return null;
         return data;
       }
-      const data = await getSchedulesByDateRangeWithBookingCount(FromDate, ToDate);
+      const data = await getSchedulesByDateRangeWithBookingCount
+      (FromDate, ToDate);
       if (!data) return null;
       return data;
 
