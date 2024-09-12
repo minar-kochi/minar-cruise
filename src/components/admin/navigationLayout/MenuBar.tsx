@@ -36,7 +36,7 @@ const MenuBar = () => {
               <NavigationSelectionState routeName="admin">
                 <Link
                   href="/admin"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:rounded-md hover:text-primary"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
                 >
                   <Home className="h-4 w-4" />
                   Dashboard
@@ -45,7 +45,7 @@ const MenuBar = () => {
               <NavigationSelectionState routeName="schedule">
                 <Link
                   href="/admin/schedule"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:rounded-md hover:text-primary"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
                 >
                   <ShoppingCart className="h-4 w-4" />
                   Schedule
@@ -54,7 +54,7 @@ const MenuBar = () => {
               <NavigationSelectionState routeName="booking">
                 <Link
                   href="/admin/booking"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:rounded-md hover:text-primary"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
                 >
                   <Package className="h-4 w-4" />
                   Booking
@@ -63,7 +63,7 @@ const MenuBar = () => {
               <NavigationSelectionState routeName="image-uploader">
                 <Link
                   href="/admin/image-uploader"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:rounded-md hover:text-primary"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
                 >
                   <ImageUp className="h-4 w-4" />
                   Upload Image
@@ -72,7 +72,7 @@ const MenuBar = () => {
               <NavigationSelectionState routeName="createBlog">
                 <Link
                   href="/admin/createBlog"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:rounded-md hover:text-primary"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
                 >
                   <SquarePen className="h-4 w-4" />
                   Create Blog
@@ -81,7 +81,7 @@ const MenuBar = () => {
               <NavigationSelectionState routeName="cruise-packages">
                 <Link
                   href="/admin/cruise-packages"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:rounded-md hover:text-primary"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
                 >
                   <LineChart className="h-4 w-4" />
                   View Package&apos;s
