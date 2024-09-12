@@ -10,7 +10,7 @@ export const PackageCarousel = async () => {
     return null;
   }
   return (
-    <Bounded className="flex flex-col items-center embla__viewport ">
+    <Bounded className="flex flex-col mt-10 items-center embla__viewport ">
       <div className="overflow-hidden">
         <EmblaCarouselProvider>
           {data.map((item, i) => {

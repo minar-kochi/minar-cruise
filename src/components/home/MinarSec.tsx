@@ -16,18 +16,22 @@ const MinarSec = () => {
               <BioTextAnimation />
             </div>
             <p className="font-sans tracking-wide leading-7  text-left">
-              Minar Cruise is a private catamaran sea cruise in Kerala, India.
-              Minar Tourist Boat Cochin & Traders is registered with the Indian
-              Register of Shipping. Our fleet has been providing hospitality and
-              professional services for 20 years. The luxurious air-conditioned
-              hall can be used for a variety of events, including official
-              meetings, parties, family functions, weddings, and engagements.
-              Our intimate fleet can seat up to 146 passengers, and has
-              all-suite and all-balcony ships with superior service ratios. We
-              have permission to cruise up to 12 nautical miles and offer
-              scheduled trips ranging from 2 to 4 hours, which can be customized
-              according to your needs. Join us on your next journey to
-              experience the scenic beauty of Kochi and the Arabian Sea.
+              Minar Cruise is India&apos;s largest private luxurious yoat
+              registered under IRS (Indian Register of Shipping). It&apos;s a
+              sea-going vessel, perfect for unforgettable experiences on the
+              Arabian Sea. Our beautiful cruise ship features three amazing
+              floors. The first floor includes a completely air-conditioned
+              banquet hall suitable for grand events. The second floor is an
+              open area where you can enjoy a breathtaking 360-degree view of
+              the Arabian Sea, along with an exclusive, cosy air-conditioned VIP
+              lounge. The third floor is an open sundeck, providing even more
+              space for fun and relaxation. Our sea-going vessel can accommodate
+              up to 150 guests, making it perfect for memorable corporate
+              meetings, family gatherings, birthday parties, and even beautiful
+              wedding ceremonies. Live singers, spectacular magic performances,
+              mentalism acts, and a vibrant DJ are all available on board. Sail
+              on the Arabian Sea with our elegant sea-going vessel, Minar Cruise
+              Cochin, and have experiences that will last a lifetime.
             </p>
             <Link
               href="/about"
