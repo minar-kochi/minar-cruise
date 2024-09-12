@@ -16,7 +16,7 @@ export default function NavigationSelectionState({ children, routeName, classNam
     let parsedPath = useInitialPath({ pathName: pathname })
 
   return (
-    <div className={cn("", className, {"bg-muted border-2 rounded-md hover:text-primary": routeName===parsedPath })}>
+    <div className={cn("", className, {"bg-muted border-2 border-muted rounded-md hover:text-primary": routeName===parsedPath })}>
         {children}
     </div>
   )

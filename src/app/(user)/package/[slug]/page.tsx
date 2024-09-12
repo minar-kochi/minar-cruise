@@ -105,11 +105,11 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
   return (
     <Bounded className=" my-4 md:my-12 rounded-2xl ">
       <div className="  rounded-2xl">
-        <div className="w-full h-full  grid md:grid-cols-2   ">
-          <div className="">
+        <div className="w-full h-full  flex   ">
+          <div className="basis-3/4 max-h-[calc(100dvh-60px)]">
             <PackageImage data={data} />
           </div>
-          <div className="px-0.5 mt-2 bg-white md:bg-transparent rounded-md md:rounded-none py-2">
+          <div className="px-0.5 mt-2 bg-white rounded-md md:rounded-none py-2 basis-1/4">
             <PackageForm
               adultPrice={data.adultPrice}
               childPrice={data.childPrice}
