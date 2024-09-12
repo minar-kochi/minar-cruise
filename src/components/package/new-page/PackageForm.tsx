@@ -176,24 +176,24 @@ export default function PackageForm({
         className="flex  flex-col items-center justify-center "
       >
         {/* {!isNext ? ( */}
-          <BookingFormCalender
-            setFormDateValue={(value: string) => {
-              setValue("selectedScheduleDate", value);
-            }}
-            setScheduleId={(value: string | undefined) => {
-              setValue("scheduleId", value);
-            }}
-            packageId={packageId}
-          />
+        <BookingFormCalender
+          setFormDateValue={(value: string) => {
+            setValue("selectedScheduleDate", value);
+          }}
+          setScheduleId={(value: string | undefined) => {
+            setValue("scheduleId", value);
+          }}
+          packageId={packageId}
+        />
         {/* ) : ( */}
-          <BookingFormCard
-            getValues={getValues}
-            setValues={setValue}
-            watch={watch}
-            register={register}
-            errors={errors}
-          />
-       
+        <BookingFormCard
+          getValues={getValues}
+          setValues={setValue}
+          watch={watch}
+          register={register}
+          errors={errors}
+        />
+
         {/* <div className="w-full flex items-center justify-center flex-col">
           <div className="w-full max-w-sm mt-3 bg-gray-900 p-2 text-white rounded-md">
             <Checkbox required />

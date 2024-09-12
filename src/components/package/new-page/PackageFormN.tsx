@@ -19,6 +19,7 @@ import ColorRepresentationInfo from "./ColorRepresentationInfo";
 import BookingFormCard from "./BookingFormCard";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type TPackageForm = {
   packageId: string;
@@ -150,8 +151,8 @@ export default function PackageFormN({
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   return (
-    <article className="flex flex-col pt-2  items-center justify-center">
-      <p className="font-semibold text-lg pb-4  ">
+    <article className="flex flex-col pt-3  items-center justify-center  pb-5">
+      <p className="font-semibold text-lg py-1  ">
         Check Cruise
         <span className="text-red-500 "> Availability </span>
       </p>
@@ -168,7 +169,7 @@ export default function PackageFormN({
           }}
           packageId={packageId}
         />
-        <div className="flex flex-col items-center justify-center gap-2 ">
+        <div className="flex flex-col items-center justify-center gap-2 mt-5">
           <div className="flex gap-2">
             <ColorRepresentationInfo className="bg-muted " title="Blocked" />
             <ColorRepresentationInfo
@@ -181,7 +182,7 @@ export default function PackageFormN({
             title="Rest of the days Minimum 25 Pax"
           />
         </div>
-        <div className="my-5 h-[2px] w-[95%] bg-black" />
+        <div className="my-7 h-[1px] w-[100%] bg-gray-300" />
         <BookingFormCard
           getValues={getValues}
           setValues={setValue}
@@ -189,14 +190,20 @@ export default function PackageFormN({
           register={register}
           errors={errors}
         />
-        <div className="flex w-full  justify-evenly items-center">
+        <div className="flex w-full mt-3 justify-evenly items-center">
+          {/* <div> */}
+            {/* <p className="text-xs">Total:</p> */}
+            {/* <p className="text-2xl font-semibold ">₹{total}</p> */}
+          {/* </div> */}
+          {/* <div className="w-[2px] h-12 bg-black"></div> */}
           <div>
-            <p className="text-xs ">Total:</p>
-            <p className="text-2xl font-semibold ">₹{total}</p>
-          </div>
-          <div className="w-[2px] h-12 bg-black"></div>
-          <div>
-            <Button>Book Now</Button>
+          <Button
+                type="submit"
+                className="w-full text-white"
+                variant={"default"}
+              >
+                Pay Now {total ? `@ ₹${total}` : null}
+              </Button>
           </div>
         </div>
       </form>
