@@ -1,5 +1,6 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
+import LoadingState from "@/components/custom/Loading";
 import { getBlogPostById } from "@/db/data/dto/blog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { nanoid } from "@reduxjs/toolkit";
@@ -41,6 +42,7 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
 
   return (
     <div>
+        {isFetching && <LoadingState/>}
       <div className="flex gap-2 flex-wrap items-center justify-center">
         {data &&
           data.pages &&

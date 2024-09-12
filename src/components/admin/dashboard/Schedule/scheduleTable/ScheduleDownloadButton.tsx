@@ -28,7 +28,7 @@ import DownloadScheduleTable from "@/components/excel/DownloadScheduleButton";
 
 interface IScheduleDownloadButton {
   className?: string;
-  type: "scheduleWithBookingCount" | "scheduleWithoutBookingCount"
+  type: "scheduleWithBookingCount" | "scheduleWithoutBookingCount";
 }
 
 export type TDateRange = {
@@ -37,11 +37,11 @@ export type TDateRange = {
 };
 export default function ScheduleDownloadButton({
   className,
-  type
+  type,
 }: IScheduleDownloadButton) {
   const [date, setDate] = React.useState<TDateRange>({
     from: RemoveTimeStampFromDate(new Date(Date.now())),
-    to: RemoveTimeStampFromDate(addDays(new Date(Date.now()), 30)),
+    to: RemoveTimeStampFromDate(addDays(new Date(Date.now()), 10)),
   });
 
   return (
@@ -51,16 +51,55 @@ export default function ScheduleDownloadButton({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Download Schedule</DialogTitle>
+          <DialogTitle className="text-xl">Download Schedule</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="block sm:hidden">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={new Date(date?.from)}
+            selected={{
+              from: new Date(date.from),
+              to: new Date(date.to),
+            }}
+            sizeMode="xs"
+            className="block sm:hidden max-w-lg"
+            onSelect={(selectedDate) => {
+              setDate((prev) => {
+                let to =
+                  selectedDate?.to &&
+                  prev.to === RemoveTimeStampFromDate(selectedDate?.to)
+                    ? prev.to
+                    : selectedDate?.to
+                      ? RemoveTimeStampFromDate(selectedDate?.to)
+                      : prev.to;
+
+                let from =
+                  selectedDate?.from &&
+                  prev.from === RemoveTimeStampFromDate(selectedDate?.from)
+                    ? prev.from
+                    : selectedDate?.from
+                      ? RemoveTimeStampFromDate(selectedDate?.from)
+                      : prev.from;
+
+                return {
+                  to,
+                  from,
+                };
+              });
+            }}
+            numberOfMonths={1}
+          />
+        </div>
+        <div className="py-4 hidden sm:block">
           {/* <div className="">from:{date?.from}</div>
           <div className="">to:{date?.to}</div> */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="">
               Select Date
             </Label>
-            <div className={cn("grid gap-2", className)}>
+
+            <div className={cn("", className)}>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -96,15 +135,28 @@ export default function ScheduleDownloadButton({
                       to: new Date(date.to),
                     }}
                     onSelect={(selectedDate) => {
-                      setDate((prev)=> {
-                        let to = selectedDate?.to && prev.to === RemoveTimeStampFromDate(selectedDate?.to) ? prev.to : selectedDate?.to  ?  RemoveTimeStampFromDate(selectedDate?.to) : prev.to 
+                      setDate((prev) => {
+                        let to =
+                          selectedDate?.to &&
+                          prev.to === RemoveTimeStampFromDate(selectedDate?.to)
+                            ? prev.to
+                            : selectedDate?.to
+                              ? RemoveTimeStampFromDate(selectedDate?.to)
+                              : prev.to;
 
-                        let from = selectedDate?.from && prev.from === RemoveTimeStampFromDate(selectedDate?.from) ? prev.from : selectedDate?.from  ?  RemoveTimeStampFromDate(selectedDate?.from) : prev.from
+                        let from =
+                          selectedDate?.from &&
+                          prev.from ===
+                            RemoveTimeStampFromDate(selectedDate?.from)
+                            ? prev.from
+                            : selectedDate?.from
+                              ? RemoveTimeStampFromDate(selectedDate?.from)
+                              : prev.from;
 
                         return {
                           to,
-                          from
-                        }
+                          from,
+                        };
                       });
                     }}
                     numberOfMonths={2}
@@ -115,7 +167,7 @@ export default function ScheduleDownloadButton({
           </div>
         </div>
         <DialogFooter>
-          <DownloadScheduleTable state={date} type={type}/>
+          <DownloadScheduleTable state={date} type={type} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

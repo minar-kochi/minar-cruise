@@ -258,7 +258,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
     });
   }
   return (
-    <Button variant={"secondary"} onClick={exportExcelFile}>
+    <Button variant={"default"} onClick={exportExcelFile}>
       Download
     </Button>
   );
