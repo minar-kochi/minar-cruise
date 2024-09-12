@@ -1,7 +1,8 @@
 import z from "zod";
 //Put this into a regix file.
 
-export const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+export const indianPhoneRegex =
+  /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
 
 export const offlineBookingFormSchema = z.object({
   name: z.string().min(3, "Name should have min 3 letters").max(40),
@@ -18,7 +19,6 @@ export const offlineBookingFormSchema = z.object({
   schedule: z.string(),
   adultCount: z
     .number({ message: "Please provide a valid number" })
-    .min(1, "Adult count cannot be less than 1")
     .max(150, "Count cannot exceed 150"),
 
   childCount: z
@@ -42,8 +42,20 @@ export const updateOfflineBookingSchema = z
   .object({
     bookingId: z.string(),
   })
-  .merge(offlineBookingFormSchema);
-
+  .merge(offlineBookingFormSchema)
+  .refine(
+    (data) => {
+      let totalCount = data.adultCount + data.childCount;
+      if (totalCount < 1) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Please select atleast 1 Seat to proceed",
+      path: ["adultCount"],
+    },
+  );
 export type TUpdateBookingSchema = z.infer<typeof updateOfflineBookingSchema>;
 export type TOfflineBookingFormSchema = z.infer<
   typeof offlineBookingFormSchema

@@ -30,32 +30,18 @@ export async function sendConfirmationEmail({
   if (!BUSINESS_EMAIL) {
     return { error: "Business email not found" };
   }
-  const renderedHtml = await render(emailComponent);
-  const data = await sendNodeMailerEmail({
-    subject: emailSubject,
-    toEmail: recipientEmail,
-    fromEmail: fromEmail ?? BUSINESS_EMAIL,
-    reactEmailComponent: renderedHtml,
-  });
-  return data;
-  //   try {
-  //     const { data, error } = await resend.emails.send({
-  //       from: fromEmail ?? BUSINESS_EMAIL,
-  //       to: [recipientEmail],
-  //       subject: emailSubject ?? "Booking Confirmed!",
-  //       react: emailComponent,
-  //     });
-
-  //     console.log(data);
-  //     console.log(error);
-
-  //     if (error) {
-  //       return { error };
-  //     }
-  //     return data;
-  //   } catch (error) {
-  //     return { error };
-  //   }
+  try {
+    const renderedHtml = await render(emailComponent);
+    const data = await sendNodeMailerEmail({
+      subject: emailSubject,
+      toEmail: recipientEmail,
+      fromEmail: fromEmail ?? BUSINESS_EMAIL,
+      reactEmailComponent: renderedHtml,
+    });
+    return data;
+  } catch (error) {
+    return null;
+  }
 }
 
 type TSendEmail = {

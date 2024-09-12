@@ -396,7 +396,8 @@ export const booking = router({
       //-------------checks if booking exists in DB ENDS------------------------
 
       //-------------checks adult has min count STARTS------------------------
-      if (adultCount < 1 || !adultCount) {
+      let minCap = adultCount + childCount;
+      if (!minCap) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Need at least 1 adult to update booking",
@@ -430,7 +431,7 @@ export const booking = router({
         });
       }
 
-      if (updatedSeatCountOfBooking > 150) {
+      if (updatedSeatCountOfBooking > MAX_BOAT_SEAT) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message:
@@ -677,8 +678,8 @@ export const booking = router({
         Package: {
           select: {
             title: true,
-            fromTime:true,
-            toTime:true,
+            fromTime: true,
+            toTime: true,
           },
         },
         Booking: {
