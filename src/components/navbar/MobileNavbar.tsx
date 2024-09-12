@@ -39,30 +39,36 @@ export default async function MobileNavbar() {
           <DrawerHeader>
             <DrawerTitle className="text-center m-2">Navigations</DrawerTitle>
             <DrawerDescription className="py-5">
-              <Link href="/" className="cursor-pointer hover:text-red-500 ">
-                Home
-              </Link>
-
+              <DrawerClose asChild>
+                <Link href="/" className="cursor-pointer hover:text-red-500 ">
+                  Home
+                </Link>
+              </DrawerClose>
               <hr className="border-gray-300 my-4" />
 
               <div>
                 <Accordion type="single" collapsible>
                   <AccordionItem value="item-1">
-                    <AccordionTrigger>
-                      <Link
-                        href="/"
-                        className="cursor-pointer  hover:text-red-500   "
-                      >
-                        Packages
-                      </Link>
+                    <AccordionTrigger className="cursor-pointer  hover:text-red-500">
+                      Packages
                     </AccordionTrigger>
                     <AccordionContent>
                       {packageDetails.map((item, i) => (
-                        <Link key={item.id} href={`/package/${item.slug}`}>
-                          <p className="hover:text-red-500  py-2">
-                            {item.title}
-                          </p>
-                        </Link>
+                        <div
+                          className="border-2"
+                          key={`a-${item.id}-Accordion-DrawerClose=${i}`}
+                        >
+                          <DrawerClose
+                            asChild
+                            key={`a-${item.id}-Accordion-DrawerClose=${i}-component`}
+                          >
+                            <Link href={`/package/${item.slug}`}>
+                              <p className="hover:text-red-500  py-2">
+                                {item.title}
+                              </p>
+                            </Link>
+                          </DrawerClose>
+                        </div>
                       ))}
                     </AccordionContent>
                   </AccordionItem>
@@ -70,52 +76,53 @@ export default async function MobileNavbar() {
               </div>
 
               <hr className="border-gray-300 my-4" />
-
-              <Link
-                href="/facilities"
-                className="cursor-pointer  hover:text-red-500 "
-              >
-                Facilities
-              </Link>
+              <DrawerClose asChild>
+                <Link
+                  href="/facilities"
+                  className="cursor-pointer  hover:text-red-500 "
+                >
+                  Facilities
+                </Link>
+              </DrawerClose>
 
               <hr className="border-gray-300 my-4" />
-
-              <Link
-                href="/about"
-                className="cursor-pointer  hover:text-red-500 "
-              >
-                About
-              </Link>
+              <DrawerClose asChild>
+                <Link
+                  href="/about"
+                  className="cursor-pointer  hover:text-red-500 "
+                >
+                  About
+                </Link>
+              </DrawerClose>
 
               <hr className="border-gray-300 my-4" />
 
               <div>
                 <Accordion type="single" collapsible>
                   <AccordionItem value="item-2">
-                    <AccordionTrigger>
-                      <Link
-                        href="/"
-                        className="cursor-pointer  hover:text-red-500 "
-                      >
-                        Gallery
-                      </Link>
-                    </AccordionTrigger>
+                    <AccordionTrigger>Gallery</AccordionTrigger>
                     <AccordionContent>
-                      <Link href="/gallery/family-gathering">
-                        <p className="hover:text-red-500 py-2">
-                          Family Gathering
-                        </p>
-                      </Link>
-                      <Link href="/gallery/celebration-gathering">
-                        <p className="hover:text-red-500  py-2">
-                          Celebration Events
-                        </p>
-                      </Link>
-                      <Link href="/gallery/corporate-gathering">
-                        <p className="hover:text-red-500  pt-2">
-                          Corporate Events{" "}
-                        </p>
-                      </Link>
+                      <DrawerClose asChild>
+                        <Link href="/gallery/family-gathering">
+                          <p className="hover:text-red-500 py-2">
+                            Family Gathering
+                          </p>
+                        </Link>
+                      </DrawerClose>
+                      <DrawerClose asChild>
+                        <Link href="/gallery/celebration-gathering">
+                          <p className="hover:text-red-500  py-2">
+                            Celebration Events
+                          </p>
+                        </Link>
+                      </DrawerClose>
+                      <DrawerClose>
+                        <Link href="/gallery/corporate-gathering">
+                          <p className="hover:text-red-500  pt-2">
+                            Corporate Events{" "}
+                          </p>
+                        </Link>
+                      </DrawerClose>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -123,12 +130,14 @@ export default async function MobileNavbar() {
 
               <hr className="border-gray-300 my-4" />
 
-              <Link
-                href="/contact"
-                className="cursor-pointer  hover:text-red-500 "
-              >
-                Contact
-              </Link>
+              <DrawerClose>
+                <Link
+                  href="/contact"
+                  className="cursor-pointer  hover:text-red-500 "
+                >
+                  Contact
+                </Link>
+              </DrawerClose>
             </DrawerDescription>
           </DrawerHeader>
         </DrawerContent>

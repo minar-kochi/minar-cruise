@@ -191,18 +191,18 @@ export default function PackageFormN({
           errors={errors}
         />
         <div className="flex w-full mt-3 justify-evenly items-center">
-          {/* <div> */}
-          {/* <p className="text-xs">Total:</p> */}
-          {/* <p className="text-2xl font-semibold ">₹{total}</p> */}
-          {/* </div> */}
-          {/* <div className="w-[2px] h-12 bg-black"></div> */}
+          <div>
+          <p className="text-xs">Total:</p>
+          <p className="text-2xl font-semibold ">₹{total}</p>
+          </div>
+          <div className="w-[2px] h-12 bg-black"></div>
           <div>
             <Button
               type="submit"
               className="w-full text-white"
               variant={"default"}
             >
-              Pay Now {total ? `@ ₹${total}` : null}
+              Pay Now 
             </Button>
           </div>
         </div>
