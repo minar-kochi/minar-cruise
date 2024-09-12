@@ -14,7 +14,7 @@ export default async function SpecialPackages() {
       <h3 className=" text-[#194266] text-2xl md:text-3xl font-semibold  mt-4 mb-2 ">
         Special Cruises with Dining & Entertainment
       </h3>
-      <p className="text-sm text-muted-foreground tracking-wider my-3   w-[90%] ">
+      <p className="text-sm text-muted-foreground tracking-wide my-3   w-[90%] ">
         Enjoy extended 3+ hour cruises featuring stunning sunsets, delightful
         lunches, or scenic dinners. Each cruise offers gourmet meals, live
         music, fun-filled entertainment, and DJ performances, perfect for a

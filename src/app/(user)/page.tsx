@@ -18,12 +18,11 @@ export default function page() {
         <HomeVideo />
       </Suspense>
       <MinarSec />
-
       <PackagesBento />
       <ExclusivePackage />
       <Services />
-      <BookingDescription />
       <Facilities />
+      <BookingDescription />
       <GalleryCarousel />
     </main>
   );
