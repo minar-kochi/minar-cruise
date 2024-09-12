@@ -83,7 +83,8 @@ export async function getSchedulesByDateRangeWithBookingCount(FromDate: Date, To
   const data = await db.schedule.findMany({
     where: {
       day: {
-        gte: new Date(Date.now()),
+        gte: new Date(FromDate),
+        lte: new Date(ToDate)
       },
       scheduleStatus: {
         in: ["AVAILABLE", "EXCLUSIVE"],

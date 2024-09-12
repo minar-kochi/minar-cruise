@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import NavigationSelectionState from "./NavigationSelectionState";
 
 const MenuBar = () => {
   return (
@@ -32,69 +33,61 @@ const MenuBar = () => {
           </div>
           <div className="flex-1  ">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="/admin/"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Home className="h-4 w-4" />
-                Dashboard
-              </Link>
-
-              <Link
-                href="/admin/schedule"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Schedule
-              </Link>
-              <Link
-                href="/admin/booking"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-              >
-                <Package className="h-4 w-4" />
-                Booking
-              </Link>
-
-              <Link
-                href="/admin/image-uploader"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <ImageUp className="h-4 w-4" />
-                Upload Image
-              </Link>
-
-              <Link
-                href="/admin/createBlog"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <SquarePen className="h-4 w-4" />
-                Create Blog
-              </Link>
-
-              <Link
-                href="/admin/cruise-packages"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <LineChart className="h-4 w-4" />
-                View Package&apos;s
-              </Link>
+              <NavigationSelectionState routeName="admin">
+                <Link
+                  href="/admin"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
+                >
+                  <Home className="h-4 w-4" />
+                  Dashboard
+                </Link>
+              </NavigationSelectionState>
+              <NavigationSelectionState routeName="schedule">
+                <Link
+                  href="/admin/schedule"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Schedule
+                </Link>
+              </NavigationSelectionState>
+              <NavigationSelectionState routeName="booking">
+                <Link
+                  href="/admin/booking"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
+                >
+                  <Package className="h-4 w-4" />
+                  Booking
+                </Link>
+              </NavigationSelectionState>
+              <NavigationSelectionState routeName="image-uploader">
+                <Link
+                  href="/admin/image-uploader"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
+                >
+                  <ImageUp className="h-4 w-4" />
+                  Upload Image
+                </Link>
+              </NavigationSelectionState>
+              <NavigationSelectionState routeName="createBlog">
+                <Link
+                  href="/admin/createBlog"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
+                >
+                  <SquarePen className="h-4 w-4" />
+                  Create Blog
+                </Link>
+              </NavigationSelectionState>
+              <NavigationSelectionState routeName="cruise-packages">
+                <Link
+                  href="/admin/cruise-packages"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted  hover:border-2 hover:border-muted hover:rounded-md hover:text-primary"
+                >
+                  <LineChart className="h-4 w-4" />
+                  View Package&apos;s
+                </Link>
+              </NavigationSelectionState>
             </nav>
-          </div>
-          <div className="mt-auto p-4">
-            {/* <Card x-chunk="dashboard-02-chunk-0">
-              <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Button size="sm" className="w-full">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card> */}
           </div>
         </div>
       </div>

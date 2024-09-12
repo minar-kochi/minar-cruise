@@ -1,11 +1,12 @@
 import ChooseImg from "@/components/admin/blog/ChooseImg";
 import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescription";
+import LoadingState from "@/components/custom/Loading";
 import UploadBlogImage from "@/components/uploadImageDialog";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 export default function ImageUpload() {
   return (
-    <main className="">
+    <Suspense fallback={<LoadingState/>}>
       <HeaderTitleDescription
         title="Upload Gallery"
         description="Upload the image to your Storage and use Around package Images multiple times."
@@ -18,6 +19,6 @@ export default function ImageUpload() {
       <div className="group image-upload p-4">
         <ChooseImg />
       </div>
-    </main>
+    </Suspense>
   );
 }

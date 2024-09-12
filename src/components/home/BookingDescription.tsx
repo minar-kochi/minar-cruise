@@ -12,7 +12,7 @@ export default function BookingDescription() {
     <Bounded className="">
       <div className="min-h-[90vh] flex flex-col-reverse md:flex-row justify-center rounded-3xl w-full max-md:gap-5 bg-black "
          style={{
-          background: 'url("/assets/sea2.gif");',
+          background: 'url("/assets/sea2.gif")',
           backgroundSize: "cover",
         }}
       >
