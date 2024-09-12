@@ -15,7 +15,7 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getPackageById } from "@/db/data/dto/package";
 import { cn } from "@/lib/utils";
-import { CheckCircle2 } from "lucide-react";
+import { Baby, CheckCircle2, Clock, Hourglass, User } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import React from "react";
@@ -38,39 +38,80 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
   return (
     <div>
       <div>
-        <header className="ml-6 md:ml-[5.5rem]  text-white  flex flex-col  pt-3 pb-3">
-          <h1 className="text-xl md:text-3xl text-[#0D3A62] font-semibold">
-            {data.title}
-          </h1>
-          <p className="text-primary font-medium">
-            ({data.fromTime} - {data.toTime})
-          </p>
+        <header className="sm:mx-6 mx-1  text-white pt-3 pb-3">
+          <div className="flex gap-1 md:gap-3 ">
+            <Image
+              src="/assets/titleicons/star.svg"
+              alt="star icon"
+              width={500}
+              height={500}
+              className="w-8 md:w-10  h-8 md:h-10 "
+            />
+            <div className="">
+              <h1 className="text-xl sm:text-2xl md:text-3xl text-[#0D3A62] font-semibold">
+                {data.title}
+              </h1>
+              <p className="text-blue-950 text-xs md:text-sm font-medium flex items-center gap-2 mt-1">
+                <span className="text-primary">
+                  <Clock size="18" />
+                </span>
+                {data.fromTime} - {data.toTime}
+              </p>
+            </div>
+            {/* <div className="h-[1px] w-[20%] my-2 bg-black/70" /> */}
+          </div>
+          {/* <div>
+            <div className="flex  text-primary gap-16 ">
+              <div className="flex items-center  gap-1">
+                <Hourglass />
+                <div className="">
+                  <p className="text-xs text-muted-foreground font-semibold">
+                    Duration
+                  </p>
+                  <p className="text-xs text-black font-semibold">2 hours</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <User />
+                <div className="">
+                  <p className="text-xs text-muted-foreground font-semibold">
+                    Adult (10+)
+                  </p>
+                  <p className="text-xs text-black font-semibold">750 -/ </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex text-primary items-center gap-1 mt-1">
+              <Baby />
+              <div className="">
+                <p className="text-xs text-muted-foreground font-semibold">
+                  Children (3yr-10yr)
+                </p>
+                <p className="text-xs text-black font-semibold">400 -/</p>
+              </div>
+            </div>
+          </div> */}
         </header>
-        <div className="mx-[1rem] md:mx-[3rem] lg:mx-[5.5rem] max-md:block grid grid-cols-3 gap-2 rounded-2xl ">
-          <div className="col-span-2  rounded-xl ">
-            <div className="rounded-2xl">
-              <PackageImageN data={data} />
-            </div>
-            <Bounded className="max-md:hidden block ">
-              <PackageAmmenties data={data} />
-            </Bounded>
+
+        <div className="grid md:gap-2 px-2 2md:grid-cols-3  ">
+          <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
+            <PackageImageN data={data} />
           </div>
-          <div className="col-span-1 row-span-1      ">
-            <div className="bg-white sticky -top-96 mb-8 rounded-xl min-w-fit ">
-              <PackageFormN
-                adultPrice={data.adultPrice}
-                childPrice={data.childPrice}
-                packageId={data.id}
-                packageCategory={data.packageCategory}
-              />
-            </div>
+
+          <div className="2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg">
+            <PackageFormN
+              adultPrice={data.adultPrice}
+              childPrice={data.childPrice}
+              packageId={data.id}
+              packageCategory={data.packageCategory}
+            />
           </div>
-          <div className="col-span-2 max-md:block hidden">
-            <Bounded className="">
-              <PackageAmmenties data={data} />
-            </Bounded>
+
+          <div className="2md:col-span-2 2md:row-start-2 2md:col-start-1">
+            <PackageAmmenties data={data} />
           </div>
         </div>
+
         <PackageCarousel />
 
         {/* <div className="flex mx-auto col-span-2 bg-white rounded-2xl overflow-hidden justify-between">

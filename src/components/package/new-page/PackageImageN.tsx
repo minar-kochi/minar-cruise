@@ -23,7 +23,7 @@ export default function PackageImageN({ data }: { data: TGetPackageById }) {
                   <Image
                     alt={item.image.alt}
                     src={item.image.url}
-                    className="slider-product top-0 absolute rounded-xl w-full h-full  object-cover  "
+                    className="slider-product  rounded-xl w-full h-full  object-cover  "
                     width={2148}
                     height={1596}
                   />

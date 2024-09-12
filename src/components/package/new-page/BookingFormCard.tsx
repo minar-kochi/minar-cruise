@@ -77,7 +77,7 @@ export default function BookingFormCard({
           errorMessage={errors.phone ? `${errors.phone.message}` : null}
         />
 
-        <div className="flex flex-wrap items-center justify-start gap-10 md:mt-4">
+        <div className="flex flex-wrap items-center justify-start gap-5 lg:gap-10  mt-4">
           <div className="flex items-center">
             <div className=" leading-4">
               <Label

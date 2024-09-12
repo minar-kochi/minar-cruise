@@ -39,9 +39,9 @@ BookingFormCalender({
     day: new Date(item.day),
   }));
   return (
-    <div className=" py-4 rounded-md overflow-hidden shadow-xl   bg-primary-foreground  border-black relative">
+    <div className="  py-4 rounded-md overflow-hidden shadow-xl    bg-primary-foreground  border-black relative">
       <Calendar
-        className="p-0 sm:p-3 "
+        className="p-0 py-3 px-2 "
         sizeMode={"lg"}
         disabled={(date) =>
           filterDateFromCalender({ date, dateArray: disabledDays })
