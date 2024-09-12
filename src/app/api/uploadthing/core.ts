@@ -15,8 +15,8 @@ export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "1MB" } })
     .input(fileInputSchema)
     .middleware(async ({ req, input }) => {
-      console.log(req)
-      console.log(input)
+      // console.log(req)
+      // console.log(input)
       /**
        * @TODO
        * Check Authentication for admin.
@@ -24,7 +24,7 @@ export const ourFileRouter = {
       return { alt: input.alt };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log(file);
+      // console.log(file);
       const createdImage = await db.image.create({
         data: {
           // possible file key needs to be added.
