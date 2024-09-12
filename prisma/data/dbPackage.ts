@@ -6,7 +6,7 @@ export const packages: packagesPartialId = [
     title: "Breakfast cruise",
     packageType: "normal",
     description:
-      "Set out on a breakfast cruise with Minar Cruise Cochin and enjoy a chilled-out party in the Arabian sea. It is a delightful leisure activity for groups and a good option to kick-start your day in Cochin. A Breakfast cruise is a good option for those who are short of time for a full-day cruise, as it ensures you the fun of a day cruise while saving enough time for experiencing other daytime events. With Minar Breakfast Cruise you can find laugh-out-loud performances with Fun Filled entertainment. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances",
+      "Breakfast Cruise – Start your day with a 2-hour journey from Kochi, enjoying a delicious breakfast and breathtaking views of the Arabian Sea. Reserve your spot today for a refreshing morning escape!",
     childPrice: 40000,
     adultPrice: 75000,
     duration: 120,
@@ -22,7 +22,7 @@ export const packages: packagesPartialId = [
     title: "Lunch cruise",
     packageType: "normal",
     description:
-      "Enjoy a delicious two-course lunch while we cruise through the heart of the Arabian Sea. Take time to enjoy the view and the company! A fun-filled tour down the tides would provide you with a complete and enchanting experience on the cruise deck. Our chef and waiter would compete with each other to serve you an array of both conventional and contemporary cuisines, especially with a sumptuous feast that is served. Also up on stage find laugh-out-loud performances with Fun Filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
+      "Lunch Cruise – Escape the ordinary with a 2-hour cruise from Kochi, featuring a mouth-watering buffet lunch and stunning sea views. Book now for a perfect day on the water!",
     childPrice: 50000,
     adultPrice: 100000,
     duration: 120,
@@ -38,7 +38,7 @@ export const packages: packagesPartialId = [
     title: "sunset cruise",
     packageType: "normal",
     description:
-      "Half past five in the evening starts the sunset cruise of Minar Cruise. The Sunset Cruise is an amazing 2 hours journey beginning from Marine Drive, Kochi. The vastness of the deep blue sea, undulating waves, fishing crafts focusing on the harbor, and red beautiful sky all combine to paint a rare picture of natural harmony. Our professional crew will be ready with hot teapots with crunchy snacks to serve you and the entertainment team to serve you with fun-filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
+      "Sunset Cruise – Witness the sunset while cruising the Arabian Sea from Kochi. Enjoy a 2-hour voyage with refreshing tea, coffee, and snacks as you enjoy the stunning evening views. Book your unforgettable sunset experience today!",
     childPrice: 40000,
     adultPrice: 75000,
     duration: 120,
@@ -54,7 +54,7 @@ export const packages: packagesPartialId = [
     title: "Dinner cruise",
     packageType: "normal",
     description:
-      "The waves of the Arabian Sea are the best way to enjoy quality time with family, friends, and relatives. It is the best choice to rejuvenate your senses and feel free from the whole day’s hectic sightseeing schedule. The cruise will let you get fascinated with the hues of beauty in the surroundings along with the perfection that lies in the twilight hour. Imagine spending time with your favorite people under the moonlight and enjoying dinner along with Fun Filled entertainment and Live DJ performances.",
+      "Dinner Cruise – Experience the magic of Kochi at night with our Dinner Cruise. Savour a delicious dinner while cruising the tranquil backwaters. Book your night escape now!",
     childPrice: 50000,
     adultPrice: 100000,
     duration: 120,
@@ -70,7 +70,7 @@ export const packages: packagesPartialId = [
     title: "Sunset with Dinner cruise",
     packageType: "special",
     description:
-      "Half past five in the evening starts the sunset cruise of Minar Cruise. The Sunset Cruise is an amazing 2 hours journey beginning from Marine Drive, Kochi. The vastness of the deep blue sea, undulating waves, fishing crafts focusing on the harbor, and red beautiful sky all combine to paint a rare picture of natural harmony. Our professional crew will be ready with hot teapots with crunchy snacks to serve you and the entertainment team to serve you with fun-filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
+      "Sunset with Dinner Cruise – Enjoy a 3-hour cruise from Kochi, where you can watch a stunning sunset over the Arabian Sea and savour a delicious dinner. Make your evening unforgettable—reserve your spot today!",
     childPrice: 75000,
     adultPrice: 150000,
     duration: 180,
@@ -82,12 +82,11 @@ export const packages: packagesPartialId = [
     packageCategory: "DINNER",
   },
   {
-
     id: "clqqxasvi000508l59j1z4obt",
     title: "Special 4 Hours Lunch Cruise",
     packageType: "special",
     description:
-      "Half past five in the evening starts the sunset cruise of Minar Cruise. The Sunset Cruise is an amazing 2 hours journey beginning from Marine Drive, Kochi. The vastness of the deep blue sea, undulating waves, fishing crafts focusing on the harbor, and red beautiful sky all combine to paint a rare picture of natural harmony. Our professional crew will be ready with hot teapots with crunchy snacks to serve you and the entertainment team to serve you with fun-filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
+      "Special 4-Hour Lunch Cruise – Enjoy a leisurely 4-hour cruise from Kochi, featuring a special lunch as you take in the stunning views of the Arabian Sea. Make your day memorable—book your spot today!",
     childPrice: 75000,
     adultPrice: 150000,
     duration: 240,
@@ -99,12 +98,11 @@ export const packages: packagesPartialId = [
     packageCategory: "LUNCH",
   },
   {
-
     id: "clqqxb1q1000608l5fdxf3lj9",
     title: "Special 4 Hours Dinner Cruise",
     packageType: "special",
     description:
-      "Half past five in the evening starts the sunset cruise of Minar Cruise. The Sunset Cruise is an amazing 2 hours journey beginning from Marine Drive, Kochi. The vastness of the deep blue sea, undulating waves, fishing crafts focusing on the harbor, and red beautiful sky all combine to paint a rare picture of natural harmony. Our professional crew will be ready with hot teapots with crunchy snacks to serve you and the entertainment team to serve you with fun-filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
+      "Special 4-Hour Dinner Cruise – Enjoy a stunning 4-hour evening on the Arabian Sea from Kochi. Watch the sunset and savour a special dinner menu as you take in the serene beauty. Book your unforgettable experience now!",
     childPrice: 100000,
     adultPrice: 200000,
     duration: 240,
@@ -116,12 +114,11 @@ export const packages: packagesPartialId = [
     packageCategory: "DINNER",
   },
   {
-
     id: "clqqxbb7r000708l58m9f3ry2",
     title: "Exlusive Packages",
     packageType: "premium",
     description:
-      "Half past five in the evening starts the sunset cruise of Minar Cruise. The Sunset Cruise is an amazing 2 hours journey beginning from Marine Drive, Kochi. The vastness of the deep blue sea, undulating waves, fishing crafts focusing on the harbor, and red beautiful sky all combine to paint a rare picture of natural harmony. Our professional crew will be ready with hot teapots with crunchy snacks to serve you and the entertainment team to serve you with fun-filled entertainment performances. Kids get to have a blast with others their age at one of three youth spaces, while adults will find themselves thrilled with Live DJ performances.",
+      "Tired of ordinary gatherings in dull auditoriums and banquet halls? Elevate your next event with our Premium Cruise Package! Whether it's a corporate meeting, a get-together, a birthday celebration, a wedding, or any special function, our cruise offers an unparalleled setting. Enjoy stunning views of the Arabian Sea, top-notch service, and a tailored experience that makes every moment memorable. Make your next event extraordinary—book your premium cruise experience today!",
     childPrice: 100000,
     adultPrice: 200000,
     duration: 240,

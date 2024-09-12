@@ -37,6 +37,39 @@ type TScheduleData = {
 }[];
 
 export const user = router({
+  createSubscription: publicProcedure
+  .input(z.object({
+    name: z.string().min(3,{
+      message: "Min 3 letter req."
+    }),
+    email: z.string().email({ message: "Invalid email"}),
+  }))
+  .mutation(async({input:{email,name}})=>{
+
+    if(!email) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:"Email cannot be Empty"
+      })
+    }
+
+    if(!name) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Name cannot be empty"
+      })
+    }
+
+    const data = await db.user.create({
+      data: {
+        name,
+        email
+      }
+    })
+
+    return data.id
+  })
+  ,
   getSchedulesByPackageIdAndDate: publicProcedure
     .input(
       z.object({
