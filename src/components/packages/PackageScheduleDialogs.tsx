@@ -17,7 +17,7 @@ export type TPackageScheduleDialogs = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   isOpen: boolean;
   selectedDate: Date;
-  isNextSlideState: Dispatch<SetStateAction<boolean>>;
+  isNextSlideState?: Dispatch<SetStateAction<boolean>>;
   ScheduleError: ScheduleConflictError | null;
 };
 export default function PackageScheduleDialogs({
@@ -65,7 +65,7 @@ export default function PackageScheduleDialogs({
             <Button
               variant={"ghost"}
               onClick={() => {
-                isNextSlideState(false);
+                // isNextSlideState(false);
                 setIsOpen(false);
               }}
             >

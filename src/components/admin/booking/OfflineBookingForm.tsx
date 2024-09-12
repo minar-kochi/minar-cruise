@@ -142,23 +142,26 @@ export default function OfflineBookingForm({
       </h1>
       <p className="my-3">Offline Booking Form</p>
       <div className="w-full border-b border-gray-200 my-5"></div>
-      <div className="grid grid-cols-3 max-md:flex max-md:flex-col gap-3">
-        <div className="col-span-2 flex-col">
-          {/* first last name  */}
-          <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 max-md:flex max-md:flex-col gap-3 ">
+        <div className="col-span-2 flex flex-col justify-between ">
+          <div className="grid grid-cols-2 gap-4 ">
             <InputLabel
+              containerClassName="space-y-2"
               label="Name"
               InputProps={{
                 placeholder: "Enter name",
+                className: "bg-muted placeholder:tracking-wider",
                 required: true,
                 ...register("name"),
               }}
               errorMessage={errors.name ? `${errors.name.message}` : null}
             />
             <InputLabel
+              containerClassName="space-y-2"
               label="Phone"
               InputProps={{
                 type: "number",
+                className: "bg-muted placeholder:tracking-wider",
                 placeholder: "Enter Phone number",
                 ...register("phone"),
               }}
@@ -166,10 +169,11 @@ export default function OfflineBookingForm({
             />
           </div>
           <InputLabel
-            containerClassName=""
+            containerClassName="space-y-2"
             label="Email"
             InputProps={{
               type: "email",
+                className: "bg-muted placeholder:tracking-wider",
               placeholder: "example@gmail.com",
               ...register("email"),
             }}
@@ -178,14 +182,16 @@ export default function OfflineBookingForm({
             }
           />
 
-          <div className="grid grid-cols-3 gap-3 max-md:flex max-md:flex-col">
+          <div className="grid grid-cols-3 gap-3 max-md:flex max-md:flex-col ">
             <div className="col-span-1">
               <div className="flex flex-col items-start ">
                 <div className="mt-4 w-full">
                   <InputLabel
+                    containerClassName="space-y-2"
                     label="Adult Count"
                     InputProps={{
                       type: "number",
+                className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter Adult count",
                       min: 0,
                       ...register("adultCount", { valueAsNumber: true }),
@@ -199,10 +205,12 @@ export default function OfflineBookingForm({
                 </div>
                 <div className="mt-4 w-full">
                   <InputLabel
+                    containerClassName="space-y-2"
                     label="Child Count"
                     InputProps={{
                       min: 0,
                       type: "number",
+                className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter a Child Count",
                       ...register("childCount", { valueAsNumber: true }),
                     }}
@@ -215,10 +223,12 @@ export default function OfflineBookingForm({
                 </div>
                 <div className="mt-4 w-full">
                   <InputLabel
+                    containerClassName="space-y-2"
                     label="Baby Count"
                     InputProps={{
                       min: 0,
                       type: "number",
+                className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter a baby Count",
                       ...register("babyCount", { valueAsNumber: true }),
                     }}
@@ -235,11 +245,13 @@ export default function OfflineBookingForm({
               <div className="flex flex-col items-start ">
                 <div className="mt-4 w-full">
                   <InputLabel
+                    containerClassName="space-y-2"
                     label="Discount"
                     InputProps={{
                       min: 0,
                       type: "number",
                       defaultValue: 0,
+                className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter a Discount in rupee",
                       ...register("discount", { valueAsNumber: true }),
                     }}
@@ -252,9 +264,11 @@ export default function OfflineBookingForm({
                 </div>
                 <div className="mt-4 w-full">
                   <InputLabel
+                    containerClassName="space-y-2"
                     label="Payment mode"
                     InputProps={{
                       type: "text",
+                className: "bg-muted placeholder:tracking-wider",
                       placeholder: "eg: GPAY, CASH, PAYTM",
                       ...register("paymentMode"),
                     }}
@@ -268,10 +282,13 @@ export default function OfflineBookingForm({
                 <div className=" w-full flex justify-between gap-3">
                   <div className="mt-4 w-full">
                     <InputLabel
+                    labelClassName="overflow-clip"
+                      containerClassName="space-y-2"
                       label="Advance amount"
                       InputProps={{
                         min: 0,
                         type: "number",
+                className: "bg-muted placeholder:tracking-wider",
                         placeholder: "Enter received amount in rupee",
                         ...register("advanceAmount", { valueAsNumber: true }),
                       }}
@@ -284,11 +301,13 @@ export default function OfflineBookingForm({
                   </div>
                   <div className="mt-4 w-full">
                     <InputLabel
+                      containerClassName="space-y-2 "
                       label="Total fare"
                       InputProps={{
                         min: 0,
                         type: "number",
                         placeholder: "Enter total fare",
+                className: "bg-muted placeholder:tracking-wider",
                         ...register("billAmount", { valueAsNumber: true }),
                       }}
                       errorMessage={
@@ -303,8 +322,9 @@ export default function OfflineBookingForm({
             </div>
           </div>
         </div>
-        <div className="col-span-1">
+        <div className="col-span-1 ">
           <InputLabel
+          containerClassName="my-0"
             label="Description"
             errorMessage={
               errors.description?.message
@@ -316,24 +336,23 @@ export default function OfflineBookingForm({
               placeholder: "Enter a description, eg: Via Aslu",
               ...register("description"),
             }}
-            TextAreaClassName="mt-3 bg-neutral-900 min-h-[470px]"
+            TextAreaClassName="mt-3 bg-neutral-900 min-h-[440px] bg-muted placeholder:tracking-wider"
           />
         </div>
       </div>
 
-      {/* ===================================================== */}
       <div className="flex justify-between mt-3">
         {type === "ADD" ? (
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full gap-4">
             <Button
-              className="bg-red-900 font-semibold text-sl hover:text-black"
+              className="bg-red-700 hover:bg-red-800 dark:text-white font-semibold"
               onClick={() => reset()}
             >
               Reset
             </Button>
             <Button
               type="submit"
-              className=" bg-green-900 text-white hover:text-black min-w-[520px]"
+              className=" bg-green-700 text-white hover:bg-green-800 w-full max-w-[520px]"
               disabled={isSubmitting}
             >
               {isLoading ? <Loader2 /> : "Add"}
@@ -343,7 +362,7 @@ export default function OfflineBookingForm({
           <div className="w-full flex justify-end">
             <Button
               type="submit"
-              className="  bg-green-900 text-white hover:text-black min-w-[520px] "
+              className="bg-green-700 text-white hover:bg-green-800 w-full max-w-[520px]"
               disabled={!isDirty}
             >
               {isUpdatingLoading ? <Loader2 /> : "Update"}

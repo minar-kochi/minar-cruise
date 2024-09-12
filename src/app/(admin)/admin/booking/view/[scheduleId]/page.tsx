@@ -47,18 +47,19 @@ export default async function ViewBooking({
 }: IViewBooking) {
   const bookings: TGetBookingsByScheduleId =
     await getBookingsByScheduleId(scheduleId);
-  if(!booking) return null
+  if (!booking) return null;
   return (
     <div className="">
       <h2 className="font-bold text-3xl text-center py-5">Booking data</h2>
-      <div className="flex justify-between p-3">
-        <div className="">
+      <div className="flex max-sm:flex-col max-sm:gap-3 justify-between p-3">
+        <div className="flex justify-between">
           <CustomLinkButton
             icon={<ArrowLeft size={20} />}
             href={`/admin/booking`}
             label="Back"
-            className="flex gap-2 justify-between max-md:hidden"
+            className="flex gap-2 justify-between"
           />
+          <DownloadBookingButton tableData={bookings} />
         </div>
         <div className="flex flex-wrap max-sm:justify-between max-sm:w-full sm:gap-5">
           <RouterRefreshButton className="border" />
@@ -75,50 +76,48 @@ export default async function ViewBooking({
               variant: "greenFlag",
             }}
           />
-          <DownloadBookingButton tableData={bookings}/>
-          
         </div>
       </div>
-      <Table className="border-2">
+      <Table className="border">
         <TableHeader>
           <TableRow className="text-center">
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
               Id
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
               Name
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-0">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-0">
               Date of Booking
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
               Package
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Advance Paid
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Total Bill
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
               Phone
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:block hidden">
+             <TableHead className="hidden max-sm:flex items-center align-bottom border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
               Count
             </TableHead>
-
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Adults
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Child
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               kids
             </TableHead>
-            <TableHead className="text-center max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Description
             </TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -130,42 +129,42 @@ export default async function ViewBooking({
                     key={`aa-${booking.id}-view-booking-table-row-${i}`}
                     className="text-center cursor-pointer"
                   >
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0">
                       {i + 1}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:text-nowrap">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0 max-sm:text-nowrap">
                       {booking.user.name}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-2">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-2">
                       {formattedDate}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0">
                       {booking.schedule.schedulePackage}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
                       {booking.payment.advancePaid}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:hidden">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:hidden">
                       {booking.payment.totalAmount}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0">
                       {booking.user.contact}
                     </TableCell>
-                    <TableCell className="hidden max-sm:text-[9px] max-sm:block">
+                    <TableCell className="hidden border-r max-sm:text-[9px] max-sm:block">
                       {booking.numOfAdults +
                         booking.numOfChildren +
                         booking.numOfBaby}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
                       {booking.numOfAdults}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
                       {booking.numOfChildren}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
                       {booking.numOfBaby}
                     </TableCell>
-                    <TableCell className="max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
+                    <TableCell className="border-r max-sm:text-[9px] max-sm:p-0 max-sm:hidden">
                       {booking.description}
                     </TableCell>
                     <TableCell className="max-sm:p-2">

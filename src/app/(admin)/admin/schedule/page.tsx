@@ -25,11 +25,11 @@ export default async function ScheduleAdminPage() {
           <div className="hidden lg:block px-2  group schedule-page">
             <ScheduleBar />
           </div>
-          <div className="flex mt-12  items-center justify-center">
+          <div className="flex mt-12 mb-2 items-center md:justify-center">
             <div className="">
-              <h1 className=" text-2xl  font-bold">Recent Schedule&apos;s</h1>
+              <h1 className=" text-2xl font-bold">Recent Schedule&apos;s</h1>
             </div>
-            <div className="absolute right-0">
+            <div className="absolute right-4">
               {/* @TODO
 
                   Hide this button if no schedules are present
