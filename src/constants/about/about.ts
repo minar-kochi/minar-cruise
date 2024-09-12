@@ -14,7 +14,7 @@ export const about = {
   heading: "COME AND FEEL THE SEA CRUISE EXPERIENCE WITH MINAR",
   description: [
     "Minar Cruise is the 1st private catamaran sea cruise registered under INDIAN REGISTER OF SHIPPING at Kerala. We established with well hospitality and professional manner since 20 years. It is registered under the name Minar Tourist Boat Cochin & Traders.",
-    "The Minar cruise built with an fascinating A/C hall with multipurpose facility like Official meets, Parties, Family functions, Wedding, Engagement etc.. Operating from Marine Drive, Kochi, our fleet of intimate has a seating capacity of 146 passengers with features such as all-suite, all-balcony ships and superior space and service ratios. Our vessel has permission for cruising up to 12 nautical miles to the outer sea exploring the scenic beauty of Kochi and the Arabian Sea. The cruise trips are generally scheduled for 2 hours to 4 hours and can be also customized according to the customers carve. We would be honored to have you travel with us on your next journey.",
+    "The Minar cruise built with an fascinating A/C hall with multipurpose facility like Official meets, Parties, Family functions, Wedding, Engagement etc.. Operating from Marine Drive, Kochi, our fleet of intimate has a seating capacity of 150 passengers with features such as all-suite, all-balcony ships and superior space and service ratios. Our vessel has permission for cruising up to 12 nautical miles to the outer sea exploring the scenic beauty of Kochi and the Arabian Sea. The cruise trips are generally scheduled for 2 hours to 4 hours and can be also customized according to the customers carve. We would be honored to have you travel with us on your next journey.",
   ],
 };
 
