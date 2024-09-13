@@ -165,7 +165,7 @@ model Blog {
   blogSlug   String     @unique
   shortDes   String     @db.Text
   content    String     @db.Text
-  image      Image      @relation(fields: [imageId], references: [id])
+  image      Image      @relation(fields: [imageId], references: [id], onDelete: Restrict)
   imageId    String
   banner     String?
   blogStatus BlogStatus
@@ -181,7 +181,7 @@ model PackageImage {
   ImageUse  IMAGE_USE @default(COMMON)
   imageId   String
   package   Package   @relation(fields: [packageId], references: [id])
-  image     Image     @relation(fields: [imageId], references: [id])
+  image     Image     @relation(fields: [imageId], references: [id], onDelete: Cascade)
 }
 
 // @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
