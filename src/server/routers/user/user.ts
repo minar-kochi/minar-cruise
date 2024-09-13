@@ -19,6 +19,10 @@ import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC"
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
+import { exclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
+import { sendEmail, sendNodeMailerEmail } from "@/lib/helpers/resend";
+import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
+import { render } from "@react-email/components";
 
 export type QueryObj = [
   { id: string | undefined },
@@ -403,5 +407,43 @@ export const user = router({
       //             });
       //           }
       // }
+    }),
+
+  sendExclusiveBookingMessage: publicProcedure
+    .input(exclusivePackageValidator)
+    .mutation(async ({ ctx, input }) => {
+      const { email, name, phone } = input;
+      /**
+       * if user exists dont create. or else create the user into the database.
+       */
+      try {
+        const isUserExists = await db.user.findFirst({
+          where: {
+            email,
+          },
+        });
+
+        if (!isUserExists?.id) {
+          await db.user.create({
+            data: {
+              email,
+              name,
+              contact: phone,
+            },
+          });
+        }
+        const emailCom = await render(ExclusiveBookingEmailToAdmin(input));
+        sendNodeMailerEmail({
+          reactEmailComponent: emailCom,
+          subject: "Exclusive booking Leads",
+          fromEmail: process.env.NEXT_PUBLIC_LEADS_EMAIL,
+          toEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
     }),
 });

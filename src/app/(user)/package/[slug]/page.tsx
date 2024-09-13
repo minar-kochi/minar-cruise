@@ -163,16 +163,16 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
           <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
             <PackageImageN data={data} />
           </div>
-          {data.packageCategory !== "EXCLUSIVE" && (
-            <div className="2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg">
+          <div className="2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg">
+            {data.packageCategory !== "EXCLUSIVE" && (
               <PackageFormN
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
                 packageId={data.id}
                 packageCategory={data.packageCategory}
               />
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="2md:col-span-2 2md:row-start-2 2md:col-start-1">
             <PackageAmmenties data={data} />

@@ -27,3 +27,7 @@ export const exclusivePackageValidator = z.object({
   selectedDate: z.string(),
   selectedTime: z.string(),
 });
+
+export type TExclusivePackageValidator = z.infer<
+  typeof exclusivePackageValidator
+>;

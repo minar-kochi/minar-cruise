@@ -174,18 +174,18 @@ export default function PackageFormN({
           <div className="flex gap-2">
             <ColorRepresentationInfo className="bg-muted " title="Blocked" />
             {packageCategory !== "SUNSET" && (
-              <ColorRepresentationInfo
-                className="bg-green-600 "
-                title="Available"
-              />
+              <>
+                <ColorRepresentationInfo
+                  className="bg-green-600 "
+                  title="Available"
+                />
+                <ColorRepresentationInfo
+                  className="bg-white border "
+                  title="Rest of the days Minimum 25 Pax"
+                />
+              </>
             )}
           </div>
-          {packageCategory !== "SUNSET" && (
-            <ColorRepresentationInfo
-              className="bg-white border "
-              title="Rest of the days Minimum 25 Pax"
-            />
-          )}
         </div>
         <div className="my-7 h-[1px] w-[100%] bg-gray-300" />
         <BookingFormCard
