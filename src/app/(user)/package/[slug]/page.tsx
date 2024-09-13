@@ -17,8 +17,8 @@ import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import {  flattenObject } from "@/lib/utils";
-import { Clock} from "lucide-react";
+import { flattenObject } from "@/lib/utils";
+import { Clock } from "lucide-react";
 import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
@@ -29,7 +29,7 @@ interface IPackagePage {
     slug: string;
   };
 }
-export const maxDuration = 25
+export const maxDuration = 25;
 export async function generateMetadata({
   params: { slug },
 }: IPackagePage): Promise<Metadata> {
@@ -76,7 +76,7 @@ export async function generateMetadata({
   });
 }
 
-export async function generateStaticParams({ params: { slug } }: IPackagePage) {
+export async function generateStaticParams() {
   const packageSlug = await db.package.findMany({
     where: {
       packageCategory: {

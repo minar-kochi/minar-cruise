@@ -145,7 +145,7 @@ export async function handleExistingScheduleOrder({
             packageName: packageDetails?.title ?? "--",
             time: packageDetails?.fromTime ?? "--",
           }),
-          admin: false
+          error: false
         });
       } catch (error) {
         console.log(error);
@@ -164,7 +164,7 @@ export async function handleExistingScheduleOrder({
         email,
         name,
       }),
-      admin:false
+      error:false
     });
     await sendConfirmationEmail({
       recipientEmail: email,
@@ -190,7 +190,7 @@ export async function handleExistingScheduleOrder({
         await SendMessageViaWhatsapp({
           recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
           message: error.message,
-          admin:true
+          error:true
         });
         await updateEventToFailed({
           id: events.id,
