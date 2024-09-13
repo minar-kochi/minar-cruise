@@ -1,4 +1,5 @@
 import Bounded from "@/components/elements/Bounded";
+import ExclusivePackageEnquiryCard from "@/components/package/new-page/ExclusivePackageEnquiryCard";
 import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
 import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageFormN from "@/components/package/new-page/PackageFormN";
@@ -163,7 +164,12 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
           <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
             <PackageImageN data={data} />
           </div>
-          {data.packageCategory !== "EXCLUSIVE" && (
+          {data.packageCategory === "EXCLUSIVE" ? (
+            <ExclusivePackageEnquiryCard
+              adultPrice={data.adultPrice}
+              childPrice={data.childPrice}
+            />
+          ) : (
             <div className="2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg">
               <PackageFormN
                 adultPrice={data.adultPrice}

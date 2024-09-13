@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { indianPhoneRegex } from "./offlineBookingValidator";
 
+export type TExclusivePackageValidator = z.infer<typeof exclusivePackageValidator>
+
 export const exclusivePackageValidator = z.object({
   name: z.string().min(3, { message: "Min Length 3" }),
   email: z.string(),
@@ -10,20 +12,7 @@ export const exclusivePackageValidator = z.object({
     .refine((num) => num === "" || indianPhoneRegex.test(num), {
       message: "Should be a valid Phone number, only indian number are allowed",
     }),
-  adultCount: z
-    .number({ message: "Please provide a valid number" })
-    .max(150, "Count cannot exceed 150"),
-
-  childCount: z
-    .number({
-      message: "Please Enter a valid number",
-    })
-    .max(120, "Count cannot exceed 120"),
-  babyCount: z
-    .number({
-      message: "Please Enter a valid number",
-    })
-    .max(50, "Count cannot exceed 50"),
+  count: z.number().min(1,{message: "This field cannot be empty"}),
+  Duration: z.string(),
   selectedDate: z.string(),
-  selectedTime: z.string(),
 });
