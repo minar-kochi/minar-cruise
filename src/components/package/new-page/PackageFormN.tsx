@@ -168,19 +168,24 @@ export default function PackageFormN({
             setValue("scheduleId", value);
           }}
           packageId={packageId}
+          packageCategory={packageCategory}
         />
         <div className="flex flex-col items-center justify-center gap-2 mt-5">
           <div className="flex gap-2">
             <ColorRepresentationInfo className="bg-muted " title="Blocked" />
-            <ColorRepresentationInfo
-              className="bg-green-600 "
-              title="Available"
-            />
+            {packageCategory !== "SUNSET" && (
+              <ColorRepresentationInfo
+                className="bg-green-600 "
+                title="Available"
+              />
+            )}
           </div>
-          <ColorRepresentationInfo
-            className="bg-white border "
-            title="Rest of the days Minimum 25 Pax"
-          />
+          {packageCategory !== "SUNSET" && (
+            <ColorRepresentationInfo
+              className="bg-white border "
+              title="Rest of the days Minimum 25 Pax"
+            />
+          )}
         </div>
         <div className="my-7 h-[1px] w-[100%] bg-gray-300" />
         <BookingFormCard
@@ -192,8 +197,8 @@ export default function PackageFormN({
         />
         <div className="flex w-full mt-3 justify-evenly items-center">
           <div>
-          <p className="text-xs">Total:</p>
-          <p className="text-2xl font-semibold ">₹{total}</p>
+            <p className="text-xs">Total:</p>
+            <p className="text-2xl font-semibold ">₹{total}</p>
           </div>
           <div className="w-[2px] h-12 bg-black"></div>
           <div>
@@ -202,7 +207,7 @@ export default function PackageFormN({
               className="w-full text-white"
               variant={"default"}
             >
-              Pay Now 
+              Pay Now
             </Button>
           </div>
         </div>
