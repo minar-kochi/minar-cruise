@@ -44,4 +44,6 @@ export const SubscriptionFormValidator = z.object({
   email: z.string().email({ message: "Invalid email" }),
 });
 
-export type TSubscriptionFormValidator = z.infer<typeof SubscriptionFormValidator>
+export type TSubscriptionFormValidator = z.infer<
+  typeof SubscriptionFormValidator
+>;
