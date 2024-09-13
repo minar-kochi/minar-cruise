@@ -1,13 +1,37 @@
 import { z } from "zod";
+import { sendConfirmationEmail } from "./resend";
+import AdminErrorEmail from "@/components/services/AdminErrorEmail";
+import { render } from "@react-email/components";
 
 export async function SendMessageViaWhatsapp({
   recipientNumber,
   message,
+  error = false,
 }: {
   recipientNumber: string;
   message?: string;
+  error: boolean;
 }) {
   let ACCESS_TOKEN = process.env.CLOUD_API_ACCESS_TOKEN;
+  let isWhatsAppEnabled = process.env.WHATS_APP_ENABLE;
+
+  if (!isWhatsAppEnabled && !error) {
+    return null;
+  }
+  try {
+    if (!message) return;
+    await sendConfirmationEmail({
+      emailSubject: "URGENT: Something went wrong while processing booking",
+      fromEmail: process.env.NEXT_PUBLIC_ERROR_EMAIL!,
+      recipientEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
+      emailComponent: AdminErrorEmail({ message }),
+    });
+
+    return;
+  } catch (error) {
+    return;
+  }
+
   try {
     console.log("Called Send Message \n", message);
     const myHeaders = new Headers();

@@ -1,33 +1,33 @@
 import { z } from "zod";
+const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
 
 export const ContactValidators = z.object({
+  name: z
+    .string()
+    .min(3, {
+      message: "Name is too short",
+    })
+    .max(15, {
+      message: "Maybe shorten the name a bit, Soo i can spell it :)",
+    }),
+  phone: z
+    .string()
+    .refine((num) => num === "" || num.length > 0, {
+      message: "Phone number must be at least 10 digits long if provided",
+    })
+    .refine((num) => num === "" || indianPhoneRegex.test(num), {
+      message: "Please Enter a valid Indian Mobile Number",
+    }),
   email: z.string().email({
     message: "I haven't figured that kinda email",
   }),
-  isNewsLetter: z.enum(["true", "false"]).default("true"),
   description: z
     .string()
     .min(25, {
-      message: "Hey! atleast take a effort! for 25 char :)",
+      message: "Hey! atleast take a effort! for 25 Charector :)",
     })
     .max(1000, {
       message: "dude! Well explained but its too long!",
-    }),
-  firstName: z
-    .string()
-    .min(3, {
-      message: "Your name that short ?",
-    })
-    .max(15, {
-      message: "Maybe shorten a bit, Soo i can spell it :)",
-    }),
-  lastName: z
-    .string()
-    .min(2, {
-      message: "Too short to be a name dude!",
-    })
-    .max(15, {
-      message: "Maybe shorten a bit, Soo i can spell it :)",
     }),
 });
 

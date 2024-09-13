@@ -24,6 +24,8 @@ import { TGetPackageTimeAndDuration } from "../data/dto/package";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation from "@/components/services/EmailService";
 import { getSendAdminCreateNotificationMessage } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
+import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
+import { RemoveTimeStampFromDate } from "@/lib/utils";
 
 export async function handleCreateScheduleOrder({
   events,
@@ -164,7 +166,7 @@ export async function handleCreateScheduleOrder({
 
     try {
       if (paymentEntity.contact) {
-       await SendMessageViaWhatsapp({
+        await SendMessageViaWhatsapp({
           recipientNumber: paymentEntity.contact,
           message: sendWhatsAppBookingMessageToClient({
             bookingId: booking.id,
@@ -174,12 +176,29 @@ export async function handleCreateScheduleOrder({
             packageName: packageDetails?.title ?? "--",
             time: packageDetails?.fromTime ?? "--",
           }),
+          error: false,
         });
       }
+
       await Promise.all([
-        //@TODO Add Booking confirmation Email to admin.
-
-
+        sendConfirmationEmail({
+          recipientEmail: paymentEntity.email ?? email,
+          fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
+          emailSubject: "Minar: New Booking is Recieved",
+          emailComponent: BookingConfirmationEmailForAdmin({
+            Name: name,
+            adultCount: adultCount,
+            babyCount: babyCount,
+            BookingDate: RemoveTimeStampFromDate(booking.createdAt),
+            childCount,
+            email: paymentEntity.email ?? email,
+            phone: paymentEntity.contact ?? "",
+            BookingId: booking.id.slice(8),
+            packageTitle: packageDetails?.title ?? "",
+            scheduleDate: date,
+            totalAmount: order.amount_paid / 100,
+          }),
+        }),
         // Send Email to Client
         sendConfirmationEmail({
           recipientEmail: paymentEntity.email ?? email,
@@ -199,12 +218,13 @@ export async function handleCreateScheduleOrder({
 
         //Send admin Notification to whats appp
         SendMessageViaWhatsapp({
-          recipientNumber: process.env.OWNER_CONTACT!,
+          recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
           message: getSendAdminCreateNotificationMessage({
             date,
             packageName: `${packageDetails?.title ?? "-"} `,
             time: `${packageDetails?.fromTime}`,
           }),
+          error: false,
         }),
       ]);
     } catch (error) {
@@ -218,8 +238,9 @@ export async function handleCreateScheduleOrder({
     if (error instanceof OrderPaidEventError) {
       if (error.fatal) {
         await SendMessageViaWhatsapp({
-          recipientNumber: process.env.OWNER_CONTACT!,
+          recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
           message: error.message,
+          error: true,
         });
         await updateEventToFailed({
           id: events.id,

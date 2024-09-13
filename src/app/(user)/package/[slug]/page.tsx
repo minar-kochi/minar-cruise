@@ -13,9 +13,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { db } from "@/db";
+
 import { getPackageById } from "@/db/data/dto/package";
-import { cn } from "@/lib/utils";
-import { Baby, CheckCircle2, Clock, Hourglass, User } from "lucide-react";
+import { constructMetadata } from "@/lib/helpers/constructMetadata";
+import { flattenObject } from "@/lib/utils";
+import { Clock } from "lucide-react";
+import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import React from "react";
@@ -25,7 +29,69 @@ interface IPackagePage {
     slug: string;
   };
 }
+export const maxDuration = 25;
+export async function generateMetadata({
+  params: { slug },
+}: IPackagePage): Promise<Metadata> {
+  const packageMetadata = await db.package.findUnique({
+    where: {
+      slug,
+    },
+    select: {
+      title: true,
+      PackageSeo: {
+        select: {
+          seo: true,
+        },
+      },
+    },
+  });
+  if (!packageMetadata) {
+    return constructMetadata({
+      MetaHeadtitle: {
+        default: "Packages",
+        template: "| Minar Cruise",
+      },
+    });
+  }
+  const seo = packageMetadata.PackageSeo[0].seo;
+  // console.log(seo.structuredData?.geo)
+  const data = JSON.parse(JSON.stringify(seo.structuredData));
+  let flatted: any;
+  try {
+    flatted = flattenObject(data);
+  } catch (error) {
+    flatted = {};
+  }
+  return constructMetadata({
+    MetaHeadtitle: seo.title,
+    description: seo.description,
+    keywords: seo.keywords,
+    alternates: {
+      canonical: seo.canonicalUrl,
+    },
+    Ogimage: seo.ogImage,
+    robots: seo.metaRobots,
+    other: flatted,
+  });
+}
 
+export async function generateStaticParams() {
+  const packageSlug = await db.package.findMany({
+    where: {
+      packageCategory: {
+        not: "CUSTOM",
+      },
+    },
+    select: {
+      slug: true,
+    },
+  });
+
+  return packageSlug.map((item) => ({
+    slug: item.slug,
+  }));
+}
 export default async function PackagePage({ params: { slug } }: IPackagePage) {
   const data = await getPackageById({ slug });
 

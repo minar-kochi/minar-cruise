@@ -1,4 +1,4 @@
-import BookingConfirmationEmailForAdmin from "@/components/services/BookingConfirmationEmailForAdmin";
+import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import VercelInviteUserEmail from "@/components/services/EmailService";
 import NewScheduleCreatedAlertEmail from "@/components/services/NewScheduleCreatedAlertEmail";
 import { sendConfirmationEmail, sendEmail } from "@/lib/helpers/resend";
@@ -6,19 +6,27 @@ import { sendConfirmationEmail, sendEmail } from "@/lib/helpers/resend";
 
 export async function POST() {
   try {
-    const data = await sendConfirmationEmail({
-      emailComponent: VercelInviteUserEmail({
-        customerName: "Customer",
-        BookingId: "#12as2d158ssads",
-        packageTitle: "Sunset Cruise",
-        totalCount: 25,
-        duration: "5:30 - 6:30",
-        totalAmount: 5000,
-        status: "Confirmed",
-        date: "18/08/24",
-      }),
-      recipientEmail: "amjupm3@gmail.com"
+    console.log("User Reached");
+    let hello = VercelInviteUserEmail({
+      customerName: "Customer",
+      BookingId: "#12as2d158ssads",
+      packageTitle: "Sunset Cruise",
+      totalCount: 25,
+      duration: "5:30 - 6:30",
+      totalAmount: 5000,
+      status: "Confirmed",
+      date: "18/08/24",
     });
+    // /admin/booking/gadafjgdfgsdfg
+    // /admin/booking === /admin/booking/gadafjgdfgsdfg
+
+    const data = await sendConfirmationEmail({
+      fromEmail: "joggers@cochincruiseline.com",
+      emailComponent: hello,
+      recipientEmail: "muadpn434@gmail.com",
+      emailSubject: "",
+    });
+    console.log(data);
 
     // >>>>>>>>>>> TEST FOR BOOKING CONFIRMATION <<<<<<<<<<<<<<<<<<<<<<
     // const data = await sendEmail({
@@ -53,7 +61,7 @@ export async function POST() {
     //     duration: 120
     //   }),
     // });
-    
+
     return Response.json(data);
   } catch (error) {
     return Response.json(error);

@@ -16,6 +16,6 @@ export const admin = router({
   schedule,
   packages,
   isAdminTest: AdminProcedure.query(({ ctx: { AdminUser } }) => {
-    return AdminUser
+    return AdminUser;
   }),
 });

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const pathSchema = z.object({
-  nextPath: z.enum(["page", "layout"]),
+  nextPath: z.enum(["page", "layout"]).optional(),
   webPath: z.string(),
 });
 

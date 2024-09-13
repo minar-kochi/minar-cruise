@@ -22,7 +22,7 @@ export const packages: packagesPartialId = [
     title: "Lunch cruise",
     packageType: "normal",
     description:
-      "Lunch Cruise – Escape the ordinary with a 2-hour cruise from Kochi, featuring a mouth-watering buffet lunch and stunning sea views. Book now for a perfect day on the water!",
+      "Lunch Cruise – Escape the ordinary with a 2-hour cruise from Kochi, featurning a mouth-watering buffet lunch and stunning sea views. Book now for a perfect day on the water!",
     childPrice: 50000,
     adultPrice: 100000,
     duration: 120,
