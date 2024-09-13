@@ -8,18 +8,21 @@ import {
   filterDateFromCalender,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
+import { $Enums } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 type TBookingFormCalender = {
   setFormDateValue: (value: string) => void;
   setScheduleId: (value: string | undefined) => void;
   packageId: string;
+  packageCategory: $Enums.PACKAGE_CATEGORY
 };
 export default function 
 BookingFormCalender({
   setFormDateValue,
   setScheduleId,
   packageId,
+  packageCategory
 }: TBookingFormCalender) {
   const [date, setDate] = useState<Date>(new Date(Date.now()));
   const [month, setMonth] = useState<string>(
@@ -52,6 +55,7 @@ BookingFormCalender({
             ClientCalenderScheduleDay({
               AvailableDate: availableDateArray,
               props,
+              packageCategory
             }),
         }}
         selected={date}
