@@ -29,7 +29,7 @@ export async function getPackageNavigation(): Promise<
       },
       where: {
         packageCategory: {
-          notIn: ["CUSTOM", "EXCLUSIVE"],
+          notIn: ["CUSTOM"],
         },
       },
     });
