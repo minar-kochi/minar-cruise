@@ -36,3 +36,12 @@ export type TContactValidators = z.infer<typeof ContactValidators>;
 // data => if subscribe news letter => Keep it database email and name || !description ||
 
 // data !news => send the email. contact@qoop.ro
+
+export const SubscriptionFormValidator = z.object({
+  name: z.string().min(3, {
+    message: "Min 3 letter req.",
+  }),
+  email: z.string().email({ message: "Invalid email" }),
+});
+
+export type TSubscriptionFormValidator = z.infer<typeof SubscriptionFormValidator>
