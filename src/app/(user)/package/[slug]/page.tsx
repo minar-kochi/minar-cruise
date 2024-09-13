@@ -1,4 +1,5 @@
 import Bounded from "@/components/elements/Bounded";
+import ExclusivePackageEnquiryCard from "@/components/package/new-page/ExclusivePackageEnquiryCard";
 import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
 import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageFormN from "@/components/package/new-page/PackageFormN";
@@ -17,7 +18,8 @@ import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import { flattenObject } from "@/lib/utils";
+import { cn, flattenObject } from "@/lib/utils";
+import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { Clock } from "lucide-react";
 import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -163,13 +165,27 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
           <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
             <PackageImageN data={data} />
           </div>
-          <div className="2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg">
-            {data.packageCategory !== "EXCLUSIVE" && (
+          <div
+            className={cn(
+              "2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg",
+              {
+                "2md-top-[500px]": isPackageStatusExclusive(
+                  data.packageCategory,
+                ),
+              },
+            )}
+          >
+            {!isPackageStatusExclusive(data.packageCategory) ? (
               <PackageFormN
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
                 packageId={data.id}
                 packageCategory={data.packageCategory}
+              />
+            ) : (
+              <ExclusivePackageEnquiryCard
+                adultPrice={data.adultPrice}
+                childPrice={data.childPrice}
               />
             )}
           </div>
