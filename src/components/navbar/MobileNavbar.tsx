@@ -55,7 +55,7 @@ export default async function MobileNavbar() {
                     <AccordionContent>
                       {packageDetails.map((item, i) => (
                         <div
-                          className="border-2"
+                          className=""
                           key={`a-${item.id}-Accordion-DrawerClose=${i}`}
                         >
                           <DrawerClose
