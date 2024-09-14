@@ -27,7 +27,7 @@ import {
  * @TODO
  * Order paid
  * client email : [done]
- * admin Email : [onProgress]
+ * admin Email : [done]
  * client whatsapp : [done]
  * admin whatsapp : [done]
  */
@@ -37,21 +37,13 @@ export async function handleOrderPaidEvent({
 }: TOrderEvent<any>) {
   try {
     const order = orderBody.payload.order.entity;
-    // orderBody.payload.order.entity
+
     let event = getEvents(orderBody.payload.order.entity.notes.eventType);
     let ExistingNotes: TRazorPayEventsExistingSchedule = order.notes;
     let CreateNotes: TRazorPayEventsCreateSchedule = order.notes;
     let packageIds = ExistingNotes.packageId;
 
-    // let event = "schedule.exists"
-    /**
-     * check in query object to check whether the schedule already exists or to be created.
-     */
-
-    /**
-     * Add in check where to send the event to even if the state is to be created check whether the schedule exists,
-     * and if the
-     * */
+  
 
     const packageDetails = await getPackageTimeAndDuration(packageIds);
     switch (event) {
@@ -173,12 +165,16 @@ export async function handleOrderPaidEvent({
           description: error.message,
           failedCountSetter: 6,
         });
-        return NextResponse.json({ success: false }, { status: 502 });
+        // FATAL ERROR DON'T TRY AGAIN NO POINT
+        return NextResponse.json({ success: false }, { status: 200 });
       }
+      // NOT FATAL, Could be Tried again
       await updateEventToFailed({ id: events.id, description: error.message });
+      // TRY AGAIN.
       return NextResponse.json({ success: false }, { status: 402 });
     }
     await updateEventToFailed({ id: events.id });
+    // TRY AGAIN.
     return NextResponse.json({ success: false }, { status: 406 });
   }
 }

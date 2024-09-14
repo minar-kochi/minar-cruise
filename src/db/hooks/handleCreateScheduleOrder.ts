@@ -202,7 +202,7 @@ export async function handleCreateScheduleOrder({
         // Send Email to Client
         sendConfirmationEmail({
           recipientEmail: paymentEntity.email ?? email,
-          fromEmail: process.env.BUSINESS_EMAIL!,
+          fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
           emailSubject: "Minar: Your Booking has Confirmed",
           emailComponent: EmailSendBookingConfirmation({
             duration: `${packageDetails?.duration ?? "-"}`,
@@ -218,7 +218,7 @@ export async function handleCreateScheduleOrder({
 
         //Send admin Notification to whats appp
         SendMessageViaWhatsapp({
-          recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
+          recipientNumber: process.env.WHATS_APP_CONTACT!,
           message: getSendAdminCreateNotificationMessage({
             date,
             packageName: `${packageDetails?.title ?? "-"} `,

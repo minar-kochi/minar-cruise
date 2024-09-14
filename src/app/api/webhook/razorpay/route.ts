@@ -31,7 +31,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
 
     // check if both exists in first or return as invalid request.
     if (!IncommingSignature || !eventId) {
-      return NextResponse.json({ success: false }, { status: 400 });
+      return NextResponse.json({ success: false }, { status: 200 });
     }
     let body = await request.json();
     /// calculating signature from the body and secret
@@ -40,8 +40,10 @@ export async function POST(request: NextRequest, res: NextResponse) {
 
     // check whether the generated and incomming are same, if so use the body and the body is securely send from razor-pay
     if (generatedSignature !== IncommingSignature) {
+      
       // throw a valid error.
-      return NextResponse.json({ success: false }, { status: 400 });
+      // Respond with 200
+      return NextResponse.json({ success: false }, { status: 200 });
     }
 
     // Insert the event into data-base
@@ -50,7 +52,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
     let DbEvent = await getEventById(eventId);
 
     if (DbEvent && DbEvent.id) {
-      console.log("Event has  found");
+      console.log("Event has found");
       console.log(DbEvent);
       /**
        *
@@ -81,7 +83,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
             /**
              * @TODO Add whats app pipeline Pipeline for event failed 5 times in a raw.
              */
-            
+
             return NextResponse.json({ success: true }, { status: 200 });
           }
           // Increase the count and continue through the process

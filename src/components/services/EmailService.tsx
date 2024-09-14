@@ -124,7 +124,7 @@ export const EmailSendBookingConfirmation = ({
             <div className="flex justify-center ">
               <Button
                 className="max-w-[100px]  bg-[#000000] rounded text-white text-[12px] font-semibold no-underline text-center px-5 py-3"
-                href={`tel:${process.env.NEXT_PUBLIC_CONTACT}`}
+                href={`tel:${process.env.NEXT_PUBLIC_ENQUIRE_CONTACT}`}
               >
                 Enquire Now
               </Button>
