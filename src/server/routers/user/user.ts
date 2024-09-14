@@ -20,7 +20,7 @@ import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleT
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import { exclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
-import { sendEmail, sendNodeMailerEmail } from "@/lib/helpers/resend";
+import { sendNodeMailerEmail } from "@/lib/helpers/resend";
 import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
 import { render } from "@react-email/components";
 
