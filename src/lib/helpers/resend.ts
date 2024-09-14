@@ -51,34 +51,34 @@ type TSendEmail = {
   reactEmailComponent: JSX.Element | string;
 };
 
-export async function sendEmail({
-  fromEmail,
-  reactEmailComponent,
-  subject,
-  toEmail,
-}: TSendEmail) {
-  const { BUSINESS_EMAIL } = process.env;
-  if (!BUSINESS_EMAIL) {
-    return { error: "Business email not found" };
-  }
+// export async function sendEmail({
+//   fromEmail,
+//   reactEmailComponent,
+//   subject,
+//   toEmail,
+// }: TSendEmail) {
+//   const { BUSINESS_EMAIL } = process.env;
+//   if (!BUSINESS_EMAIL) {
+//     return { error: "Business email not found" };
+//   }
 
-  try {
-    const { data, error } = await resend.emails.send({
-      from: fromEmail ?? BUSINESS_EMAIL,
-      to: [toEmail],
-      subject,
-      react: reactEmailComponent,
-    });
+//   try {
+//     const { data, error } = await resend.emails.send({
+//       from: fromEmail ?? BUSINESS_EMAIL,
+//       to: [toEmail],
+//       subject,
+//       react: reactEmailComponent,
+//     });
 
-    if (error) {
-      return { error };
-    }
+//     if (error) {
+//       return { error };
+//     }
 
-    return data;
-  } catch (error) {
-    return { error };
-  }
-}
+//     return data;
+//   } catch (error) {
+//     return { error };
+//   }
+// }
 
 export async function sendNodeMailerEmail({
   reactEmailComponent,

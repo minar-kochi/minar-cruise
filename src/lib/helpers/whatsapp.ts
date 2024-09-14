@@ -20,13 +20,14 @@ export async function SendMessageViaWhatsapp({
   }
   try {
     if (!message) return;
-    await sendConfirmationEmail({
-      emailSubject: "URGENT: Something went wrong while processing booking",
-      fromEmail: process.env.NEXT_PUBLIC_ERROR_EMAIL!,
-      recipientEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
-      emailComponent: AdminErrorEmail({ message }),
-    });
-
+    if (error) {
+      await sendConfirmationEmail({
+        emailSubject: "URGENT: Something went wrong while processing booking",
+        fromEmail: process.env.NEXT_PUBLIC_ERROR_EMAIL!,
+        recipientEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
+        emailComponent: AdminErrorEmail({ message }),
+      });
+    }
     return;
   } catch (error) {
     return;

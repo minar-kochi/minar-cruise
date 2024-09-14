@@ -1,7 +1,7 @@
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import VercelInviteUserEmail from "@/components/services/EmailService";
 import NewScheduleCreatedAlertEmail from "@/components/services/NewScheduleCreatedAlertEmail";
-import { sendConfirmationEmail, sendEmail } from "@/lib/helpers/resend";
+import { sendConfirmationEmail } from "@/lib/helpers/resend";
 // import { sendConfirmationEmail } from "@/lib/helpers/CommonBuisnessHelpers";
 
 export async function POST() {
