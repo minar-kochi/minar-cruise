@@ -24,7 +24,7 @@ BookingFormCalender({
   packageId,
   packageCategory
 }: TBookingFormCalender) {
-  const [date, setDate] = useState<Date>(new Date(Date.now()));
+  const [date, setDate] = useState<Date| undefined>(undefined);
   const [month, setMonth] = useState<string>(
     RemoveTimeStampFromDate(new Date(Date.now())),
   );
@@ -59,7 +59,9 @@ BookingFormCalender({
             }),
         }}
         selected={date}
-        onSelect={(date) => {
+        onSelect={(date,dat,mod,e) => {
+          if(mod.disabled) return
+          
           if (!date) return;
           setDate(date);
           setFormDateValue(RemoveTimeStampFromDate(date));
@@ -101,3 +103,5 @@ BookingFormCalender({
     </div>
   );
 }
+
+

@@ -433,12 +433,13 @@ export const user = router({
           });
         }
         const emailCom = await render(ExclusiveBookingEmailToAdmin(input));
-        sendNodeMailerEmail({
+        await sendNodeMailerEmail({
           reactEmailComponent: emailCom,
           subject: "Exclusive booking Leads",
           fromEmail: process.env.NEXT_PUBLIC_LEADS_EMAIL,
           toEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
         });
+        return true;
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

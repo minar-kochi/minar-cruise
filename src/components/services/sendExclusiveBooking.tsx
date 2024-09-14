@@ -1,3 +1,4 @@
+import { TExclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
 import {
   Body,
   Button,
@@ -31,24 +32,16 @@ interface ExclusiveBookingEmailToAdmin {
 // const domain = process.env.NEXT_PUBLIC_DOMAIN;
 
 export default function ExclusiveBookingEmailToAdmin({
-  adultCount,
-  babyCount,
-  childCount,
+  Duration,
+  count,
+  eventType,
   email,
   name,
   phone,
   selectedDate,
-  selectedTime,
-}: ExclusiveBookingEmailToAdmin) {
+}: TExclusivePackageValidator) {
   const Subject = `You have recieved new messsage fron ${name}`;
-  //   name: string;
-  //   email: string;
-  //   phone: string;
-  //   adultCount: number;
-  //   childCount: number;
-  //   babyCount: number;
-  //   selectedDate: string;
-  //   selectedTime: string;
+
   return (
     <Html>
       <Head />
@@ -78,10 +71,9 @@ export default function ExclusiveBookingEmailToAdmin({
             <Text>Email: {email}</Text>
             <Text>Phone: {phone}</Text>
             <Text>Date: {selectedDate}</Text>
-            <Text>Time: {selectedTime}</Text>
-            <Text>Adults: {adultCount}</Text>
-            <Text>Infants: {babyCount}</Text>
-            <Text>Childs: {childCount}</Text>
+            <Text>Aproximate Count: {count}</Text>
+            <Text>Event Type: {eventType}</Text>
+            <Text>Duration: {Duration}</Text>
 
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             <Text className="text-[#666666]  text-[12px] leading-[24px] text-justify">

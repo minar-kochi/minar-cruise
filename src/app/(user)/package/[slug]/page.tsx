@@ -104,8 +104,8 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
       </>
     );
   return (
-    <Bounded>
-      <div>
+    <Bounded className="md:px-1 ">
+      <div className="">
         <header className="sm:mx-10 mx-1  text-white pt-3 pb-3">
           <div className="flex gap-1 md:gap-3 ">
             <Image
@@ -161,7 +161,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
           </div> */}
         </header>
 
-        <div className="grid md:gap-3 px-2 2md:grid-cols-3 md:mx-1 lg:mx-10">
+        <div className="grid md:gap-3 px-2 2md:grid-cols-3 md:mx-1  lg:mx-10">
           <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
             <PackageImageN data={data} />
           </div>
