@@ -23,6 +23,7 @@ import {
   getInvalidScheduleTemplateWhatsApp,
   SendAdminPackageConflictError,
 } from "@/lib/helpers/retrieveWhatsAppMessage";
+import { format } from "date-fns";
 /**
  * @TODO
  * Order paid
@@ -43,8 +44,6 @@ export async function handleOrderPaidEvent({
     let CreateNotes: TRazorPayEventsCreateSchedule = order.notes;
     let packageIds = ExistingNotes.packageId;
 
-  
-
     const packageDetails = await getPackageTimeAndDuration(packageIds);
     switch (event) {
       case "schedule.create": {
@@ -58,7 +57,7 @@ export async function handleOrderPaidEvent({
           let message = getInvalidScheduleTemplateWhatsApp({
             ScheduleTime,
             packageTitle: packageDetails?.title ?? "",
-            date,
+            date: format(new Date(date), "iii dd-MM-yyyy"),
             adultCount: `${rest.adultCount}`,
             babyCount: `${rest.babyCount}`,
             childCount: `${rest.childCount}`,
@@ -156,9 +155,17 @@ export async function handleOrderPaidEvent({
       if (error.fatal) {
         console.log(error.message);
         await SendMessageViaWhatsapp({
-          recipientNumber: process.env.WHATS_APP_CONTACT!,
+          recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
           message: error.message,
-          error: true,
+          temp: {
+            allow: true,
+            FromEmail: process.env.NEXT_PUBLIC_ERROR_EMAIL!,
+            error: true,
+            subject:
+              "URGENT: Something went wrong while processing the request.",
+            Emailheading:
+              "URGENT: FATAL Server Error, Please Review and contact Customer.",
+          },
         });
         await updateEventToFailed({
           id: events.id,
