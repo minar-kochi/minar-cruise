@@ -3,7 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
-import { absoluteUrl, RemoveTimeStampFromDate } from "@/lib/utils";
+import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
@@ -20,6 +20,8 @@ import BookingFormCard from "./BookingFormCard";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { isStatusCustom } from "@/lib/validators/Schedules";
+import { isPackageStatusSunSet } from "@/lib/validators/Package";
 
 type TPackageForm = {
   packageId: string;
@@ -172,20 +174,37 @@ export default function PackageFormN({
         />
         <div className="flex flex-col items-center justify-center gap-2 mt-5">
           <div className="flex gap-2">
-            <ColorRepresentationInfo className="bg-muted " title="Blocked" />
-            {packageCategory !== "SUNSET" && (
+            <div>
               <ColorRepresentationInfo
-                className="bg-green-600 "
+                className="bg-muted  "
+                title="Blocked"
+              />
+            </div>
+            <div
+              className={cn({
+                hidden: isPackageStatusSunSet({
+                  packageStatus: packageCategory,
+                }),
+              })}
+            >
+              <ColorRepresentationInfo
+                className={cn("bg-green-600 ")}
                 title="Available"
               />
-            )}
+            </div>
           </div>
-          {packageCategory !== "SUNSET" && (
+          <div
+            className={cn({
+              hidden: isPackageStatusSunSet({
+                packageStatus: packageCategory,
+              }),
+            })}
+          >
             <ColorRepresentationInfo
-              className="bg-white border "
+              className={cn("bg-white border")}
               title="Rest of the days Minimum 25 Pax"
             />
-          )}
+          </div>
         </div>
         <div className="my-7 h-[1px] w-[100%] bg-gray-300" />
         <BookingFormCard

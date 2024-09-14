@@ -18,7 +18,8 @@ import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import { flattenObject } from "@/lib/utils";
+import { cn, flattenObject } from "@/lib/utils";
+import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { Clock } from "lucide-react";
 import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -103,8 +104,8 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
       </>
     );
   return (
-    <Bounded>
-      <div>
+    <Bounded className="md:px-1 ">
+      <div className="">
         <header className="sm:mx-10 mx-1  text-white pt-3 pb-3">
           <div className="flex gap-1 md:gap-3 ">
             <Image
@@ -160,25 +161,34 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
           </div> */}
         </header>
 
-        <div className="grid md:gap-3 px-2 2md:grid-cols-3 md:mx-1 lg:mx-10">
+        <div className="grid md:gap-3 px-2 2md:grid-cols-3 md:mx-1  lg:mx-10">
           <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
             <PackageImageN data={data} />
           </div>
-          {data.packageCategory === "EXCLUSIVE" ? (
-            <ExclusivePackageEnquiryCard
-              adultPrice={data.adultPrice}
-              childPrice={data.childPrice}
-            />
-          ) : (
-            <div className="2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg">
+          <div
+            className={cn(
+              "2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg",
+              {
+                "2md-top-[500px]": isPackageStatusExclusive(
+                  data.packageCategory,
+                ),
+              },
+            )}
+          >
+            {!isPackageStatusExclusive(data.packageCategory) ? (
               <PackageFormN
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
                 packageId={data.id}
                 packageCategory={data.packageCategory}
               />
-            </div>
-          )}
+            ) : (
+              <ExclusivePackageEnquiryCard
+                adultPrice={data.adultPrice}
+                childPrice={data.childPrice}
+              />
+            )}
+          </div>
 
           <div className="2md:col-span-2 2md:row-start-2 2md:col-start-1">
             <PackageAmmenties data={data} />

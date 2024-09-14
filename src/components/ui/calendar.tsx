@@ -84,7 +84,7 @@ const CalendarVarients = ({
     day_today: "",
     day_outside:
       "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-      day_disabled:  " text-black",
+      day_disabled: "text-black",
       day_range_middle:
       "aria-selected:bg-accent aria-selected:text-accent-foreground",
     day_hidden: "invisible",

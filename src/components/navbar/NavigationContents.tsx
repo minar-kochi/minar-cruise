@@ -22,13 +22,10 @@ const NavigationContents = async () => {
       </Link>
 
       <div className="relative group">
-        <Link
-          href="/"
-          className="cursor-pointer flex items-center hover:text-red-500 "
-        >
+        <div className="cursor-pointer flex items-center hover:text-red-500 ">
           Packages
           <ChevronDown className="h-4 w-4 shrink-0  duration-200 " />
-        </Link>
+        </div>
         <div className="absolute pt-6 pb-3 px-5 rounded-lg hidden w-[250px] bg-white  shadow-lg z-10 group-hover:block">
           {packageDetails.map((item, i) => (
             <Link className="" key={item.id} href={`/package/${item.slug}`}>
@@ -51,13 +48,10 @@ const NavigationContents = async () => {
       </Link>
 
       <div className="relative group">
-        <Link
-          href="/"
-          className="cursor-pointer flex items-center  hover:text-red-500"
-        >
+        <div className="cursor-pointer flex items-center  hover:text-red-500">
           Gallery
           <ChevronDown className="h-4 w-4 shrink-0  duration-200 " />
-        </Link>
+        </div>
         <div className="absolute  py-3 px-5 rounded-lg hidden bg-white w-[250px] shadow-lg z-10 group-hover:block">
           <Link href="/gallery/family-gathering">
             <p className="hover:text-red-500 text-sm py-3">Family Gathering</p>

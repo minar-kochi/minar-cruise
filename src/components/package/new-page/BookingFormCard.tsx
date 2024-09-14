@@ -86,7 +86,7 @@ export default function BookingFormCard({
               >
                 ADULT
               </Label>
-              <p className="text-[10px] mx-1.5">₹ 750</p>
+              <p className="text-[12px] font-bold mx-1.5">₹ 750</p>
             </div>
             <div className="max-w-[80px] bg-slate-800  rounded-full  w-full flex items-center justify-center">
               <button
@@ -135,7 +135,7 @@ export default function BookingFormCard({
               >
                 INFANT
               </Label>
-              <p className="text-[10px] mx-1.5">₹ 0</p>
+              <p className="text-[12px] font-bold mx-1.5">₹ 0</p>
             </div>
             <div className="max-w-[80px] bg-slate-800 rounded-full  w-full  flex items-center justify-center">
               <button
@@ -184,7 +184,7 @@ export default function BookingFormCard({
             >
               CHILD
             </Label>
-            <p className="text-[10px] mx-1.5">₹ 400</p>
+            <p className="text-[12px] font-bold mx-1.5">₹ 400</p>
           </div>
           <div className="max-w-[80px] bg-slate-800 rounded-full  ml-1  flex items-center justify-center">
             <button
