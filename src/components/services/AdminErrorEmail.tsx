@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   Body,
   Button,
@@ -17,19 +18,25 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface AdminErrorEmail {
-  message: string;
+interface AdminGenericEmail {
+  message: React.ReactNode;
+  error: boolean;
+  subject: string;
+  heading:string
 }
 
 // const domain = process.env.NEXT_PUBLIC_DOMAIN;
 
-export default function AdminErrorEmail({ message }: AdminErrorEmail) {
-  const Subject = `URGENT: Something went wrong while processing booking`;
-
+export default function AdminGenericEmail({
+  message,
+  error,
+  subject,
+  heading
+}: AdminGenericEmail) {
   return (
     <Html>
       <Head />
-      <Preview>{Subject}</Preview>
+      <Preview>{subject}</Preview>
       <Tailwind>
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[700px]">
@@ -42,8 +49,15 @@ export default function AdminErrorEmail({ message }: AdminErrorEmail) {
                 className="my-0 mx-auto object-contain w-[180px] h-[50px]"
               />
             </Section>
-            <Heading className="text-[24px] font-normal text-center p-0 my-[15px] mx-0 text-red-400">
-              <strong>Server Issue, Please Clarify with the customer</strong>
+            <Heading
+              className={cn(
+                "text-[24px] font-normal text-center p-0 my-[15px] mx-0",
+                {
+                  "text-red-600": error,
+                },
+              )}
+            >
+              <strong>{heading}</strong>
             </Heading>
             <Text className="text-black text-[14px] leading-[24px] pt-[30px]">
               Dear <strong>{"Admin"}</strong>,
@@ -57,8 +71,14 @@ export default function AdminErrorEmail({ message }: AdminErrorEmail) {
               <strong>Minar Cruise Services</strong>, Inc., GF,40/6185, Marine
               Drive, Ernakulam, Kerala 682031. © 2022, All rights reserved.
               Minar cruise is a registered trademark of{" "}
-              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>{process.env.NEXT_PUBLIC_DOMAIN}</Link>, Inc. View our{" "}
-              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>privacy policy</Link>.
+              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>
+                {process.env.NEXT_PUBLIC_DOMAIN}
+              </Link>
+              , Inc. View our{" "}
+              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>
+                privacy policy
+              </Link>
+              .
             </Text>
           </Container>
         </Body>
@@ -82,4 +102,4 @@ export default function AdminErrorEmail({ message }: AdminErrorEmail) {
 //     babyCount: 5
 //   } as BookingConfirmationProps;
 
-// export default AdminErrorEmail;
+// export default AdminGenericEmail;
