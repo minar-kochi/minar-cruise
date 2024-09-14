@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { getPackageAllImage } from "@/db/data/dto/package";
 import { AddPackageImageSchema } from "@/lib/validators/adminAddPackageImageValidator";
+import { revalidateAllPackageImageUse } from "@/revalidator/package";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { revalidatePath } from "next/cache";
@@ -56,11 +57,19 @@ export const packages = router({
           message: "This Image has Already been used for this package",
         });
       }
-      const upserted = await db.packageImage.create({
+
+      await db.packageImage.create({
         data,
       });
-      revalidatePath(`/package/[slug]`);
-      revalidatePath(`/`);
+      if (
+        data.ImageUse === "PROD_FEATURED" ||
+        data.ImageUse === "PROD_THUMBNAIL"
+      ) {
+        await revalidateAllPackageImageUse();
+      } else {
+        revalidatePath(`/package/${packageSlug.slug}`);
+      }
+
       return { success: true };
     } catch (error) {
       if (error instanceof TRPCError) {
@@ -82,6 +91,16 @@ export const packages = router({
         where: {
           id,
         },
+        select: {
+          id: true,
+          ImageUse: true,
+          packageId: true,
+          package: {
+            select: {
+              slug: true,
+            },
+          },
+        },
       });
       if (!isImageFound) {
         throw new TRPCError({
@@ -94,8 +113,17 @@ export const packages = router({
           id,
         },
       });
-      revalidatePath("/package");
-      revalidatePath(`/`);
+
+      if (
+        isImageFound.ImageUse === "PROD_FEATURED" ||
+        isImageFound.ImageUse === "PROD_THUMBNAIL"
+      ) {
+        // add func to revalidate all the package and home page.
+        await revalidateAllPackageImageUse();
+      } else {
+        revalidatePath(`/package/${isImageFound.package.slug}`);
+      }
+
       return { success: true };
     } catch (error) {
       if (error instanceof TRPCError) {

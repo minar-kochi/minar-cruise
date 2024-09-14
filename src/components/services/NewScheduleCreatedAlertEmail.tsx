@@ -43,7 +43,7 @@ const NewScheduleCreatedAlertEmail = ({
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[700px]">
             <Section className="my-[10px] ">
               <Img
-                src={`https://cochincruiseline.com/wp-content/uploads/2022/12/logo.png`}
+                src={`${process.env.NEXT_PUBLIC_DOMAIN}/assets/logo.png`}
                 width="1920"
                 height="1080"
                 alt="Vercel"
@@ -78,8 +78,14 @@ const NewScheduleCreatedAlertEmail = ({
               <strong>Minar Cruise Services</strong>, Inc., GF,40/6185, Marine
               Drive, Ernakulam, Kerala 682031. © 2022, All rights reserved.
               Minar cruise is a registered trademark of{" "}
-              <Link href={domain}>{domain}</Link>, Inc. View our{" "}
-              <Link href={`${domain}/privacy-policy`}>privacy policy</Link>.
+              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>
+                {process.env.NEXT_PUBLIC_DOMAIN}
+              </Link>
+              , Inc. View our{" "}
+              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>
+                privacy policy
+              </Link>
+              .
             </Text>
           </Container>
         </Body>

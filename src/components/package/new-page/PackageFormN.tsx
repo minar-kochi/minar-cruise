@@ -3,7 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
-import { absoluteUrl, RemoveTimeStampFromDate } from "@/lib/utils";
+import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
@@ -20,6 +20,8 @@ import BookingFormCard from "./BookingFormCard";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { isStatusCustom } from "@/lib/validators/Schedules";
+import { isPackageStatusSunSet } from "@/lib/validators/Package";
 
 type TPackageForm = {
   packageId: string;
@@ -168,19 +170,41 @@ export default function PackageFormN({
             setValue("scheduleId", value);
           }}
           packageId={packageId}
+          packageCategory={packageCategory}
         />
         <div className="flex flex-col items-center justify-center gap-2 mt-5">
           <div className="flex gap-2">
-            <ColorRepresentationInfo className="bg-muted " title="Blocked" />
+            <div>
+              <ColorRepresentationInfo
+                className="bg-muted  "
+                title="Blocked"
+              />
+            </div>
+            <div
+              className={cn({
+                hidden: isPackageStatusSunSet({
+                  packageStatus: packageCategory,
+                }),
+              })}
+            >
+              <ColorRepresentationInfo
+                className={cn("bg-green-600 ")}
+                title="Available"
+              />
+            </div>
+          </div>
+          <div
+            className={cn({
+              hidden: isPackageStatusSunSet({
+                packageStatus: packageCategory,
+              }),
+            })}
+          >
             <ColorRepresentationInfo
-              className="bg-green-600 "
-              title="Available"
+              className={cn("bg-white border")}
+              title="Rest of the days Minimum 25 Pax"
             />
           </div>
-          <ColorRepresentationInfo
-            className="bg-white border "
-            title="Rest of the days Minimum 25 Pax"
-          />
         </div>
         <div className="my-7 h-[1px] w-[100%] bg-gray-300" />
         <BookingFormCard
@@ -191,18 +215,18 @@ export default function PackageFormN({
           errors={errors}
         />
         <div className="flex w-full mt-3 justify-evenly items-center">
-          {/* <div> */}
-          {/* <p className="text-xs">Total:</p> */}
-          {/* <p className="text-2xl font-semibold ">₹{total}</p> */}
-          {/* </div> */}
-          {/* <div className="w-[2px] h-12 bg-black"></div> */}
+          <div>
+            <p className="text-xs">Total:</p>
+            <p className="text-2xl font-semibold ">₹{total}</p>
+          </div>
+          <div className="w-[2px] h-12 bg-black"></div>
           <div>
             <Button
               type="submit"
               className="w-full text-white"
               variant={"default"}
             >
-              Pay Now {total ? `@ ₹${total}` : null}
+              Pay Now
             </Button>
           </div>
         </div>

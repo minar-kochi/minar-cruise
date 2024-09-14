@@ -162,10 +162,11 @@ export async function handleOrderPaidEvent({
     if (error instanceof OrderPaidEventError) {
       console.log("FATAL ERROR HAPPENDED");
       if (error.fatal) {
-        console.log(error.message)
+        console.log(error.message);
         await SendMessageViaWhatsapp({
           recipientNumber: process.env.WHATS_APP_CONTACT!,
           message: error.message,
+          error: true,
         });
         await updateEventToFailed({
           id: events.id,

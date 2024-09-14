@@ -9,9 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL_POOLED")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL_POOLED")
 }
 
 // add description 
@@ -76,7 +75,7 @@ enum SCHEDULE_STATUS {
 
 model Schedule {
   id              String          @id @default(cuid())
-  day             DateTime        @db.Date() 
+  day             DateTime        @db.Date()
   fromTime        String?
   toTime          String?
   packageId       String?
@@ -166,7 +165,7 @@ model Blog {
   blogSlug   String     @unique
   shortDes   String     @db.Text
   content    String     @db.Text
-  image      Image      @relation(fields: [imageId], references: [id])
+  image      Image      @relation(fields: [imageId], references: [id], onDelete: Restrict)
   imageId    String
   banner     String?
   blogStatus BlogStatus
@@ -177,12 +176,12 @@ model Blog {
 }
 
 model PackageImage {
-  id        String      @id @unique @default(cuid())
+  id        String    @id @unique @default(cuid())
   packageId String
   ImageUse  IMAGE_USE @default(COMMON)
   imageId   String
-  package   Package     @relation(fields: [packageId], references: [id])
-  image     Image       @relation(fields: [imageId], references: [id])
+  package   Package   @relation(fields: [packageId], references: [id])
+  image     Image     @relation(fields: [imageId], references: [id], onDelete: Cascade)
 }
 
 // @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  

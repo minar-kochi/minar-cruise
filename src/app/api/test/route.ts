@@ -7,22 +7,22 @@ import { sendWhatsAppBookingMessageToClient } from "@/lib/helpers/retrieveWhatsA
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     let number = "919562103255";
-    const data = await SendMessageViaWhatsapp({
-      recipientNumber: number,
-      // messageTemplate:"rs_vp_id",
-      message: sendWhatsAppBookingMessageToClient({
-        bookingId: "1245",
-        dateOfBooking: "07/10/2024",
-        email: "muadpn434@gmail.com",
-        name: "Mouad Pn",
-        packageName: "Lunch Cruise",
-        time: "11:00AM",
-      }),
-    });
+    // const data = await SendMessageViaWhatsapp({
+    //   recipientNumber: number,
+    //   // messageTemplate:"rs_vp_id",
+    //   message: sendWhatsAppBookingMessageToClient({
+    //     bookingId: "1245",
+    //     dateOfBooking: "07/10/2024",
+    //     email: "muadpn434@gmail.com",
+    //     name: "Mouad Pn",
+    //     packageName: "Lunch Cruise",
+    //     time: "11:00AM",
+    //   }),
+    // });
     return NextResponse.json(
       {
         state: number,
-        answer: data,
+        answer: "data",
         currentTime: new Date(Date.now()),
       },
       { status: 425 },

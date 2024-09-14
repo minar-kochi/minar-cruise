@@ -124,7 +124,7 @@ export const EmailSendBookingConfirmation = ({
             <div className="flex justify-center ">
               <Button
                 className="max-w-[100px]  bg-[#000000] rounded text-white text-[12px] font-semibold no-underline text-center px-5 py-3"
-                href={`tel:${process.env.OWNER_CONTACT}`}
+                href={`tel:${process.env.NEXT_PUBLIC_CONTACT}`}
               >
                 Enquire Now
               </Button>
@@ -144,8 +144,14 @@ export const EmailSendBookingConfirmation = ({
               <strong>Minar Cruise Services</strong>, Inc., GF,40/6185, Marine
               Drive, Ernakulam, Kerala 682031. © 2022, All rights reserved.
               Minar cruise is a registered trademark of{" "}
-              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>{process.env.NEXT_PUBLIC_DOMAIN}</Link>, Inc. View our{" "}
-              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>privacy policy</Link>.
+              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>
+                {process.env.NEXT_PUBLIC_DOMAIN}
+              </Link>
+              , Inc. View our{" "}
+              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>
+                privacy policy
+              </Link>
+              .
             </Text>
           </Container>
         </Body>
