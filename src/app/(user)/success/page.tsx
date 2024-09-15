@@ -18,14 +18,6 @@ interface ISearchParams {
   };
 }
 
-
-// interface ISearchParams {
-//   searchParams: { [key: string]: string | string[] | undefined };
-// }
-// export default async function SuccessPage(params: ISearchParams) {
-//   let contact = params.searchParams.contact
-//   const time = params.searchParams.time;
-
 export default async function SuccessPage(params: ISearchParams) {
 
 
