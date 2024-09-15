@@ -2,12 +2,7 @@ import CustomDialog from "@/components/custom/CustomDialog";
 import BoxReveal from "@/components/magicui/box-reveal";
 import GradualSpacing from "@/components/magicui/gradual-spacing";
 import RetroGrid from "@/components/magicui/RetroGrid";
-import { db } from "@/db";
-import { isProd, sleep } from "@/lib/utils";
-import { indianPhoneRegex } from "@/lib/validators/offlineBookingValidator";
-import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import React from "react";
 
 interface ISearchParams {
@@ -19,23 +14,22 @@ interface ISearchParams {
 }
 
 export default async function SuccessPage(params: ISearchParams) {
-
-
   const time = params.searchParams.time;
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen flex flex-col justify-around items-center">
       <div
-        className="bg-primary rounded-xl 
-        bg-slate-100 z-0  max-w-lg shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-t-2
-       border-slate-200 md:max-w-2xl md:z-10 md:shadow-lg md:absolute md:top-0 md:mt-48 lg:w-3/5 lg:left-0 lg:mt-20 lg:ml-20 xl:mt-24 xl:ml-12"
+        className="rounded-xl bg-slate-100 z-0  max-w-[400px] sm:max-w-[700px] w-full bg-transparent
+         border-slate-200 shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]"
       >
+        {/* shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] */}
+        {/* md:max-w-2xl md:z-10 md:shadow-lg md:absolute md:top-0 md:mt-48 lg:w-3/5 lg:left-0 lg:mt-20 lg:ml-20 xl:mt-24 xl:ml-12 */}
         <div className="flex flex-col p-12 md:px-16">
           <div className="">
             <GradualSpacing
               text="Booking Successful "
-              className="font-bold text-4xl text-left "
-              parentClassName="justify-left"
+              className="font-bold text-2xl sm:text-4xl text-left "
+              parentClassName="justify-left space-x-0"
             />
           </div>
           <BoxReveal duration={0.5} boxColor="#caccd9">
@@ -46,7 +40,9 @@ export default async function SuccessPage(params: ISearchParams) {
           </BoxReveal>
           <BoxReveal boxColor="#caccd9">
             {time ? (
-              <p className="font-bold mt-3">See you at {params.searchParams.time}</p>
+              <p className="font-bold mt-3">
+                See you at {params.searchParams.time}
+              </p>
             ) : (
               <p className="font-bold mt-6">
                 Thank You for choosing{" "}
@@ -67,15 +63,7 @@ export default async function SuccessPage(params: ISearchParams) {
           </div>
         </div>
       </div>
-      {/* <div className="absolute bottom-96 right-60">
-        <Image
-          alt=""
-          src={"/assets/shipBack.png"}
-          width={1920}
-          height={1080}
-          className="w-[500px]"
-        />
-      </div> */}
+      <div className=""></div>
       <RetroGrid className="absolute top-0" />
     </div>
   );
