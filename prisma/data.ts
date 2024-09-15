@@ -33,6 +33,7 @@ import { packageImage } from "./data/dbPackageImage";
 import { packages } from "./data/dbPackage";
 import { schedule } from "./data/dbSchedule";
 import { users } from "./data/dbUserData";
+import { parseUploadThingData } from "./functions/parseUploadThingData";
 
 export { amenities };
 export { booking };
@@ -42,3 +43,4 @@ export { packageImage };
 export { packages };
 export { schedule };
 export { users };
+export const imageData = parseUploadThingData()

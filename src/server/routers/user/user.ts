@@ -300,11 +300,6 @@ export const user = router({
                 code: "CONFLICT",
                 message: JSON.stringify(ScheduleConflictError),
               });
-
-              // throw new TRPCError({
-              //   code: "CONFLICT",
-              //   message: `There is Another Schedule at this Date and Time, Please Check ${schedule.Package?.title} to book for this date`,
-              // });
             }
             return await CreateBookingForExistingSchedule({
               input,
@@ -330,83 +325,6 @@ export const user = router({
           message: "Something unexpected Happened, Please contact Admins",
         });
       }
-
-      // if(isLunch) {
-      //   if(timeGapInMinutes <= 15) {
-      //     throw new TRPCError({
-      //       code: "BAD_REQUEST",
-      //       message:
-      //         "Select a different package ,You need to book lunch at least 2 hours before schedule time",
-      //     });
-      //   }
-      // }
-
-      // if(isDinner && packageDetails.title === "sunset cruise"){
-
-      // }
-      // if(isDinner && packageDetails.title === "Dinner cruise"){
-
-      // }
-      // if(isDinner && packageDetails.title === "Sunset with Dinner cruise"){
-
-      // }
-      // if(isDinner && packageDetails.title === "Special 4 Hours Dinner Cruise"){
-
-      // }
-
-      // if(isExclusive){
-
-      // }
-
-      // // ----------------------------------------------------------------------------
-      //         if (scheduleId) {
-      //           const scheduleIdExists = findScheduleById(scheduleId);
-      //           if (!scheduleIdExists)
-      //             throw new TRPCError({
-      //               code: "BAD_REQUEST",
-      //               message:
-      //                 "need at least a total of 25 seat count to confirm a new booking",
-      //             });
-
-      //           const scheduleDetails = await db.schedule.findUnique({
-      //             where: {
-      //               id: scheduleId,
-      //             },
-      //             select: {
-      //               day: true,
-      //             },
-      //           });
-
-      //           if (!scheduleDetails) {
-      //             throw new TRPCError({
-      //               code: "BAD_REQUEST",
-      //               message: "could not get schedule details",
-      //             });
-      //           }
-
-      //           const packageExists = await db.package.count({
-      //             where: {
-      //               id: packageId,
-      //             },
-      //           });
-
-      //           if (!packageExists) {
-      //             throw new TRPCError({
-      //               code: "BAD_REQUEST",
-      //               message: "Selected package does not exists",
-      //             });
-      //           }
-      //         }
-
-      //         if (!scheduleId) {
-      //           if (numOfAdults + numOfChildren < 25) {
-      //             throw new TRPCError({
-      //               code: "BAD_REQUEST",
-      //               message:
-      //                 "need at least a total of 25 seat count to confirm a new booking",
-      //             });
-      //           }
-      // }
     }),
 
   sendExclusiveBookingMessage: publicProcedure
@@ -441,14 +359,23 @@ export const user = router({
             ),
           }),
         );
-        await sendNodeMailerEmail({
+        let data = await sendNodeMailerEmail({
           reactEmailComponent: emailCom,
           subject: "Exclusive booking Leads",
           fromEmail: process.env.NEXT_PUBLIC_LEADS_EMAIL,
           toEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
         });
+        if (!data?.messageId) {
+          throw new TRPCError({
+            code: "SERVICE_UNAVAILABLE",
+            message: "Something went wrong while reaching out",
+          });
+        }
         return true;
       } catch (error) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
+        }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
