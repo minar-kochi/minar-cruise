@@ -1,7 +1,4 @@
 import { isValidMergeTimeCycle } from "../utils";
-import { error } from "console";
-import { Resend } from "resend";
-
 export const selectFromTimeAndToTimeFromScheduleOrPackages = ({
   Packages,
   schedule,

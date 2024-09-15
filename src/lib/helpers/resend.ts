@@ -1,8 +1,6 @@
-import { Resend } from "resend";
 import nodemailer from "nodemailer";
 import { render } from "@react-email/components";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
-const resend = new Resend(process.env.RESEND_API_KEY);
 const transporter = nodemailer.createTransport({
   host: "smtp.hostinger.com",
   port: 465,
