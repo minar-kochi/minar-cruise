@@ -22,13 +22,14 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { isStatusCustom } from "@/lib/validators/Schedules";
 import { isPackageStatusSunSet } from "@/lib/validators/Package";
+import { format } from "date-fns";
 
 type TPackageForm = {
   packageId: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
   adultPrice: number;
   childPrice: number;
-  type?: 'modal' | undefined
+  type?: "modal" | undefined;
 };
 
 export default function PackageFormN({
@@ -36,7 +37,7 @@ export default function PackageFormN({
   packageCategory,
   adultPrice,
   childPrice,
-  type
+  type,
 }: TPackageForm) {
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
@@ -78,7 +79,9 @@ export default function PackageFormN({
           currency: "INR",
           amount: res?.order?.amount,
           order_id: res?.order.id,
-          callback_url: absoluteUrl(`/success?email=${""}&time="07*10*2001"`),
+          callback_url: absoluteUrl(
+            `/success?email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate")), "iii dd-MM-yyyy")}`,
+          ),
           prefill: {
             name: notes.name ?? undefined,
             phone: phoneNumberParser(
@@ -156,7 +159,11 @@ export default function PackageFormN({
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   return (
     <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full ">
-      <p className={cn("font-semibold text-lg py-1", {'pb-5 font-bold text-xl': type === 'modal'})}>
+      <p
+        className={cn("font-semibold text-lg py-1", {
+          "pb-5 font-bold text-xl": type === "modal",
+        })}
+      >
         Check Cruise
         <span className="text-red-500 "> Availability </span>
       </p>
@@ -172,16 +179,17 @@ export default function PackageFormN({
             setValue("scheduleId", value);
           }}
           packageId={packageId}
-          packageCategory={packageCategory} 
-          {...type === 'modal' && {popoverCalender : true , className: ""}} 
+          packageCategory={packageCategory}
+          {...(type === "modal" && { popoverCalender: true, className: "" })}
         />
-        <div className={cn("flex flex-col items-center justify-center gap-2 mt-5 ")}>
+        <div
+          className={cn(
+            "flex flex-col items-center justify-center gap-2 mt-5 ",
+          )}
+        >
           <div className="flex gap-2">
             <div>
-              <ColorRepresentationInfo
-                className="bg-muted  "
-                title="Blocked"
-              />
+              <ColorRepresentationInfo className="bg-muted  " title="Blocked" />
             </div>
             <div
               className={cn({
@@ -216,7 +224,7 @@ export default function PackageFormN({
           watch={watch}
           register={register}
           errors={errors}
-          className={cn("",{ "": type === 'modal'})}
+          className={cn("", { "": type === "modal" })}
         />
         <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
           <div>

@@ -67,7 +67,7 @@ const UploadBlogImage = () => {
           <DialogTitle>Upload Image</DialogTitle>
           <DialogDescription>
             Please add in
-            <span className="font-medium text-black"> Alt Tag&apos;s </span>a
+            <span className="font-medium text-white"> Alt Tag&apos;s </span>a
             descriptive text for SEO, as it will boost the image to linking the
             image to website
           </DialogDescription>
@@ -97,7 +97,7 @@ const UploadBlogImage = () => {
                       src={imagePreview}
                       width={720}
                       height={480}
-                      className="w-full h-full absolute z-[2] rounded-xl"
+                      className="w-full h-full object-cover absolute z-[2] rounded-xl"
                     />
                   </>
                 ) : null}
