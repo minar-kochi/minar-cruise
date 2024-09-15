@@ -441,14 +441,23 @@ export const user = router({
             ),
           }),
         );
-        await sendNodeMailerEmail({
+        let data = await sendNodeMailerEmail({
           reactEmailComponent: emailCom,
           subject: "Exclusive booking Leads",
           fromEmail: process.env.NEXT_PUBLIC_LEADS_EMAIL,
           toEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
         });
+        if (!data?.messageId) {
+          throw new TRPCError({
+            code: "SERVICE_UNAVAILABLE",
+            message: "Something went wrong while reaching out",
+          });
+        }
         return true;
       } catch (error) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
+        }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
