@@ -42,7 +42,7 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
 
   return (
     <div>
-        {isFetching && <LoadingState/>}
+      {isFetching && <LoadingState />}
       <div className="flex gap-2 flex-wrap items-center justify-center">
         {data &&
           data.pages &&
@@ -56,13 +56,15 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
                     className="cursor-pointer max-w-[150px]  group-[.image-upload]:max-w-[350px] w-full"
                     onClick={() => handleImageClick(item.id, item.url)}
                   >
-                    <Image
-                      className="rounded-md w-full h-full object-cover"
-                      src={item.url}
-                      alt={item.alt}
-                      width={720}
-                      height={480}
-                    />
+                    <div className="w-[350px] h-[262px]">
+                      <Image
+                        className="rounded-md w-full h-full object-cover"
+                        src={item.url}
+                        alt={item.alt}
+                        width={720}
+                        height={480}
+                      />
+                    </div>
                   </button>
                 );
               })

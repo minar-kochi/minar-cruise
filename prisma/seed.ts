@@ -6,6 +6,7 @@ import {
   booking,
   foodMenu,
   image,
+  imageData,
   packageImage,
   packages,
   schedule,
@@ -84,12 +85,9 @@ async function main() {
       console.log("Inserting image...");
 
       await tx.image.createMany({
-        data: image,
+        data: await imageData,
       });
       console.log("Completed image \n");
-
-    
-
       console.log("Inserting package...");
 
       await tx.package.createMany({
