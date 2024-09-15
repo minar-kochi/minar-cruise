@@ -28,6 +28,7 @@ type TPackageForm = {
   packageCategory: $Enums.PACKAGE_CATEGORY;
   adultPrice: number;
   childPrice: number;
+  type?: 'modal' | undefined
 };
 
 export default function PackageFormN({
@@ -35,6 +36,7 @@ export default function PackageFormN({
   packageCategory,
   adultPrice,
   childPrice,
+  type
 }: TPackageForm) {
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
@@ -153,14 +155,14 @@ export default function PackageFormN({
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   return (
-    <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full">
-      <p className="font-semibold text-lg py-1  ">
+    <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full ">
+      <p className={cn("font-semibold text-lg py-1", {'pb-5 font-bold text-xl': type === 'modal'})}>
         Check Cruise
         <span className="text-red-500 "> Availability </span>
       </p>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col items-center justify-center"
+        className={cn("flex flex-col items-center justify-center")}
       >
         <BookingFormCalender
           setFormDateValue={(value: string) => {
@@ -170,9 +172,10 @@ export default function PackageFormN({
             setValue("scheduleId", value);
           }}
           packageId={packageId}
-          packageCategory={packageCategory}
+          packageCategory={packageCategory} 
+          {...type === 'modal' && {popoverCalender : true , className: ""}} 
         />
-        <div className="flex flex-col items-center justify-center gap-2 mt-5">
+        <div className={cn("flex flex-col items-center justify-center gap-2 mt-5 ")}>
           <div className="flex gap-2">
             <div>
               <ColorRepresentationInfo
@@ -206,15 +209,16 @@ export default function PackageFormN({
             />
           </div>
         </div>
-        <div className="my-7 h-[1px] w-[100%] bg-gray-300" />
+        {type ? null : <div className="my-7 h-[1px] w-[100%] bg-gray-300" />}
         <BookingFormCard
           getValues={getValues}
           setValues={setValue}
           watch={watch}
           register={register}
           errors={errors}
+          className={cn("",{ "": type === 'modal'})}
         />
-        <div className="flex w-full mt-3 justify-evenly items-center">
+        <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
           <div>
             <p className="text-xs">Total:</p>
             <p className="text-2xl font-semibold ">₹{total}</p>
