@@ -27,29 +27,27 @@ export default function RootLayout({
   modal: React.ReactNode;
 }>) {
   return (
-    <>
-      <html lang="en">
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable,
-          )}
-        >
-          <Providers>
-            {/* <CounterStoreProvider> */}
-            <Navbar />
-            <Toaster />
+    <html lang="en">
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+        )}
+      >
+        <Providers>
+          {/* <CounterStoreProvider> */}
+          <Navbar />
+          <Toaster />
 
-            {children}
-            {modal}
-            <div id="modal-root" />
-            <Footer/>
-            
-            {/* </CounterStoreProvider> */}
-          </Providers>
-        </body>
-      </html>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-    </>
+          {children}
+          {modal}
+          <div id="modal-root" />
+          <Footer />
+
+          {/* </CounterStoreProvider> */}
+        </Providers>
+      </body>
+      <Script defer src="https://checkout.razorpay.com/v1/checkout.js" />
+    </html>
   );
 }
