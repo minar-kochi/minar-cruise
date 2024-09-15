@@ -30,27 +30,16 @@ const UploadBlogImage = () => {
 
   async function handleSubmit() {
     try {
-      console.log(image);
-      // if (altText.length < 20) {
-      //   toast.error("Please enter something Larger than 20");
-      //   return;
-      // }
-      // if (!image?.length) {
-      //   toast.error("Please select a file.");
-      //   return;
-      // }
-      if (!image) {
+      if (altText.length < 20) {
+        toast.error("Please enter something Larger than 20");
         return;
       }
-      image.map(async (item) => {
-        // @ts-ignore
-        let d = item.name.replace(/\.(webp|JPG|jpeg|png)$/, "") as string;
-
-        await startUpload([item], { alt: d });
-      });
-      // alert(image[0].name.replace('.webp',""))
-      // console.log(image);
-      // return
+      if (!image?.length) {
+        toast.error("Please select a file.");
+        return;
+      }
+      console.log(image);
+      await startUpload(image, { alt: altText });
     } catch (error) {
       console.log(error);
     }
@@ -78,20 +67,18 @@ const UploadBlogImage = () => {
           <DialogTitle>Upload Image</DialogTitle>
           <DialogDescription>
             Please add in
-            <span className="font-medium text-black"> Alt Tag&apos;s </span>a
+            <span className="font-medium text-white"> Alt Tag&apos;s </span>a
             descriptive text for SEO, as it will boost the image to linking the
             image to website
           </DialogDescription>
         </DialogHeader>
 
         <Dropzone
-          multiple={true}
+          multiple={false}
           useFsAccessApi={true}
           onDrop={async (acceptedFiles) => {
-            let accptFiles: File[] = [];
-            // acceptedFiles.map((item) => accptFiles.push(item));
             setImage(acceptedFiles);
-            // setImagePreview(URL.createObjectURL(acceptedFiles[0]));
+            setImagePreview(URL.createObjectURL(acceptedFiles[0]));
           }}
         >
           {({ getRootProps, getInputProps, acceptedFiles }) => (
@@ -110,7 +97,7 @@ const UploadBlogImage = () => {
                       src={imagePreview}
                       width={720}
                       height={480}
-                      className="w-full h-full absolute z-[2] rounded-xl"
+                      className="w-full h-full object-cover absolute z-[2] rounded-xl"
                     />
                   </>
                 ) : null}

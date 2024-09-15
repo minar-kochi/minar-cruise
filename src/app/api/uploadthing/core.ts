@@ -13,7 +13,7 @@ const fileInputSchema = z.object({
 const f = createUploadthing();
 
 export const ourFileRouter = {
-  imageUploader: f({ image: { maxFileSize: "1MB",maxFileCount:150 } })
+  imageUploader: f({ image: { maxFileSize: "1MB" } })
     .input(fileInputSchema)
     .middleware(async ({ req, input }) => {
       const session = await auth();
