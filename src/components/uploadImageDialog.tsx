@@ -20,7 +20,7 @@ import Image from "next/image";
 const UploadBlogImage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // const { toast } = useToast();
-  const { startUpload, isUploading } = useUploadThing("imageUploader");
+  const { startUpload, isUploading,  } = useUploadThing("imageUploader");
 
   const [altText, setAltText] = useState("");
 
@@ -30,16 +30,28 @@ const UploadBlogImage = () => {
 
   async function handleSubmit() {
     try {
-      if (altText.length < 20) {
-        toast.error("Please enter something Larger than 20");
-        return;
-      }
-      if (!image?.length) {
-        toast.error("Please select a file.");
-        return;
-      }
       console.log(image);
-      await startUpload(image, { alt: altText });
+      // if (altText.length < 20) {
+      //   toast.error("Please enter something Larger than 20");
+      //   return;
+      // }
+      // if (!image?.length) {
+      //   toast.error("Please select a file.");
+      //   return;
+      // }
+      if (!image) {
+        return;
+      }
+      image.map(async (item) => {
+        // @ts-ignore
+        let d = item.name.replace(".webp", "") as string;
+      
+
+        await startUpload([item], { alt: d });
+      }); 
+      // alert(image[0].name.replace('.webp',""))
+      // console.log(image);
+      // return
     } catch (error) {
       console.log(error);
     }
@@ -74,11 +86,13 @@ const UploadBlogImage = () => {
         </DialogHeader>
 
         <Dropzone
-          multiple={false}
+          multiple={true}
           useFsAccessApi={true}
           onDrop={async (acceptedFiles) => {
+            let accptFiles: File[] = [];
+            // acceptedFiles.map((item) => accptFiles.push(item));
             setImage(acceptedFiles);
-            setImagePreview(URL.createObjectURL(acceptedFiles[0]));
+            // setImagePreview(URL.createObjectURL(acceptedFiles[0]));
           }}
         >
           {({ getRootProps, getInputProps, acceptedFiles }) => (
