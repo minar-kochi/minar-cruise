@@ -97,7 +97,7 @@ export default function PackageFormN({
           toast.error("payment failed");
         });
 
-        toast.success("intend created successfully");
+        // toast.success("intend created successfully");
       },
       onError(error, variables, context) {
         toast.dismiss();
@@ -237,6 +237,7 @@ export default function PackageFormN({
               type="submit"
               className="w-full text-white"
               variant={"default"}
+              disabled={isPending}
             >
               Pay Now
             </Button>
