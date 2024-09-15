@@ -20,7 +20,7 @@ import Image from "next/image";
 const UploadBlogImage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // const { toast } = useToast();
-  const { startUpload, isUploading,  } = useUploadThing("imageUploader");
+  const { startUpload, isUploading } = useUploadThing("imageUploader");
 
   const [altText, setAltText] = useState("");
 
@@ -44,11 +44,10 @@ const UploadBlogImage = () => {
       }
       image.map(async (item) => {
         // @ts-ignore
-        let d = item.name.replace(".webp", "") as string;
-      
+        let d = item.name.replace(/\.(webp|JPG|jpeg|png)$/, "") as string;
 
         await startUpload([item], { alt: d });
-      }); 
+      });
       // alert(image[0].name.replace('.webp',""))
       // console.log(image);
       // return
