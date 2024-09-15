@@ -25,8 +25,8 @@ export default function PackageImage({ data }: { data: TGetPackageById }) {
                 >
                   <div className="absolute w-full h-full  bg-gradient-to-b from-black/85 to-black/0 z-20" />
                   <Image
-                    alt={item.image.alt}
-                    src={item.image.url}
+                    alt={item?.image?.alt ?? "/assets/world-map.png"}
+                    src={item?.image?.url ?? "/assets/world-map.png"}
                     className="slider-product h-full  border  w-full  object-cover max-h-[calc(100d
                     vh-4rem)"
                     width={1280}

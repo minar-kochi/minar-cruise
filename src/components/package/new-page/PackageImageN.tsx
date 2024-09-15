@@ -21,8 +21,8 @@ export default function PackageImageN({ data }: { data: TGetPackageById }) {
                   className="embla__slide rounded-xl  overflow-hidden aspect-[14/9] relative "
                 >
                   <Image
-                    alt={item.image.alt}
-                    src={item.image.url}
+                    alt={item?.image?.alt ?? "/assets/world-map.png"}
+                    src={item?.image?.url ?? "/assets/world-map.png"}
                     className="slider-product  rounded-xl w-full h-full  object-cover  "
                     width={2148}
                     height={1596}

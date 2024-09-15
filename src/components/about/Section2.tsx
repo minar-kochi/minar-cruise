@@ -26,8 +26,8 @@ const Section2 = () => {
       </div>
       <div className="basis-[50%]  flex justify-end">
         <Image
-          src={images.fishnet.url}
-          alt={images.fishnet.alt}
+          src={images?.fishnet?.url ?? "/assets/world-map.png"}
+          alt={images?.fishnet?.alt || ""}
           width={1920}
           height={1080}
           className="rounded-lg lg:w-[450px]"

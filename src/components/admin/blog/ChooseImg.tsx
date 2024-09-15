@@ -54,13 +54,13 @@ export default function ChooseImg({ onSelectImage }: ChooseImgProps) {
                   <button
                     key={`${item.id}-choose-image-${i}`}
                     className="cursor-pointer max-w-[150px]  group-[.image-upload]:max-w-[350px] w-full"
-                    onClick={() => handleImageClick(item.id, item.url)}
+                    onClick={() => handleImageClick(item?.id, item?.url)}
                   >
                     <div className="w-[350px] h-[262px]">
                       <Image
                         className="rounded-md w-full h-full object-cover"
-                        src={item.url}
-                        alt={item.alt}
+                        src={item?.url ?? "/assets/world-map.png"}
+                        alt={item?.alt}
                         width={720}
                         height={480}
                       />

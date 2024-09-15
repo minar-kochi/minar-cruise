@@ -17,7 +17,7 @@ export default async function RecentBlogPosts() {
       {recentPosts.map((post, i) => (
         <div key={i} className="py-3 gap-4 rounded-xl flex">
           <Image
-            src={post.image?.url ?? "/"}
+            src={post.image?.url ?? "/assets/world-map.png"}
             alt="trial"
             width={80}
             height={80}
