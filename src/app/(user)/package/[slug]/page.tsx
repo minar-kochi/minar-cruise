@@ -183,10 +183,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
                 packageCategory={data.packageCategory}
               />
             ) : (
-              <ExclusivePackageEnquiryCard
-                adultPrice={data.adultPrice}
-                childPrice={data.childPrice}
-              />
+              <ExclusivePackageEnquiryCard/>
             )}
           </div>
 
