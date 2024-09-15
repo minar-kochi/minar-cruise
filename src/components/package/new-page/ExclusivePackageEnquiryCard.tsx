@@ -5,7 +5,7 @@ import ScheduleDatePicker from "@/components/admin/dashboard/Schedule/ScheduleDa
 import { InputLabel } from "@/components/cnWrapper/InputLabel";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import { filterDateFromCalender, RemoveTimeStampFromDate } from "@/lib/utils";
+import { cn, filterDateFromCalender, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   exclusivePackageValidator,
   TExclusivePackageValidator,
@@ -20,14 +20,13 @@ import { Button } from "@/components/ui/button";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
+import CalendarPopover from "./CalendarPopover";
 
 interface IExclusivePackageEnquiryCard {
-  adultPrice: Number;
-  childPrice: Number;
+  type?: "modal" | undefined;
 }
 export default function ExclusivePackageEnquiryCard({
-  adultPrice,
-  childPrice,
+  type,
 }: IExclusivePackageEnquiryCard) {
   const [date, setDate] = useState<Date>(new Date(Date.now()));
   const {
@@ -69,21 +68,39 @@ export default function ExclusivePackageEnquiryCard({
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col pt-3  items-center justify-center pb-5 w-full "
     >
-      <p className="font-semibold text-lg py-1  ">
+      <p className={cn("font-semibold text-lg py-1", {'text-xl font-bold pb-5': type ==='modal'})}>
         Enquire Cruise
         <span className="text-red-500 "> Exclusively </span>
       </p>
-      <Calendar
-        sizeMode="lg"
-        selected={new Date(watch("selectedDate"))}
-        onSelect={(date) => {
-          if (!date) return;
-          let Selected = RemoveTimeStampFromDate(date);
-          setValue("selectedDate", Selected);
-        }}
-        disabled={{ before: new Date(Date.now()) }}
-        mode="single"
-      />
+      {type === "modal" ? (
+        <CalendarPopover date={date}>
+          <Calendar
+            sizeMode="lg"
+            selected={new Date(watch("selectedDate"))}
+            onSelect={(date) => {
+              if (!date) return;
+              let Selected = RemoveTimeStampFromDate(date);
+              setDate(date)
+              setValue("selectedDate", Selected);
+            }}
+            disabled={{ before: new Date(Date.now()) }}
+            mode="single"
+          />
+        </CalendarPopover>
+      ) : (
+        <Calendar
+          sizeMode="lg"
+          selected={new Date(watch("selectedDate"))}
+          onSelect={(date) => {
+            if (!date) return;
+            let Selected = RemoveTimeStampFromDate(date);
+            setDate(date)
+            setValue("selectedDate", Selected);
+          }}
+          disabled={{ before: new Date(Date.now()) }}
+          mode="single"
+        />
+      )}
       <div className="w-[90%]  max-w-sm ">
         <InputLabel
           errorClassName="justify-start ml-1"

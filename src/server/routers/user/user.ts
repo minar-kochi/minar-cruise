@@ -10,7 +10,7 @@ import { onlineBookingFormValidator } from "@/lib/validators/onlineBookingValida
 import { publicProcedure, router } from "@/server/trpc";
 import { $Enums, PrismaClient, SCHEDULED_TIME } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { endOfMonth, startOfMonth } from "date-fns";
+import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { findPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
@@ -432,7 +432,15 @@ export const user = router({
             },
           });
         }
-        const emailCom = await render(ExclusiveBookingEmailToAdmin(input));
+        const emailCom = await render(
+          ExclusiveBookingEmailToAdmin({
+            ...input,
+            selectedDate: format(
+              new Date(input.selectedDate),
+              "iii dd-MMM-yyyy",
+            ),
+          }),
+        );
         await sendNodeMailerEmail({
           reactEmailComponent: emailCom,
           subject: "Exclusive booking Leads",

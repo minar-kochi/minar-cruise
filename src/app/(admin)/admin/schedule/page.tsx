@@ -34,7 +34,7 @@ export default async function ScheduleAdminPage() {
 
                   Hide this button if no schedules are present
               */}
-              <ScheduleDownloadButton type="scheduleWithoutBookingCount"/>
+              <ScheduleDownloadButton type="scheduleWithoutBookingCount" />
             </div>
           </div>
           <div
