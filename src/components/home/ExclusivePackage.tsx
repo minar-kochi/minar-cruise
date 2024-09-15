@@ -86,7 +86,7 @@ export default function ExclusivePackage() {
             </div>
             <div>
               {/* <BookNowBtn /> */}
-              <Link href="/booking/premium-cruise">
+              <Link href="/package/premium-cruise">
                 <Button size={"lg"} className="text-lg shadow-2xl">
                   Book Now
                 </Button>
