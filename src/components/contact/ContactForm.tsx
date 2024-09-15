@@ -44,7 +44,7 @@ const ContactForm = () => {
         as={"textarea"}
         className="h-[200px]"
       />
-      <Button>Submit</Button>
+      <Button className="max-w-[200px] w-full">Submit</Button>
     </form>
   );
 };
