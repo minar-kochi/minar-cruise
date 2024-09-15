@@ -33,7 +33,7 @@ const FooterContactCard = ({
       </div>
       <div className=" flex gap-4 w-full justify-start  md:max-w-fit">
         <Mail color="white" />
-        <Link href="info@cochincruiseline.com">
+        <Link href="mailto:info@cochincruiseline.com">
           <p className=" text-center  w-full text-white font-medium">{email}</p>
         </Link>
       </div>
