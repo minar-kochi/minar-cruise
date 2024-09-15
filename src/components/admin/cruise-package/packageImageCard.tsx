@@ -62,8 +62,8 @@ export default function PackageImageCard({
           {getPackageImageUseCaseToHumanized(dbImage.ImageUse)}
         </div>
         <Image
-          alt={dbImage.image.alt}
-          src={dbImage.image.url}
+          alt={dbImage?.image?.alt ?? "/assets/world-map.png"}
+          src={dbImage?.image?.url ?? "/assets/world-map.png"}
           width={350}
           height={350}
           className="w-full h-full rounded-md  "

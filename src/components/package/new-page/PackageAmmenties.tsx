@@ -77,8 +77,8 @@ export default function PackageAmmenties({ data }: { data: TGetPackageById }) {
           </Card>
           <div className="sm:basis-[30%] flex">
             <Image
-              src={data.packageImage[0].image.url}
-              alt={data.packageImage[0].image.alt}
+              src={data?.packageImage[0]?.image?.url ?? "/assets/world-map.png"}
+              alt={data?.packageImage[0]?.image?.alt ?? "packageImage"}
               width={1920}
               height={1080}
               className="max-md:hidden 2md:hidden lg:block object-cover w-[400px]"

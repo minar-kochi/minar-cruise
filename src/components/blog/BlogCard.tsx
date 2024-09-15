@@ -14,7 +14,7 @@ export default function BlogCard({ imgUrl, title, desc, link }: BlogcardType) {
     <div className="border-[1px] border-muted max-w-[350px] rounded-xl flex flex-col h-fit">
       <Link href={link} className="h-1/2 max-h-[250px]">
         <Image
-          src={imgUrl}
+          src={imgUrl ?? "/assets/world-map.png"}
           alt="ship"
           width={400}
           height={300}
