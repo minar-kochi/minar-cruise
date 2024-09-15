@@ -127,6 +127,7 @@ export async function CreateBookingForCreateSchedule({
     message: "success",
     order,
     phone: user.contact,
+    email: user.email,
   };
 
   return data;

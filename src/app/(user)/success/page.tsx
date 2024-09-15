@@ -17,14 +17,17 @@ interface ISearchParams {
     contact?: string;
   };
 }
+
+
+// interface ISearchParams {
+//   searchParams: { [key: string]: string | string[] | undefined };
+// }
+// export default async function SuccessPage(params: ISearchParams) {
+//   let contact = params.searchParams.contact
+//   const time = params.searchParams.time;
+
 export default async function SuccessPage(params: ISearchParams) {
-  if (
-    (params.searchParams.contact &&
-      !params.searchParams.contact.match(indianPhoneRegex)) ||
-    !params.searchParams.email
-  ) {
-    redirect("/");
-  }
+
 
   const time = params.searchParams.time;
 
@@ -51,7 +54,7 @@ export default async function SuccessPage(params: ISearchParams) {
           </BoxReveal>
           <BoxReveal boxColor="#caccd9">
             {time ? (
-              <p className="font-bold mt-3">See you at {time}</p>
+              <p className="font-bold mt-3">See you at {params.searchParams.time}</p>
             ) : (
               <p className="font-bold mt-6">
                 Thank You for choosing{" "}

@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import { cn } from "@/lib/utils";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { Minus, Plus, PlusIcon } from "lucide-react";
 import React from "react";
@@ -20,6 +21,7 @@ type TBookingFormCard = {
   setValues: UseFormSetValue<TOnlineBookingFormValidator>;
   watch: UseFormWatch<TOnlineBookingFormValidator>;
   errors: FieldErrors<TOnlineBookingFormValidator>;
+  className?: string
 };
 export default function BookingFormCard({
   register,
@@ -27,10 +29,11 @@ export default function BookingFormCard({
   setValues,
   watch,
   errors,
+  className
 }: TBookingFormCard) {
   //   watch("numOfAdults");
   return (
-    <div className="w-full flex items-center text-base font-normal justify-center flex-col ">
+    <div className={cn("w-full flex items-center text-base font-normal justify-center flex-col ", className)}>
       
       <div className="w-[90%]  max-w-sm ">
         <InputLabel

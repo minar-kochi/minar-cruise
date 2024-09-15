@@ -101,13 +101,15 @@ const BookingFormCard = ({
       async onSuccess(res) {
         toast.dismiss();
         const notes = res?.order.notes!;
+        
         const options = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEYID,
           name: notes?.name ?? undefined,
           currency: "INR",
           amount: res?.order?.amount,
           order_id: res?.order.id,
-          callback_url: absoluteUrl(`/success?email=${""}&time=${formData?.fromTime}`),
+          callback_url: absoluteUrl(`/success?email="${res.email}"&time="${formData?.fromTime}"`),
+
           prefill: {
             name: notes.name ?? undefined,
             phone: phoneNumberParser(

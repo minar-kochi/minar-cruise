@@ -28,8 +28,11 @@ export default function ScheduleDatePicker({
         components: {
           DayContent: (props) => CustomDayContentWithScheduleIndicator(props),
         },
-        sizeMode: "lg",
+        sizeMode: "lg_admin",
         mode: "single",
+        classNames: {
+          // day_disabled: ""
+        },
         selected: new Date(date),
         onSelect: async (selectedDate) => {
           if (!selectedDate) {
@@ -43,7 +46,7 @@ export default function ScheduleDatePicker({
               const data = await fetch({
                 ScheduleDate: DateStringFormated,
               });
-              console.log(data)
+              console.log(data);
               dispatch(setCurrentScheduleDate(data));
             }
           } catch (error) {
