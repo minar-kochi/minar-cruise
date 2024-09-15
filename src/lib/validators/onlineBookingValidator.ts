@@ -92,7 +92,18 @@ export const onlineBookingFormValidator = z
       message: "Should select at least a total of 25 seats (adult + child)",
       path: ["numOfAdults"],
     },
-  );
+  )
+  .refine(
+    (data)=>{
+     let totalCount = data.numOfAdults + data.numOfChildren + data.numOfBaby;
+     if(totalCount > 150) return false;
+     return true 
+    },
+    {
+      message: "Max seats allowed 150",
+      path:['numOfAdults']
+    }
+  )
 // .refine(
 //   (data) => {
 //     let totalCount = data.numOfAdults + data.numOfChildren;
