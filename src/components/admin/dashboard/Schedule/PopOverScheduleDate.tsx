@@ -27,16 +27,8 @@ export function PopOverDatePicker({
   const { isPopOverDateOpened } = useAppSelector((state) => state.schedule);
   const dispatch = useAppDispatch();
   return (
-    <Popover
-      // open={isPopOverDateOpened}
-      // onOpenChange={(open) => {
-      //   dispatch(setPopOverDateToggle(open));
-      // }}
-    >
-      <PopoverTrigger
-        // onClick={() => dispatch(setPopOverDateToggle(true))}
-        asChild
-      >
+    <Popover>
+      <PopoverTrigger asChild>
         <Button
           variant={"outline"}
           className={cn(
