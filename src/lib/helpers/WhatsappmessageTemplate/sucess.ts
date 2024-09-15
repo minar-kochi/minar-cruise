@@ -8,7 +8,7 @@ export const getSendAdminCreateNotificationMessage = ({
   time: string;
 }) => {
   return `
-    📅 New Schedule Created
+    📅 New Schedule Has been Created
     Package: ${packageName}
     Date: ${date}
     Time: ${time}

@@ -147,20 +147,45 @@ Action: Urgent review required. Check payment status and contact customer.
       `;
 };
 
+export const CreateScheduleAndBookingFailed = ({
+  orderId,
+  email,
+  contact,
+  packageTitle,
+  date,
+}: {
+  date: string;
+  orderId: string;
+  email: string;
+  contact: string;
+  packageTitle: string;
+  ScheduleTime: string;
+}) => {
+  return `
+ERROR ALERT: Failed to Create Schedule
+- Date of Schedule ${date}
+- Package : ${packageTitle}
+- Order ID: ${orderId}
+- Customer Email: ${email}
+- Customer Contact: ${contact}
+Action: Urgent review required. Check payment status and contact customer.
+      `;
+};
+
 export function sendBookingFailedNotification({
   customerEmail,
   customerName,
   dateAttempted,
   packageName,
   reason,
-  payId
+  payId,
 }: {
   packageName: string;
   customerName: string;
   customerEmail: string;
   dateAttempted: string;
   reason: string;
-  payId:string
+  payId: string;
 }) {
   const notificationMessage = `
   🚨 Booking Failed Alert

@@ -39,8 +39,10 @@ const page = () => {
           <ContactCard />
         </article>
         <ContactMessageCard />
+        <div className="mt-2">
+        <MapView />
+        </div>
       </Bounded>
-      <MapView />
     </div>
   );
 };

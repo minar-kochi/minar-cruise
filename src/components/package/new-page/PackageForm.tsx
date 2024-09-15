@@ -177,6 +177,7 @@ export default function PackageForm({
       >
         {/* {!isNext ? ( */}
         <BookingFormCalender
+          packageCategory={packageCategory}
           setFormDateValue={(value: string) => {
             setValue("selectedScheduleDate", value);
           }}

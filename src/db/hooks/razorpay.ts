@@ -23,11 +23,12 @@ import {
   getInvalidScheduleTemplateWhatsApp,
   SendAdminPackageConflictError,
 } from "@/lib/helpers/retrieveWhatsAppMessage";
+import { format } from "date-fns";
 /**
  * @TODO
  * Order paid
  * client email : [done]
- * admin Email : [onProgress]
+ * admin Email : [done]
  * client whatsapp : [done]
  * admin whatsapp : [done]
  */
@@ -37,21 +38,11 @@ export async function handleOrderPaidEvent({
 }: TOrderEvent<any>) {
   try {
     const order = orderBody.payload.order.entity;
-    // orderBody.payload.order.entity
+
     let event = getEvents(orderBody.payload.order.entity.notes.eventType);
     let ExistingNotes: TRazorPayEventsExistingSchedule = order.notes;
     let CreateNotes: TRazorPayEventsCreateSchedule = order.notes;
     let packageIds = ExistingNotes.packageId;
-
-    // let event = "schedule.exists"
-    /**
-     * check in query object to check whether the schedule already exists or to be created.
-     */
-
-    /**
-     * Add in check where to send the event to even if the state is to be created check whether the schedule exists,
-     * and if the
-     * */
 
     const packageDetails = await getPackageTimeAndDuration(packageIds);
     switch (event) {
@@ -66,7 +57,7 @@ export async function handleOrderPaidEvent({
           let message = getInvalidScheduleTemplateWhatsApp({
             ScheduleTime,
             packageTitle: packageDetails?.title ?? "",
-            date,
+            date: format(new Date(date), "iii dd-MM-yyyy"),
             adultCount: `${rest.adultCount}`,
             babyCount: `${rest.babyCount}`,
             childCount: `${rest.childCount}`,
@@ -164,21 +155,33 @@ export async function handleOrderPaidEvent({
       if (error.fatal) {
         console.log(error.message);
         await SendMessageViaWhatsapp({
-          recipientNumber: process.env.WHATS_APP_CONTACT!,
+          recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
           message: error.message,
-          error: true,
+          temp: {
+            allow: true,
+            FromEmail: process.env.NEXT_PUBLIC_ERROR_EMAIL!,
+            error: true,
+            subject:
+              "URGENT: Something went wrong while processing the request.",
+            Emailheading:
+              "URGENT: FATAL Server Error, Please Review and contact Customer.",
+          },
         });
         await updateEventToFailed({
           id: events.id,
           description: error.message,
           failedCountSetter: 6,
         });
-        return NextResponse.json({ success: false }, { status: 502 });
+        // FATAL ERROR DON'T TRY AGAIN NO POINT
+        return NextResponse.json({ success: false }, { status: 200 });
       }
+      // NOT FATAL, Could be Tried again
       await updateEventToFailed({ id: events.id, description: error.message });
+      // TRY AGAIN.
       return NextResponse.json({ success: false }, { status: 402 });
     }
     await updateEventToFailed({ id: events.id });
+    // TRY AGAIN.
     return NextResponse.json({ success: false }, { status: 406 });
   }
 }

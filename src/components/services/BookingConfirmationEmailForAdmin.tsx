@@ -55,7 +55,7 @@ export function BookingConfirmationEmailForAdmin({
       <Head />
       <Preview>{Subject}</Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans px-2">
+        <Body className="bg-white my-auto mx-auto font-sans px-6">
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[700px]">
             <Section className="my-[10px] ">
               <Img

@@ -3,7 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
-import { absoluteUrl, RemoveTimeStampFromDate } from "@/lib/utils";
+import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
@@ -20,12 +20,15 @@ import BookingFormCard from "./BookingFormCard";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { isStatusCustom } from "@/lib/validators/Schedules";
+import { isPackageStatusSunSet } from "@/lib/validators/Package";
 
 type TPackageForm = {
   packageId: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
   adultPrice: number;
   childPrice: number;
+  type?: 'modal' | undefined
 };
 
 export default function PackageFormN({
@@ -33,6 +36,7 @@ export default function PackageFormN({
   packageCategory,
   adultPrice,
   childPrice,
+  type
 }: TPackageForm) {
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
@@ -151,14 +155,14 @@ export default function PackageFormN({
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   return (
-    <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full">
-      <p className="font-semibold text-lg py-1  ">
+    <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full ">
+      <p className={cn("font-semibold text-lg py-1", {'pb-5 font-bold text-xl': type === 'modal'})}>
         Check Cruise
         <span className="text-red-500 "> Availability </span>
       </p>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col items-center justify-center"
+        className={cn("flex flex-col items-center justify-center")}
       >
         <BookingFormCalender
           setFormDateValue={(value: string) => {
@@ -168,32 +172,56 @@ export default function PackageFormN({
             setValue("scheduleId", value);
           }}
           packageId={packageId}
+          packageCategory={packageCategory} 
+          {...type === 'modal' && {popoverCalender : true , className: ""}} 
         />
-        <div className="flex flex-col items-center justify-center gap-2 mt-5">
+        <div className={cn("flex flex-col items-center justify-center gap-2 mt-5 ")}>
           <div className="flex gap-2">
-            <ColorRepresentationInfo className="bg-muted " title="Blocked" />
+            <div>
+              <ColorRepresentationInfo
+                className="bg-muted  "
+                title="Blocked"
+              />
+            </div>
+            <div
+              className={cn({
+                hidden: isPackageStatusSunSet({
+                  packageStatus: packageCategory,
+                }),
+              })}
+            >
+              <ColorRepresentationInfo
+                className={cn("bg-green-600 ")}
+                title="Available"
+              />
+            </div>
+          </div>
+          <div
+            className={cn({
+              hidden: isPackageStatusSunSet({
+                packageStatus: packageCategory,
+              }),
+            })}
+          >
             <ColorRepresentationInfo
-              className="bg-green-600 "
-              title="Available"
+              className={cn("bg-white border")}
+              title="Rest of the days Minimum 25 Pax"
             />
           </div>
-          <ColorRepresentationInfo
-            className="bg-white border "
-            title="Rest of the days Minimum 25 Pax"
-          />
         </div>
-        <div className="my-7 h-[1px] w-[100%] bg-gray-300" />
+        {type ? null : <div className="my-7 h-[1px] w-[100%] bg-gray-300" />}
         <BookingFormCard
           getValues={getValues}
           setValues={setValue}
           watch={watch}
           register={register}
           errors={errors}
+          className={cn("",{ "": type === 'modal'})}
         />
-        <div className="flex w-full mt-3 justify-evenly items-center">
+        <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
           <div>
-          <p className="text-xs">Total:</p>
-          <p className="text-2xl font-semibold ">₹{total}</p>
+            <p className="text-xs">Total:</p>
+            <p className="text-2xl font-semibold ">₹{total}</p>
           </div>
           <div className="w-[2px] h-12 bg-black"></div>
           <div>
@@ -202,7 +230,7 @@ export default function PackageFormN({
               className="w-full text-white"
               variant={"default"}
             >
-              Pay Now 
+              Pay Now
             </Button>
           </div>
         </div>

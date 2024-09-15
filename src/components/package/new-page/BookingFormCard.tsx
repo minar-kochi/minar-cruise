@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import { cn } from "@/lib/utils";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { Minus, Plus, PlusIcon } from "lucide-react";
 import React from "react";
@@ -20,6 +21,7 @@ type TBookingFormCard = {
   setValues: UseFormSetValue<TOnlineBookingFormValidator>;
   watch: UseFormWatch<TOnlineBookingFormValidator>;
   errors: FieldErrors<TOnlineBookingFormValidator>;
+  className?: string
 };
 export default function BookingFormCard({
   register,
@@ -27,10 +29,11 @@ export default function BookingFormCard({
   setValues,
   watch,
   errors,
+  className
 }: TBookingFormCard) {
   //   watch("numOfAdults");
   return (
-    <div className="w-full flex items-center text-base font-normal justify-center flex-col ">
+    <div className={cn("w-full flex items-center text-base font-normal justify-center flex-col ", className)}>
       
       <div className="w-[90%]  max-w-sm ">
         <InputLabel
@@ -86,7 +89,7 @@ export default function BookingFormCard({
               >
                 ADULT
               </Label>
-              <p className="text-[10px] mx-1.5">₹ 750</p>
+              <p className="text-[12px] font-bold mx-1.5">₹ 750</p>
             </div>
             <div className="max-w-[80px] bg-slate-800  rounded-full  w-full flex items-center justify-center">
               <button
@@ -135,7 +138,7 @@ export default function BookingFormCard({
               >
                 INFANT
               </Label>
-              <p className="text-[10px] mx-1.5">₹ 0</p>
+              <p className="text-[12px] font-bold mx-1.5">₹ 0</p>
             </div>
             <div className="max-w-[80px] bg-slate-800 rounded-full  w-full  flex items-center justify-center">
               <button
@@ -184,7 +187,7 @@ export default function BookingFormCard({
             >
               CHILD
             </Label>
-            <p className="text-[10px] mx-1.5">₹ 400</p>
+            <p className="text-[12px] font-bold mx-1.5">₹ 400</p>
           </div>
           <div className="max-w-[80px] bg-slate-800 rounded-full  ml-1  flex items-center justify-center">
             <button

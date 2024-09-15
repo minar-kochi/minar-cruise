@@ -17,6 +17,7 @@ import { CreateSchedule } from "../data/creator/schedule";
 import { SendMessageViaWhatsapp } from "@/lib/helpers/whatsapp";
 import {
   CreateBookingFailed,
+  CreateScheduleAndBookingFailed,
   getInvalidScheduleTemplateWhatsApp,
   sendWhatsAppBookingMessageToClient,
 } from "@/lib/helpers/retrieveWhatsAppMessage";
@@ -26,6 +27,7 @@ import EmailSendBookingConfirmation from "@/components/services/EmailService";
 import { getSendAdminCreateNotificationMessage } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
+import { format } from "date-fns";
 
 export async function handleCreateScheduleOrder({
   events,
@@ -88,10 +90,12 @@ export async function handleCreateScheduleOrder({
       throw new OrderPaidEventError({
         code: "FAILED_CREATING_SCHEDULE_TIME",
         fatality: {
-          message: CreateBookingFailed({
+          message: CreateScheduleAndBookingFailed({
             orderId: orderBody?.payload?.payment?.entity?.id,
             contact: paymentEntity.contact ?? "",
-            email: paymentEntity.email ?? email,
+            email: email,
+            date: format(date, 'iii dd-MM-yyyy'),
+            ScheduleTime:scheduleTimeForPackage,
             packageTitle: packageDetails?.title ?? "",
           }),
           fatal: true,
@@ -127,7 +131,7 @@ export async function handleCreateScheduleOrder({
                 create: {
                   name,
                   contact: paymentEntity.contact ?? null,
-                  email: paymentEntity.email ?? email,
+                  email: email,
                 },
               },
             },
@@ -157,7 +161,7 @@ export async function handleCreateScheduleOrder({
           message: CreateBookingFailed({
             orderId: orderBody?.payload?.payment?.entity?.id,
             contact: paymentEntity.contact ?? "",
-            email: paymentEntity.email ?? email,
+            email: email,
             packageTitle: packageDetails?.title ?? "",
           }),
         },
@@ -166,32 +170,33 @@ export async function handleCreateScheduleOrder({
 
     try {
       if (paymentEntity.contact) {
+        // send whats app sms to client about booking details.
         await SendMessageViaWhatsapp({
           recipientNumber: paymentEntity.contact,
           message: sendWhatsAppBookingMessageToClient({
             bookingId: booking.id,
             dateOfBooking: date,
-            email: paymentEntity.email ?? email,
+            email: email,
             name,
             packageName: packageDetails?.title ?? "--",
             time: packageDetails?.fromTime ?? "--",
           }),
-          error: false,
         });
       }
 
       await Promise.all([
+        // send Email to Client about new booking.
         sendConfirmationEmail({
-          recipientEmail: paymentEntity.email ?? email,
+          recipientEmail: process.env.ADMIN_EMAIL!,
           fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
-          emailSubject: "Minar: New Booking is Recieved",
+          emailSubject: "Minar: New Booking Recieved",
           emailComponent: BookingConfirmationEmailForAdmin({
             Name: name,
             adultCount: adultCount,
             babyCount: babyCount,
             BookingDate: RemoveTimeStampFromDate(booking.createdAt),
             childCount,
-            email: paymentEntity.email ?? email,
+            email: email,
             phone: paymentEntity.contact ?? "",
             BookingId: booking.id.slice(8),
             packageTitle: packageDetails?.title ?? "",
@@ -201,30 +206,35 @@ export async function handleCreateScheduleOrder({
         }),
         // Send Email to Client
         sendConfirmationEmail({
-          recipientEmail: paymentEntity.email ?? email,
-          fromEmail: process.env.BUSINESS_EMAIL!,
+          recipientEmail: email,
+          fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
           emailSubject: "Minar: Your Booking has Confirmed",
           emailComponent: EmailSendBookingConfirmation({
             duration: `${packageDetails?.duration ?? "-"}`,
             packageTitle: `${packageDetails?.title ?? "-"} `,
             status: "Confirmed",
-            totalAmount: order.amount_paid,
+            totalAmount: order.amount_paid / 100,
             totalCount: adultCount + babyCount + childCount,
             BookingId: booking.id.slice(8),
             customerName: name,
             date,
           }),
         }),
-
-        //Send admin Notification to whats appp
+        //Send admin Create Notification to whats app
         SendMessageViaWhatsapp({
-          recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
+          recipientNumber: process.env.WHATS_APP_CONTACT!,
           message: getSendAdminCreateNotificationMessage({
             date,
             packageName: `${packageDetails?.title ?? "-"} `,
             time: `${packageDetails?.fromTime}`,
           }),
-          error: false,
+          temp: {
+            allow: true,
+            FromEmail: process.env.NEXT_PUBLIC_INFO_EMAIL!,
+            error: false,
+            Emailheading: "New Schedule has been placed",
+            subject: "INFO: New Schedule has been placed",
+          },
         }),
       ]);
     } catch (error) {
@@ -240,15 +250,22 @@ export async function handleCreateScheduleOrder({
         await SendMessageViaWhatsapp({
           recipientNumber: process.env.NEXT_PUBLIC_CONTACT!,
           message: error.message,
-          error: true,
+          temp: {
+            allow: true,
+            FromEmail: process.env.NEXT_PUBLIC_ERROR_EMAIL!,
+            error: true,
+            subject:
+              "URGENT: Something went wrong while processing the request.",
+            Emailheading:
+              "URGENT: FATAL Server Error, Please Review and contact Customer.",
+          },
         });
         await updateEventToFailed({
           id: events.id,
           description: error.message,
           failedCountSetter: 6,
         });
-
-        return NextResponse.json({ success: false }, { status: 400 });
+        return NextResponse.json({ success: false }, { status: 200 });
       }
       await updateEventToFailed({ id: events.id, description: error.message });
       return NextResponse.json({ success: false }, { status: 400 });

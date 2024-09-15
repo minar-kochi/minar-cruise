@@ -10,7 +10,7 @@ import { onlineBookingFormValidator } from "@/lib/validators/onlineBookingValida
 import { publicProcedure, router } from "@/server/trpc";
 import { $Enums, PrismaClient, SCHEDULED_TIME } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { endOfMonth, startOfMonth } from "date-fns";
+import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { findPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
@@ -19,6 +19,10 @@ import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC"
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
+import { exclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
+import { sendNodeMailerEmail } from "@/lib/helpers/resend";
+import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
+import { render } from "@react-email/components";
 
 export type QueryObj = [
   { id: string | undefined },
@@ -38,38 +42,31 @@ type TScheduleData = {
 
 export const user = router({
   createSubscription: publicProcedure
-  .input(z.object({
-    name: z.string().min(3,{
-      message: "Min 3 letter req."
-    }),
-    email: z.string().email({ message: "Invalid email"}),
-  }))
-  .mutation(async({input:{email,name}})=>{
+    .input(
+      z.object({
+        name: z.string().min(3, {
+          message: "Min 3 letter req.",
+        }),
+        email: z.string().email({ message: "Invalid email" }),
+      }),
+    )
+    .mutation(async ({ input: { email, name } }) => {
+      try {
+        const data = await db.user.create({
+          data: {
+            name,
+            email,
+          },
+        });
 
-    if(!email) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message:"Email cannot be Empty"
-      })
-    }
-
-    if(!name) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Name cannot be empty"
-      })
-    }
-
-    const data = await db.user.create({
-      data: {
-        name,
-        email
+        return data.id;
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong",
+        });
       }
-    })
-
-    return data.id
-  })
-  ,
+    }),
   getSchedulesByPackageIdAndDate: publicProcedure
     .input(
       z.object({
@@ -410,5 +407,52 @@ export const user = router({
       //             });
       //           }
       // }
+    }),
+
+  sendExclusiveBookingMessage: publicProcedure
+    .input(exclusivePackageValidator)
+    .mutation(async ({ ctx, input }) => {
+      const { email, name, phone } = input;
+      /**
+       * if user exists dont create. or else create the user into the database.
+       */
+      try {
+        const isUserExists = await db.user.findFirst({
+          where: {
+            email,
+          },
+        });
+
+        if (!isUserExists?.id) {
+          await db.user.create({
+            data: {
+              email,
+              name,
+              contact: phone,
+            },
+          });
+        }
+        const emailCom = await render(
+          ExclusiveBookingEmailToAdmin({
+            ...input,
+            selectedDate: format(
+              new Date(input.selectedDate),
+              "iii dd-MMM-yyyy",
+            ),
+          }),
+        );
+        await sendNodeMailerEmail({
+          reactEmailComponent: emailCom,
+          subject: "Exclusive booking Leads",
+          fromEmail: process.env.NEXT_PUBLIC_LEADS_EMAIL,
+          toEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL!,
+        });
+        return true;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
     }),
 });
