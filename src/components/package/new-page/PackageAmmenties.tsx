@@ -8,7 +8,7 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { CheckCircle2 } from "lucide-react";
 import React from "react";
-import PackageFormN from "./PackageFormN";
+import PackageFormN from "./PackageForm";
 import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { PackageCarousel } from "@/components/packages/PackageCarousel";
