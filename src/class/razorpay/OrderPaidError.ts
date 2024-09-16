@@ -1,6 +1,11 @@
 import { db } from "@/db";
 
-export type OrderPaidEventErrorCode = "UNKNOWN_ERROR" | "NOT_IMPLIMENTED" | "BOOKING_CREATE_FAILED" | "SCHEDULE_TIME_NOT_FOUND" | "FAILED_CREATING_SCHEDULE_TIME";;
+export type OrderPaidEventErrorCode =
+  | "UNKNOWN_ERROR"
+  | "NOT_IMPLIMENTED"
+  | "BOOKING_CREATE_FAILED"
+  | "SCHEDULE_TIME_NOT_FOUND"
+  | "FAILED_CREATING_SCHEDULE_TIME";
 
 export class OrderPaidEventError extends Error {
   readonly code: OrderPaidEventErrorCode;
@@ -20,8 +25,6 @@ export class OrderPaidEventError extends Error {
     super();
     this.code = code;
     this.fatal = fatal;
-    this.message = message
+    this.message = message;
   }
 }
-
-

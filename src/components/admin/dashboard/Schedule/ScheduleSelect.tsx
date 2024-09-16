@@ -35,7 +35,7 @@ export default function ScheduleSelect({ type }: TScheduleSelector) {
       <SelectTrigger value={"false"} className="w-full">
         <SelectValue placeholder={"Select a Package"} />
       </SelectTrigger>
-      <SelectContent sticky="always" >
+      <SelectContent sticky="always">
         <SelectItem value={"false"} key={`select-item-empty`}>
           <div className="flex items-center gap-1">Select a Package</div>
         </SelectItem>

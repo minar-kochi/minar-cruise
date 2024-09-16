@@ -89,15 +89,17 @@
 }
 
 
-.scroll-hidden::-webkit-scrollbar {
-  display: none;
+.xscroll::-webkit-scrollbar {
+  width: 0rem;
+  height: 0rem;
+}
+.scrollbar-w-2::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
 }
 
+
 /* Hide scrollbar for IE, Edge and Firefox */
-.scroll-hidden {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
 
 
 .embla__slide:has(.slider-product) {

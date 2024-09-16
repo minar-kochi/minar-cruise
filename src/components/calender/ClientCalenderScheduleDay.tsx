@@ -8,14 +8,14 @@ interface IClientCalenderScheduleDay {
   props: DayProps;
   AvailableDate?: string[];
   blockedDate?: string[];
-  packageCategory?: $Enums.PACKAGE_CATEGORY
+  packageCategory?: $Enums.PACKAGE_CATEGORY;
 }
 
 export default function ClientCalenderScheduleDay({
   AvailableDate,
   props,
   blockedDate,
-  packageCategory
+  packageCategory,
 }: IClientCalenderScheduleDay) {
   const { date } = props;
 
@@ -34,8 +34,8 @@ export default function ClientCalenderScheduleDay({
         "bg-green-500 rounded-md  relative z-0 w-full h-full flex items-center justify-center text-white font-bold ":
           isAvailableDateFound !== -1 &&
           AvailableDate &&
-          AvailableDate[isAvailableDateFound]
-          && packageCategory !== 'SUNSET'
+          AvailableDate[isAvailableDateFound] &&
+          packageCategory !== "SUNSET",
       })}
     >
       {/* <div className="absolute w-full -bottom-[3px] left-0 items-center  justify-center flex gap-1">

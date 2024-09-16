@@ -22,15 +22,14 @@ export const blog = router({
       try {
         const isImageExists = await db.image.count({
           where: {
-            id: imageId
-          }
-        })
-        if(!isImageExists){
+            id: imageId,
+          },
+        });
+        if (!isImageExists) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Didn't find the images in Gallery",
           });
-
         }
         //write your logic here.
         const data = await db.blog.create({

@@ -35,7 +35,7 @@ interface IPackageCard {
   className?: string;
   amenities: TAmenitiesGetPackageCardDetails;
   packageCategory: PACKAGE_CATEGORY;
-  slug:string
+  slug: string;
 }
 const PackageCard = async ({
   adultPrice,

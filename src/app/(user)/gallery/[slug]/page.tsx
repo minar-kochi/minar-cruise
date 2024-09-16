@@ -1,6 +1,6 @@
-import { Galleries, TGalleries, TGallery } from "@/Types/type";
+import { Galleries, TGalleries } from "@/Types/type";
 import GalleryCard from "@/components/gallery/GalleryCard";
-import { notFound, redirect } from "next/navigation";
+import {  redirect } from "next/navigation";
 
 interface GalleryProps {
   params: {

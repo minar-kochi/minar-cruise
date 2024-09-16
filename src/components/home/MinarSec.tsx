@@ -16,7 +16,7 @@ const MinarSec = () => {
               <BioTextAnimation />
             </div>
             <p className="font-sans tracking-wide leading-7  text-left">
-              Minar Cruise is India&apos;s largest private luxurious yoat
+              Minar Cruise is India&apos;s largest private luxurious yacht
               registered under IRS (Indian Register of Shipping). It&apos;s a
               sea-going vessel, perfect for unforgettable experiences on the
               Arabian Sea. Our beautiful cruise ship features three amazing

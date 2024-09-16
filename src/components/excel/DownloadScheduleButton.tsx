@@ -45,7 +45,10 @@ import {
   createExcelSheetWithoutBookingCount,
   TScheduleWithoutBookingCount,
 } from "./createExcelSheetWithoutBookingCount";
-import { createExcelSheetWithBookingCount, TScheduleWithBookingCount } from "./createExcelSheetWithBookingCount";
+import {
+  createExcelSheetWithBookingCount,
+  TScheduleWithBookingCount,
+} from "./createExcelSheetWithBookingCount";
 
 interface IDownloadScheduleTable {
   state: TDateRange;
@@ -84,12 +87,11 @@ export default function DownloadScheduleTable({
             TableName: "Schedules",
             TableRowData: scheduleData as TScheduleWithoutBookingCount,
           })
-          : await createExcelSheetWithBookingCount({
+        : await createExcelSheetWithBookingCount({
             TableName: "Schedules",
-          TableRowData: scheduleData as TScheduleWithBookingCount
-        }) 
-          // console.log(scheduleData)
-          
+            TableRowData: scheduleData as TScheduleWithBookingCount,
+          });
+      // console.log(scheduleData)
 
       toast.dismiss();
     } catch (error) {

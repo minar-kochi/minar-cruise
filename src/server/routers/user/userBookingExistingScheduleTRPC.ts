@@ -100,19 +100,18 @@ export async function CreateBookingForExistingSchedule({
     notes,
   };
   try {
-    
     const order = await $RazorPay.orders.create(options);
 
     const data = {
       message: "success",
       order,
       phone: user.contact,
-      email:user.email
+      email: user.email,
     };
 
     return data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message:

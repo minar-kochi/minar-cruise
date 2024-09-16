@@ -6,7 +6,7 @@ import { Suspense, useState } from "react";
 
 export default function ImageUpload() {
   return (
-    <Suspense fallback={<LoadingState/>}>
+    <Suspense fallback={<LoadingState />}>
       <HeaderTitleDescription
         title="Upload Gallery"
         description="Upload the image to your Storage and use Around package Images multiple times."
@@ -17,7 +17,7 @@ export default function ImageUpload() {
         </div>
       </div>
       <div className="group image-upload p-4">
-        <ChooseImg />
+        <ChooseImg  showLink={true} />
       </div>
     </Suspense>
   );

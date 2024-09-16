@@ -10,7 +10,7 @@ interface GradualSpacingProps {
   delayMultiple?: number;
   framerProps?: Variants;
   className?: string;
-  parentClassName?: string
+  parentClassName?: string;
 }
 
 export default function GradualSpacing({
@@ -22,7 +22,7 @@ export default function GradualSpacing({
     visible: { opacity: 1, x: 0 },
   },
   className,
-  parentClassName
+  parentClassName,
 }: GradualSpacingProps) {
   return (
     <div className={cn("flex space-x-1", parentClassName)}>

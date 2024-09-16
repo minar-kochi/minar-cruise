@@ -88,7 +88,9 @@ export default function ExclusivePackageEnquiryCard({
             <DialogDescription className="text-md">
               Our representative will contact you soon !
             </DialogDescription>
-            <DialogDescription className="text-md">Thank you for choosing Minar</DialogDescription>
+            <DialogDescription className="text-md">
+              Thank you for choosing Minar
+            </DialogDescription>
           </DialogHeader>
         </DialogContent>
       </Dialog>

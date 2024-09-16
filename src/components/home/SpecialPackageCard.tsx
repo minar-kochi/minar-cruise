@@ -38,7 +38,9 @@ export default function SpecialPackageCard({
         className="w-full h-full object-cover"
       />
       <div className="absolute bottom-5 left-4">
-        <h2 className="font-medium text-white text-lg hover:text-red-100">{title}</h2>
+        <h2 className="font-medium text-white text-lg hover:text-red-100">
+          {title}
+        </h2>
 
         <BookNowBtn
           className="py-2 w-full"

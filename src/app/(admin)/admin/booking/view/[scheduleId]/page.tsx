@@ -15,21 +15,13 @@ import {
 import { format } from "date-fns";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, EllipsisVertical } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { ChevronLeft, EllipsisVertical } from "lucide-react";
 import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
 import CustomLinkButton from "@/components/custom/CustomLinkButton";
-import { Modal } from "../../@modal/(.)change/[bookingId]/modal";
-import { Dialog } from "@/components/ui/dialog";
-import MoveAllSchedulesButton from "@/components/admin/booking/MoveAllBookingsButton";
 import MoveAllBookingsButton from "@/components/admin/booking/MoveAllBookingsButton";
 import { booking } from "@/server/routers/admin/booking";
-import DownloadTable from "@/components/excel/DownloadBookingButton";
 import DownloadBookingButton from "@/components/excel/DownloadBookingButton";
 
 interface IViewBooking {
@@ -53,13 +45,18 @@ export default async function ViewBooking({
       <h2 className="font-bold text-3xl text-center py-5">Booking data</h2>
       <div className="flex max-sm:flex-col max-sm:gap-3 justify-between p-3">
         <div className="flex justify-between">
-          <CustomLinkButton
-            icon={<ArrowLeft size={20} />}
-            href={`/admin/booking`}
-            label="Back"
-            className="flex gap-2 justify-between"
-          />
-          <DownloadBookingButton tableData={bookings} />
+          <div className="flex gap-2 items-center justify-center">
+            <CustomLinkButton
+              icon={<ChevronLeft size={20} />}
+              href={`/admin/booking`}
+              label="Back"
+              props={{
+                variant: "secondary"
+              }}
+              className="flex pl-2 justify-between"
+            />
+            <DownloadBookingButton tableData={bookings} />
+          </div>
         </div>
         <div className="flex flex-wrap max-sm:justify-between max-sm:w-full sm:gap-5">
           <RouterRefreshButton className="border" />
@@ -81,40 +78,40 @@ export default async function ViewBooking({
       <Table className="border">
         <TableHeader>
           <TableRow className="text-center">
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
               Id
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
               Name
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-0">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-0">
               Date of Booking
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
               Package
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Advance Paid
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Total Bill
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
               Phone
             </TableHead>
-             <TableHead className="hidden max-sm:flex items-center align-bottom border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
+            <TableHead className="hidden max-sm:flex items-center align-bottom border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
               Count
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Adults
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Child
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               kids
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Description
             </TableHead>
             <TableHead></TableHead>

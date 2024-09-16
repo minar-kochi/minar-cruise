@@ -1,21 +1,25 @@
-import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
-import { findBookingById, findScheduleById } from "@/db/data/dto/schedule";
-import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import {
+  BookingSchedulesTotalCounts,
+  BookingTotalCount,
+} from "@/db/data/dto/booking";
+import {
+  findBookingById,
+  findScheduleById,
+  findScheduleToAndFrom,
+} from "@/db/data/dto/schedule";
 import { combineDateWithSplitedTime, sleep, splitTimeColon } from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
 import {
   offlineBookingFormSchema,
-  TOfflineBookingFormSchema,
   updateOfflineBookingSchema,
 } from "@/lib/validators/offlineBookingValidator";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
-import { error } from "console";
 import { revalidatePath } from "next/cache";
-import { string, z } from "zod";
+import {  z } from "zod";
 
 export const booking = router({
   deleteBooking: AdminProcedure.input(
@@ -23,18 +27,28 @@ export const booking = router({
       bookingId: z.string(),
     }),
   ).mutation(async ({ input: { bookingId } }) => {
-    const bookingExists = await findBookingById(bookingId);
-    if (!bookingExists) {
+    try {
+      const bookingExists = await findBookingById(bookingId);
+      if (!bookingExists) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "booking id doesn't exists",
+        });
+      }
+      await db.booking.delete({
+        where: {
+          id: bookingId,
+        },
+      });
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
       throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "booking id doesn't exists",
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went wrong",
       });
     }
-    const deleteBooking = await db.booking.delete({
-      where: {
-        id: bookingId,
-      },
-    });
   }),
   transferAllBookingsToASpecificSchedule: AdminProcedure.input(
     z.object({
@@ -71,23 +85,15 @@ export const booking = router({
 
       // checks if fromSchedules exists in db
 
-      const fromScheduleExists = findScheduleById(fromScheduleId);
+      const scheduleFound = await findScheduleToAndFrom(
+        fromScheduleId,
+        toScheduleId,
+      );
 
-      if (!fromScheduleExists) {
+      if (!scheduleFound) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Could not find schedule id",
-        });
-      }
-
-      // checks if toSchedules exists in db
-
-      const toScheduleExists = findScheduleById(toScheduleId);
-
-      if (!toScheduleExists) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Could not find schedule id",
+          message: "Schedules not found.",
         });
       }
 
@@ -97,19 +103,13 @@ export const booking = router({
 
       // checks the count of all fromSchedules booking
 
-      const AllCountOfFromSchedule = await db.booking.findMany({
-        where: {
-          scheduleId: fromScheduleId,
-        },
-        select: {
-          totalBooking: true,
-        },
-      });
+      const AllCountOfFromSchedule =
+        await BookingSchedulesTotalCounts(fromScheduleId);
 
-      if (!AllCountOfFromSchedule) {
+      if (!AllCountOfFromSchedule || !AllCountOfFromSchedule?.length) {
         throw new TRPCError({
           code: "BAD_GATEWAY",
-          message: "Couldn't get count of all bookings from schedule",
+          message: "Schedule to move doesn't have a booking",
         });
       }
 
@@ -165,12 +165,12 @@ export const booking = router({
           message: "Cannot fill seats greater than max capacity",
         });
       }
-
       if (totalSeatsOfFromSchedules + totalSeatsOfToSchedules > MAX_BOAT_SEAT) {
+        let exceededCap =
+          totalSeatsOfFromSchedules + totalSeatsOfToSchedules - MAX_BOAT_SEAT;
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message:
-            "Cannot move bookings, Total seat count may exceed maximum capacity",
+          message: `Cannot move bookings, Total seat count may exceed maximum capacity by ${exceededCap}`,
         });
       }
 
@@ -235,14 +235,10 @@ export const booking = router({
         //-----------------Checks if given ID exists in db ENDS-----------------------------
 
         //-----------------CHecking Count of the given booking id STARTS-----------------------------
-        const totalSeatsOfBooking = await db.booking.findUnique({
-          where: {
-            id: idOfBookingToBeUpdated,
-          },
-          select: {
-            totalBooking: true,
-          },
-        });
+
+        const totalSeatsOfBooking = await BookingTotalCount(
+          idOfBookingToBeUpdated,
+        );
 
         if (!totalSeatsOfBooking) {
           throw new TRPCError({
@@ -254,18 +250,9 @@ export const booking = router({
         //-----------------CHecking Count of the given booking id END-----------------------------
 
         //-----------------CHecking Count of the given scheduleID STARTS-----------------------------
-        const unformattedScheduleCount = await db.schedule.findUnique({
-          where: {
-            id: toScheduleId,
-          },
-          select: {
-            Booking: {
-              select: {
-                totalBooking: true,
-              },
-            },
-          },
-        });
+
+        const unformattedScheduleCount =
+          await BookingSchedulesTotalCounts(toScheduleId);
 
         if (!unformattedScheduleCount) {
           throw new TRPCError({
@@ -274,7 +261,7 @@ export const booking = router({
           });
         }
 
-        let totalCountOfToScheduleId = unformattedScheduleCount.Booking.reduce(
+        let totalCountOfToScheduleId = unformattedScheduleCount.reduce(
           (total, booking) => total + booking.totalBooking,
           0,
         );
@@ -558,12 +545,6 @@ export const booking = router({
        *
        */
       try {
-        if (!adultCount) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Couldnt find any schedule",
-          });
-        }
         const schedule = await db.schedule.findUnique({
           where: {
             id: scheduleId,

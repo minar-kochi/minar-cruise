@@ -25,7 +25,7 @@ export const onlineBookingFormValidator = z
       .min(3, "Name should have min 3 letters")
       .max(25, "Name should be maximum of 25 letters"),
     email: z.string().email({
-      message: "Please Enter a Valid Email"
+      message: "Please Enter a Valid Email",
     }),
     phone: z
       .string()
@@ -33,8 +33,7 @@ export const onlineBookingFormValidator = z
         message: "Phone number must be at least 10 digits long if provided",
       })
       .refine((num) => num === "" || indianPhoneRegex.test(num), {
-        message:
-          "Please Enter a valid Indian Mobile Number",
+        message: "Please Enter a valid Indian Mobile Number",
       })
       .optional(),
     numOfAdults: z
@@ -94,16 +93,16 @@ export const onlineBookingFormValidator = z
     },
   )
   .refine(
-    (data)=>{
-     let totalCount = data.numOfAdults + data.numOfChildren + data.numOfBaby;
-     if(totalCount > 150) return false;
-     return true 
+    (data) => {
+      let totalCount = data.numOfAdults + data.numOfChildren + data.numOfBaby;
+      if (totalCount > 150) return false;
+      return true;
     },
     {
       message: "Max seats allowed 150",
-      path:['numOfAdults']
-    }
-  )
+      path: ["numOfAdults"],
+    },
+  );
 // .refine(
 //   (data) => {
 //     let totalCount = data.numOfAdults + data.numOfChildren;

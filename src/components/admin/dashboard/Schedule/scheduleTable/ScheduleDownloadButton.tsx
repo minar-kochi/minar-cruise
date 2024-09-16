@@ -21,10 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import toast from "react-hot-toast";
 import DownloadScheduleTable from "@/components/excel/DownloadScheduleButton";
-// import { DateRange } from "react-day-picker";
 
 interface IScheduleDownloadButton {
   className?: string;
@@ -47,7 +44,7 @@ export default function ScheduleDownloadButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Download</Button>
+        <Button variant={"outline"}>Download</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

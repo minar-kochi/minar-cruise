@@ -19,14 +19,14 @@ interface IUserBookingDateSelector {
     adult: number;
   };
   packageCategory: $Enums.PACKAGE_CATEGORY;
-  className?: string
+  className?: string;
 }
 export default function UserBookingDateSelector({
   packageTitle,
   packageId,
   packagePrice,
   packageCategory,
-  className
+  className,
 }: IUserBookingDateSelector) {
   const [date, setDate] = useState<Date>(new Date(Date.now()));
   const [month, setMonth] = useState<string>(
@@ -53,7 +53,12 @@ export default function UserBookingDateSelector({
   }));
 
   return (
-    <div className={cn("flex flex-col items-center justify-center shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4 gap-4 rounded-2xl", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4 gap-4 rounded-2xl",
+        className,
+      )}
+    >
       {!isNextSlide ? (
         <>
           <h1 className="text-2xl font-bold text-center">
@@ -71,7 +76,6 @@ export default function UserBookingDateSelector({
                   AvailableDate: availableDateArray,
                   props,
                 }),
-                
             }}
             selected={date}
             onSelect={(date) => {

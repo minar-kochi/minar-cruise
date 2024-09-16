@@ -19,8 +19,6 @@ import ColorRepresentationInfo from "./ColorRepresentationInfo";
 import BookingFormCard from "./BookingFormCard";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { isStatusCustom } from "@/lib/validators/Schedules";
 import { isPackageStatusSunSet } from "@/lib/validators/Package";
 import { format } from "date-fns";
 

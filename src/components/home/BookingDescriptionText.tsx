@@ -34,7 +34,13 @@ function BookingLabel({
   return (
     <div className="lg:flex lg:gap-10 xl:gap-12">
       <div className="flex items-center gap-4 mx-4 sm:mx-8 my-4">
-        <Image alt="cruise" src={Logo} width={400} height={400 } className="w-12 h-12" />
+        <Image
+          alt="cruise"
+          src={Logo}
+          width={400}
+          height={400}
+          className="w-12 h-12"
+        />
         <div className="">
           <h2 className="text-md md:text-lg font-semibold ">{heading}</h2>
           <p className="text-xs md:text-md ">{desc}</p>

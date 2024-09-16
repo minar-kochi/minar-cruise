@@ -4,13 +4,16 @@ import { $Enums } from "@prisma/client";
 import { format } from "date-fns";
 import ExcelJS from "exceljs";
 
-export type TScheduleWithoutBookingCount = (Omit<TGetSchedulesByDateRangeExcludingNull[number], "day"> & {
+export type TScheduleWithoutBookingCount = (Omit<
+  TGetSchedulesByDateRangeExcludingNull[number],
+  "day"
+> & {
   day: string;
 })[];
 
 type TCreateExcelTable = {
   TableName: string;
-  TableRowData: TScheduleWithoutBookingCount
+  TableRowData: TScheduleWithoutBookingCount;
 };
 export async function createExcelSheetWithoutBookingCount({
   TableName,
@@ -36,10 +39,8 @@ export async function createExcelSheetWithoutBookingCount({
     },
   });
 
-  
-  
   table.columns = [
-    { 
+    {
       header: "N0.",
       key: "num",
       width: 8,
@@ -125,7 +126,6 @@ export async function createExcelSheetWithoutBookingCount({
     bold: true,
   };
 
-
   TableRowData.map((item, i) => {
     const { Package, day, schedulePackage, scheduleStatus, fromTime, toTime } =
       item;
@@ -141,34 +141,32 @@ export async function createExcelSheetWithoutBookingCount({
         scheduleToTime: toTime,
       },
     });
-    const fromToTime = data.fromTime + " - " + data.toTime
-    
+    const fromToTime = data.fromTime + " - " + data.toTime;
+
     table.addRow({
-      num: i+1  ,
+      num: i + 1,
       date: date,
       day: dayOfWeek,
-      duration: fromToTime ,
-      package: Package?.title ,
+      duration: fromToTime,
+      package: Package?.title,
       type: schedulePackage,
       status: scheduleStatus,
     });
   });
 
- 
   const statusColumn = await table.getColumn(7);
-  statusColumn.eachCell((cell)=> {
-    const cellAddress = table.getCell(cell.address)
-    const cellValue  = cellAddress.value;
-    
-    if(cellValue === "BLOCKED"){
+  statusColumn.eachCell((cell) => {
+    const cellAddress = table.getCell(cell.address);
+    const cellValue = cellAddress.value;
+
+    if (cellValue === "BLOCKED") {
       cellAddress.fill = {
         type: "pattern",
         pattern: "lightGray",
-        fgColor: {argb: "FF0000"} 
-      }
+        fgColor: { argb: "FF0000" },
+      };
     }
-  })
-
+  });
 
   workbook.xlsx.writeBuffer().then((data: any) => {
     const blob = new Blob([data], {
