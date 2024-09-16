@@ -81,7 +81,7 @@ export default function PackageAmmenties({ data }: { data: TGetPackageById }) {
               alt={data?.packageImage[0]?.image?.alt ?? "packageImage"}
               width={1920}
               height={1080}
-              className="max-md:hidden 2md:hidden lg:block object-cover w-[400px]"
+              className="max-md:hidden  2md:hidden aspect-video lg:block object-cover max-w-sm w-full"
             />
           </div>
         </div>
