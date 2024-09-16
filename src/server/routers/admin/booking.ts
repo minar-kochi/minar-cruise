@@ -19,7 +19,7 @@ import {
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { revalidatePath } from "next/cache";
-import {  z } from "zod";
+import { z } from "zod";
 
 export const booking = router({
   deleteBooking: AdminProcedure.input(
