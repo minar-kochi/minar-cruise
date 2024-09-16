@@ -1,29 +1,15 @@
 import Image from "next/image";
+
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ArrowRight,
   Baby,
-  CameraIcon,
   Check,
-  Clock,
-  Heart,
-  Star,
-  TicketIcon,
   UserRound,
 } from "lucide-react";
-import { Button, buttonVariants } from "../ui/button";
+import { Button,  } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { TAmenitiesGetPackageCardDetails } from "@/db/data/dto/package";
 import Link from "next/link";
-import PackageForm from "../package/new-page/PackageForm";
 import { PACKAGE_CATEGORY } from "@prisma/client";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 
 interface IPackageCard {
   url: string;
@@ -57,7 +43,7 @@ const PackageCard = async ({
             src={url ?? "/assets/world-map.png"}
             width={500}
             height={600}
-            className="object-fill aspect-[6/4] rounded-sm"
+            className="object-cover object-center aspect-[6/4] rounded-sm"
             alt={alt ?? "/assets/world-map.png"}
           />
           <div className="absolute  top-0 border w-full h-full bg-black/50 z-0 rounded-sm"></div>
@@ -82,11 +68,11 @@ const PackageCard = async ({
           <div className=" w-full flex gap-4">
             <div className=" flex gap-2">
               <UserRound stroke="red" />
-              <p className="font-bold">{adultPrice / 100}/-</p>
+              <p className="font-bold">₹{adultPrice / 100}/-</p>
             </div>
             <div className=" flex gap-2">
               <Baby stroke="red" />
-              <p className="font-bold">{childPrice / 100}/-</p>
+              <p className="font-bold">₹{childPrice / 100}/-</p>
             </div>
           </div>
 

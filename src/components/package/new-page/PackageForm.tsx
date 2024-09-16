@@ -223,8 +223,8 @@ export default function PackageFormN({
           watch={watch}
           register={register}
           errors={errors}
-          adultPrice={adultPrice}
-          childPrice={adultPrice}
+          adultPrice={adultPrice / 100}
+          childPrice={childPrice / 100}
           className={cn("", { "": type === "modal" })}
         />
         <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
