@@ -6,7 +6,7 @@ import { BookingData } from "@/constants/home/landingData";
 import BoatAnimation from "./BoatAnimation";
 
 export default function BookingDescription() {
-  const { image1 } = BookingData;
+  const { bgImage } = BookingData;
 
   return (
     <Bounded className="">
