@@ -3,7 +3,7 @@ import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { nanoid } from "@reduxjs/toolkit";
-import {  Link2, Tags } from "lucide-react";
+import { Link2, Tags } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import toast from "react-hot-toast";

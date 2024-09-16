@@ -1,12 +1,10 @@
 import { Seo } from "@prisma/client";
 import { Metadata } from "next";
 
-
 type TPackageJunctionTable = {
   id: string;
   packageId: string;
 };
-
 
 export type TseoTable = Omit<Seo, "id">;
 export const seoSeedData = [

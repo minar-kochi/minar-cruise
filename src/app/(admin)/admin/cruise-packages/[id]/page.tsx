@@ -8,7 +8,7 @@ import PackageChooseImage from "@/components/admin/cruise-package/PackageChooseI
 import Bounded from "@/components/elements/Bounded";
 import { Loader2 } from "lucide-react";
 
-export default  function PackageImagePage({
+export default function PackageImagePage({
   params: { id },
 }: {
   params: { id: string };
