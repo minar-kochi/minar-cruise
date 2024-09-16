@@ -116,12 +116,13 @@ model Package {
   fromTime        String
   toTime          String
   createdAt       DateTime         @default(now()) @db.Timestamp()
-  amenities       Amenities        @relation(fields: [amenitiesId], references: [id])
-  food            FoodMenu         @relation(fields: [foodMenuId], references: [id])
+  amenities       Amenities        @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
+  food            FoodMenu         @relation(fields: [foodMenuId], references: [id], onDelete: Cascade)
   packageCategory PACKAGE_CATEGORY
   Schedule        Schedule[]
   packageImage    PackageImage[]
   PackageSeo      PackageSeo[]
+  @@index([slug, id])
 }
 
 enum IMAGE_USE {
@@ -143,6 +144,7 @@ model Events {
   description String?
   FailedCount Int
   status      PROCESSING_STATUS
+  @@index([eventId])
 }
 
 model Image {
@@ -153,6 +155,7 @@ model Image {
   ImageUse     IMAGE_USE[]    @default([COMMON])
   packageImage PackageImage[]
   Blog         Blog[]
+  
 }
 
 enum BlogStatus {
@@ -182,8 +185,9 @@ model PackageImage {
   packageId String
   ImageUse  IMAGE_USE @default(COMMON)
   imageId   String
-  package   Package   @relation(fields: [packageId], references: [id])
+  package   Package   @relation(fields: [packageId], references: [id],onDelete: Cascade)
   image     Image     @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
 }
 
 // @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
@@ -202,6 +206,7 @@ model Seo {
   metaRobots     String
   PackageSeo     PackageSeo[]
   BlogSeo        BlogSeo[]
+  
 }
 
 model PackageSeo {
