@@ -27,7 +27,7 @@ export default function DisplayBlog({
         <div className="">
           {selectedImg ? (
             <Image
-              src={selectedImg}
+              src={selectedImg ?? "/assets/world-map.png"}
               alt="selected image"
               width={380}
               height={380}

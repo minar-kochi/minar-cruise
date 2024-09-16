@@ -17,7 +17,7 @@ export default async function PackagesInBlog() {
           <>
             <Link href={`/package/${item.slug}`} key={`packages${i}`} className="flex gap-5">
               <Image
-                src={item.packageImage[0].image.url}
+                src={item?.packageImage[0]?.image?.url ?? "/assets/world-map.png"}
                 width={400}
                 height={400}
                 alt={item.title}

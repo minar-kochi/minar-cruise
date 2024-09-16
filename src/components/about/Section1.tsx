@@ -21,8 +21,8 @@ const Section1 = () => {
     <article className=" flex max-lg:flex-col max-lg:gap-10 mb-20 ">
       <div className="basis-[50%]  ">
         <Image
-          src={images.cruiseTopView.url}
-          alt={images.cruiseTopView.alt}
+          src={images?.cruiseTopView?.url || "/assets/world-map.png"}
+          alt={images?.cruiseTopView?.alt || ""}
           width={1920}
           height={1080}
           className="rounded-lg lg:w-[450px]"

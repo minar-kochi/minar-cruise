@@ -58,7 +58,7 @@ const PackageCard = async ({
             width={500}
             height={600}
             className="object-fill aspect-[6/4] rounded-sm"
-            alt={alt}
+            alt={alt ?? "/assets/world-map.png"}
           />
           <div className="absolute  top-0 border w-full h-full bg-black/50 z-0 rounded-sm"></div>
           <div className="absolute top-2 sm:top-5 left-2 sm:left-5 text-white space-y-2">

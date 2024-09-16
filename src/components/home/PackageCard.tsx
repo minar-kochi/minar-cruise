@@ -31,8 +31,8 @@ export default function PackageCard({
     >
       <div className="absolute h-full w-full  bg-gradient-to-t from-black/80 via-gray-500/20 to-slate-50/5" />
       <Image
-        src={url}
-        alt={alt}
+        src={url ?? "/assets/world-map.png"}
+        alt={alt ?? "package"}
         width={1024}
         height={1024}
         className="w-full h-full object-cover "

@@ -36,8 +36,8 @@ const PackageGalleryCard = async ({
           >
             <Image
               priority={true}
-              src={item.image.url}
-              alt={item.image.alt}
+              src={item?.image?.url ?? "/assets/world-map.png"}
+              alt={item?.image?.alt ?? "/assets/world-map.png"}
               width={1920}
               height={1080}
               className=" w-[500px]"
