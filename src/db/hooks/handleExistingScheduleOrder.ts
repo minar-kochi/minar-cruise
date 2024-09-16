@@ -202,8 +202,8 @@ export async function handleExistingScheduleOrder({
           BookingId: booking.id.slice(8),
           packageTitle: packageDetails?.title ?? "",
           scheduleDate: schedule?.day
-          ? format(schedule.day, "iii dd-MM-yyyy")
-          : "--",
+            ? format(schedule.day, "iii dd-MM-yyyy")
+            : "--",
           totalAmount: order.amount_paid / 100,
         }),
       }),

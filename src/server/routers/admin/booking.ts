@@ -2,7 +2,10 @@ import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
-import { BookingSchedulesTotalCounts, BookingTotalCount } from "@/db/data/dto/booking";
+import {
+  BookingSchedulesTotalCounts,
+  BookingTotalCount,
+} from "@/db/data/dto/booking";
 import {
   findBookingById,
   findScheduleById,
@@ -251,7 +254,7 @@ export const booking = router({
         //-----------------CHecking Count of the given booking id END-----------------------------
 
         //-----------------CHecking Count of the given scheduleID STARTS-----------------------------
-  
+
         const unformattedScheduleCount =
           await BookingSchedulesTotalCounts(toScheduleId);
 

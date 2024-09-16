@@ -23,7 +23,7 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       screens: {
-        "2md": "860px"
+        "2md": "860px",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -61,10 +61,10 @@ const config = {
         },
       },
       boxShadow: {
-        'inner-custom': 'inset 7px 35px 60px -15px rgba(0, 0, 0, 0.3)',
+        "inner-custom": "inset 7px 35px 60px -15px rgba(0, 0, 0, 0.3)",
       },
       gridTemplateColumns: {
-        'auto-fit-minmax': 'repeat(auto-fit, minmax(250px, 1fr))',
+        "auto-fit-minmax": "repeat(auto-fit, minmax(250px, 1fr))",
       },
       borderRadius: {
         lg: "var(--radius)",

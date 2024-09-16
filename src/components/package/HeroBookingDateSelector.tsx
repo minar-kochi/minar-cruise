@@ -15,16 +15,16 @@ export default async function HeroBookingDateSelector({
 }: IHeroBookingDateSelector) {
   return (
     <div className={cn(" flex justify-center", className)}>
-        <UserBookingDateSelector
-          packageCategory={formData?.packageCategory}
-          packageId={formData.id}
-          packagePrice={{
-            adult: formData.adultPrice,
-            child: formData.childPrice,
-          }}
-          packageTitle={formData.title}
-          className="min-h-full shadow-none  max-w-[350px]"
-        />
+      <UserBookingDateSelector
+        packageCategory={formData?.packageCategory}
+        packageId={formData.id}
+        packagePrice={{
+          adult: formData.adultPrice,
+          child: formData.childPrice,
+        }}
+        packageTitle={formData.title}
+        className="min-h-full shadow-none  max-w-[350px]"
+      />
     </div>
   );
 }

@@ -1,18 +1,23 @@
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
-import { TGetSchedulesByDateRangeExcludingNull, TGetSchedulesByDateRangeWithBookingCount } from "@/db/data/dto/schedule";
+import {
+  TGetSchedulesByDateRangeExcludingNull,
+  TGetSchedulesByDateRangeWithBookingCount,
+} from "@/db/data/dto/schedule";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { $Enums } from "@prisma/client";
 import { format } from "date-fns";
 import ExcelJS from "exceljs";
 
-export type TScheduleWithBookingCount = (Omit<TGetSchedulesByDateRangeWithBookingCount[number], "day"> & {
+export type TScheduleWithBookingCount = (Omit<
+  TGetSchedulesByDateRangeWithBookingCount[number],
+  "day"
+> & {
   day: string;
 })[];
 
 type TCreateExcelTable = {
   TableName: string;
-  TableRowData: TScheduleWithBookingCount
-
+  TableRowData: TScheduleWithBookingCount;
 };
 export async function createExcelSheetWithBookingCount({
   TableName,
@@ -38,10 +43,8 @@ export async function createExcelSheetWithBookingCount({
     },
   });
 
-  
-  
   table.columns = [
-    { 
+    {
       header: "N0.",
       key: "num",
       width: 8,
@@ -127,11 +130,9 @@ export async function createExcelSheetWithBookingCount({
     bold: true,
   };
 
-
   TableRowData.map((item, i) => {
-    const { Booking, Package, day, fromTime, toTime} =
-      item;
-      
+    const { Booking, Package, day, fromTime, toTime } = item;
+
     const date = format(day, "dd/ MM /yyyy");
     const dayOfWeek = format(day, "EEEE");
     const data = selectFromTimeAndToTimeFromScheduleOrPackages({
@@ -144,34 +145,32 @@ export async function createExcelSheetWithBookingCount({
         scheduleToTime: toTime,
       },
     });
-    const fromToTime = data.fromTime + " - " + data.toTime
-    
+    const fromToTime = data.fromTime + " - " + data.toTime;
+
     table.addRow({
-      num: i+1  ,
+      num: i + 1,
       date: date,
       day: dayOfWeek,
-      duration: fromToTime ,
-      package: Package?.title ,
+      duration: fromToTime,
+      package: Package?.title,
       booked: Booking,
       available: MAX_BOAT_SEAT - Booking,
     });
   });
 
- 
-//   const statusColumn = await table.getColumn(7);
-//   statusColumn.eachCell((cell)=> {
-//     const cellAddress = table.getCell(cell.address)
-//     const cellValue  = cellAddress.value;
-    
-//     if(cellValue === "BLOCKED"){
-//       cellAddress.fill = {
-//         type: "pattern",
-//         pattern: "lightGray",
-//         fgColor: {argb: "FF0000"} 
-//       }
-//     }
-//   })
+  //   const statusColumn = await table.getColumn(7);
+  //   statusColumn.eachCell((cell)=> {
+  //     const cellAddress = table.getCell(cell.address)
+  //     const cellValue  = cellAddress.value;
 
+  //     if(cellValue === "BLOCKED"){
+  //       cellAddress.fill = {
+  //         type: "pattern",
+  //         pattern: "lightGray",
+  //         fgColor: {argb: "FF0000"}
+  //       }
+  //     }
+  //   })
 
   workbook.xlsx.writeBuffer().then((data: any) => {
     const blob = new Blob([data], {

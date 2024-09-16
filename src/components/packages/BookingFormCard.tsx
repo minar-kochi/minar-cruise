@@ -55,7 +55,6 @@ interface IBookingFormCard {
   };
   packageCategory: $Enums.PACKAGE_CATEGORY;
   isNextSlideState: Dispatch<SetStateAction<boolean>>;
-
 }
 
 const BookingFormCard = ({
@@ -101,14 +100,16 @@ const BookingFormCard = ({
       async onSuccess(res) {
         toast.dismiss();
         const notes = res?.order.notes!;
-        
+
         const options = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEYID,
           name: notes?.name ?? undefined,
           currency: "INR",
           amount: res?.order?.amount,
           order_id: res?.order.id,
-          callback_url: absoluteUrl(`/success?email="${res.email}"&time="${formData?.fromTime}"`),
+          callback_url: absoluteUrl(
+            `/success?email="${res.email}"&time="${formData?.fromTime}"`,
+          ),
 
           prefill: {
             name: notes.name ?? undefined,
@@ -284,7 +285,11 @@ const BookingFormCard = ({
           </span>
         </p>
         <div className="space-y-5">
-          <Button disabled={isSubmitting || isPending} type="submit" className="w-full">
+          <Button
+            disabled={isSubmitting || isPending}
+            type="submit"
+            className="w-full"
+          >
             Submit
           </Button>
         </div>

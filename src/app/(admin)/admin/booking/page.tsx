@@ -18,8 +18,8 @@ export default function page() {
             <Button className="">Back</Button>
           </Link>
           <div className="flex gap-3">
-            <RouterRefreshButton/>
-            <ScheduleDownloadButton type="scheduleWithBookingCount"/>
+            <RouterRefreshButton />
+            <ScheduleDownloadButton type="scheduleWithBookingCount" />
             <OpenScheduleButton />
           </div>
         </div>

@@ -86,7 +86,7 @@ export default function BookingFormCard({
 
         <div className="flex flex-wrap items-center justify-start gap-5 lg:gap-10  mt-4">
           <div>
-          <p className="text-[13px] font-light  mx-1.5 leading-none">10Y+</p>
+            <p className="text-[13px] font-light  mx-1.5 leading-none">10Y+</p>
             <div className="flex items-center">
               <div className=" leading-4">
                 <Label
@@ -137,7 +137,7 @@ export default function BookingFormCard({
             </div>
           </div>
           <div>
-          <p className="text-[13px] font-light  mx-1.5 leading-none">0-3Y</p>
+            <p className="text-[13px] font-light  mx-1.5 leading-none">0-3Y</p>
             <div className="flex items-center mr-8">
               <div className="leading-4">
                 <Label
@@ -189,7 +189,9 @@ export default function BookingFormCard({
           </div>
         </div>
         <div>
-          <p className="text-[13px] font-light mt-4 mx-1.5 leading-none">3-10Y</p>
+          <p className="text-[13px] font-light mt-4 mx-1.5 leading-none">
+            3-10Y
+          </p>
           <div className="flex items-center ">
             <div className="leading-4">
               <Label

@@ -42,7 +42,7 @@ export const seoSeedData = [
   {
     id: "cm0mrtk7i00000cihba8s9ie1",
     title: "Breakfast Cruise in Cochin - Scenic Morning Voyage | Minar Cruise",
-    "description":
+    description:
       "Start your day with our unforgettable Breakfast Cruise in Cochin. Enjoy stunning Arabian Sea views, delicious breakfast, and family-friendly entertainment. Perfect for tourists and locals seeking a unique morning experience.",
     keywords: [
       "breakfast cruise Cochin",
@@ -62,16 +62,15 @@ export const seoSeedData = [
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
       name: "Minar Breakfast Cruise Cochin",
-      "description":
+      description:
         "A scenic breakfast cruise in Cochin offering gourmet breakfast, stunning Arabian Sea views, and family entertainment.",
-      "url": "https://minarcruise.com/packages/breakfast-cruise",
-      "geo": {
+      url: "https://minarcruise.com/packages/breakfast-cruise",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "09:00-11:00",
-    
+      openingHours: "09:00-11:00",
     },
     metaRobots: "index, follow",
   },
@@ -79,7 +78,7 @@ export const seoSeedData = [
     id: "cm0mru9wf00010cih0tlc1ob6",
     title:
       "Luxury Lunch Cruise in Cochin - Gourmet Dining on the Arabian Sea | Minar Cruise",
-    "description":
+    description:
       "Indulge in our exquisite Lunch Cruise in Cochin. Savor a gourmet two-course meal while enjoying panoramic Arabian Sea views and live entertainment. The perfect midday escape for food lovers and adventure seekers.",
     keywords: [
       "lunch cruise Cochin",
@@ -100,16 +99,15 @@ export const seoSeedData = [
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
       name: "Minar Luxury Lunch Cruise Cochin",
-      "description":
+      description:
         "A luxury lunch cruise in Cochin offering gourmet two-course meals, panoramic Arabian Sea views, and live entertainment.",
-      "url": "https://minarcruise.com/packages/lunch-cruise",
-      "geo": {
+      url: "https://minarcruise.com/packages/lunch-cruise",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "12:00-14:00",
-   
+      openingHours: "12:00-14:00",
     },
     metaRobots: "index, follow",
   },
@@ -117,7 +115,7 @@ export const seoSeedData = [
     id: "cm0mrul0100020cih1olp18fb",
     title:
       "Romantic Sunset Cruise in Cochin - Twilight Magic on the Arabian Sea | Minar Cruise",
-    "description":
+    description:
       "Experience the enchanting beauty of a Cochin sunset on our Romantic Sunset Cruise. Enjoy breathtaking views, delicious snacks, and captivating entertainment as you sail along the picturesque Arabian Sea coastline.",
     keywords: [
       "sunset cruise Cochin",
@@ -137,16 +135,16 @@ export const seoSeedData = [
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
-      "name": "Minar Romantic Sunset Cruise Cochin",
-      "description":
+      name: "Minar Romantic Sunset Cruise Cochin",
+      description:
         "A romantic sunset cruise in Cochin offering breathtaking twilight views, delicious snacks, and captivating entertainment on the Arabian Sea.",
-      "url": "https://minarcruise.com/packages/sunset-cruise",
-      "geo": {
+      url: "https://minarcruise.com/packages/sunset-cruise",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "17:30-19:30",     
+      openingHours: "17:30-19:30",
     },
     metaRobots: "index, follow",
   },
@@ -155,7 +153,7 @@ export const seoSeedData = [
 
     title:
       "Exquisite Dinner Cruise in Cochin - Moonlit Dining on the Arabian Sea | Minar Cruise",
-    "description":
+    description:
       "Indulge in a magical evening aboard our Dinner Cruise in Cochin. Savor gourmet cuisine, dance to live music, and create unforgettable memories under the starlit sky of the Arabian Sea. Perfect for romantic dates or special celebrations.",
     keywords: [
       "dinner cruise Cochin",
@@ -175,17 +173,16 @@ export const seoSeedData = [
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
-      "name": "Minar Exquisite Dinner Cruise Cochin",
-      "description":
+      name: "Minar Exquisite Dinner Cruise Cochin",
+      description:
         "A luxurious dinner cruise in Cochin offering gourmet cuisine, live music, and stunning moonlit views of the Arabian Sea.",
-      "url": "https://minarcruise.com/packages/dinner-cruise",
-      "geo": {
+      url: "https://minarcruise.com/packages/dinner-cruise",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "20:00-22:00",
-    
+      openingHours: "20:00-22:00",
     },
     metaRobots: "index, follow",
   },
@@ -194,7 +191,7 @@ export const seoSeedData = [
 
     title:
       "Sunset & Dinner Cruise Combo - Ultimate Cochin Evening Experience | Minar Cruise",
-    "description":
+    description:
       "Experience the best of Cochin's evening with our Sunset and Dinner Cruise Combo. Witness a spectacular sunset, then enjoy a sumptuous dinner and entertainment as you cruise the Arabian Sea. Ideal for couples, families, and special occasions.",
     keywords: [
       "sunset dinner cruise Cochin",
@@ -214,17 +211,16 @@ export const seoSeedData = [
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
-      "name": "Minar Sunset & Dinner Cruise Combo Cochin",
-      "description":
+      name: "Minar Sunset & Dinner Cruise Combo Cochin",
+      description:
         "An ultimate evening experience in Cochin offering a spectacular sunset view, gourmet dinner, and enchanting entertainment on the Arabian Sea.",
-      "url": "https://minarcruise.com/packages/sunset-dinner-cruise",
-      "geo": {
+      url: "https://minarcruise.com/packages/sunset-dinner-cruise",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "17:30-20:30",
-    
+      openingHours: "17:30-20:30",
     },
     metaRobots: "index, follow",
   },
@@ -233,7 +229,7 @@ export const seoSeedData = [
 
     title:
       "4-Hour Special Lunch Cruise - Extended Luxury Sailing in Cochin | Minar Cruise",
-    "description":
+    description:
       "Embark on our 4-Hour Special Lunch Cruise for the ultimate daytime sailing experience in Cochin. Indulge in gourmet cuisine, enjoy panoramic Arabian Sea views, and experience a variety of entertainment perfect for a leisurely afternoon.",
     keywords: [
       "4-hour lunch cruise Cochin",
@@ -253,16 +249,16 @@ export const seoSeedData = [
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
-      "name": "Minar 4-Hour Special Lunch Cruise Cochin",
-      "description":
+      name: "Minar 4-Hour Special Lunch Cruise Cochin",
+      description:
         "An extended 4-hour luxury lunch cruise in Cochin offering gourmet cuisine, panoramic Arabian Sea views, and premium entertainment.",
-      "url": "https://minarcruise.com/packages/special-lunch-cruise",
-      "geo": {
+      url: "https://minarcruise.com/packages/special-lunch-cruise",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "11:00-15:00",
+      openingHours: "11:00-15:00",
     },
     metaRobots: "index, follow",
   },
@@ -271,7 +267,7 @@ export const seoSeedData = [
 
     title:
       "4-Hour Deluxe Dinner Cruise - Ultimate Evening Luxury on the Arabian Sea | Minar Cruise",
-    "description":
+    description:
       "Indulge in our 4-Hour Deluxe Dinner Cruise for an extended evening of luxury and entertainment in Cochin. Savor fine cuisine, enjoy live performances, and dance the night away as you cruise the stunning waters of the Arabian Sea.",
     keywords: [
       "4-hour dinner cruise Cochin",
@@ -291,18 +287,16 @@ export const seoSeedData = [
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
-      "name": "Minar 4-Hour Deluxe Dinner Cruise Cochin",
-      "description":
+      name: "Minar 4-Hour Deluxe Dinner Cruise Cochin",
+      description:
         "An extended 4-hour luxury dinner cruise in Cochin offering fine dining, live entertainment, and dancing under the stars on the Arabian Sea.",
-      "url": "https://minarcruise.com/packages/special-dinner-cruise",
-      "geo": {
+      url: "https://minarcruise.com/packages/special-dinner-cruise",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "17:00-21:00",
-    
-    
+      openingHours: "17:00-21:00",
     },
     metaRobots: "index, follow",
   },
@@ -311,7 +305,7 @@ export const seoSeedData = [
 
     title:
       "Exclusive Premium Cruise Packages - Tailored Luxury in Cochin | Minar Cruise",
-    "description":
+    description:
       "Experience unparalleled luxury with our Exclusive Premium Cruise Packages in Cochin. Enjoy personalized service, gourmet dining, and bespoke entertainment options as you sail the Arabian Sea in ultimate style and comfort.",
     keywords: [
       "exclusive cruise Cochin",
@@ -331,17 +325,16 @@ export const seoSeedData = [
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
-      "name": "Minar Exclusive Premium Cruise Packages Cochin",
-      "description":
+      name: "Minar Exclusive Premium Cruise Packages Cochin",
+      description:
         "Exclusive premium cruise packages in Cochin offering personalized service, gourmet dining, and bespoke entertainment options on the Arabian Sea.",
-      "url": "https://minarcruise.com/packages/exclusive-packages",
-      "geo": {
+      url: "https://minarcruise.com/packages/exclusive-packages",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "By Appointment",
-     
+      openingHours: "By Appointment",
     },
     metaRobots: "index, follow",
   },
@@ -349,7 +342,7 @@ export const seoSeedData = [
     id: "cm0mrw4tn000a0cih0ccrhm6w",
     title:
       "Custom Cruise Packages - Design Your Perfect Cochin Sailing Experience | Minar Cruise",
-    "description":
+    description:
       "Create your ideal cruise experience with our Custom Packages in Cochin. From intimate gatherings to grand celebrations, we tailor every aspect of your journey to ensure a unique and unforgettable voyage on the Arabian Sea.",
     keywords: [
       "custom cruise Cochin",
@@ -369,16 +362,16 @@ export const seoSeedData = [
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TouristAttraction",
-      "name": "Minar Custom Cruise Packages Cochin",
-      "description":
+      name: "Minar Custom Cruise Packages Cochin",
+      description:
         "Custom cruise packages in Cochin offering tailored experiences for any occasion, from intimate gatherings to grand celebrations on the Arabian Sea.",
-      "url": "https://minarcruise.com/packages/custom-packages",
-      "geo": {
+      url: "https://minarcruise.com/packages/custom-packages",
+      geo: {
         "@type": "GeoCoordinates",
-        "latitude": "9.9312",
-        "longitude": "76.2673",
+        latitude: "9.9312",
+        longitude: "76.2673",
       },
-      "openingHours": "By Appointment",
+      openingHours: "By Appointment",
     },
     metaRobots: "index, follow",
   },

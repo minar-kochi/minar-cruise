@@ -16,7 +16,7 @@ const LandingDescription = () => {
   const { description, heading, image, title } = landingData;
 
   return (
-    <Bounded  className="lg:max-w-6xl py-12 w-full md:place-items-center  md:grid lg:grid-cols-2 ">
+    <Bounded className="lg:max-w-6xl py-12 w-full md:place-items-center  md:grid lg:grid-cols-2 ">
       <section className="lg:max-w-lg flex flex-col gap-7 w-full   ">
         <p className="text-sm text-red-500 font-semibold">{heading}</p>
         <h1

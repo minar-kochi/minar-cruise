@@ -63,16 +63,18 @@ export async function updateEventToSucess({ id }: { id: string }) {
 export async function updateEventToFailed({
   id,
   description,
-  failedCountSetter
+  failedCountSetter,
 }: {
   id: string;
   description?: string;
-  failedCountSetter?:number
+  failedCountSetter?: number;
 }) {
   try {
-    let FailedCount = failedCountSetter ?  {
-      set: failedCountSetter
-    }: undefined
+    let FailedCount = failedCountSetter
+      ? {
+          set: failedCountSetter,
+        }
+      : undefined;
     const updatedEvent = await db.events.update({
       where: {
         id: id,

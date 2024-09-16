@@ -136,7 +136,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
                 </SheetClose>
               </NavigationSelectionState>
             </nav>
-            <div className= "mt-auto"></div>
+            <div className="mt-auto"></div>
           </SheetContent>
         </Sheet>
         <div className="w-full flex-1">

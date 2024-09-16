@@ -1,4 +1,3 @@
-
 import {
   Body,
   Button,
@@ -23,13 +22,11 @@ interface EmailSendBookingConfirmationProps {
   date?: string;
   packageTitle: string;
   BookingId?: string;
-  totalCount: number
-  duration: string
-  totalAmount: number
-  status: string
+  totalCount: number;
+  duration: string;
+  totalAmount: number;
+  status: string;
 }
-
-
 
 export const EmailSendBookingConfirmation = ({
   customerName,
@@ -39,7 +36,7 @@ export const EmailSendBookingConfirmation = ({
   totalCount,
   duration,
   totalAmount,
-  status
+  status,
 }: EmailSendBookingConfirmationProps) => {
   const Subject = `here is your Booking ID: ${BookingId}`;
 
@@ -72,7 +69,9 @@ export const EmailSendBookingConfirmation = ({
               upcoming event:
             </Text>
             <div className="py-[20px]">
-              <strong className="text-md font-sans font-black">Cruise Details :-</strong>
+              <strong className="text-md font-sans font-black">
+                Cruise Details :-
+              </strong>
               <ul className="pl-5 list-outside">
                 <li className=" pl-0 font-sans tracking-wide">
                   <Text>
@@ -172,4 +171,3 @@ export const EmailSendBookingConfirmation = ({
 // } as VercelInviteUserEmailProps;
 
 export default EmailSendBookingConfirmation;
-

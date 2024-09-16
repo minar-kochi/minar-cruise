@@ -26,5 +26,4 @@ export const loginAction = async (formData: TAdminLoginValidator) => {
     }
     throw error;
   }
-  
 };

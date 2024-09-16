@@ -22,7 +22,7 @@ interface AdminGenericEmail {
   message: React.ReactNode;
   error: boolean;
   subject: string;
-  heading:string
+  heading: string;
 }
 
 // const domain = process.env.NEXT_PUBLIC_DOMAIN;
@@ -31,7 +31,7 @@ export default function AdminGenericEmail({
   message,
   error,
   subject,
-  heading
+  heading,
 }: AdminGenericEmail) {
   return (
     <Html>

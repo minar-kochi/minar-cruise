@@ -81,40 +81,40 @@ export default async function ViewBooking({
       <Table className="border">
         <TableHeader>
           <TableRow className="text-center">
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
               Id
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty ">
               Name
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-0">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-0">
               Date of Booking
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:p-2">
               Package
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Advance Paid
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Total Bill
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
               Phone
             </TableHead>
-             <TableHead className="hidden max-sm:flex items-center align-bottom border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
+            <TableHead className="hidden max-sm:flex items-center align-bottom border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty">
               Count
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Adults
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Child
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               kids
             </TableHead>
-             <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
+            <TableHead className="border-r max-sm:text-[9px] max-sm:font-bold max-sm:text-pretty max-sm:hidden">
               Description
             </TableHead>
             <TableHead></TableHead>

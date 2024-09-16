@@ -53,7 +53,9 @@ function FacilitiesLabel({
             className="max-w-[60px]"
           />
         </div>
-        <h2 className="text-sm max-md:text-md font-semibold my-1 ">{heading}</h2>
+        <h2 className="text-sm max-md:text-md font-semibold my-1 ">
+          {heading}
+        </h2>
         <p className=" hidden md:block text-xs max-md:text-sm text-center px-4  text-muted-foreground tracking-wide ">
           {desc}
         </p>

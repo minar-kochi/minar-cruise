@@ -34,7 +34,7 @@ export async function parseUploadThingData() {
       url: item.url,
     });
   });
-  return data
+  return data;
 }
 
 function handleFileName(fileName: string): { name: string; isImage: boolean } {
