@@ -1,7 +1,6 @@
 import Razorpay from "razorpay";
 import crypto from "crypto";
 
-
 const { NEXT_PUBLIC_RAZORPAY_KEYID, RAZORPAY_KEY_SECRET } = process.env;
 if (!NEXT_PUBLIC_RAZORPAY_KEYID || !RAZORPAY_KEY_SECRET) {
   throw new Error(
@@ -13,8 +12,7 @@ export const $RazorPay = new Razorpay({
   key_secret: RAZORPAY_KEY_SECRET,
 });
 
-
-// generate the hashed signature 
+// generate the hashed signature
 
 export function generateSignature(data: string) {
   const hmac = crypto.createHmac(

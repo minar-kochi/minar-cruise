@@ -9,7 +9,7 @@ export const metadata = constructMetadata({
     default: "Facilities",
     template: "% | Minar Cruise",
   },
-});// import Entertainments from "@/components/home/Entertainments";
+}); // import Entertainments from "@/components/home/Entertainments";
 // import Facilities from "@/components/home/Facilities";
 // import Footer from "@/components/footerAmj/Footer";
 // import Services from "@/components/home/Services";

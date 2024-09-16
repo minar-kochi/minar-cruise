@@ -14,7 +14,7 @@ export const middleware = Authmiddleware((req, ctx) => {
     return NextResponse.next();
   }
   const { nextUrl } = req;
-  console.log(nextUrl)
+  console.log(nextUrl);
   const isLoggedIn = !!req.auth;
   console.log(req.auth);
   console.log(isLoggedIn);

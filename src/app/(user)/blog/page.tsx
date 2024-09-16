@@ -10,8 +10,6 @@ export const metadata = constructMetadata({
     "Explore our insightful blog for travel tips, destination guides, technology trends, and lifestyle advice. Stay inspired and informed. ",
 });
 
-
-
 const AllBlogsPage = async () => {
   const blogPosts = await getBlogPosts();
 

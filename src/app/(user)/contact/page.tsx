@@ -40,7 +40,7 @@ const page = () => {
         </article>
         <ContactMessageCard />
         <div className="mt-2">
-        <MapView />
+          <MapView />
         </div>
       </Bounded>
     </div>

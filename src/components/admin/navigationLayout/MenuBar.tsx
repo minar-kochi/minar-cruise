@@ -32,7 +32,7 @@ const MenuBar = () => {
             </Button>
           </div>
           <div className="flex-1  ">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+            <nav className="grid items-start px-2 text-sm font-medium gap-y-1 lg:px-4">
               <NavigationSelectionState routeName="admin">
                 <Link
                   href="/admin"

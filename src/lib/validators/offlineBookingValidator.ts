@@ -20,7 +20,6 @@ export const offlineBookingFormSchema = z.object({
   adultCount: z
     .number({ message: "Please provide a valid number" })
     .max(150, "Count cannot exceed 150"),
-
   childCount: z
     .number({
       message: "Please Enter a valid number",

@@ -6,10 +6,7 @@ import Image from "next/image";
 
 export default function BoatAnimation() {
   return (
-    <div
-   
-      className=" rounded-2xl flex items-center justify-center "
-    >
+    <div className=" rounded-2xl flex items-center justify-center ">
       <div className="overflow-hidden ">
         <motion.div
           whileInView={{ opacity: 1, y: 0, scale: 1.1 }}
@@ -23,7 +20,6 @@ export default function BoatAnimation() {
             height={500}
             className="min-w-[500px] max-sm:min-w-[300px] mt-10"
           />
-          
         </motion.div>
       </div>
     </div>

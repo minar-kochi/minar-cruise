@@ -66,6 +66,3 @@ export const phoneNumberParser = (contact: string | undefined) => {
   const parsedPhoneNumber = countryCodePrefix + removedZeroFromPhoneNumber;
   return parsedPhoneNumber;
 };
-
-
-

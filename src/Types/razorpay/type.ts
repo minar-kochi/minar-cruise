@@ -4,7 +4,6 @@ export type TOrderEvent<T> = {
   events: Events;
   //type is any because of Razorpay doesn't actually give out types.
   orderBody: T;
- 
 };
 export type TEventType = {
   "schedule.existing": "schedule.existing";

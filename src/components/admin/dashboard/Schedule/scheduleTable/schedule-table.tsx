@@ -46,9 +46,15 @@ export default function ScheduleTable() {
         <TableHeader className="">
           <TableRow className="">
             {/* <TableHead>id</TableHead> */}
-            <TableHead className="border-r font-bold max-sm:text-[9px] ">Date</TableHead>
-            <TableHead className="border-r font-bold max-sm:text-[9px] ">Day</TableHead>
-            <TableHead className="border-r font-bold max-sm:text-[9px] ">From To</TableHead>
+            <TableHead className="border-r font-bold max-sm:text-[9px] ">
+              Date
+            </TableHead>
+            <TableHead className="border-r font-bold max-sm:text-[9px] ">
+              Day
+            </TableHead>
+            <TableHead className="border-r font-bold max-sm:text-[9px] ">
+              From To
+            </TableHead>
             <TableHead className="border-r font-bold max-sm:text-[9px] ">
               Package Name
             </TableHead>
@@ -94,7 +100,9 @@ export default function ScheduleTable() {
                       </p>
                     </TableCell>
                     <TableCell className="border-r  max-sm:text-[9px] max-sm:text-pretty max-sm:p-0">
-                      <p className="max-sm:text-center">{item.Package?.title}</p>
+                      <p className="max-sm:text-center">
+                        {item.Package?.title}
+                      </p>
                     </TableCell>
                     <TableCell className="border-r  max-sm:text-[9px] max-sm:text-pretty max-sm:hidden">
                       {item.schedulePackage}

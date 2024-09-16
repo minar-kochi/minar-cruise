@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import ProductCarousalIndexProvider from "./ProductCarousalContextProvider";
 import ProductCarousalProvider from "./ProductCarousalProvider";
@@ -12,7 +10,6 @@ export default function PackageImageN({ data }: { data: TGetPackageById }) {
     <div className="max-h-fit mx-auto   rounded-xl overflow-hidden max-md:mb-4 md:max-w-full">
       <ProductCarousalIndexProvider>
         <div className="w-full  relative h-full ">
-         
           <ProductCarousalProvider>
             {data.packageImage.map((item, index) => {
               return (

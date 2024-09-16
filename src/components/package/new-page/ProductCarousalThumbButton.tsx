@@ -8,11 +8,11 @@ type TProductCarousalThumbButton = {
   className?: string;
   CurrentIndexClass?: string;
 };
-const   ProductCarousalThumbButton = ({
+const ProductCarousalThumbButton = ({
   children,
   index,
   className,
-  CurrentIndexClass = '',
+  CurrentIndexClass = "",
 }: TProductCarousalThumbButton) => {
   const { setIndex, currentIndex } = useContext(ProductCarousalContext);
   function handleChange(

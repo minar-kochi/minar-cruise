@@ -57,7 +57,7 @@ const ProductCarousalProvider = ({
         setIndex(emblaApi.selectedScrollSnap());
       });
     }
-  }, [emblaApi,setIndex]);
+  }, [emblaApi, setIndex]);
   useEffect(() => {
     if (emblaApi) {
       emblaApi.scrollTo(currentIndex);
@@ -115,7 +115,9 @@ const ProductCarousalProvider = ({
           </button>
         </div>
         <div className="embla  relative  overflow-hidden h-full" ref={emblaRef}>
-          <div className="embla__container   relative gap-2 h-full ">{data}</div>
+          <div className="embla__container   relative gap-2 h-full ">
+            {data}
+          </div>
         </div>
       </div>
     </>

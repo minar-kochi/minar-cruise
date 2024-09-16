@@ -76,7 +76,7 @@ export default function AddBlog() {
     resolver: zodResolver(BlogFormValidators),
   });
 
-  const { fetch } = trpc.useUtils().admin.blog.checkSlug
+  const { fetch } = trpc.useUtils().admin.blog.checkSlug;
 
   const onSubmitBlog = async (data: TBlogFormValidators) => {
     // Check if the slug already exists

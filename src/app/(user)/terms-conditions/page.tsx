@@ -9,8 +9,6 @@ export const metadata = constructMetadata({
   noIndex: true,
 });
 
-
-
 export default async function Terms() {
   return (
     <div>

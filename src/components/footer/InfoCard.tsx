@@ -7,8 +7,6 @@ import SubscribeCard from "./SubscribeCard";
 import FooterItemCard from "../facilities/FooterItemCard";
 import { cn } from "@/lib/utils";
 
-
-
 const InfoCard = ({ className }: { className?: string }) => {
   return (
     <>
@@ -18,7 +16,6 @@ const InfoCard = ({ className }: { className?: string }) => {
           className,
         )}
       >
-      
         <ContactCard logo={true} />
         <CompanyInfoCard className="" />
         <ExploreCard className="" />

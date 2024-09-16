@@ -22,7 +22,7 @@ export type userPartialId = (Omit<User, "id"> & { id?: string })[];
 export type imagesPartialId = (Omit<Image, "id"> & { id?: string })[];
 export type packageImagePartialId = (Omit<PackageImage, "id" | "ImageUse"> & {
   id?: string;
-  ImageUse?: "COMMON" | "PROD_FEATURED" | "PROD_THUMBNAIL"
+  ImageUse?: "COMMON" | "PROD_FEATURED" | "PROD_THUMBNAIL";
 })[];
 
 import { amenities } from "./data/dbAmenities";
@@ -43,4 +43,4 @@ export { packageImage };
 export { packages };
 export { schedule };
 export { users };
-export const imageData = parseUploadThingData()
+export const imageData = parseUploadThingData();

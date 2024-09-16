@@ -67,7 +67,6 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         //   right: 2,
         //   top: 2
         // },
-
       },
     });
 
@@ -78,12 +77,11 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
       family: 1,
       size: 12,
       bold: true,
-
     };
     // BookingTable.eachRow(item)
 
-    // const customTableDataColumns = workbook.addWorksheet().columns   
-    
+    // const customTableDataColumns = workbook.addWorksheet().columns
+
     BookingTable.columns = [
       {
         header: "Num",
@@ -92,7 +90,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
       },
@@ -103,7 +101,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
       },
@@ -114,11 +112,9 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
-
       },
       {
         header: "Package",
@@ -127,10 +123,9 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
       },
       {
         header: "Advance Paid",
@@ -139,10 +134,9 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
       },
       {
         header: "Total Bill",
@@ -151,10 +145,9 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
       },
       {
         header: "Phone",
@@ -163,7 +156,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
       },
@@ -174,10 +167,9 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
       },
       {
         header: "Child",
@@ -186,10 +178,9 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
       },
       {
         header: "Kid",
@@ -198,10 +189,9 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
       },
       {
         header: "Description",
@@ -210,14 +200,13 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         style: {
           alignment: {
             vertical: "middle",
-            horizontal: "center"
+            horizontal: "center",
           },
         },
-
       },
     ];
     // Do something here when table data in empty
-    tableData?.map((item,index) => {
+    tableData?.map((item, index) => {
       const {
         createdAt,
         description,
@@ -230,7 +219,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         user,
       } = item;
       BookingTable.addRow({
-        num: index-1,
+        num: index - 1,
         name: user.name,
         bookingDate: createdAt,
         package: schedule.schedulePackage,
@@ -244,7 +233,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
       });
     });
 
-    workbook.xlsx.writeBuffer().then((data:any) => {
+    workbook.xlsx.writeBuffer().then((data: any) => {
       const blob = new Blob([data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheet.sheet",
       });
