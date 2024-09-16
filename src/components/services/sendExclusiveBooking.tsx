@@ -81,8 +81,14 @@ export default function ExclusiveBookingEmailToAdmin({
               <strong>Minar Cruise Services</strong>, Inc., GF,40/6185, Marine
               Drive, Ernakulam, Kerala 682031. © 2022, All rights reserved.
               Minar cruise is a registered trademark of{" "}
-              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>{process.env.NEXT_PUBLIC_DOMAIN}</Link>, Inc. View our{" "}
-                  <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>privacy policy</Link>.
+              <Link href={process.env.NEXT_PUBLIC_DOMAIN}>
+                {process.env.NEXT_PUBLIC_DOMAIN}
+              </Link>
+              , Inc. View our{" "}
+              <Link href={`${process.env.NEXT_PUBLIC_DOMAIN}/privacy-policy`}>
+                privacy policy
+              </Link>
+              .
             </Text>
           </Container>
         </Body>

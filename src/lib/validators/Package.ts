@@ -17,11 +17,13 @@ export function ShouldStatusBeAvaiablePublicWithPackage({
   }
   return "AVAILABLE";
 }
-export function ShouldPackageBeAvailableForPublicToSchedule(packageCategory:$Enums.PACKAGE_CATEGORY) {
-  if(packageCategory === 'CUSTOM' || packageCategory === 'EXCLUSIVE' ){
-    return false
+export function ShouldPackageBeAvailableForPublicToSchedule(
+  packageCategory: $Enums.PACKAGE_CATEGORY,
+) {
+  if (packageCategory === "CUSTOM" || packageCategory === "EXCLUSIVE") {
+    return false;
   }
-  return true
+  return true;
 }
 export type IsPackageTypeOrExclusiveChecker = {
   packageStatus: string;

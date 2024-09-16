@@ -207,7 +207,7 @@ export const isScheduleInputsChanged = createSelector(
     if (
       updatedDateSchedule[type]?.fromTime &&
       currentDateSchedule[type]?.fromTime !==
-      updatedDateSchedule[type]?.fromTime
+        updatedDateSchedule[type]?.fromTime
     ) {
       Changed.isTimeChanged = true;
     }

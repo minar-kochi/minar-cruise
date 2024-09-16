@@ -6,13 +6,13 @@ const CompanyInfoCard = ({ className }: { className: string }) => {
     <section>
       <div className={cn("flex flex-col gap-8 h-full ", className)}>
         <h2 className="max-sm:mx-auto text-2xl font-semibold">Company</h2>
-        <Link
-          href="/about"
-          className="max-sm:mx-auto font-medium text-white"
-        >
+        <Link href="/about" className="max-sm:mx-auto font-medium text-white">
           About Us
         </Link>
-        <Link href="/package/premium-cruise" className="max-sm:mx-auto font-medium text-white">
+        <Link
+          href="/package/premium-cruise"
+          className="max-sm:mx-auto font-medium text-white"
+        >
           Packages
         </Link>
         <Link
@@ -21,10 +21,7 @@ const CompanyInfoCard = ({ className }: { className: string }) => {
         >
           Facilities
         </Link>
-        <Link
-          href="/blog"
-          className="max-sm:mx-auto font-medium text-white"
-        >
+        <Link href="/blog" className="max-sm:mx-auto font-medium text-white">
           News And Blogs
         </Link>
       </div>

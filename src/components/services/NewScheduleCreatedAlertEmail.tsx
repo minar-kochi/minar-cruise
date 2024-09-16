@@ -30,7 +30,7 @@ const NewScheduleCreatedAlertEmail = ({
   packageTitle,
   scheduleDate,
   fromTime,
-  duration
+  duration,
 }: NewScheduleCreatedAlertEmailProps) => {
   const Subject = `New Schedule Created`;
 
@@ -59,16 +59,19 @@ const NewScheduleCreatedAlertEmail = ({
               </Text> */}
             <Section className="flex flex-col items-center gap-4 max-w-fit leading-5 tracking-wider">
               <Text>
-                <strong className="font-bold text-lg">Package :</strong> {packageTitle}
+                <strong className="font-bold text-lg">Package :</strong>{" "}
+                {packageTitle}
               </Text>
               <Text>
-                <strong className="font-bold text-lg">Date :</strong> {scheduleDate}
+                <strong className="font-bold text-lg">Date :</strong>{" "}
+                {scheduleDate}
               </Text>
               <Text>
                 <strong className="font-bold text-lg">Time :</strong> {fromTime}
               </Text>
               <Text>
-                <strong className="font-bold text-lg">Duration :</strong> {duration/60} hrs
+                <strong className="font-bold text-lg">Duration :</strong>{" "}
+                {duration / 60} hrs
               </Text>
             </Section>
 

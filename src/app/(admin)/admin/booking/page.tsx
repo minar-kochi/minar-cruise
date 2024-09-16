@@ -1,8 +1,7 @@
 import AllSchedules from "@/components/admin/booking/AllSchedules";
-import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
-import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 import ScheduleDownloadButton from "@/components/admin/dashboard/Schedule/scheduleTable/ScheduleDownloadButton";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function page() {
@@ -15,12 +14,13 @@ export default function page() {
         {/* //add something else */}
         <div className="flex justify-between p-5">
           <Link href={`/admin`}>
-            <Button className="">Back</Button>
+            <Button variant={"secondary"} className="pl-2">
+              <ChevronLeft size={20} />
+              Back
+            </Button>
           </Link>
           <div className="flex gap-3">
-            <RouterRefreshButton/>
-            <ScheduleDownloadButton type="scheduleWithBookingCount"/>
-            <OpenScheduleButton />
+            <ScheduleDownloadButton type="scheduleWithBookingCount" />
           </div>
         </div>
 

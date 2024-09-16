@@ -23,9 +23,13 @@ export default async function NormalPackages() {
               <PackageCard
                 key={`${item.id}${i}`}
                 className=""
-                alt={item?.packageImage[0]?.image?.alt ?? "/assets/world-map.png"}
+                alt={
+                  item?.packageImage[0]?.image?.alt ?? "/assets/world-map.png"
+                }
                 title={item.title}
-                url={item?.packageImage[0]?.image?.url ?? "/assets/world-map.png"}
+                url={
+                  item?.packageImage[0]?.image?.url ?? "/assets/world-map.png"
+                }
                 slug={`/package/${item.slug}`}
                 adultPrice={item.adultPrice}
                 duration={item.duration}

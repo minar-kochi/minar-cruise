@@ -16,8 +16,6 @@ interface BlogPage {
 const defaultImage =
   "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-9-580x450.jpg";
 
-
-  
 export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
   const blogPost = await getBlogPostById({ id: blogSlug });
   if (!blogPost) {

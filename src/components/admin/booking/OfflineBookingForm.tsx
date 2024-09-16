@@ -173,7 +173,7 @@ export default function OfflineBookingForm({
             label="Email"
             InputProps={{
               type: "email",
-                className: "bg-muted placeholder:tracking-wider",
+              className: "bg-muted placeholder:tracking-wider",
               placeholder: "example@gmail.com",
               ...register("email"),
             }}
@@ -191,7 +191,7 @@ export default function OfflineBookingForm({
                     label="Adult Count"
                     InputProps={{
                       type: "number",
-                className: "bg-muted placeholder:tracking-wider",
+                      className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter Adult count",
                       min: 0,
                       ...register("adultCount", { valueAsNumber: true }),
@@ -210,7 +210,7 @@ export default function OfflineBookingForm({
                     InputProps={{
                       min: 0,
                       type: "number",
-                className: "bg-muted placeholder:tracking-wider",
+                      className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter a Child Count",
                       ...register("childCount", { valueAsNumber: true }),
                     }}
@@ -228,7 +228,7 @@ export default function OfflineBookingForm({
                     InputProps={{
                       min: 0,
                       type: "number",
-                className: "bg-muted placeholder:tracking-wider",
+                      className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter a baby Count",
                       ...register("babyCount", { valueAsNumber: true }),
                     }}
@@ -251,7 +251,7 @@ export default function OfflineBookingForm({
                       min: 0,
                       type: "number",
                       defaultValue: 0,
-                className: "bg-muted placeholder:tracking-wider",
+                      className: "bg-muted placeholder:tracking-wider",
                       placeholder: "Enter a Discount in rupee",
                       ...register("discount", { valueAsNumber: true }),
                     }}
@@ -268,7 +268,7 @@ export default function OfflineBookingForm({
                     label="Payment mode"
                     InputProps={{
                       type: "text",
-                className: "bg-muted placeholder:tracking-wider",
+                      className: "bg-muted placeholder:tracking-wider",
                       placeholder: "eg: GPAY, CASH, PAYTM",
                       ...register("paymentMode"),
                     }}
@@ -282,13 +282,13 @@ export default function OfflineBookingForm({
                 <div className=" w-full flex justify-between gap-3">
                   <div className="mt-4 w-full">
                     <InputLabel
-                    labelClassName="overflow-clip"
+                      labelClassName="overflow-clip"
                       containerClassName="space-y-2"
                       label="Advance amount"
                       InputProps={{
                         min: 0,
                         type: "number",
-                className: "bg-muted placeholder:tracking-wider",
+                        className: "bg-muted placeholder:tracking-wider",
                         placeholder: "Enter received amount in rupee",
                         ...register("advanceAmount", { valueAsNumber: true }),
                       }}
@@ -307,7 +307,7 @@ export default function OfflineBookingForm({
                         min: 0,
                         type: "number",
                         placeholder: "Enter total fare",
-                className: "bg-muted placeholder:tracking-wider",
+                        className: "bg-muted placeholder:tracking-wider",
                         ...register("billAmount", { valueAsNumber: true }),
                       }}
                       errorMessage={
@@ -324,7 +324,7 @@ export default function OfflineBookingForm({
         </div>
         <div className="col-span-1 ">
           <InputLabel
-          containerClassName="my-0"
+            containerClassName="my-0"
             label="Description"
             errorMessage={
               errors.description?.message

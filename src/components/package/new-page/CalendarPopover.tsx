@@ -28,7 +28,12 @@ export default function CalendarPopover({ children, date }: ICalendarPopover) {
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="center" className="w-full max-w-[350px] border border-muted shadow-lg mt-2">{children}</PopoverContent>
+      <PopoverContent
+        align="center"
+        className="w-full max-w-[350px] border border-muted shadow-lg mt-2"
+      >
+        {children}
+      </PopoverContent>
     </Popover>
   );
 }

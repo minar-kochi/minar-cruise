@@ -21,6 +21,7 @@ import { $Enums } from "@prisma/client";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { Loader2 } from "lucide-react";
 type SelectPackageImage = {
   id: string;
   imageUse: $Enums.IMAGE_USE;
@@ -37,7 +38,7 @@ export default function PackageChooseImage({
   }>(defaultState);
   const [showNext, setNext] = useState(false);
   const { invalidate } = trpc.useUtils().admin.packages.getPackageImage;
-  const { mutate: MutatePackageImage } =
+  const { mutate: MutatePackageImage, isPending } =
     trpc.admin.packages.setPackageImage.useMutation({
       async onSuccess(data, variables, context) {
         toast.success("Package Image has been sucessfully loaded");
@@ -67,12 +68,12 @@ export default function PackageChooseImage({
     });
   };
   return (
-    <div>
+    <div className="xscroll">
       <Dialog>
         <DialogTrigger className={buttonVariants()}>
           Add Image Package
         </DialogTrigger>
-        <DialogContent className="max-w-xl w-full">
+        <DialogContent className=" overflow-y-scroll xscroll max-h-[calc(100dvh-14rem)] max-w-fit w-full">
           <DialogHeader>
             <DialogTitle>Select Image for Package to use</DialogTitle>
             <DialogDescription>
@@ -83,15 +84,17 @@ export default function PackageChooseImage({
                 hidden: showNext,
               })}
             >
-              <ChooseImg
-                onSelectImage={(id, url) => {
-                  setSelectedImage({
-                    id,
-                    imageUse: "COMMON",
-                  });
-                  setNext(true);
-                }}
-              />
+              <div className="group cruise-package p-4">
+                <ChooseImg
+                  onSelectImage={(id, url) => {
+                    setSelectedImage({
+                      id,
+                      imageUse: "COMMON",
+                    });
+                    setNext(true);
+                  }}
+                />
+              </div>
             </div>
             <div
               className={cn({
@@ -130,9 +133,25 @@ export default function PackageChooseImage({
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <Button className="mt-2 w-full" onClick={() => handleMutate()}>
-                Submit
-              </Button>
+              <div className="flex mt-2 items-center justify-center gap-2">
+                <Button
+                  className="basis-1/3"
+                  variant={"secondary"}
+                  onClick={() => setNext(false)}
+                >
+                  Back
+                </Button>
+                <Button className="basis-3/4" onClick={() => handleMutate()}>
+                  {isPending ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="animate-spin w-4 h-4" />
+                      <p> Loading</p>
+                    </div>
+                  ) : (
+                    "Submit"
+                  )}
+                </Button>
+              </div>
             </div>
           </DialogHeader>
         </DialogContent>

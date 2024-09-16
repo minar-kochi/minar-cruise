@@ -1,28 +1,17 @@
 import Bounded from "@/components/elements/Bounded";
 import ExclusivePackageEnquiryCard from "@/components/package/new-page/ExclusivePackageEnquiryCard";
 import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
-import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageFormN from "@/components/package/new-page/PackageFormN";
 import PackageImageN from "@/components/package/new-page/PackageImageN";
 import { PackageCarousel } from "@/components/packages/PackageCarousel";
-import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
 import { cn, flattenObject } from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
-import { Clock } from "lucide-react";
+import { Clock, PersonStanding, User } from "lucide-react";
 import { Metadata } from "next";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import React from "react";
 
@@ -115,16 +104,24 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
               height={500}
               className="w-8 md:w-10  h-8 md:h-10 "
             />
-            <div className="">
-              <h1 className="text-xl sm:text-2xl md:text-3xl text-[#0D3A62] font-semibold">
-                {data.title}
-              </h1>
-              <p className="text-blue-950 text-xs md:text-sm font-medium flex items-center gap-2 mt-1">
-                <span className="text-primary">
-                  <Clock size="18" />
-                </span>
-                {data.fromTime} - {data.toTime}
-              </p>
+            <div className="flex">
+              <div>
+                <h1 className="text-xl sm:text-2xl md:text-3xl text-[#0D3A62] font-semibold">
+                  {data.title}
+                </h1>
+                <p className="text-blue-950 text-xs md:text-sm font-medium flex items-center gap-2 mt-1">
+                  <span className="text-primary">
+                    <Clock size="18" />
+                  </span>
+                  {data.fromTime} - {data.toTime}
+                </p>
+              </div>
+              <div className="text-black font-medium text-xl mt-2 ml-4 self-end">
+                <div className="flex flex-col items-center">
+                  <p className="text-sm">10Y+</p>
+                  <User />
+                </div>
+              </div>
             </div>
             {/* <div className="h-[1px] w-[20%] my-2 bg-black/70" /> */}
           </div>
@@ -183,7 +180,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
                 packageCategory={data.packageCategory}
               />
             ) : (
-              <ExclusivePackageEnquiryCard/>
+              <ExclusivePackageEnquiryCard />
             )}
           </div>
 

@@ -58,7 +58,7 @@ export default function PackageImageCard({
   return (
     <div className="max-w-[320px] bg-accent border  rounded-md overflow-hidden p-2  relative   m-2">
       <div className="relative  w-full h-full">
-        <div className="absolute max-w-[200px] rounded-md bg-black/80 p-2  text-white font-medium">
+        <div className="absolute max-w-[200px] rounded-md rounded-tl-sm bg-black/80 p-2  text-white font-medium">
           {getPackageImageUseCaseToHumanized(dbImage.ImageUse)}
         </div>
         <Image
@@ -66,7 +66,7 @@ export default function PackageImageCard({
           src={dbImage?.image?.url ?? "/assets/world-map.png"}
           width={350}
           height={350}
-          className="w-full h-full rounded-md  "
+          className="w-full h-full rounded-md aspect-square object-cover  "
         />
       </div>
 

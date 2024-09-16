@@ -1,6 +1,5 @@
 import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { TRPCError } from "@trpc/server";
 
 export async function getAllBookingDataFromToday() {
   try {
@@ -101,7 +100,7 @@ export const totalBookedSeats = async (scheduleId: string) => {
         totalBooking: true,
       },
     });
-    
+
     if (!unformattedCount.length) {
       return 0;
     }
@@ -113,6 +112,37 @@ export const totalBookedSeats = async (scheduleId: string) => {
     return formattedCount;
   } catch (error) {
     ErrorLogger(error);
-    return -1
+    return -1;
   }
 };
+
+export async function BookingSchedulesTotalCounts(scheduleId: string) {
+  try {
+    const AllCountOfFromSchedule = await db.booking.findMany({
+      where: {
+        scheduleId,
+      },
+      select: {
+        totalBooking: true,
+      },
+    });
+    return AllCountOfFromSchedule;
+  } catch (error) {
+    return null;
+  }
+}
+export async function BookingTotalCount(bookingid: string) {
+  try {
+    const AllCount = await db.booking.findUnique({
+      where: {
+        id: bookingid,
+      },
+      select: {
+        totalBooking: true,
+      },
+    });
+    return AllCount;
+  } catch (error) {
+    return null;
+  }
+}

@@ -23,11 +23,9 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { $Enums } from "@prisma/client";
 import {
   getSchedulesByDateRange,
   getSchedulesByDateRangeWithBookingCount,
-  TGetSchedulesByDateRange,
 } from "@/db/data/dto/schedule";
 import { toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
@@ -46,10 +44,10 @@ import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadVal
 // }[]
 
 export const schedule = router({
-  // 
-  getSchedulesByDateRange: AdminProcedure
-  .input(scheduleDateRangeValidator)
-  .query(async ({ input: { fromDate, toDate, type } }) => {
+  //
+  getSchedulesByDateRange: AdminProcedure.input(
+    scheduleDateRangeValidator,
+  ).query(async ({ input: { fromDate, toDate, type } }) => {
     const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
     const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
     if (!fromDateParser || !toDateParser) {
@@ -76,11 +74,12 @@ export const schedule = router({
         if (!data) return null;
         return data;
       }
-      const data = await getSchedulesByDateRangeWithBookingCount
-      (FromDate, ToDate);
+      const data = await getSchedulesByDateRangeWithBookingCount(
+        FromDate,
+        ToDate,
+      );
       if (!data) return null;
       return data;
-
     } catch (error) {
       console.log(error);
       ErrorLogger(error);
@@ -109,7 +108,6 @@ export const schedule = router({
       }
       //________________Validate Input ends _____________
       try {
-        /** @TODO Fix the positioning of date */
         const schedule = await db.schedule.findMany({
           where: {
             day: new Date(ScheduleDate),
@@ -314,7 +312,6 @@ export const schedule = router({
       }
     },
   ),
-  /** @TODO incomplete */
   updateSchedule: AdminProcedure.input(
     UpdatedDateScheduleSchema.extend({
       date: z.string(),
@@ -397,9 +394,6 @@ export const schedule = router({
           scheduleTime,
         });
 
-        /**
-         * @TODO Adding package timing to the schedule would be nice. or extract it from the package while displaying to avoid redundency.
-         */
         const data = await db.schedule.update({
           where: {
             id: Schedule.id,

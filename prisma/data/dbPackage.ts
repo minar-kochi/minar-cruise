@@ -35,7 +35,7 @@ export const packages: packagesPartialId = [
   },
   {
     id: "clqqxa3wq000208l5enk651jd",
-    title: "sunset cruise",
+    title: "Sunset cruise",
     packageType: "normal",
     description:
       "Sunset Cruise – Witness the sunset while cruising the Arabian Sea from Kochi. Enjoy a 2-hour voyage with refreshing tea, coffee, and snacks as you enjoy the stunning evening views. Book your unforgettable sunset experience today!",

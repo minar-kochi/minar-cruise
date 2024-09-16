@@ -46,7 +46,7 @@ export default async function RootLayout({
         <Header>
           <Toaster />
           <Providers>
-            <Suspense fallback={<LoadingState/>}>
+            <Suspense fallback={<LoadingState />}>
               <NextSSRPlugin
                 routerConfig={extractRouterConfig(ourFileRouter)}
               />

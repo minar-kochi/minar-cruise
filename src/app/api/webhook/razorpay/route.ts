@@ -40,7 +40,6 @@ export async function POST(request: NextRequest, res: NextResponse) {
 
     // check whether the generated and incomming are same, if so use the body and the body is securely send from razor-pay
     if (generatedSignature !== IncommingSignature) {
-      
       // throw a valid error.
       // Respond with 200
       return NextResponse.json({ success: false }, { status: 200 });
