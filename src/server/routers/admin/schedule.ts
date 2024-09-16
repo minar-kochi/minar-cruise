@@ -109,7 +109,7 @@ export const schedule = router({
       }
       //________________Validate Input ends _____________
       try {
-        /** @TODO Fix the positioning of date */
+
         const schedule = await db.schedule.findMany({
           where: {
             day: new Date(ScheduleDate),
@@ -314,7 +314,6 @@ export const schedule = router({
       }
     },
   ),
-  /** @TODO incomplete */
   updateSchedule: AdminProcedure.input(
     UpdatedDateScheduleSchema.extend({
       date: z.string(),
@@ -397,9 +396,6 @@ export const schedule = router({
           scheduleTime,
         });
 
-        /**
-         * @TODO Adding package timing to the schedule would be nice. or extract it from the package while displaying to avoid redundency.
-         */
         const data = await db.schedule.update({
           where: {
             id: Schedule.id,

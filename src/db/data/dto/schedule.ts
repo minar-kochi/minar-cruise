@@ -37,9 +37,13 @@ export async function checkScheduleStatusForTheSelectedDate({
   return scheduleStatus;
 }
 
-
-export type TGetSchedulesByDateRange= Awaited<ReturnType<typeof getSchedulesByDateRange>>
-export type TGetSchedulesByDateRangeExcludingNull = Exclude<TGetSchedulesByDateRange, null>
+export type TGetSchedulesByDateRange = Awaited<
+  ReturnType<typeof getSchedulesByDateRange>
+>;
+export type TGetSchedulesByDateRangeExcludingNull = Exclude<
+  TGetSchedulesByDateRange,
+  null
+>;
 
 export async function getSchedulesByDateRange(FromDate: Date, ToDate: Date) {
   try {
@@ -76,15 +80,20 @@ export async function getSchedulesByDateRange(FromDate: Date, ToDate: Date) {
   }
 }
 
-export type TGetSchedulesByDateRangeWithBookingCount = Exclude<Awaited<ReturnType<typeof getSchedulesByDateRangeWithBookingCount>>, null>
+export type TGetSchedulesByDateRangeWithBookingCount = Exclude<
+  Awaited<ReturnType<typeof getSchedulesByDateRangeWithBookingCount>>,
+  null
+>;
 
-export async function getSchedulesByDateRangeWithBookingCount(FromDate: Date, ToDate: Date){
-
+export async function getSchedulesByDateRangeWithBookingCount(
+  FromDate: Date,
+  ToDate: Date,
+) {
   const data = await db.schedule.findMany({
     where: {
       day: {
         gte: new Date(FromDate),
-        lte: new Date(ToDate)
+        lte: new Date(ToDate),
       },
       scheduleStatus: {
         in: ["AVAILABLE", "EXCLUSIVE"],
@@ -101,7 +110,7 @@ export async function getSchedulesByDateRangeWithBookingCount(FromDate: Date, To
         select: {
           title: true,
           fromTime: true,
-          toTime: true
+          toTime: true,
         },
       },
       Booking: {
@@ -110,12 +119,11 @@ export async function getSchedulesByDateRangeWithBookingCount(FromDate: Date, To
         },
       },
     },
-    
+
     orderBy: {
       day: "asc",
     },
   });
-
 
   let scheduleBookingData = data.map((item) => ({
     ...item,
@@ -125,7 +133,7 @@ export async function getSchedulesByDateRangeWithBookingCount(FromDate: Date, To
     ),
   }));
 
-  return scheduleBookingData
+  return scheduleBookingData;
 }
 export async function findScheduleById(scheduleId: string) {
   try {
@@ -136,6 +144,30 @@ export async function findScheduleById(scheduleId: string) {
     });
 
     if (!data) return false;
+    return true;
+  } catch (error) {
+    console.error(error);
+    ErrorLogger(error);
+    return false;
+  }
+}
+export async function findScheduleToAndFrom(
+  scheduleId: string,
+  fromScheduleId: string,
+) {
+  try {
+    const data = await db.schedule.findMany({
+      where: {
+        id: {
+          in: [scheduleId, fromScheduleId],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!data || !data.length) return false;
     return true;
   } catch (error) {
     console.error(error);

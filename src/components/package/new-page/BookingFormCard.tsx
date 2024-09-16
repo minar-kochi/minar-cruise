@@ -21,7 +21,7 @@ type TBookingFormCard = {
   setValues: UseFormSetValue<TOnlineBookingFormValidator>;
   watch: UseFormWatch<TOnlineBookingFormValidator>;
   errors: FieldErrors<TOnlineBookingFormValidator>;
-  className?: string
+  className?: string;
 };
 export default function BookingFormCard({
   register,
@@ -29,12 +29,16 @@ export default function BookingFormCard({
   setValues,
   watch,
   errors,
-  className
+  className,
 }: TBookingFormCard) {
   //   watch("numOfAdults");
   return (
-    <div className={cn("w-full flex items-center text-base font-normal justify-center flex-col ", className)}>
-      
+    <div
+      className={cn(
+        "w-full flex items-center text-base font-normal justify-center flex-col ",
+        className,
+      )}
+    >
       <div className="w-[90%]  max-w-sm ">
         <InputLabel
           errorClassName="justify-start ml-1"
@@ -52,7 +56,7 @@ export default function BookingFormCard({
       </div>
       <div className="w-[90%]  max-w-sm">
         <InputLabel
-        label="Email"
+          label="Email"
           labelClassName="text-sm"
           errorClassName="justify-start ml-1"
           InputProps={{
@@ -67,7 +71,7 @@ export default function BookingFormCard({
       </div>
       <div className="w-[90%]  max-w-sm">
         <InputLabel
-        label="Phone Number"
+          label="Phone Number"
           labelClassName="text-sm"
           errorClassName="justify-start ml-1"
           InputProps={{
@@ -81,76 +85,132 @@ export default function BookingFormCard({
         />
 
         <div className="flex flex-wrap items-center justify-start gap-5 lg:gap-10  mt-4">
-          <div className="flex items-center">
-            <div className=" leading-4">
-              <Label
-                className="mx-1.5 text-xs font-semibold "
-                htmlFor="numOfAdults-count"
-              >
-                ADULT
-              </Label>
-              <p className="text-[12px] font-bold mx-1.5">₹ 750</p>
-            </div>
-            <div className="max-w-[80px] bg-slate-800  rounded-full  w-full flex items-center justify-center">
-              <button
-                // size={"icon"}
-                className=" left-0 text-white hover:text-red-500 w-5 h-8 "
-                type="button"
-                onClick={() => {
-                  let Currvalue = getValues("numOfAdults");
-                  if (Currvalue <= 0) {
-                    return;
-                  }
-                  setValues("numOfAdults", Currvalue - 1);
-                }}
-              >
-                -
-              </button>
+          <div>
+          <p className="text-[13px] font-light  mx-1.5 leading-none">10Y+</p>
+            <div className="flex items-center">
+              <div className=" leading-4">
+                <Label
+                  className="mx-1.5 text-xs font-semibold "
+                  htmlFor="numOfAdults-count"
+                >
+                  ADULT
+                </Label>
+                <p className="text-[12px] font-bold mx-1.5">₹ 750</p>
+              </div>
+              <div className="max-w-[80px] bg-slate-800  rounded-full  w-full flex items-center justify-center">
+                <button
+                  // size={"icon"}
+                  className=" left-0 text-white hover:text-red-500 w-5 h-8 "
+                  type="button"
+                  onClick={() => {
+                    let Currvalue = getValues("numOfAdults");
+                    if (Currvalue <= 0) {
+                      return;
+                    }
+                    setValues("numOfAdults", Currvalue - 1);
+                  }}
+                >
+                  -
+                </button>
 
-              <input
-                className="max-w-[20px]  bg-gray-800 rounded-full  text-white  text-center"
-                id="numOfAdults-count"
-                {...register("numOfAdults", {
-                  valueAsNumber: true,
-                })}
-              />
-              <button
-                className=" right-0 text-white hover:text-green-500 w-5 h-8"
-                type="button"
-                onClick={() => {
-                  let Currvalue = getValues("numOfAdults");
-                  if (Currvalue >= MAX_BOAT_SEAT) {
-                    return;
-                  }
-                  setValues("numOfAdults", Currvalue + 1);
-                }}
-              >
-                +
-              </button>
+                <input
+                  className="max-w-[20px]  bg-gray-800 rounded-full  text-white  text-center"
+                  id="numOfAdults-count"
+                  {...register("numOfAdults", {
+                    valueAsNumber: true,
+                  })}
+                />
+                <button
+                  className=" right-0 text-white hover:text-green-500 w-5 h-8"
+                  type="button"
+                  onClick={() => {
+                    let Currvalue = getValues("numOfAdults");
+                    if (Currvalue >= MAX_BOAT_SEAT) {
+                      return;
+                    }
+                    setValues("numOfAdults", Currvalue + 1);
+                  }}
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
+          <div>
+          <p className="text-[13px] font-light  mx-1.5 leading-none">0-3Y</p>
+            <div className="flex items-center mr-8">
+              <div className="leading-4">
+                <Label
+                  htmlFor="numOfBaby-count"
+                  className="mx-1.5 text-xs font-semibold flex-shrink-0"
+                >
+                  INFANT
+                </Label>
+                <p className="text-[12px] font-bold mx-1.5">₹ 0</p>
+              </div>
+              <div className="max-w-[80px] bg-slate-800 rounded-full  w-full  flex items-center justify-center">
+                <button
+                  // size={"icon"}
+                  className=" left-0 text-white hover:text-red-500 w-5 h-8 "
+                  type="button"
+                  onClick={() => {
+                    let Currvalue = getValues("numOfBaby");
+                    if (Currvalue <= 0) {
+                      return;
+                    }
+                    setValues("numOfBaby", Currvalue - 1);
+                  }}
+                >
+                  -
+                </button>
 
-          <div className="flex items-center mr-8">
+                <input
+                  className="max-w-[20px]  bg-gray-800 rounded-full text-white  text-center"
+                  id="numOfBaby-count"
+                  {...register("numOfBaby", {
+                    valueAsNumber: true,
+                  })}
+                />
+                <button
+                  className=" right-0 text-white hover:text-green-500  w-5 h-8 "
+                  type="button"
+                  onClick={() => {
+                    let Currvalue = getValues("numOfBaby");
+                    if (Currvalue >= MAX_BOAT_SEAT) {
+                      return;
+                    }
+                    setValues("numOfBaby", Currvalue + 1);
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p className="text-[13px] font-light mt-4 mx-1.5 leading-none">3-10Y</p>
+          <div className="flex items-center ">
             <div className="leading-4">
               <Label
-                htmlFor="numOfBaby-count"
+                htmlFor="numOfChildren-count"
                 className="mx-1.5 text-xs font-semibold"
               >
-                INFANT
+                CHILD
               </Label>
-              <p className="text-[12px] font-bold mx-1.5">₹ 0</p>
+              <p className="text-[12px] font-bold mx-1.5">₹ 400</p>
             </div>
-            <div className="max-w-[80px] bg-slate-800 rounded-full  w-full  flex items-center justify-center">
+            <div className="max-w-[80px] bg-slate-800 rounded-full  ml-1  flex items-center justify-center">
               <button
                 // size={"icon"}
                 className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                 type="button"
                 onClick={() => {
-                  let Currvalue = getValues("numOfBaby");
+                  let Currvalue = getValues("numOfChildren");
                   if (Currvalue <= 0) {
                     return;
                   }
-                  setValues("numOfBaby", Currvalue - 1);
+                  setValues("numOfChildren", Currvalue - 1);
                 }}
               >
                 -
@@ -158,73 +218,25 @@ export default function BookingFormCard({
 
               <input
                 className="max-w-[20px]  bg-gray-800 rounded-full text-white  text-center"
-                id="numOfBaby-count"
-                {...register("numOfBaby", {
+                id="numOfChildren-count"
+                {...register("numOfChildren", {
                   valueAsNumber: true,
                 })}
               />
               <button
-                className=" right-0 text-white hover:text-green-500  w-5 h-8 "
+                className=" right-0 text-white hover:text-green-500 w-5 h-8"
                 type="button"
                 onClick={() => {
-                  let Currvalue = getValues("numOfBaby");
+                  let Currvalue = getValues("numOfChildren");
                   if (Currvalue >= MAX_BOAT_SEAT) {
                     return;
                   }
-                  setValues("numOfBaby", Currvalue + 1);
+                  setValues("numOfChildren", Currvalue + 1);
                 }}
               >
                 +
               </button>
             </div>
-          </div>
-        </div>
-        <div className="flex items-center mt-4">
-          <div className="leading-4">
-            <Label
-              htmlFor="numOfChildren-count"
-              className="mx-1.5 text-xs font-semibold"
-            >
-              CHILD
-            </Label>
-            <p className="text-[12px] font-bold mx-1.5">₹ 400</p>
-          </div>
-          <div className="max-w-[80px] bg-slate-800 rounded-full  ml-1  flex items-center justify-center">
-            <button
-              // size={"icon"}
-              className=" left-0 text-white hover:text-red-500 w-5 h-8 "
-              type="button"
-              onClick={() => {
-                let Currvalue = getValues("numOfChildren");
-                if (Currvalue <= 0) {
-                  return;
-                }
-                setValues("numOfChildren", Currvalue - 1);
-              }}
-            >
-              -
-            </button>
-
-            <input
-              className="max-w-[20px]  bg-gray-800 rounded-full text-white  text-center"
-              id="numOfChildren-count"
-              {...register("numOfChildren", {
-                valueAsNumber: true,
-              })}
-            />
-            <button
-              className=" right-0 text-white hover:text-green-500 w-5 h-8"
-              type="button"
-              onClick={() => {
-                let Currvalue = getValues("numOfChildren");
-                if (Currvalue >= MAX_BOAT_SEAT) {
-                  return;
-                }
-                setValues("numOfChildren", Currvalue + 1);
-              }}
-            >
-              +
-            </button>
           </div>
         </div>
         <div className="my-5 h-[1px] w-[95%] bg-gray-300" />
