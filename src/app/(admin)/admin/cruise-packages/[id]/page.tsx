@@ -7,7 +7,6 @@ import PackageImageCard from "@/components/admin/cruise-package/packageImageCard
 import PackageChooseImage from "@/components/admin/cruise-package/PackageChooseImage";
 import Bounded from "@/components/elements/Bounded";
 import { Loader2 } from "lucide-react";
-import { sleep } from "@/lib/utils";
 
 export default async function PackageImagePage({
   params: { id },

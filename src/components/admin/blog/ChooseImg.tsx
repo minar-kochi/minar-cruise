@@ -1,12 +1,9 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
-import LoadingState from "@/components/custom/Loading";
 import { Button } from "@/components/ui/button";
-import { getBlogPostById } from "@/db/data/dto/blog";
 import { cn } from "@/lib/utils";
-import { DialogClose } from "@radix-ui/react-dialog";
 import { nanoid } from "@reduxjs/toolkit";
-import { Copy, CopyCheck, Link2, Tags } from "lucide-react";
+import {  Link2, Tags } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import toast from "react-hot-toast";

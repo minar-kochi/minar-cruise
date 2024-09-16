@@ -4,12 +4,10 @@ import { isProd, RemoveTimeStampFromDate } from "@/lib/utils";
 import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
 import {
   isStatusBreakfast,
-  isStatusCustom,
   isStatusDinner,
   isStatusLunch,
   isStatusSunset,
 } from "@/lib/validators/Schedules";
-import { TScheduleWithBookingCountWithId } from "@/Types/Schedule/ScheduleSelect";
 import { $Enums, Schedule } from "@prisma/client";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 

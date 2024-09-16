@@ -1,19 +1,9 @@
 import Bounded from "@/components/elements/Bounded";
 import ExclusivePackageEnquiryCard from "@/components/package/new-page/ExclusivePackageEnquiryCard";
 import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
-import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageFormN from "@/components/package/new-page/PackageFormN";
 import PackageImageN from "@/components/package/new-page/PackageImageN";
 import { PackageCarousel } from "@/components/packages/PackageCarousel";
-import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
@@ -22,7 +12,6 @@ import { cn, flattenObject } from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { Clock, PersonStanding, User } from "lucide-react";
 import { Metadata } from "next";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import React from "react";
 

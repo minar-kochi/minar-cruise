@@ -23,11 +23,9 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { $Enums } from "@prisma/client";
 import {
   getSchedulesByDateRange,
   getSchedulesByDateRangeWithBookingCount,
-  TGetSchedulesByDateRange,
 } from "@/db/data/dto/schedule";
 import { toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";

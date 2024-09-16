@@ -1,4 +1,3 @@
-import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
@@ -11,19 +10,16 @@ import {
   findScheduleById,
   findScheduleToAndFrom,
 } from "@/db/data/dto/schedule";
-import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { combineDateWithSplitedTime, sleep, splitTimeColon } from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
 import {
   offlineBookingFormSchema,
-  TOfflineBookingFormSchema,
   updateOfflineBookingSchema,
 } from "@/lib/validators/offlineBookingValidator";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
-import { error } from "console";
 import { revalidatePath } from "next/cache";
-import { string, z } from "zod";
+import {  z } from "zod";
 
 export const booking = router({
   deleteBooking: AdminProcedure.input(

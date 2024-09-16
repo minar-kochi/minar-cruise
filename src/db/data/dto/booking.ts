@@ -1,6 +1,5 @@
 import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { TRPCError } from "@trpc/server";
 
 export async function getAllBookingDataFromToday() {
   try {

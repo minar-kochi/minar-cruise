@@ -1,35 +1,15 @@
 import Link from "next/link";
 import {
-  CircleUser,
   Home,
   LineChart,
   Menu,
   Package,
-  Package2,
-  Search,
   ShipIcon,
   ShoppingCart,
   Users,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetClose,
@@ -42,6 +22,7 @@ import HeaderAdminDropDownMenu from "./HeaderAdminDropDownMenu";
 import { ModeToggle } from "./theme-changer";
 import ViewSelectedDate from "../dashboard/home/ViewSelectedDate";
 import NavigationSelectionState from "./NavigationSelectionState";
+import RouterRefreshButton from "../booking/RouterRefresh";
 
 const Header = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -144,6 +125,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
         </div>
         <div className="flex items-center gap-2">
           <OpenScheduleButton />
+          <RouterRefreshButton />
           <ModeToggle />
           <HeaderAdminDropDownMenu />
         </div>

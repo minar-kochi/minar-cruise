@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Button, ButtonProps } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { VariantProps } from "class-variance-authority";
 
 export default function CustomLinkButton({
   href,
@@ -14,14 +14,12 @@ export default function CustomLinkButton({
   label: string;
   icon?: React.ReactNode;
   className?: string;
-  props?: ButtonProps;
+  props?: VariantProps<typeof buttonVariants>;
 }) {
   return (
-    <Link href={href}>
-      <Button {...props} className={cn("", className)}>
-        {icon}
-        {label}
-      </Button>
+    <Link href={href} className={cn(buttonVariants(props),className)}>
+      {icon}
+      {label}
     </Link>
   );
 }
