@@ -17,7 +17,7 @@ export default function ImageUpload() {
         </div>
       </div>
       <div className="group image-upload p-4">
-        <ChooseImg />
+        <ChooseImg  showLink={true} />
       </div>
     </Suspense>
   );
