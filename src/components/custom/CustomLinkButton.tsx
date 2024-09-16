@@ -17,7 +17,7 @@ export default function CustomLinkButton({
   props?: VariantProps<typeof buttonVariants>;
 }) {
   return (
-    <Link href={href} className={cn(buttonVariants(props),className)}>
+    <Link href={href} className={cn(buttonVariants(props), className)}>
       {icon}
       {label}
     </Link>

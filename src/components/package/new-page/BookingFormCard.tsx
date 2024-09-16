@@ -13,6 +13,8 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 type TBookingFormCard = {
+  adultPrice: number;
+  childPrice: number;
   register: UseFormRegister<TOnlineBookingFormValidator>;
   getValues: UseFormGetValues<TOnlineBookingFormValidator>;
   setValues: UseFormSetValue<TOnlineBookingFormValidator>;
@@ -27,6 +29,8 @@ export default function BookingFormCard({
   watch,
   errors,
   className,
+  adultPrice,
+  childPrice,
 }: TBookingFormCard) {
   //   watch("numOfAdults");
   return (
@@ -92,7 +96,7 @@ export default function BookingFormCard({
                 >
                   ADULT
                 </Label>
-                <p className="text-[12px] font-bold mx-1.5">₹ 750</p>
+                <p className="text-[12px] font-bold mx-1.5">₹ {adultPrice}</p>
               </div>
               <div className="max-w-[80px] bg-slate-800  rounded-full  w-full flex items-center justify-center">
                 <button
@@ -197,7 +201,7 @@ export default function BookingFormCard({
               >
                 CHILD
               </Label>
-              <p className="text-[12px] font-bold mx-1.5">₹ 400</p>
+              <p className="text-[12px] font-bold mx-1.5">₹ {childPrice}</p>
             </div>
             <div className="max-w-[80px] bg-slate-800 rounded-full  ml-1  flex items-center justify-center">
               <button

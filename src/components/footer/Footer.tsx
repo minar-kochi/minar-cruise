@@ -9,11 +9,6 @@ const Footer = () => {
   return (
     <footer className="text-white bg-black ">
       <Bounded className="flex flex-col justify-evenly">
-        <FloatingWhatsApp
-          phoneNumber="7034191993"
-          accountName="Minar Cruise Cochin"
-          avatar="/assets/favicon.svg"
-        />
         <InfoCard />
         <CopyRight />
       </Bounded>

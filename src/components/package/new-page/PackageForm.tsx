@@ -188,6 +188,8 @@ export default function PackageForm({
         />
         {/* ) : ( */}
         <BookingFormCard
+          adultPrice={adultPrice}
+          childPrice={childPrice}
           getValues={getValues}
           setValues={setValue}
           watch={watch}

@@ -7,6 +7,7 @@ import Navbar from "@/components/navbar/Navbar";
 import Script from "next/script";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/footer/Footer";
+import WhatsappButton from "@/components/whatsapp/WhatsappButton";
 // import Footer from "@/components/footer/Footer";
 
 const fontSans = FontSans({
@@ -42,6 +43,7 @@ export default function RootLayout({
           {children}
           {modal}
           <div id="modal-root" />
+          <WhatsappButton />
           <Footer />
 
           {/* </CounterStoreProvider> */}
