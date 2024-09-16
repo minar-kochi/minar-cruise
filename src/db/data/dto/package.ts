@@ -359,19 +359,15 @@ export async function getNormalPackageCard() {
         title: true,
         duration: true,
         packageImage: {
-          take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
               select: {
-                url: true,
+                id: true,
                 alt: true,
+                url: true,
               },
             },
           },
@@ -412,19 +408,15 @@ export async function getSpecialPackageCard() {
         title: true,
         duration: true,
         packageImage: {
-          take: 1,
           where: {
-            image: {
-              ImageUse: {
-                has: "PROD_FEATURED",
-              },
-            },
+            ImageUse: "PROD_FEATURED",
           },
           select: {
             image: {
               select: {
-                url: true,
+                id: true,
                 alt: true,
+                url: true,
               },
             },
           },
