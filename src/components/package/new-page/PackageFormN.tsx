@@ -21,6 +21,7 @@ import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs
 import { Button } from "@/components/ui/button";
 import { isPackageStatusSunSet } from "@/lib/validators/Package";
 import { format } from "date-fns";
+import { dataTagSymbol } from "@tanstack/react-query";
 
 type TPackageForm = {
   packageId: string;
@@ -222,6 +223,8 @@ export default function PackageFormN({
           watch={watch}
           register={register}
           errors={errors}
+          adultPrice={adultPrice}
+          childPrice={adultPrice}
           className={cn("", { "": type === "modal" })}
         />
         <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>

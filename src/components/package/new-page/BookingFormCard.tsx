@@ -13,6 +13,8 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 type TBookingFormCard = {
+  adultPrice: number;
+  childPrice: number;
   register: UseFormRegister<TOnlineBookingFormValidator>;
   getValues: UseFormGetValues<TOnlineBookingFormValidator>;
   setValues: UseFormSetValue<TOnlineBookingFormValidator>;
