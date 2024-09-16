@@ -8,7 +8,8 @@ export async function revalidateAllPackageImageUse() {
     },
   });
   packageSlugs.map(async (item) => {
-    revalidatePath(`/package/${item}`);
+    revalidatePath(`/package/${item.slug}`);
   });
-  revalidatePath(`/`);
+  revalidatePath(`/`, "layout");
+  revalidatePath(`/`, "page");
 }
