@@ -10,7 +10,7 @@ import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
 import { cn, flattenObject } from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
-import { Clock, PersonStanding, User } from "lucide-react";
+import { Baby, Clock, PersonStanding, User } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import React from "react";
@@ -95,8 +95,8 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
   return (
     <Bounded className="md:px-1 ">
       <div className="">
-        <header className="sm:mx-10 mx-1  text-white pt-3 pb-3">
-          <div className="flex gap-1 md:gap-3 ">
+        <header className="sm:px-10 mx-1 flex flex-col items-center justify-center md:grid md:grid-cols-2 bg-white rounded-md my-4  w-full  gap-4 pt-3 pb-3 ">
+          <div className="flex gap-1 md:gap-3 bg-white">
             <Image
               src="/assets/titleicons/star.svg"
               alt="star icon"
@@ -109,62 +109,63 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
                 <h1 className="text-xl sm:text-2xl md:text-3xl text-[#0D3A62] font-semibold">
                   {data.title}
                 </h1>
-                <p className="text-blue-950 text-xs md:text-sm font-medium flex items-center gap-2 mt-1">
-                  <span className="text-primary">
-                    <Clock size="18" />
-                  </span>
-                  {data.fromTime} - {data.toTime}
-                </p>
-              </div>
-              <div className="text-black font-medium text-xl mt-2 ml-4 self-end">
-                <div className="flex flex-col items-center">
-                  <p className="text-sm">10Y+</p>
-                  <User />
-                </div>
+                {/* <div className="md:flex hidden items-center justify-center gap-2">
+                
+                </div> */}
               </div>
             </div>
-            {/* <div className="h-[1px] w-[20%] my-2 bg-black/70" /> */}
           </div>
-          {/* <div>
-            <div className="flex  text-primary gap-16 ">
-              <div className="flex items-center  gap-1">
-                <Hourglass />
-                <div className="">
-                  <p className="text-xs text-muted-foreground font-semibold">
-                    Duration
-                  </p>
-                  <p className="text-xs text-black font-semibold">2 hours</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <User />
-                <div className="">
-                  <p className="text-xs text-muted-foreground font-semibold">
-                    Adult (10+)
-                  </p>
-                  <p className="text-xs text-black font-semibold">750 -/ </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex text-primary items-center gap-1 mt-1">
-              <Baby />
-              <div className="">
-                <p className="text-xs text-muted-foreground font-semibold">
-                  Children (3yr-10yr)
-                </p>
-                <p className="text-xs text-black font-semibold">400 -/</p>
-              </div>
-            </div>
+          {/* <div className="block md:hidden">
+            <p className="text-blue-950 text-xs md:text-sm font-medium flex items-center gap-2 mt-1">
+              <span className="text-primary">
+                <Clock size="18" />
+              </span>
+              {data.fromTime} - {data.toTime}
+            </p>
           </div> */}
+          <div className="flex flex-col justify-center items-center">
+            <div className="bg-white flex  gap-4 px-2 py-2">
+              <div className="">
+                <div className="flex  gap-2 items-center ">
+                  <User size="26" className="text-red-500" />
+                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                    Adult
+                  </p>
+                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                    ₹{data.adultPrice / 100}/-
+                  </p>
+                </div>
+              </div>
+              <div className="">
+                <div className="flex  gap-2 items-center ">
+                  <Baby size="26" className="text-red-500" />
+                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                    Adult
+                  </p>
+                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                    ₹{data.adultPrice / 100}/-
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="">
+              <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                <span className="text-primary">
+                  <Clock size="26" />
+                </span>
+                {data.fromTime} - {data.toTime}
+              </p>
+            </div>
+          </div>
         </header>
 
-        <div className="grid md:gap-3 px-2 2md:grid-cols-3 md:mx-1  lg:mx-10">
+        <div className="grid md:gap-3  2md:grid-cols-3   ">
           <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
             <PackageImageN data={data} />
           </div>
           <div
             className={cn(
-              "2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg",
+              "2md:row-span-2 2md:col-start-3 2md:row-start-1 2md:sticky 2md:-top-96 2md:self-start bg-white  rounded-lg ",
               {
                 "2md-top-[500px]": isPackageStatusExclusive(
                   data.packageCategory,
