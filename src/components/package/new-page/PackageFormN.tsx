@@ -26,9 +26,9 @@ import { dataTagSymbol } from "@tanstack/react-query";
 type TPackageForm = {
   packageId: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
+  type?: "modal" | undefined;
   adultPrice: number;
   childPrice: number;
-  type?: "modal" | undefined;
 };
 
 export default function PackageFormN({

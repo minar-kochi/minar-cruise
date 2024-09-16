@@ -51,7 +51,7 @@ export default async function ViewBooking({
               href={`/admin/booking`}
               label="Back"
               props={{
-                variant: "secondary"
+                variant: "secondary",
               }}
               className="flex pl-2 justify-between"
             />
