@@ -38,12 +38,12 @@ export const BookingData = {
   mainHeading: "Why Choose ",
   subHeading:
     "Be it a cool DJ party with your friends and colleagues or a laid-back family vacation, now you can enjoy in the open sea with Minar",
-  image1: {
-    url: "/assets/minar-boat-dark.jpeg",
+  bgImage: {
+    url: `url("/assets/sea2.gif")`,
     alt: "Booking image background",
   },
-  image2: {
-    url: "https://cochincruiseline.com/wp-content/uploads/2023/01/bg2.jpg",
+  boatImage: {
+    url: "/assets/minar.png",
     alt: "Booking image background",
   },
   features: [
