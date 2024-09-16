@@ -9,7 +9,7 @@ export default function WhatsappButton() {
       <FloatingWhatsApp
         phoneNumber="7034191993"
         accountName="Minar Cruise Cochin"
-        avatar="/assets/favicon."
+        avatar="/assets/whatsapplogo.png"
       />
     </div>
   );
