@@ -22,7 +22,7 @@ const ErrorPage = () => {
     <main className="bg-white overflow-hidden relative lgmd:static text-black">
       <div className=" mx-auto  ">
         <Image
-          alt="cruise"
+          alt="404 error page"
           src={"/assets/404page.png"}
           width={1920}
           height={1080}
