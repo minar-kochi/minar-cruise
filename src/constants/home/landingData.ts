@@ -165,7 +165,7 @@ export const facilities = {
 export const entertainment = {
   image: {
     url: "/assets/nightPhoto.jpg",
-    logo: "/assets/logo.png",
+    logo: "https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q",
   },
   activities: [
     { description: "Live DJ performance", icon: Disc2 },
@@ -225,24 +225,24 @@ export const galleryImageUrl = [
 
 export const footer = {
   image:
-    "https://cochincruiseline.com/wp-content/uploads/2021/08/logo-light.png",
+    "https://utfs.io/f/Lnh9TIEe6BHcUrCcf7WNbKLTVg5knvAfD8pQYay0m4qERxcX",
   contact: ["+91 8089021666", "+91 8089061444"],
   email: "info@cochincruiseline.com",
   address:
     "GF, 40/6185, Swapnil Enclave, Highcourt junction, Marine Drive, Ernakulam, Kerala, India, 682031",
   socials: [
     {
-      name: "Facebook",
+      name: "Minar Facebook Url",
       icon: "/assets/Social/facebook.svg",
-      url: "https://www.facebook.com/minarcruisecochin/",
+      url: "https://www.facebook.com/minar.touristcochin/",
     },
     {
-      name: "Instagram",
+      name: "Minar Instagram Url",
       icon: "/assets/Social/instagram.svg",
-      url: "https://www.instagram.com/minarcruisecochin/",
+      url: "https://www.instagram.com/minar_tours_cochin/",
     },
     {
-      name: "Whatsapp",
+      name: "Minar Whatsapp Url",
       icon: "/assets/Social/whatsapp.svg",
       url: "https://api.whatsapp.com/send?phone=917034191993",
     },
