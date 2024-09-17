@@ -38,20 +38,9 @@ export default function Services() {
               width={1078}
               height={1080}
             >
-              <source src={bgVid } type="video/mp4" />
+              <source src={bgVid} type="video/mp4" />
             </video>
-            {/* <div className="absolute max-lg:top-1/3 max-sm:top-6 max-sm:w-[95%] max-sm:left-2 top-7 text-white  w-[88%] left-5 ">
-              <h2 className="font-medium max-lg:font-bold mb-2 leading-6 max-lg:text-2xl max-lg:mx-auto max-lg:text-center ">
-                {subHeading}
-              </h2>
-              {description.map((item) => (
-                <>
-                  <p className="font-medium max-lg:text-lg max-lg:mx-auto max-lg:text-center text-xs leading-5 w-[85%] my-2">
-                    {item}
-                  </p>
-                </>
-              ))}
-            </div> */}
+
             <div className="absolute bottom-5 left-4  w-full ">
               <div className="flex gap-2">
                 {contact.map((item, i) => (
@@ -77,7 +66,7 @@ export default function Services() {
           {events.map((item, i) => (
             <div
               className={`flex gap-4 max-sm:gap-2 max-sm:flex-col  ${i === 1 ? "flex-row-reverse " : ""} items-center `}
-              key={item.image + i}
+              key={`${item.image}-${i}-events-page`}
             >
               <div className="w-1/2 max-sm:w-full">
                 <Image

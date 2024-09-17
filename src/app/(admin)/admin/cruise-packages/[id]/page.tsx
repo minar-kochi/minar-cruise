@@ -46,7 +46,7 @@ export default function PackageImagePage({
           data.packageImage.map((dbImage) => {
             return (
               <PackageImageCard
-                key={`${dbImage.imageId}-${dbImage.packageId}`}
+                key={`${dbImage.imageId}-${dbImage.packageId}-PackageImageCard`}
                 dbImage={dbImage}
               />
             );
