@@ -19,7 +19,7 @@ const GalleryCard = ({ slug }: { slug: TGalleries }) => {
           alt={bannerImages[0].alt}
           width={1920}
           height={1080}
-          className="  max-h-[400px] object-cover object-top"
+          className="  max-h-[400px] object-cover "
         />
         <div className="absolute text-white   top-0 w-full h-full grid place-content-center text-center gap-3">
           <h3 className="text-5xl font-bold">{Text.bannerHeading}</h3>
