@@ -8,6 +8,7 @@ import Script from "next/script";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/footer/Footer";
 import WhatsappButton from "@/components/whatsapp/WhatsappButton";
+import GoogleRecaptchaWrappers from "@/context/ReCaptchaWrapper";
 // import Footer from "@/components/footer/Footer";
 
 const fontSans = FontSans({
@@ -35,26 +36,23 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <Providers>
-          {/* <CounterStoreProvider> */}
-          <Navbar />
-          <Toaster />
+        <GoogleRecaptchaWrappers>
+          <Providers>
+            {/* <CounterStoreProvider> */}
+            <Navbar />
+            <Toaster />
 
-          {children}
-          {modal}
-          <div id="modal-root" />
-          <WhatsappButton />
-          <Footer />
+            {children}
+            {modal}
+            <div id="modal-root" />
+            <WhatsappButton />
+            <Footer />
 
-          {/* </CounterStoreProvider> */}
-        </Providers>
+            {/* </CounterStoreProvider> */}
+          </Providers>
+        </GoogleRecaptchaWrappers>
       </body>
       <Script defer src="https://checkout.razorpay.com/v1/checkout.js" />
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        async
-        defer
-      ></Script>
     </html>
   );
 }

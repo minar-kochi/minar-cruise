@@ -54,6 +54,7 @@ export const onlineBookingFormValidator = z
     scheduleId: z.string().optional(),
     selectedScheduleDate: z.string(),
     packageCategory: z.enum(packageCategory),
+    token: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -103,6 +104,7 @@ export const onlineBookingFormValidator = z
       path: ["numOfAdults"],
     },
   );
+// export const ExtendedOnlineBookingFormWithRecaptcha = onlineBookingFormValidator.
 // .refine(
 //   (data) => {
 //     let totalCount = data.numOfAdults + data.numOfChildren;
