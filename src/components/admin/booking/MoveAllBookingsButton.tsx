@@ -53,16 +53,17 @@ export default function MoveAllBookingsButton({
   const schedulesData = useAppSelector((state) =>
     scheduleIdAndPackageTitleSelector(state),
   );
-
+  const { invalidate: InvalidateBookingSchedule } =
+    trpc.useUtils().admin.booking;
   const { mutate, isPending } =
     trpc.admin.booking.transferAllBookingsToASpecificSchedule.useMutation({
       onMutate() {
         toast.loading(`Moving All Bookings`);
       },
       async onSuccess() {
-        await sleep(2000);
         toast.dismiss();
         toast.success("Migration Successful");
+        InvalidateBookingSchedule();
         router.push(`/admin/booking`);
       },
       onError(error) {
