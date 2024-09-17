@@ -130,10 +130,10 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
                 <div className="flex  gap-2 items-center ">
                   <Baby size="26" className="text-red-500" />
                   <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                    Adult
+                    Child
                   </p>
                   <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                    ₹{data.adultPrice / 100}/-
+                    ₹{data.childPrice / 100}/-
                   </p>
                 </div>
               </div>

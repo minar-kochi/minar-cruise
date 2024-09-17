@@ -86,10 +86,10 @@ export default function BookingFormCard({
         />
 
         <div className="flex flex-wrap items-center justify-start gap-5 lg:gap-10  mt-4">
-          <div>
+          <div className="">
             <p className="text-[13px] font-light  mx-1.5 leading-none">10Y+</p>
             <div className="flex items-center">
-              <div className=" leading-4">
+              <div className="flex-shrink-0 leading-4">
                 <Label
                   className="mx-1.5 text-xs font-semibold "
                   htmlFor="numOfAdults-count"
@@ -115,7 +115,7 @@ export default function BookingFormCard({
                 </button>
 
                 <input
-                  className="max-w-[20px]  bg-gray-800 rounded-full  text-white  text-center"
+                  className="max-w-[25px]  bg-gray-800 rounded-full  text-white  text-center"
                   id="numOfAdults-count"
                   {...register("numOfAdults", {
                     valueAsNumber: true,
@@ -166,7 +166,7 @@ export default function BookingFormCard({
                 </button>
 
                 <input
-                  className="max-w-[20px]  bg-gray-800 rounded-full text-white  text-center"
+                  className="max-w-[25px]  bg-gray-800 rounded-full text-white  text-center"
                   id="numOfBaby-count"
                   {...register("numOfBaby", {
                     valueAsNumber: true,
@@ -220,7 +220,7 @@ export default function BookingFormCard({
               </button>
 
               <input
-                className="max-w-[20px]  bg-gray-800 rounded-full text-white  text-center"
+                className="max-w-[25px]  bg-gray-800 rounded-full text-white  text-center"
                 id="numOfChildren-count"
                 {...register("numOfChildren", {
                   valueAsNumber: true,
