@@ -1,6 +1,9 @@
 // import SearchBarWrapper from "../searchbar/SearchBarWrapper";
 
+import { landingData } from "@/constants/home/landingData";
+
 const HomeVideo = async () => {
+  const { video } = landingData;
   return (
     <div className="relative ">
       {/* <SearchBarWrapper className=" absolute bottom-0 w-full" /> */}
@@ -14,7 +17,7 @@ const HomeVideo = async () => {
         width={1920}
         height={1080}
       >
-        <source src="/assets/HomeVid.mp4" type="video/mp4" />
+        <source src={video} type="video/mp4" />
       </video>
     </div>
   );
