@@ -47,10 +47,6 @@ export function Modal({
       }}
     >
       <DialogContent className={cn("", className)}>{children}</DialogContent>
-      {/* <dialog ref={dialogRef} className="modal" onClose={onDismiss}>
-        {children}
-        <button onClick={onDismiss} className="close-button" />
-      </dialog> */}
     </Dialog>,
     document.getElementById("modal-root")!,
   );

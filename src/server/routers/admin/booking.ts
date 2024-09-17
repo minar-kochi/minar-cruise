@@ -202,6 +202,7 @@ export const booking = router({
       if (error instanceof TRPCError) {
         throw new TRPCError({ code: error.code, message: error.message });
       }
+
       throw new TRPCError({
         code: "BAD_GATEWAY",
         message: "something went wrong",
@@ -308,11 +309,13 @@ export const booking = router({
 
         return data.scheduleId;
       } catch (error) {
-        console.error(error);
-
+        console.log(error)
+        if(error instanceof TRPCError){
+          throw new TRPCError({code: error.code, message: error.message})
+        }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Could not find schedule id",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong, Please try again",
         });
       }
     },
