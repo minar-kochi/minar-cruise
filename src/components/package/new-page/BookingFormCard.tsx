@@ -34,8 +34,6 @@ export default function BookingFormCard({
 }: TBookingFormCard) {
   //   watch("numOfAdults");
 
-
-
   return (
     <div
       className={cn(
@@ -107,7 +105,7 @@ export default function BookingFormCard({
                   className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                   type="button"
                   onClick={() => {
-                    let currValue = getValues("numOfAdults");
+                    let currValue = getValues("numOfAdults") || 0;
                     if (currValue <= 0) {
                       return;
                     }
@@ -129,7 +127,7 @@ export default function BookingFormCard({
                   className=" right-0 text-white hover:text-green-500 w-5 h-8"
                   type="button"
                   onClick={() => {
-                    let currValue = getValues("numOfAdults");
+                    let currValue = getValues("numOfAdults") || 0;
                     if (currValue >= MAX_BOAT_SEAT) {
                       return;
                     }
@@ -159,7 +157,7 @@ export default function BookingFormCard({
                   className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                   type="button"
                   onClick={() => {
-                    let currValue = getValues("numOfBaby");
+                    let currValue = getValues("numOfBaby") || 0;
                     if (currValue <= 0) {
                       return;
                     }
@@ -180,7 +178,7 @@ export default function BookingFormCard({
                   className=" right-0 text-white hover:text-green-500  w-5 h-8 "
                   type="button"
                   onClick={() => {
-                    let currValue = getValues("numOfBaby");
+                    let currValue = getValues("numOfBaby") || 0;
                     if (currValue >= MAX_BOAT_SEAT) {
                       return;
                     }
@@ -213,7 +211,7 @@ export default function BookingFormCard({
                 className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                 type="button"
                 onClick={() => {
-                  let currValue = getValues("numOfChildren");
+                  let currValue = getValues("numOfChildren") || 0;
                   if (currValue <= 0) {
                     return;
                   }
@@ -234,7 +232,7 @@ export default function BookingFormCard({
                 className=" right-0 text-white hover:text-green-500 w-5 h-8"
                 type="button"
                 onClick={() => {
-                  let currValue = getValues("numOfChildren");
+                  let currValue = getValues("numOfChildren") || 0;
                   if (currValue >= MAX_BOAT_SEAT) {
                     return;
                   }
