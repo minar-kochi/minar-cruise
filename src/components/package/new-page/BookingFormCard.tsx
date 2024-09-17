@@ -33,6 +33,9 @@ export default function BookingFormCard({
   childPrice,
 }: TBookingFormCard) {
   //   watch("numOfAdults");
+
+
+
   return (
     <div
       className={cn(
@@ -104,11 +107,11 @@ export default function BookingFormCard({
                   className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                   type="button"
                   onClick={() => {
-                    let Currvalue = getValues("numOfAdults");
-                    if (Currvalue <= 0) {
+                    let currValue = getValues("numOfAdults");
+                    if (currValue <= 0) {
                       return;
                     }
-                    setValues("numOfAdults", Currvalue - 1);
+                    setValues("numOfAdults", currValue - 1);
                   }}
                 >
                   -
@@ -119,17 +122,18 @@ export default function BookingFormCard({
                   id="numOfAdults-count"
                   {...register("numOfAdults", {
                     valueAsNumber: true,
+                    setValueAs: (v) => (isNaN(Number(v)) ? 0 : Number(v)),
                   })}
                 />
                 <button
                   className=" right-0 text-white hover:text-green-500 w-5 h-8"
                   type="button"
                   onClick={() => {
-                    let Currvalue = getValues("numOfAdults");
-                    if (Currvalue >= MAX_BOAT_SEAT) {
+                    let currValue = getValues("numOfAdults");
+                    if (currValue >= MAX_BOAT_SEAT) {
                       return;
                     }
-                    setValues("numOfAdults", Currvalue + 1);
+                    setValues("numOfAdults", currValue + 1);
                   }}
                 >
                   +
@@ -155,11 +159,11 @@ export default function BookingFormCard({
                   className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                   type="button"
                   onClick={() => {
-                    let Currvalue = getValues("numOfBaby");
-                    if (Currvalue <= 0) {
+                    let currValue = getValues("numOfBaby");
+                    if (currValue <= 0) {
                       return;
                     }
-                    setValues("numOfBaby", Currvalue - 1);
+                    setValues("numOfBaby", currValue - 1);
                   }}
                 >
                   -
@@ -176,11 +180,11 @@ export default function BookingFormCard({
                   className=" right-0 text-white hover:text-green-500  w-5 h-8 "
                   type="button"
                   onClick={() => {
-                    let Currvalue = getValues("numOfBaby");
-                    if (Currvalue >= MAX_BOAT_SEAT) {
+                    let currValue = getValues("numOfBaby");
+                    if (currValue >= MAX_BOAT_SEAT) {
                       return;
                     }
-                    setValues("numOfBaby", Currvalue + 1);
+                    setValues("numOfBaby", currValue + 1);
                   }}
                 >
                   +
@@ -209,11 +213,11 @@ export default function BookingFormCard({
                 className=" left-0 text-white hover:text-red-500 w-5 h-8 "
                 type="button"
                 onClick={() => {
-                  let Currvalue = getValues("numOfChildren");
-                  if (Currvalue <= 0) {
+                  let currValue = getValues("numOfChildren");
+                  if (currValue <= 0) {
                     return;
                   }
-                  setValues("numOfChildren", Currvalue - 1);
+                  setValues("numOfChildren", currValue - 1);
                 }}
               >
                 -
@@ -230,11 +234,11 @@ export default function BookingFormCard({
                 className=" right-0 text-white hover:text-green-500 w-5 h-8"
                 type="button"
                 onClick={() => {
-                  let Currvalue = getValues("numOfChildren");
-                  if (Currvalue >= MAX_BOAT_SEAT) {
+                  let currValue = getValues("numOfChildren");
+                  if (currValue >= MAX_BOAT_SEAT) {
                     return;
                   }
-                  setValues("numOfChildren", Currvalue + 1);
+                  setValues("numOfChildren", currValue + 1);
                 }}
               >
                 +

@@ -64,6 +64,10 @@ export default function PackageFormN({
       // token: undefined,
     },
   });
+  const safeTotal = (value: number) => {
+    const numberValue = Number(value);
+    return isNaN(numberValue) ? 0 : numberValue;
+  };
 
   const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
@@ -243,7 +247,7 @@ export default function PackageFormN({
         <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
           <div>
             <p className="text-xs">Total:</p>
-            <p className="text-2xl font-semibold ">₹{total}</p>
+            <p className="text-2xl font-semibold ">₹{safeTotal(total)}</p>
           </div>
           <div className="w-[2px] h-12 bg-black"></div>
           <div>
