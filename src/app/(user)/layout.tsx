@@ -39,12 +39,12 @@ export default function RootLayout({
         <GoogleRecaptchaWrappers>
           <Providers>
             {/* <CounterStoreProvider> */}
-            <Navbar />
             <Toaster />
 
-            {children}
             {modal}
             <div id="modal-root" />
+            <Navbar />
+            <div className="">{children}</div>
             <WhatsappButton />
             <Footer />
 
@@ -52,7 +52,7 @@ export default function RootLayout({
           </Providers>
         </GoogleRecaptchaWrappers>
       </body>
-      <Script defer src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script async defer src="https://checkout.razorpay.com/v1/checkout.js" />
     </html>
   );
 }

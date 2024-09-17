@@ -181,7 +181,7 @@ export default function PackageFormN({
       </p>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={cn("flex flex-col items-center justify-center")}
+        className={cn("flex flex-col items-center w-full justify-center")}
       >
         <BookingFormCalender
           setFormDateValue={(value: string) => {

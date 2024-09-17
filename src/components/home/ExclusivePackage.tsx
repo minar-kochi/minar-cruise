@@ -72,16 +72,8 @@ export default function ExclusivePackage() {
               <h3 className="text-2xl lg:text-3xl font-semibold text-white">
                 Exclusive Package
               </h3>
-              <div className="flex items-center text-xs">
-                <div className="flex gap-1 ">
-                  <Star className="w-[17px] fill-[#ffcc18] text-[#ffcc18] rounded-lg" />
-                  <Star className="w-[17px] fill-[#ffcc18] text-[#ffcc18] rounded-lg" />
-                  <Star className="w-[17px] fill-[#ffcc18] text-[#ffcc18] rounded-lg" />
-                  <Star className="w-[17px] fill-[#ffcc18] text-[#ffcc18] rounded-lg" />
-                  <Star className="w-[17px] fill-[#ffcc18] text-[#ffcc18] rounded-lg" />
-                </div>
-
-                <p className="ml-2 font-semibold text-white text-sm">5/5</p>
+              <div className="">
+               
               </div>
             </div>
             <div>
