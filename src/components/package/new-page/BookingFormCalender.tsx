@@ -12,6 +12,7 @@ import { $Enums } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import CalendarPopover from "./CalendarPopover";
+import toast from "react-hot-toast";
 type TBookingFormCalender = {
   setFormDateValue: (value: string) => void;
   setScheduleId: (value: string | undefined) => void;
@@ -70,7 +71,10 @@ export default function BookingFormCalender({
           }}
           selected={date}
           onSelect={(date, dat, mod, e) => {
-            if (mod.disabled) return;
+            if (mod.disabled){
+              toast.error('This date is disabled')
+              return
+            }
 
             if (!date) return;
             setDate(date);
@@ -131,7 +135,10 @@ export default function BookingFormCalender({
         }}
         selected={date}
         onSelect={(date, dat, mod, e) => {
-          if (mod.disabled) return;
+          if (mod.disabled){
+            toast.error('This date is disabled')
+            return
+          }
 
           if (!date) return;
           setDate(date);

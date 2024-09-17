@@ -226,7 +226,7 @@ export const user = router({
         if (!input.token) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Please give access to Recaptcha",
+            message: "Please give access to Recaptcha, or Contact Admins",
           });
         }
         const formData = `secret=${process.env.RECAPTCHA_SITE_SECRET}&response=${input.token}`;
@@ -236,10 +236,10 @@ export const user = router({
         if (res && res.data?.success && res.data?.score < 0.5) {
           throw new TRPCError({
             code: "UNPROCESSABLE_CONTENT",
-            message: "Recaptcha Failed",
+            message:
+              "Failed to validate Recaptcha Please try again, or contact admin",
           });
         }
-        console.log(res);
       } catch (error) {
         if (error instanceof TRPCError) {
           throw new TRPCError({ code: error.code, message: error.message });
@@ -258,7 +258,7 @@ export const user = router({
         if (!packageIdExists) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Could not find given packageId",
+            message: "Could not find given package",
           });
         }
 
