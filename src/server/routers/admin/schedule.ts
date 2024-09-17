@@ -21,7 +21,11 @@ import { isStatusCustom } from "@/lib/validators/Schedules";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ShouldStatusBeAvaiablePublicWithPackage } from "@/lib/validators/Package";
+import {
+  isPackageStatusCustom,
+  isPackageStatusExclusive,
+  ShouldStatusBeAvaiablePublicWithPackage,
+} from "@/lib/validators/Package";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import {
   getSchedulesByDateRange,
@@ -262,6 +266,17 @@ export const schedule = router({
             message: `Time is Required for ${ScheduleTime} Packages.`,
           });
         }
+        if (
+          (isPackageStatusExclusive(isPackageFound.packageCategory) ||
+            isPackageStatusCustom(isPackageFound.packageCategory)) &&
+          (!toTime || !fromTime)
+        ) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Time is Required for ${isPackageFound.packageCategory.toLocaleLowerCase()} Packages.`,
+          });
+        }
+
         const Schedule = await db.schedule.findFirst({
           where: {
             AND: [
@@ -369,7 +384,16 @@ export const schedule = router({
             message: "Selected Package is not found on our database.",
           });
         }
-
+        if (
+          (isPackageStatusExclusive(isPackageFound.packageCategory) ||
+            isPackageStatusCustom(isPackageFound.packageCategory)) &&
+          (!toTime || !fromTime)
+        ) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Time is Required for ${isPackageFound.packageCategory.toLocaleLowerCase()} Packages.`,
+          });
+        }
         const Schedule = await db.schedule.findFirst({
           where: {
             AND: [

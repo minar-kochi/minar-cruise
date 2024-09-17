@@ -59,7 +59,7 @@ export function BookingConfirmationEmailForAdmin({
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[700px]">
             <Section className="my-[10px] ">
               <Img
-                src={`${process.env.NEXT_PUBLIC_DOMAIN}/assets/logo.png`}
+                src={`https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q`}
                 width="1920"
                 height="1080"
                 alt="Vercel"

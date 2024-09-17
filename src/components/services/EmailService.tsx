@@ -50,7 +50,7 @@ export const EmailSendBookingConfirmation = ({
             <Section className="my-[10px] ">
               {/* @TODO Need to change this URL */}
               <Img
-                src={`${process.env.NEXT_PUBLIC_DOMAIN}/assets/logo.png`}
+                src={`https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q`}
                 width="1920"
                 height="1080"
                 alt="Minar Logo"

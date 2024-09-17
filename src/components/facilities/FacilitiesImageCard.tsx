@@ -1,8 +1,10 @@
 import Image from "next/image";
-import { facilitiesImages } from "@/constants/facilities/images";
+
 import Bounded from "../elements/Bounded";
 import Link from "next/link";
 import FacilitiesTitle from "./FacilitiesTitle";
+import { facilitiesImages } from "@/constants/facilities/images";
+
 
 const FacilitiesImageCard = ({
   label,

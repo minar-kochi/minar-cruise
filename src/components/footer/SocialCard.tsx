@@ -2,6 +2,7 @@ import { Facebook, Instagram, Twitch } from "lucide-react";
 import { Button } from "../ui/button";
 import { footer } from "@/constants/home/landingData";
 import Image from "next/image";
+import Link from "next/link";
 
 const SocialCard = () => {
   const { socials } = footer;
@@ -9,14 +10,14 @@ const SocialCard = () => {
     <>
       <div className="flex justify-end max-sm:justify-evenly space-x-3 py-5">
         {socials.map((item, i) => (
-          <Button
+          <Link
             className="bg-white] hover:bg-[#102539ee]"
             key={`${item.icon}${i}`}
+            href={item.url}
+            target="_blank"
           >
-            <a href={item.url}>
-              <Image alt={item.name} src={item.icon} width={30} height={30} />
-            </a>
-          </Button>
+            <Image alt={item.name} src={item.icon} width={30} height={30} />
+          </Link>
         ))}
       </div>
     </>

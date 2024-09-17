@@ -44,7 +44,7 @@ export default function OfflineBookingForm({
   prefillData,
 }: TOfflineBookingForm) {
   const { invalidate: InvalidateBookingSchedule } =
-    trpc.useUtils().admin.booking.bookingScheduleInfinity;
+    trpc.useUtils().admin.booking
   const { mutate: createOfflineBooking, isPending: isLoading } =
     trpc.admin.booking.createNewOfflineBooking.useMutation({
       onMutate() {

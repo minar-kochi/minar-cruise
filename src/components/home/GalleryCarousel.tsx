@@ -4,6 +4,9 @@ import Image from "next/image";
 import { EmblaCarouselProvider } from "@/components/Carousel/EmblaCarousel";
 import Bounded from "@/components/elements/Bounded";
 import { HomeCarousalProvider } from "../Carousel/HomeCarousal";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "../ui/button";
 
 export default function GalleryCarousel() {
   return (
@@ -14,13 +17,13 @@ export default function GalleryCarousel() {
       <h3 className="text-4xl md:text-5xl text-center font-normal">
         Explore Our <span className="text-[#0D3A62] font-semibold">Cruise</span>
       </h3>
-      <div className="  mx-auto relative  rounded-lg">
+      <div className="  mx-auto relative rounded-lg  ">
         <HomeCarousalProvider>
-          {galleryImageUrl.map((url, i) => (
-            <div key={url + i} className="first-of-type:ml-4">
+          {galleryImageUrl.map((item, i) => (
+            <div key={item.url + i} className="first-of-type:ml-4">
               <Image
-                src={url}
-                alt="gallery image"
+                src={item.url}
+                alt={item.alt}
                 width={1000}
                 height={400}
                 className="  rounded-lg aspect-video object-cover max-w-[45rem] "
@@ -28,6 +31,15 @@ export default function GalleryCarousel() {
             </div>
           ))}
         </HomeCarousalProvider>
+        <Link
+          href={"/gallery/family-gathering"}
+          className={buttonVariants({
+            size: "sm",
+            className: "absolute right-0 bg-[#0D3A62] text-destructive-foreground hover:bg-blue-900",
+          })}
+        >
+          View Gallery
+        </Link>
       </div>
     </Bounded>
   );

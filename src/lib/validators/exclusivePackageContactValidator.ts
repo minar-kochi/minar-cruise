@@ -23,4 +23,5 @@ export const exclusivePackageValidator = z.object({
   Duration: z.string(),
   eventType: z.string().min(3),
   selectedDate: z.string(),
+  token:z.string().optional()
 });

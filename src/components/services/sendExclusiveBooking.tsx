@@ -27,6 +27,7 @@ interface ExclusiveBookingEmailToAdmin {
   babyCount: number;
   selectedDate: string;
   selectedTime: string;
+  token:string | undefined
 }
 
 // const domain = process.env.NEXT_PUBLIC_DOMAIN;
@@ -34,6 +35,7 @@ interface ExclusiveBookingEmailToAdmin {
 export default function ExclusiveBookingEmailToAdmin({
   Duration,
   count,
+  token,
   eventType,
   email,
   name,
@@ -51,7 +53,7 @@ export default function ExclusiveBookingEmailToAdmin({
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[700px]">
             <Section className="my-[10px] ">
               <Img
-                src={`https://cochincruiseline.com/wp-content/uploads/2022/12/logo.png`}
+                src={`https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q`}
                 width="1920"
                 height="1080"
                 alt="Vercel"

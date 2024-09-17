@@ -3,6 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   onlineBookingFormValidator,
@@ -60,6 +61,7 @@ export default function PackageFormN({
       packageId: packageId,
       selectedScheduleDate: RemoveTimeStampFromDate(new Date(Date.now())),
       packageCategory: packageCategory,
+      // token: undefined,
     },
   });
 
@@ -139,14 +141,24 @@ export default function PackageFormN({
         });
       },
     });
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   async function onSubmit(data: TOnlineBookingFormValidator) {
     try {
-      CreateRazorPayIntent(data);
+      const token =
+        executeRecaptcha && (await executeRecaptcha("OrderSubmitted"));
+      if (!token) {
+        toast.error("Recaptcha has not loaded Yet");
+        return;
+      }
+
+      CreateRazorPayIntent({ ...data, token });
     } catch (error) {
+      console.log(error);
       if (error instanceof zodResolver) {
         console.log("Zod validation error");
       }
+      toast.error("Something unexpected happened");
     }
   }
 
@@ -156,6 +168,7 @@ export default function PackageFormN({
   const date = watch("selectedScheduleDate");
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
+
   return (
     <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full ">
       <p

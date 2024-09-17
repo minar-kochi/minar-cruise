@@ -157,7 +157,6 @@ model Image {
   ImageUse     IMAGE_USE[]    @default([COMMON])
   packageImage PackageImage[]
   Blog         Blog[]
-  EventsImage  EventsImage[]
 }
 
 enum BlogStatus {
@@ -191,12 +190,6 @@ model PackageImage {
   image     Image     @relation(fields: [imageId], references: [id], onDelete: Cascade)
 }
 
-model EventsImage {
-  id      String @id
-  slug    String @unique
-  image   Image  @relation(fields: [imageId], references: [id])
-  imageId String
-}
 
 // @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
 // pg_dump -U postgres --clean | pg_restore -U postgres
