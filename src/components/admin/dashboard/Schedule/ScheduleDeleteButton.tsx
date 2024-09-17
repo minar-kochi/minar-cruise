@@ -101,7 +101,7 @@ export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
             onClick={handleDeleteButton}
             variant={"destructive"}
           >
-            Delete Lunch at {format(date, "dd/MM")}{" "}
+            Delete {type} at {format(date, "dd/MM")}{" "}
           </Button>
         </div>
       </DialogContent>
