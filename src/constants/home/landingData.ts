@@ -233,17 +233,17 @@ export const footer = {
     "GF, 40/6185, Swapnil Enclave, Highcourt junction, Marine Drive, Ernakulam, Kerala, India, 682031",
   socials: [
     {
-      name: "Facebook",
+      name: "Minar Facebook Url",
       icon: "/assets/Social/facebook.svg",
       url: "https://www.facebook.com/minar.touristcochin/",
     },
     {
-      name: "Instagram",
+      name: "Minar Instagram Url",
       icon: "/assets/Social/instagram.svg",
       url: "https://www.instagram.com/minar_tours_cochin/",
     },
     {
-      name: "Whatsapp",
+      name: "Minar Whatsapp Url",
       icon: "/assets/Social/whatsapp.svg",
       url: "https://api.whatsapp.com/send?phone=917034191993",
     },
