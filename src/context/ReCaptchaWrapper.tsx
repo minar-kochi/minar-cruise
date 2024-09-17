@@ -8,6 +8,11 @@ export default function GoogleRecaptchaWrappers({
 }) {
   return (
     <GoogleReCaptchaProvider
+      container={{
+        parameters: {
+          badge: "bottomleft",
+        },
+      }}
       reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
     >
       {children}
