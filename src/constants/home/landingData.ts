@@ -1,25 +1,21 @@
-import {
-  BookCheck,
-  Handshake,
-  Ship,
-  Disc2,
-  MicVocal,
-  SmilePlus,
-  WandSparkles,
-  Laugh,
-  CandlestickChart,
-  ShieldIcon,
-} from "lucide-react";
+import { Disc2, Laugh, MicVocal, SmilePlus, WandSparkles } from "lucide-react";
+import { CONSTANTS } from "../data/assets";
+
+export const fallBackImgBlur = {
+  url: "/assets/Screenshot 2024-09-10 210118.png",
+};
+
+
 
 export const landingData = {
+  video: CONSTANTS.HERO.LANDING_VIDEO_URL,
   heading: "MINAR CRUISE",
   title: "Best Cruise in the Arabian Sea",
   description:
     "Minar Cruise is a private catamaran sea cruise in Kerala, India. Minar Tourist Boat Cochin & Traders is registered with the Indian Register of Shipping. Our fleet has been providing hospitality and professional services for 20 years. The luxurious air-conditioned hall can be used for a variety of events, including official meetings, parties, family functions, weddings, and engagements. Our intimate fleet can seat up to 150 passengers, and has all-suite and all-balcony ships with superior service ratios. We have permission to cruise up to 12 nautical miles and offer scheduled trips ranging from 2 to 4 hours, which can be customized according to your needs. Join us on your next journey to experience the scenic beauty of Kochi and the Arabian Sea.",
-  video: "/assets/HomeVid.mp4",
   image: {
-    url: "https://cochincruiseline.com/wp-content/uploads/2022/12/about-1.jpg",
-    alt: "About Image page",
+    url: CONSTANTS.HERO.HERO_IMAGE_URL,
+    alt: CONSTANTS.HERO.HERO_IMAGE_ALT,
   },
 };
 
@@ -29,8 +25,7 @@ export const Exclusive = {
     "BRING BACK YOUR MEMORIES IN OUR EXCLUSIVE MINAR CRUISE PACKAGE. ENJOY YOUR LIFE.",
   desc: "Host unforgettable events on our exclusive cruises, perfect for get-togethers, birthday parties, weddings, corporate meetings, and pre-wedding celebrations. Enjoy stunning sunsets, entertainment, and top-notch service on the Arabian Sea",
   video1: {
-    url: "/assets/Exclusive-vid.mp4",
-    alt: "Booking video background",
+    url: CONSTANTS.EXCLUSIVE.PACKAGE_VIDEO_URL,
   },
 };
 
@@ -48,35 +43,35 @@ export const BookingData = {
   },
   features: [
     {
-      icon: "/assets/minarchooseicon/ship.svg",
+      icon: CONSTANTS.WHY_CHOOSE.BOAT_ICON,
       iconClass: "",
       heading: "Professional and Certified",
       description:
         "Minar, the only privately owned catamaran class vessel in the country to get Indian Register of Shipping (IRS) registration.",
     },
     {
-      icon: "/assets/minarchooseicon/calendar.svg",
+      icon: CONSTANTS.WHY_CHOOSE.CALENDER_ICON,
       iconClass: "",
       heading: "Get Instant Tour Bookings",
       description:
         "Simplify your booking experience with our web-based online booking or contact directly in any of the phone number given.",
     },
     {
-      icon: "/assets/minarchooseicon/empty-wallet-tick.svg",
+      icon: CONSTANTS.WHY_CHOOSE.PEOPLE_ICON,
       iconClass: "",
       heading: "Best Price Guarantee",
       description:
         "Simplify your booking experience with our web-based online booking or contact directly in any of the phone number given.",
     },
     {
-      icon: "/assets/minarchooseicon/people.svg",
+      icon: CONSTANTS.WHY_CHOOSE.WALLET_ICON,
       iconClass: "",
       heading: "Best Price Guarantee",
       description:
         "Simplify your booking experience with our web-based online booking or contact directly in any of the phone number given.",
     },
     {
-      icon: "/assets/minarchooseicon/shield-tick.svg",
+      icon: CONSTANTS.WHY_CHOOSE.TICK_ICON,
       iconClass: "",
       heading: "Safe Controls",
       description:
@@ -92,19 +87,19 @@ export const star = {
 export const facilities = {
   description: [
     {
-      icon: "/assets/minarfeature/activity.svg",
+      icon: CONSTANTS.FACILITIES.IRS_ICON,
       heading: "IRS Registered",
       description:
         "Kerala's first private cruise yacht registered under Indian Register of Shipping.",
     },
     {
-      icon: "/assets/minarfeature/brush-square.svg",
+      icon: CONSTANTS.FACILITIES.CUSTOM_ICON,
       heading: "Custom Packages",
       description:
         "Tailored cruise experiences to match your specific needs and preferences.",
     },
     {
-      icon: "/assets/minarfeature/lovely.svg",
+      icon: CONSTANTS.FACILITIES.WHEELCHAIR_ICON,
       heading: "Wheelchair Accessible",
       description:
         "Easy access for guests with mobility needs for a comfortable journey.",
@@ -127,30 +122,30 @@ export const facilities = {
     //     "Onboard entertainment paired with delicious food of your choice.",
     // },
     {
-      icon: "/assets/minarfeature/messages-2.svg",
+      icon: CONSTANTS.FACILITIES.EVENT_ICON,
       heading: "Event Hosting",
       description:
         "Perfect for weddings, birthdays, corporate events, and celebrations.",
     },
     {
-      icon: "/assets/minarfeature/cake.svg",
+      icon: CONSTANTS.FACILITIES.CELEBRATION_ICON,
       heading: "Celebration",
       description:
         "A/c hall for marriage, wedding anniversary, birthday, corporate meetings",
     },
     {
-      icon: "/assets/minarfeature/Meal.svg",
+      icon: CONSTANTS.FACILITIES.FOOD_ICON,
       heading: "Food",
       description: "Food counter facility",
     },
     {
-      icon: "/assets/minarfeature/shield-tick.svg",
+      icon: CONSTANTS.FACILITIES.SAFETY_ICON,
       heading: "Safety First",
       description:
         "Equipped with life-saving gear and firefighting equipment up to international standards.",
     },
     {
-      icon: "/assets/minarfeature/people.svg",
+      icon: CONSTANTS.FACILITIES.CREW_ICON,
       heading: "Crew",
       description: "Trained and professional crew for assistance",
     },
@@ -179,10 +174,9 @@ export const entertainment = {
 export const services = {
   heading: "Minar Cruise Events ",
   subHeading: "PLAN YOUR EXPERIENCE",
-  bgImg: "/assets/IMG_8788.PNG",
-  bgVid: {
-    url: "/assets/Events_services-vid.mp4",
-  },
+
+  bgVid: CONSTANTS.EVENTS.VIDEO_URL,
+
   description: [
     "Are you looking for an unforgettable and exciting experience for your special event or organization’s next corporate retreat?",
     "If you’re ready to explore all the exciting possibilities of charter cruising, contact us at:",
@@ -190,22 +184,22 @@ export const services = {
   contact: ["+91 8089021666", "+91 8089031666"],
   events: [
     {
-      image:
-        "https://cochincruiseline.com/wp-content/uploads/2023/10/cruise-enjoying-1-180x180.jpg",
+      image: CONSTANTS.EVENTS.FAMILY_IMAGE_URL,
+      alt: CONSTANTS.EVENTS.FAMILY_IMAGE_ALT,
       title: "Family Gathering",
       description:
         "Planning a family reunion? Minar Cochin Cruise offer a fun-filled vacation with your loved ones.",
     },
     {
-      image:
-        "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise2.jpg",
+      image: CONSTANTS.EVENTS.CELEBRATION_IMAGE_URL,
+      alt: CONSTANTS.EVENTS.CELEBRATION_IMAGE_ALT,
       title: "Celebration Events",
       description:
         "Celebrate your Wedding, Anniversaries, Birthdays and other memorable events with the best celebration cruise.",
     },
     {
-      image:
-        "https://cochincruiseline.com/wp-content/uploads/2022/10/corporate02.jpg",
+      image: CONSTANTS.EVENTS.CORPORATE_IMAGE_URL,
+      alt: CONSTANTS.EVENTS.CORPORATE_IMAGE_ALT,
       title: "Corporate Events",
       description:
         "We have the perfect space for corporate meetings and your business needs on our luxury cruise.",
@@ -214,19 +208,18 @@ export const services = {
 };
 
 export const galleryImageUrl = [
-  "https://cochincruiseline.com/wp-content/uploads/2023/07/outer-view-minar-3.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/10/corporate03.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/09/lunch-cruise-minar.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2022/10/breakfast-cruise-2.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/10/birthday-celebration1.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise1.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/10/corporate-events.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2021/09/minar-dinner-cruise1.jpg",
+  { url: CONSTANTS.GALLERY.IMG_1_URL, alt: CONSTANTS.GALLERY.IMG_1_ALT },
+  { url: CONSTANTS.GALLERY.IMG_2_URL, alt: CONSTANTS.GALLERY.IMG_2_ALT },
+  { url: CONSTANTS.GALLERY.IMG_3_URL, alt: CONSTANTS.GALLERY.IMG_3_ALT },
+  { url: CONSTANTS.GALLERY.IMG_4_URL, alt: CONSTANTS.GALLERY.IMG_4_ALT },
+  { url: CONSTANTS.GALLERY.IMG_5_URL, alt: CONSTANTS.GALLERY.IMG_5_ALT },
+  { url: CONSTANTS.GALLERY.IMG_6_URL, alt: CONSTANTS.GALLERY.IMG_6_ALT },
+  { url: CONSTANTS.GALLERY.IMG_7_URL, alt: CONSTANTS.GALLERY.IMG_7_ALT },
+  { url: CONSTANTS.GALLERY.IMG_8_URL, alt: CONSTANTS.GALLERY.IMG_8_ALT },
 ];
 
 export const footer = {
-  image:
-    "https://utfs.io/f/Lnh9TIEe6BHcUrCcf7WNbKLTVg5knvAfD8pQYay0m4qERxcX",
+  image: "https://utfs.io/f/Lnh9TIEe6BHcUrCcf7WNbKLTVg5knvAfD8pQYay0m4qERxcX",
   contact: ["+91 8089021666", "+91 8089061444"],
   email: "info@cochincruiseline.com",
   address:
