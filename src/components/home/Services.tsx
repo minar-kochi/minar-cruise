@@ -38,7 +38,7 @@ export default function Services() {
               width={1078}
               height={1080}
             >
-              <source src={bgVid.url} type="video/mp4" />
+              <source src={bgVid } type="video/mp4" />
             </video>
             {/* <div className="absolute max-lg:top-1/3 max-sm:top-6 max-sm:w-[95%] max-sm:left-2 top-7 text-white  w-[88%] left-5 ">
               <h2 className="font-medium max-lg:font-bold mb-2 leading-6 max-lg:text-2xl max-lg:mx-auto max-lg:text-center ">
@@ -82,7 +82,7 @@ export default function Services() {
               <div className="w-1/2 max-sm:w-full">
                 <Image
                   src={item.image}
-                  alt="cruise"
+                  alt={item.alt}
                   width={1920}
                   height={1024}
                   className="w-full aspect-[16/9.7] rounded-lg object-cover"

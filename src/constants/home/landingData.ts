@@ -10,16 +10,17 @@ import {
   CandlestickChart,
   ShieldIcon,
 } from "lucide-react";
+import { CONSTANTS } from "../data/assets";
 
 export const landingData = {
   heading: "MINAR CRUISE",
   title: "Best Cruise in the Arabian Sea",
   description:
     "Minar Cruise is a private catamaran sea cruise in Kerala, India. Minar Tourist Boat Cochin & Traders is registered with the Indian Register of Shipping. Our fleet has been providing hospitality and professional services for 20 years. The luxurious air-conditioned hall can be used for a variety of events, including official meetings, parties, family functions, weddings, and engagements. Our intimate fleet can seat up to 150 passengers, and has all-suite and all-balcony ships with superior service ratios. We have permission to cruise up to 12 nautical miles and offer scheduled trips ranging from 2 to 4 hours, which can be customized according to your needs. Join us on your next journey to experience the scenic beauty of Kochi and the Arabian Sea.",
-  video: "/assets/HomeVid.mp4",
+  video: CONSTANTS.HERO.LANDING_VIDEO_URL,
   image: {
-    url: "https://cochincruiseline.com/wp-content/uploads/2022/12/about-1.jpg",
-    alt: "About Image page",
+    url: CONSTANTS.HERO.HERO_IMAGE_URL,
+    alt: CONSTANTS.HERO.HERO_IMAGE_ALT,
   },
 };
 
@@ -29,8 +30,7 @@ export const Exclusive = {
     "BRING BACK YOUR MEMORIES IN OUR EXCLUSIVE MINAR CRUISE PACKAGE. ENJOY YOUR LIFE.",
   desc: "Host unforgettable events on our exclusive cruises, perfect for get-togethers, birthday parties, weddings, corporate meetings, and pre-wedding celebrations. Enjoy stunning sunsets, entertainment, and top-notch service on the Arabian Sea",
   video1: {
-    url: "/assets/Exclusive-vid.mp4",
-    alt: "Booking video background",
+    url: CONSTANTS.EXCLUSIVE.PACKAGE_VIDEO_URL,
   },
 };
 
@@ -179,10 +179,9 @@ export const entertainment = {
 export const services = {
   heading: "Minar Cruise Events ",
   subHeading: "PLAN YOUR EXPERIENCE",
-  bgImg: "/assets/IMG_8788.PNG",
-  bgVid: {
-    url: "/assets/Events_services-vid.mp4",
-  },
+
+  bgVid: CONSTANTS.EVENTS.VIDEO_URL,
+
   description: [
     "Are you looking for an unforgettable and exciting experience for your special event or organization’s next corporate retreat?",
     "If you’re ready to explore all the exciting possibilities of charter cruising, contact us at:",
@@ -190,22 +189,22 @@ export const services = {
   contact: ["+91 8089021666", "+91 8089031666"],
   events: [
     {
-      image:
-        "https://cochincruiseline.com/wp-content/uploads/2023/10/cruise-enjoying-1-180x180.jpg",
+      image: CONSTANTS.EVENTS.FAMILY_IMAGE_URL,
+      alt: CONSTANTS.EVENTS.FAMILY_IMAGE_ALT,
       title: "Family Gathering",
       description:
         "Planning a family reunion? Minar Cochin Cruise offer a fun-filled vacation with your loved ones.",
     },
     {
-      image:
-        "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise2.jpg",
+      image: CONSTANTS.EVENTS.CELEBRATION_IMAGE_URL,
+      alt: CONSTANTS.EVENTS.CELEBRATION_IMAGE_ALT,
       title: "Celebration Events",
       description:
         "Celebrate your Wedding, Anniversaries, Birthdays and other memorable events with the best celebration cruise.",
     },
     {
-      image:
-        "https://cochincruiseline.com/wp-content/uploads/2022/10/corporate02.jpg",
+      image: CONSTANTS.EVENTS.CORPORATE_IMAGE_URL,
+      alt: CONSTANTS.EVENTS.CORPORATE_IMAGE_ALT,
       title: "Corporate Events",
       description:
         "We have the perfect space for corporate meetings and your business needs on our luxury cruise.",
@@ -214,14 +213,14 @@ export const services = {
 };
 
 export const galleryImageUrl = [
-  "https://cochincruiseline.com/wp-content/uploads/2023/07/outer-view-minar-3.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/10/corporate03.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/09/lunch-cruise-minar.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2022/10/breakfast-cruise-2.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/10/birthday-celebration1.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/07/Sunset-With-Dinner-Cruise1.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2023/10/corporate-events.jpg",
-  "https://cochincruiseline.com/wp-content/uploads/2021/09/minar-dinner-cruise1.jpg",
+  { url: CONSTANTS.GALLERY.IMG_1_URL, alt: CONSTANTS.GALLERY.IMG_1_ALT },
+  { url: CONSTANTS.GALLERY.IMG_2_URL, alt: CONSTANTS.GALLERY.IMG_2_ALT },
+  { url: CONSTANTS.GALLERY.IMG_3_URL, alt: CONSTANTS.GALLERY.IMG_3_ALT },
+  { url: CONSTANTS.GALLERY.IMG_4_URL, alt: CONSTANTS.GALLERY.IMG_4_ALT },
+  { url: CONSTANTS.GALLERY.IMG_5_URL, alt: CONSTANTS.GALLERY.IMG_5_ALT },
+  { url: CONSTANTS.GALLERY.IMG_6_URL, alt: CONSTANTS.GALLERY.IMG_6_ALT },
+  { url: CONSTANTS.GALLERY.IMG_7_URL, alt: CONSTANTS.GALLERY.IMG_7_ALT },
+  { url: CONSTANTS.GALLERY.IMG_8_URL, alt: CONSTANTS.GALLERY.IMG_8_ALT },
 ];
 
 export const footer = {

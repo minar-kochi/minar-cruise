@@ -16,11 +16,11 @@ export default function GalleryCarousel() {
       </h3>
       <div className="  mx-auto relative  rounded-lg">
         <HomeCarousalProvider>
-          {galleryImageUrl.map((url, i) => (
-            <div key={url + i} className="first-of-type:ml-4">
+          {galleryImageUrl.map((item, i) => (
+            <div key={item.url + i} className="first-of-type:ml-4">
               <Image
-                src={url}
-                alt="gallery image"
+                src={item.url}
+                alt={item.alt}
                 width={1000}
                 height={400}
                 className="  rounded-lg aspect-video object-cover max-w-[45rem] "
