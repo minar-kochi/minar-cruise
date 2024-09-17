@@ -61,6 +61,7 @@ export default function PackageFormN({
       packageId: packageId,
       selectedScheduleDate: RemoveTimeStampFromDate(new Date(Date.now())),
       packageCategory: packageCategory,
+      // token: undefined,
     },
   });
 
@@ -143,17 +144,21 @@ export default function PackageFormN({
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   async function onSubmit(data: TOnlineBookingFormValidator) {
-    if (!executeRecaptcha) {
-      toast.success("Recaptcha hasn't Loaded Yet, Please try again.");
-      return
-    }
-    const token = await executeRecaptcha('booking-form')
     try {
-      CreateRazorPayIntent({...data, token});
+      const token =
+        executeRecaptcha && (await executeRecaptcha("OrderSubmitted"));
+      if (!token) {
+        toast.error("Recaptcha has not loaded Yet");
+        return;
+      }
+
+      CreateRazorPayIntent({ ...data, token });
     } catch (error) {
+      console.log(error);
       if (error instanceof zodResolver) {
         console.log("Zod validation error");
       }
+      toast.error("Something unexpected happened");
     }
   }
 

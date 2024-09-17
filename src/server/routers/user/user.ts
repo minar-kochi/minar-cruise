@@ -48,9 +48,38 @@ export const user = router({
           message: "Min 3 letter req.",
         }),
         email: z.string().email({ message: "Invalid email" }),
+        token: z.string().optional(),
       }),
     )
-    .mutation(async ({ input: { email, name } }) => {
+    .mutation(async ({ input: { email, name, token } }) => {
+      try {
+        if (!token) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Please give access to Recaptcha",
+          });
+        }
+        const formData = `secret=${process.env.RECAPTCHA_SITE_SECRET}&response=${token}`;
+        const res = await axios.get(
+          `https://www.google.com/recaptcha/api/siteverify?${formData}`,
+        );
+        if (res && res.data?.success && res.data?.score < 0.5) {
+          throw new TRPCError({
+            code: "UNPROCESSABLE_CONTENT",
+            message: "Recaptcha Failed",
+          });
+        }
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
+        }
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Failed to validate Recaptcha Please try again, or contact admin",
+        });
+      }
+
       try {
         const data = await db.user.create({
           data: {
@@ -210,6 +239,7 @@ export const user = router({
             message: "Recaptcha Failed",
           });
         }
+        console.log(res);
       } catch (error) {
         if (error instanceof TRPCError) {
           throw new TRPCError({ code: error.code, message: error.message });

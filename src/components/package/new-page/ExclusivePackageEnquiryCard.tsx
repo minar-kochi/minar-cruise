@@ -73,12 +73,12 @@ export default function ExclusivePackageEnquiryCard({
     });
   async function onSubmit(data: TExclusivePackageValidator) {
     try {
-      if (!executeRecaptcha) {
-        toast.success("Recaptcha hasn't Loaded Yet, Please try again.");
+      const token =
+        executeRecaptcha && (await executeRecaptcha("exclusiveEnquiry"));
+      if (!token) {
+        toast.error("Failed to load Recaptcha");
         return;
       }
-      const token = await executeRecaptcha("booking-form");
-
       SendExclusiveEmail({ ...data, token });
     } catch (e) {
       toast.error("Something went wrong");

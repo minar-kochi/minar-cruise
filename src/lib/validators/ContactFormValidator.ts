@@ -44,6 +44,7 @@ export const SubscriptionFormValidator = z.object({
     message: "Min 3 letter req.",
   }),
   email: z.string().email({ message: "Invalid email" }),
+  token: z.string().optional(),
 });
 
 export type TSubscriptionFormValidator = z.infer<

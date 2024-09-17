@@ -28,11 +28,12 @@ const ContactForm = () => {
 
   const handleFormSubmit = async (data: TContactValidators) => {
     try {
-      if (!executeRecaptcha) {
-        toast.success("Recaptcha hasn't Loaded Yet, Please try again.");
+      const token =
+        executeRecaptcha && (await executeRecaptcha("contactForm"));
+      if (!token) {
+        toast.error("Recaptcha has not loaded Yet");
         return;
       }
-      const token = await executeRecaptcha("booking-form");
 
       contactAdmin({ ...data, token });
     } catch (error) {

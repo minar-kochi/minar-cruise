@@ -53,7 +53,7 @@ export const onlineBookingFormValidator = z
     scheduleId: z.string().optional(),
     selectedScheduleDate: z.string(),
     packageCategory: z.enum(packageCategory),
-    token: z.string().optional(),
+    token: z.string().nullable().optional(),
   })
   .refine(
     (data) => {
