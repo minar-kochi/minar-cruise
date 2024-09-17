@@ -23,13 +23,13 @@ export default function BookNowBtn({
         )}
       >
         <div className="flex gap-4">
-          <div className="flex gap-1 items-center justify-center hover:text-red-900">
+          <div className="flex gap-2 items-center justify-center hover:text-red-900">
             <Users className="w-[16px] h-[16px] md:h-5 md:w-5" />
-            <p className="text-sm md:text-base font-medium">{adultPrice} -/ </p>
+            <p className="text-sm md:text-base font-medium">₹{adultPrice}</p>
           </div>
           <div className="flex gap-1 items-center justify-center hover:text-red-900">
             <Clock className="w-[16px] h-[16px] md:h-5 md:w-5" />
-            <p className="text-sm md:text-base font-medium">{duration} min</p>
+            <p className="text-sm md:text-base font-medium">{duration/60} hr</p>
           </div>
         </div>
         <div>

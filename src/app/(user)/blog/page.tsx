@@ -24,7 +24,7 @@ const AllBlogsPage = async () => {
       <Bounded className="grid grid-cols-3 pt-10 pb-28">
         {blogPosts.map((blog) => (
           <BlogCard
-            key={blog.id}
+            key={`${blog.id}-BlogCard`}
             title={blog.title}
             desc={blog.shortDes}
             imgUrl={blog.image?.url ?? ""}

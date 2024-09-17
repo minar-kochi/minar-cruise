@@ -105,7 +105,7 @@ export default function ChangeBookingModal({
                     {options.map((item, i) => {
                       return (
                         <SelectItem
-                          key={item.label + item.value + i}
+                          key={`${item.label}-${item.value}-${i}-ChangeBookingModal`}
                           value={item.value}
                           disabled={item.value === scheduleId}
                         >

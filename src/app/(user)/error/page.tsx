@@ -19,7 +19,7 @@ const ErrorPage = () => {
   //     };
   //   });
   return (
-    <main className="bg-white overflow-hidden text-black min-h-screen">
+    <main className="bg-white overflow-hidden relative lgmd:static text-black">
       <div className=" mx-auto  ">
         <Image
           alt="404 error page"
@@ -29,12 +29,12 @@ const ErrorPage = () => {
           className="w-full h-full object-cover object-bottom  max-w-[100dvw] max-h-[100dvh] relative "
         />
       </div>
-      <div className="flex flex-col items-center justify-center absolute lg:top-[15%] lg:left-[70%]">
-        <p className="text-[100px] font-semibold">Oops!</p>
+      <div className="flex flex-col items-center justify-center top-0  left-0 right-0 absolute lg:top-[15%] lg:left-[50%]">
+        <p className="text-4xl sm:text-6xl md:text-[100px] font-semibold my-2">Oops!</p>
         <p className="text-lg font-semibold">
           The page you&apos;re looking for
         </p>
-        <p className="text-3xl font-semibold">
+        <p className="text-xl sm:text-3xl font-semibold">
           Can&apos;t be <span className="text-[#DA0202]">found.</span>
         </p>
         <Link
