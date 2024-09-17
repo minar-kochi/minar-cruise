@@ -50,6 +50,11 @@ export default function RootLayout({
         </Providers>
       </body>
       <Script defer src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      ></Script>
     </html>
   );
 }
