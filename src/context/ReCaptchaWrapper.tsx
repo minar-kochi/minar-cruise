@@ -12,6 +12,12 @@ export default function GoogleRecaptchaWrappers({
         parameters: {
           badge: "bottomleft",
         },
+
+      }}
+      scriptProps={{
+        appendTo: "head",
+        defer:true,
+        async: true,        
       }}
       reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
     >

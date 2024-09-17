@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { isPackageStatusSunSet } from "@/lib/validators/Package";
 import { format } from "date-fns";
 import { dataTagSymbol } from "@tanstack/react-query";
+import { TRPCClientError } from "@trpc/client";
 
 type TPackageForm = {
   packageId: string;
@@ -64,11 +65,15 @@ export default function PackageFormN({
       // token: undefined,
     },
   });
+  const safeTotal = (value: number) => {
+    const numberValue = Number(value);
+    return isNaN(numberValue) ? 0 : numberValue;
+  };
 
   const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
       onMutate() {
-        toast.loading("creating razorpay intend");
+        toast.loading("Confirming Schedule...");
       },
       // @HOTFIX check callback url before deployment
       async onSuccess(res) {
@@ -81,28 +86,24 @@ export default function PackageFormN({
           amount: res?.order?.amount,
           order_id: res?.order.id,
           callback_url: absoluteUrl(
-            `/success?email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate")), "iii dd-MM-yyyy")}`,
+            `/success?email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate") ?? ""), "iii dd-MM-yyyy") ?? ""}`,
           ),
           prefill: {
             name: notes.name ?? undefined,
             phone: phoneNumberParser(
-              res?.phone ? res.phone.toString() : undefined,
+              res?.phone ? res?.phone?.toString() : undefined,
             ),
           },
         };
         const paymentModal = new window.Razorpay(options);
         paymentModal.open();
-        paymentModal.on("success", function (data: any) {
-          console.log(data);
-          alert("Payment failed. Please try again.");
-          toast.error("payment failed");
-        });
-
-        // toast.success("intend created successfully");
       },
       onError(error, variables, context) {
         toast.dismiss();
-        if (error.data?.code === "CONFLICT") {
+        if (
+          error instanceof TRPCClientError &&
+          error.data?.code === "CONFLICT"
+        ) {
           try {
             const message = error.message;
             const ParsedMessage = ParseScheduleConflicError(message);
@@ -116,7 +117,7 @@ export default function PackageFormN({
               });
               return;
             }
-            toast.error(ParsedMessage.message, {
+            toast.error(ParsedMessage?.message, {
               duration: 6000,
               ariaProps: {
                 "aria-live": "polite",
@@ -127,36 +128,41 @@ export default function PackageFormN({
             setScheduleError(ParsedMessage);
             return;
           } catch (error) {
-            console.log(error);
             toast.error("something went wrong");
             return;
           }
         }
-        toast.error(error.message, {
-          duration: 6000,
-          ariaProps: {
-            "aria-live": "polite",
-            role: "alert",
-          },
-        });
+        if (error instanceof TRPCClientError) {
+          toast.error(error.message, {
+            duration: 6000,
+            ariaProps: {
+              "aria-live": "polite",
+              role: "alert",
+            },
+          });
+        }
       },
     });
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   async function onSubmit(data: TOnlineBookingFormValidator) {
     try {
-      const token =
-        executeRecaptcha && (await executeRecaptcha("OrderSubmitted"));
-      if (!token) {
+      if (typeof executeRecaptcha === "undefined") {
+        toast.error(
+          "Recaptcha hasn't Loaded,Please turn on script or Try again",
+        );
+        return;
+      }
+      const token = await executeRecaptcha("OrderSubmitted");
+      if (!token || !token.length) {
         toast.error("Recaptcha has not loaded Yet");
         return;
       }
-
       CreateRazorPayIntent({ ...data, token });
     } catch (error) {
       console.log(error);
       if (error instanceof zodResolver) {
-        console.log("Zod validation error");
+        console.log("Validation error has occured");
       }
       toast.error("Something unexpected happened");
     }
@@ -183,6 +189,16 @@ export default function PackageFormN({
         onSubmit={handleSubmit(onSubmit)}
         className={cn("flex flex-col items-center w-full justify-center")}
       >
+        <div
+          className={
+            cn(" border border-blue-300 bg-white px-4 mt-4 rounded-2xl",
+            {
+              hidden: type,
+            })
+          }
+        >
+          <div>{format(date, "iii dd/MM/yyyy")}</div>
+        </div>
         <BookingFormCalender
           setFormDateValue={(value: string) => {
             setValue("selectedScheduleDate", value);
@@ -229,7 +245,8 @@ export default function PackageFormN({
             />
           </div>
         </div>
-        {type ? null : <div className="my-7 h-[1px] w-[100%] bg-gray-300" />}
+        {type ? null : <div className="m-7 h-[1px] w-[100%] bg-gray-300" />}
+
         <BookingFormCard
           getValues={getValues}
           setValues={setValue}
@@ -243,7 +260,7 @@ export default function PackageFormN({
         <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
           <div>
             <p className="text-xs">Total:</p>
-            <p className="text-2xl font-semibold ">₹{total}</p>
+            <p className="text-2xl font-semibold ">₹{safeTotal(total)}</p>
           </div>
           <div className="w-[2px] h-12 bg-black"></div>
           <div>
