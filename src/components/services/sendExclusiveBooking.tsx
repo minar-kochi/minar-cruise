@@ -27,6 +27,7 @@ interface ExclusiveBookingEmailToAdmin {
   babyCount: number;
   selectedDate: string;
   selectedTime: string;
+  token:string | undefined
 }
 
 // const domain = process.env.NEXT_PUBLIC_DOMAIN;
@@ -34,6 +35,7 @@ interface ExclusiveBookingEmailToAdmin {
 export default function ExclusiveBookingEmailToAdmin({
   Duration,
   count,
+  token,
   eventType,
   email,
   name,

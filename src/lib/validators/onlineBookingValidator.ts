@@ -6,7 +6,6 @@ import { isStatusSunset } from "./Schedules";
 export type TOnlineBookingFormValidator = z.infer<
   typeof onlineBookingFormValidator
 >;
-
 const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
 
 const packageCategory = [
@@ -54,6 +53,7 @@ export const onlineBookingFormValidator = z
     scheduleId: z.string().optional(),
     selectedScheduleDate: z.string(),
     packageCategory: z.enum(packageCategory),
+    token: z.string().nullable().optional(),
   })
   .refine(
     (data) => {
@@ -103,6 +103,7 @@ export const onlineBookingFormValidator = z
       path: ["numOfAdults"],
     },
   );
+// export const ExtendedOnlineBookingFormWithRecaptcha = onlineBookingFormValidator.
 // .refine(
 //   (data) => {
 //     let totalCount = data.numOfAdults + data.numOfChildren;

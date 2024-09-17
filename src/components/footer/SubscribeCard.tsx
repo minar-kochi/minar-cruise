@@ -11,6 +11,7 @@ import {
   SubscriptionFormValidator,
   TSubscriptionFormValidator,
 } from "@/lib/validators/ContactFormValidator";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const SubscribeCard = ({ className }: { className: string }) => {
   const { mutate: createSubscription } =
@@ -30,8 +31,17 @@ const SubscribeCard = ({ className }: { className: string }) => {
   } = useForm<TSubscriptionFormValidator>({
     resolver: zodResolver(SubscriptionFormValidator),
   });
-  const handleFormSubmit = (data: TSubscriptionFormValidator) => {
-    createSubscription(data);
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const handleFormSubmit = async (data: TSubscriptionFormValidator) => {
+    try {
+      const token =
+        executeRecaptcha && (await executeRecaptcha("OrderSubmitted"));
+      if (!token) {
+        toast.error("Recaptcha has not loaded Yet");
+        return;
+      }
+      createSubscription(data);
+    } catch (error) {}
   };
   return (
     <section className="flex flex-col max-sm:w-full">
