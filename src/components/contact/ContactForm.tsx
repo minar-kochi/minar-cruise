@@ -10,6 +10,7 @@ import {
   TContactValidators,
 } from "@/lib/validators/ContactFormValidator";
 import toast from "react-hot-toast";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const ContactForm = () => {
   const { register, handleSubmit } = useForm<TContactValidators>({
@@ -20,11 +21,23 @@ const ContactForm = () => {
       toast.success("We will Reach out to you soon!");
     },
     onError(error, variables, context) {
-      toast.error("something went wrong!");
+      toast.error(error.message);
     },
   });
-  const handleFormSubmit = (data: TContactValidators) => {
-    contactAdmin(data);
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const handleFormSubmit = async (data: TContactValidators) => {
+    try {
+      if (!executeRecaptcha) {
+        toast.success("Recaptcha hasn't Loaded Yet, Please try again.");
+        return;
+      }
+      const token = await executeRecaptcha("booking-form");
+
+      contactAdmin({ ...data, token });
+    } catch (error) {
+      toast.error("Failed to validated Recaptcha");
+    }
   };
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>

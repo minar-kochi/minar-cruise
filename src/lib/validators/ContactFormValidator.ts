@@ -29,6 +29,8 @@ export const ContactValidators = z.object({
     .max(1000, {
       message: "dude! Well explained but its too long!",
     }),
+
+  token: z.string().optional(),
 });
 
 export type TContactValidators = z.infer<typeof ContactValidators>;

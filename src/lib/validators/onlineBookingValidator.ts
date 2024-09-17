@@ -6,7 +6,6 @@ import { isStatusSunset } from "./Schedules";
 export type TOnlineBookingFormValidator = z.infer<
   typeof onlineBookingFormValidator
 >;
-
 const indianPhoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
 
 const packageCategory = [

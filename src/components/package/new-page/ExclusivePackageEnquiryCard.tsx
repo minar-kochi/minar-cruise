@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import CustomModal from "@/components/custom/CustomModal";
 import { Loader2 } from "lucide-react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 interface IExclusivePackageEnquiryCard {
   type?: "modal" | undefined;
@@ -59,6 +60,8 @@ export default function ExclusivePackageEnquiryCard({
     },
     resolver: zodResolver(exclusivePackageValidator),
   });
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   const { mutate: SendExclusiveEmail, isPending } =
     trpc.user.sendExclusiveBookingMessage.useMutation({
       onSuccess(data, variables, context) {
@@ -68,10 +71,15 @@ export default function ExclusivePackageEnquiryCard({
         toast.error("Something went wrong");
       },
     });
-  function onSubmit(data: TExclusivePackageValidator) {
+  async function onSubmit(data: TExclusivePackageValidator) {
     try {
-      // toast.success("yay!")
-      SendExclusiveEmail(data);
+      if (!executeRecaptcha) {
+        toast.success("Recaptcha hasn't Loaded Yet, Please try again.");
+        return;
+      }
+      const token = await executeRecaptcha("booking-form");
+
+      SendExclusiveEmail({ ...data, token });
     } catch (e) {
       toast.error("Something went wrong");
     }

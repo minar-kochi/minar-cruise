@@ -1,5 +1,5 @@
 import { db } from "@/db";
-
+import axios from "axios";
 import {
   isCurrentMonthSameAsRequestedMonth,
   isDateValid,
@@ -193,7 +193,33 @@ export const user = router({
     .input(onlineBookingFormValidator)
     .mutation(async ({ ctx, input }) => {
       const { packageId, scheduleId, selectedScheduleDate } = input;
-
+      try {
+        if (!input.token) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Please give access to Recaptcha",
+          });
+        }
+        const formData = `secret=${process.env.RECAPTCHA_SITE_SECRET}&response=${input.token}`;
+        const res = await axios.get(
+          `https://www.google.com/recaptcha/api/siteverify?${formData}`,
+        );
+        if (res && res.data?.success && res.data?.score < 0.5) {
+          throw new TRPCError({
+            code: "UNPROCESSABLE_CONTENT",
+            message: "Recaptcha Failed",
+          });
+        }
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
+        }
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Failed to validate Recaptcha Please try again, or contact admin",
+        });
+      }
       try {
         // Check if the package trying to book is either exist or it is available for public to book
         const packageIdExists =
@@ -330,11 +356,27 @@ export const user = router({
   sendExclusiveBookingMessage: publicProcedure
     .input(exclusivePackageValidator)
     .mutation(async ({ ctx, input }) => {
-      const { email, name, phone } = input;
+      const { email, name, phone, token } = input;
       /**
        * if user exists dont create. or else create the user into the database.
        */
       try {
+        if (!token) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Please give access to Recaptcha",
+          });
+        }
+        const formData = `secret=${process.env.RECAPTCHA_SITE_SECRET}&response=${token}`;
+        const res = await axios.get(
+          `https://www.google.com/recaptcha/api/siteverify?${formData}`,
+        );
+        if (res && res.data?.success && res.data?.score < 0.5) {
+          throw new TRPCError({
+            code: "UNPROCESSABLE_CONTENT",
+            message: "Recaptcha Failed",
+          });
+        }
         const isUserExists = await db.user.findFirst({
           where: {
             email,

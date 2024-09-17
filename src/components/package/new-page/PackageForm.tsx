@@ -149,7 +149,7 @@ export default function PackageFormN({
     }
     const token = await executeRecaptcha('booking-form')
     try {
-      CreateRazorPayIntent(data);
+      CreateRazorPayIntent({...data, token});
     } catch (error) {
       if (error instanceof zodResolver) {
         console.log("Zod validation error");
