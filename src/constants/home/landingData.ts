@@ -1,3 +1,4 @@
+import { Disc2, Laugh, MicVocal, SmilePlus, WandSparkles } from "lucide-react";
 import { CONSTANTS } from "../data/assets";
 
 export const fallBackImgBlur = {
@@ -156,19 +157,19 @@ export const facilities = {
   ],
 };
 
-// export const entertainment = {
-//   image: {
-//     url: "/assets/nightPhoto.jpg",
-//     logo: "https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q",
-//   },
-//   activities: [
-//     { description: "Live DJ performance", icon: Disc2 },
-//     { description: "Live Karaoke singers", icon: MicVocal },
-//     { description: "Mimicry show", icon: SmilePlus },
-//     { description: "Magic Show", icon: WandSparkles },
-//     { description: "Fun filled programs", icon: Laugh },
-//   ],
-// };
+export const entertainment = {
+  image: {
+    url: "/assets/nightPhoto.jpg",
+    logo: "https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q",
+  },
+  activities: [
+    { description: "Live DJ performance", icon: Disc2 },
+    { description: "Live Karaoke singers", icon: MicVocal },
+    { description: "Mimicry show", icon: SmilePlus },
+    { description: "Magic Show", icon: WandSparkles },
+    { description: "Fun filled programs", icon: Laugh },
+  ],
+};
 
 export const services = {
   heading: "Minar Cruise Events ",
