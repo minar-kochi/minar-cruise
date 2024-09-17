@@ -1,3 +1,4 @@
+import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescription";
 import Bounded from "@/components/elements/Bounded";
 import ExclusivePackageEnquiryCard from "@/components/package/new-page/ExclusivePackageEnquiryCard";
 import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
@@ -88,9 +89,12 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
 
   if (!data)
     return (
-      <>
-        <h1>Package doesn&apos;t Found</h1>
-      </>
+      <Bounded>
+        <HeaderTitleDescription
+          title="Package not found!"
+          description="We couldn't find the package you are looking for"
+        />
+      </Bounded>
     );
   return (
     <Bounded className="md:px-1 ">
