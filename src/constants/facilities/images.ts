@@ -1,6 +1,8 @@
+import { CONSTANTS } from "../data/assets";
+
 export const facilitiesImages = {
   mainImage: {
-    url: "/assets/IMG_8139 (1).JPEG",
-    alt: "ship Photo",
+    url: CONSTANTS.FACILITIES_IMG_CARD.IMAGE_URL,
+    alt: CONSTANTS.FACILITIES_IMG_CARD.IMAGE_ALT,
   },
 };

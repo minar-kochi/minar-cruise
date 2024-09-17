@@ -70,7 +70,7 @@ export const CONSTANTS = {
     IMG_3_ALT:
       "People gathering on Minar Cruise for a scenic sea voyage, white and yellow catamaran in Kochi",
     IMG_4_URL:
-      "https://utfs.io/f/Lnh9TIEe6BHcN0YYmsaC3IsGbnZqRDv1oahATd2MHiz7mx4WF",
+      "https://utfs.io/f/Lnh9TIEe6BHcN0YYmsaC3IsGbnZqRDv1oahATd2MHiz7mx4W",
     IMG_4_ALT:
       "Experience world-class hospitality aboard Minar Cruise with a stunning sunset backdrop over the Arabian Sea",
     IMG_5_URL:
@@ -78,9 +78,9 @@ export const CONSTANTS = {
     IMG_5_ALT:
       "Luxurious private yacht cruise in Kochi, India with Minar Cruise",
     IMG_6_URL:
-      "https://utfs.io/f/Lnh9TIEe6BHczJyIev86Io8BRVAjPGJvrluqE5ab4fQiwc92",
+      "https://utfs.io/f/Lnh9TIEe6BHcYaO23BzdT2swapRe3190fcbXA7nkLuSIh5YM",
     IMG_6_ALT:
-      "Freshly prepared seafood delicacies served aboard Minar Cruise with a view of the Arabian Sea",
+      "Buffet at wedding function held at cruise in the sea",
     IMG_7_URL:
       "https://utfs.io/f/Lnh9TIEe6BHcNeB27xaC3IsGbnZqRDv1oahATd2MHiz7mx4W",
     IMG_7_ALT:

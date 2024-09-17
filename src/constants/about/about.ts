@@ -1,11 +1,13 @@
+import { CONSTANTS } from "../data/assets";
+
 export const images = {
   cruiseTopView: {
-    url: "https://cochincruiseline.com/wp-content/uploads/2022/12/minar3-768x930.jpg",
-    alt: "top view",
+    url: CONSTANTS.ABOUT_PAGE.FIRST_IMAGE_URL,
+    alt: CONSTANTS.ABOUT_PAGE.FIRST_IMAGE_ALT,
   },
   fishnet: {
-    url: "https://cochincruiseline.com/wp-content/uploads/2022/12/kochi.jpg",
-    alt: "sunset view",
+    url: CONSTANTS.ABOUT_PAGE.SCND_IMAGE_URL,
+    alt: CONSTANTS.ABOUT_PAGE.SCND_IMAGE_ALT,
   },
 };
 

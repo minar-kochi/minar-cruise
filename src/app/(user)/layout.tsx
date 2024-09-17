@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter as FontSans, Inter } from "next/font/google";
+import { Manrope as FontSans, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
 import Navbar from "@/components/navbar/Navbar";
