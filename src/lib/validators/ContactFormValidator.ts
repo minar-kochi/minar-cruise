@@ -29,6 +29,8 @@ export const ContactValidators = z.object({
     .max(1000, {
       message: "dude! Well explained but its too long!",
     }),
+
+  token: z.string().optional(),
 });
 
 export type TContactValidators = z.infer<typeof ContactValidators>;
@@ -42,6 +44,7 @@ export const SubscriptionFormValidator = z.object({
     message: "Min 3 letter req.",
   }),
   email: z.string().email({ message: "Invalid email" }),
+  token: z.string().optional(),
 });
 
 export type TSubscriptionFormValidator = z.infer<
