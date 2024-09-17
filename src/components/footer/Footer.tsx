@@ -9,7 +9,6 @@ const Footer = () => {
   return (
     <footer className="text-white bg-black ">
       <Bounded className="flex flex-col justify-evenly">
-    
         <InfoCard />
         <CopyRight />
       </Bounded>

@@ -57,14 +57,16 @@ export default function ChangeBooking({
         toast.success(`successfully changed Booking to new date`);
         router.back();
       },
-      onError() {
+      onError(error, variables, context) {
         toast.dismiss();
-        toast.error(`something went wrong`);
+        toast.error(error.message);
       },
     });
 
   const onSubmit = ({ scheduleId: toScheduleId }: { scheduleId: string }) => {
-    if (scheduleId === "") toast.error("select a package");
+    if (scheduleId === "") {
+      toast.error("select a package");
+    }
     mutateScheduleIdOfBooking({
       idOfBookingToBeUpdated: bookingId,
       toScheduleId: toScheduleId,

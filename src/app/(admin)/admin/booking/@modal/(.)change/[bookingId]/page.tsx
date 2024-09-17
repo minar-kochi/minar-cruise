@@ -13,7 +13,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -58,9 +58,9 @@ export default function ChangeBookingModal({
         toast.success(`successfully changed Booking to new date`);
         router.back();
       },
-      onError() {
+      onError(error) {
         toast.dismiss();
-        toast.error(`something went wrong`);
+        toast.error(error.message);
       },
     });
 
@@ -75,7 +75,7 @@ export default function ChangeBookingModal({
     <Modal className="sm:min-w-[600px]">
       <div className="flex flex-col p-5 gap-9">
         <div className="space-y-3">
-          <h1 className="text-2xl font-semibold ">
+          <h1 className="text -2xl font-semibold ">
             Select a schedule that you want to change
           </h1>
           <p className="text-sm text-muted-foreground">

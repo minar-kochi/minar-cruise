@@ -28,7 +28,6 @@ const ErrorPage = () => {
           height={1080}
           className="w-full h-full object-cover object-bottom  max-w-[100dvw] max-h-[100dvh] relative "
         />
-        
       </div>
       <div className="flex flex-col items-center justify-center absolute lg:top-[15%] lg:left-[70%]">
         <p className="text-[100px] font-semibold">Oops!</p>
