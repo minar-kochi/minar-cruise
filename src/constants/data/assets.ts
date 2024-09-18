@@ -24,7 +24,7 @@ export const CONSTANTS = {
     VIDEO_URL:
       "https://utfs.io/f/Lnh9TIEe6BHcvblqKHrsGZelLEUhRBQk2uoqDdgJ95bivyxa",
     FAMILY_IMAGE_URL:
-      " https://utfs.io/f/Lnh9TIEe6BHcDGjSarfAiFzv4qSEnhMT5V3xRoukQKXjwDpP",
+      "https://utfs.io/f/Lnh9TIEe6BHcDGjSarfAiFzv4qSEnhMT5V3xRoukQKXjwDpP",
     FAMILY_IMAGE_ALT:
       " Three senior men enjoying a scenic cruise aboard Minar Cruise, gazing out from the deck while sailing along the Arabian Sea",
     CELEBRATION_IMAGE_URL:
