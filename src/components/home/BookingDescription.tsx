@@ -9,24 +9,22 @@ export default function BookingDescription() {
   const { bgImage } = BookingData;
 
   return (
-    <Bounded className="">
-      <div className="min-h-[90vh] z-10 overflow-hidden relative flex flex-col-reverse md:flex-row justify-center rounded-3xl w-full max-md:gap-5 bg-black ">
+    <Bounded className="overflow-hidden">
+      <div className="min-h-[90vh] z-10  relative flex flex-col-reverse md:flex-row justify-center rounded-3xl w-full max-md:gap-5 bg-black ">
         <video
-          // className="  object-cover  w-full mx-auto h-[35rem] rounded-lg"
           playsInline
-          preload="true"
+          preload="none"
           muted
           autoPlay
           loop
-          // width={1080}
-          // height={1920}
-          className="absolute -z-10 top-0 object-cover left-0 w-full h-full"
+          width={1080}
+          height={1920}
+          className="absolute -z-10 top-0 object-cover overflow-hidden rounded-3xl left-0 w-full h-full"
         >
-          <source src="/assets/Sea2.mp4" />
+          <source src="/assets/sea2-converted.mp4" />
         </video>
         <div className="md:w-[50%] flex flex-col items-center justify-center">
           <div className="relative w-[90%]  ">
-            {/* <div className="absolute w-full h-full  bg-[radial-gradient(circle,_rgba(0,0,0,0)_20%,rgba(0,0,0,1)_100%)] pointer-events-noneborder-2  "></div> */}
             <BoatAnimation />
           </div>
         </div>
