@@ -34,14 +34,19 @@ const SubscribeCard = ({ className }: { className: string }) => {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const handleFormSubmit = async (data: TSubscriptionFormValidator) => {
     try {
-      const token =
-        executeRecaptcha && (await executeRecaptcha("OrderSubmitted"));
-      if (!token) {
+      if (typeof executeRecaptcha === "undefined") {
+        toast.error("Recaptcha has not been loaded yet");
+        return;
+      }
+      const token = await executeRecaptcha("OrderSubmitted");
+      if (!token || !token.length) {
         toast.error("Recaptcha has not loaded Yet");
         return;
       }
       createSubscription(data);
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
   return (
     <section className="flex flex-col max-sm:w-full">

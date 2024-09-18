@@ -46,7 +46,7 @@ export default function Services() {
                 {contact.map((item, i) => (
                   <div
                     className="bg-black px-2 py-1 rounded-3xl"
-                    key={`${i}${item}`}
+                    key={`${i}-${item}`}
                   >
                     <a
                       href={`tel:${item}`}
@@ -73,7 +73,7 @@ export default function Services() {
                   src={item.image}
                   alt={item.alt}
                   width={1920}
-                  height={1024}
+                  height={1080}
                   className="w-full aspect-[16/9.7] rounded-lg object-cover"
                 />
               </div>
