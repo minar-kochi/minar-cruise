@@ -2,15 +2,15 @@ import { PackageSeo } from "@prisma/client";
 type TPackageSeo = Omit<PackageSeo, "id">;
 export const dbPackageSeo: TPackageSeo[] = [
   {
-    seoId: "cm0mrtk7i00000cihba8s9ie1",
+    seoId: "cm0mrtk7i00000cihba8s9ie1", //[done]
     packageId: "clj9r7rku0000356cql29f672",
   },
   {
-    seoId: "cm0mru9wf00010cih0tlc1ob6",
+    seoId: "cm0mru9wf00010cih0tlc1ob6", //[done]
     packageId: "clqqx9xhp000108l5frrkhu8h",
   },
   {
-    seoId: "cm0mrul0100020cih1olp18fb",
+    seoId: "cm0mrul0100020cih1olp18fb", // [done]
     packageId: "clqqxa3wq000208l5enk651jd",
   },
   {
@@ -22,7 +22,7 @@ export const dbPackageSeo: TPackageSeo[] = [
     packageId: "clqqxaklk000408l5cq6v8xfm",
   },
   {
-    seoId: "cm0mruy2i00040cihe93k1sn2",
+    seoId: "cm0mrvg3z00060cih8p3xd9eo",
     packageId: "clqqxasvi000508l59j1z4obt",
   },
   {

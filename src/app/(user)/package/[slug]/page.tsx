@@ -5,6 +5,7 @@ import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
 import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageImage from "@/components/package/new-page/PackageImage";
 import { PackageCarousel } from "@/components/packages/PackageCarousel";
+import { CONSTANTS } from "@/constants/data/assets";
 import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
@@ -31,6 +32,18 @@ export async function generateMetadata({
     },
     select: {
       title: true,
+      packageImage: {
+        where: {
+          ImageUse: "PROD_THUMBNAIL",
+        },
+        select: {
+          image: {
+            select: {
+              url: true,
+            },
+          },
+        },
+      },
       PackageSeo: {
         select: {
           seo: true,
@@ -55,6 +68,15 @@ export async function generateMetadata({
   } catch (error) {
     flatted = {};
   }
+  function Ogimage() {
+    if (packageMetadata?.packageImage[0]?.image?.url) {
+      return packageMetadata?.packageImage[0]?.image?.url;
+    }
+    if (seo.ogImage) {
+      return packageMetadata?.packageImage[0]?.image?.url;
+    }
+    return  CONSTANTS.DEFAULT.IMAGE_URL
+  }
   return constructMetadata({
     MetaHeadtitle: seo.title,
     description: seo.description,
@@ -62,7 +84,7 @@ export async function generateMetadata({
     alternates: {
       canonical: seo.canonicalUrl,
     },
-    Ogimage: seo.ogImage,
+    Ogimage: Ogimage(),
     robots: seo.metaRobots,
     other: flatted,
   });
