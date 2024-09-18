@@ -35,7 +35,7 @@ export default function ExclusivePackage() {
         <video
           className="  object-cover  w-full mx-auto h-[35rem] rounded-lg"
           playsInline
-          preload="true"
+          preload="none"
           muted
           autoPlay
           loop
