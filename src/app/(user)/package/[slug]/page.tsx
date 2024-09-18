@@ -73,7 +73,7 @@ export async function generateMetadata({
       return packageMetadata?.packageImage[0]?.image?.url;
     }
     if (seo.ogImage) {
-      return packageMetadata?.packageImage[0]?.image?.url;
+      return seo.ogImage;
     }
     return  CONSTANTS.DEFAULT.IMAGE_URL
   }
