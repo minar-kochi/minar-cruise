@@ -1,4 +1,10 @@
 export const CONSTANTS = {
+  DEFAULT: {
+    IMAGE_URL:
+      "https://utfs.io/f/Lnh9TIEe6BHcKojHSU0SJO69wIQDfcTumpVgCavbqeYjiANy",
+    IMAGE_ALT:
+      "Frontview of A yellow and white catamaran named Minar Cruise sailing on the calm waters of a bay with lush green mountains in the background in arabian sea, kochi, kerala, india",
+  },
   LOGO: {
     LOGO_URL:
       "https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q",
@@ -79,8 +85,7 @@ export const CONSTANTS = {
       "Luxurious private yacht cruise in Kochi, India with Minar Cruise",
     IMG_6_URL:
       "https://utfs.io/f/Lnh9TIEe6BHcYaO23BzdT2swapRe3190fcbXA7nkLuSIh5YM",
-    IMG_6_ALT:
-      "Buffet at wedding function held at cruise in the sea",
+    IMG_6_ALT: "Buffet at wedding function held at cruise in the sea",
     IMG_7_URL:
       "https://utfs.io/f/Lnh9TIEe6BHcNeB27xaC3IsGbnZqRDv1oahATd2MHiz7mx4W",
     IMG_7_ALT:

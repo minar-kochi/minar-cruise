@@ -9,6 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "seed-ts": "tsx ./prisma/seed.ts",
+    "seed-seo-package": "tsx ./prisma/seeder/seoPackageSeeder.ts",
     "postinstall": "npx prisma generate",
     "start": "next start",
     "lint": "eslint . --ext ts --ext tsx",
