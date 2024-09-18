@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import Footer from "@/components/footer/Footer";
 import WhatsappButton from "@/components/whatsapp/WhatsappButton";
 import GoogleRecaptchaWrappers from "@/context/ReCaptchaWrapper";
+import GoogleAnalyticsWrapper from "@/context/services/GoogleAnalytics";
 // import Footer from "@/components/footer/Footer";
 
 const fontSans = FontSans({
@@ -52,7 +53,8 @@ export default function RootLayout({
             {/* </CounterStoreProvider> */}
           </Providers>
         </GoogleRecaptchaWrappers>
-        <SpeedInsights  />
+        <GoogleAnalyticsWrapper />
+        <SpeedInsights />
       </body>
       <Script async defer src="https://checkout.razorpay.com/v1/checkout.js" />
     </html>

@@ -31,7 +31,7 @@ export default function Services() {
             <video
               className="aspect-[64/89] object-cover rounded-xl w-full h-full max-lg:max-h-[40rem]"
               playsInline
-              preload="true"
+              preload="none"
               muted
               autoPlay
               loop
