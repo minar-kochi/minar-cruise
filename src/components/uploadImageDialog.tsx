@@ -17,6 +17,7 @@ import { Textarea } from "./ui/textarea";
 import { Button, buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { supportedImageFormats } from "@/constants/config/supportedFileFormats";
 const UploadBlogImage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // const { toast } = useToast();
@@ -29,9 +30,14 @@ const UploadBlogImage = () => {
   const [imagePreview, setImagePreview] = useState("");
 
   async function handleSubmit() {
+    toast.success("dasd");
     try {
       if (altText.length < 20) {
         toast.error("Please enter something Larger than 20");
+        return;
+      }
+      if (!image) {
+        toast.error("Please select Correct Support file.");
         return;
       }
       if (!image?.length) {
@@ -40,8 +46,14 @@ const UploadBlogImage = () => {
       }
       console.log(image);
       await startUpload(image, { alt: altText });
+      toast("File is Processing and uploading");
+      setImage(null);
+      setImagePreview("");
+      setAltText("");
     } catch (error) {
+      toast.error("Something went wrong");
       console.log(error);
+      return;
     }
   }
   return (
@@ -76,7 +88,34 @@ const UploadBlogImage = () => {
         <Dropzone
           multiple={false}
           useFsAccessApi={true}
+          accept={{
+            "image/png": [".png", ".PNG"],
+            "image/jpeg": [".jpeg"],
+            "image/webp": [".webp"],
+          }}
           onDrop={async (acceptedFiles) => {
+            const rejected = acceptedFiles.filter((file) => {
+              // Ensure file is defined
+              if (!file || !file.name) return true; // Reject if file or name is undefined
+              let fileName = file.name;
+              const fileType = file.type;
+              let IsFileTypeFound = supportedImageFormats[fileType];
+
+              if (!IsFileTypeFound) return true;
+
+              const lastDotIndex = fileName.lastIndexOf(".");
+              if (lastDotIndex === -1) {
+                return true;
+              }
+
+              const extension = fileName.slice(lastDotIndex).toLowerCase();
+              // Check if the file type is accepted
+              return !IsFileTypeFound.includes(extension);
+            });
+            if (rejected.length) {
+              toast.error("Unsupported Formats found");
+              return;
+            }
             setImage(acceptedFiles);
             setImagePreview(URL.createObjectURL(acceptedFiles[0]));
           }}
