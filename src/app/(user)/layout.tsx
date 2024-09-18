@@ -10,7 +10,7 @@ import { Toaster } from "react-hot-toast";
 import Footer from "@/components/footer/Footer";
 import WhatsappButton from "@/components/whatsapp/WhatsappButton";
 import GoogleRecaptchaWrappers from "@/context/ReCaptchaWrapper";
-import GoogleAnalyticsWrapper from "@/context/services/HotJar";
+import GoogleAnalyticsWrapper from "@/context/services/GoogleAnalytics";
 // import Footer from "@/components/footer/Footer";
 
 const fontSans = FontSans({
