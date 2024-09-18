@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Manrope as FontSans, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Providers from "@/context/TrpcProvider";
@@ -51,6 +52,7 @@ export default function RootLayout({
             {/* </CounterStoreProvider> */}
           </Providers>
         </GoogleRecaptchaWrappers>
+        <SpeedInsights  />
       </body>
       <Script async defer src="https://checkout.razorpay.com/v1/checkout.js" />
     </html>

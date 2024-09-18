@@ -10,7 +10,7 @@ const HomeVideo = async () => {
       <video
         className="pointer-events-none object-contain lg:object-cover lg:h-[calc(100vh-65px)] w-full "
         playsInline
-        preload="true"
+        preload="none"
         muted
         autoPlay
         loop
