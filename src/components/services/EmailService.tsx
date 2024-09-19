@@ -45,7 +45,7 @@ export const EmailSendBookingConfirmation = ({
       <Head />
       <Preview>{Subject}</Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans px-2">
+        <Body className="bg-white my-auto mx-auto font-sans ">
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
             <Section className="my-[10px] ">
               {/* @TODO Need to change this URL */}
@@ -75,6 +75,13 @@ export const EmailSendBookingConfirmation = ({
               <ul className="pl-5 list-outside">
                 <li className=" pl-0 font-sans tracking-wide">
                   <Text>
+                    <strong>Date of Journey- </strong>
+                    {date}
+                  </Text>
+                </li>
+
+                <li className=" pl-0 font-sans tracking-wide">
+                  <Text>
                     <strong>Booking Number - </strong>
                     {"  "}
                     {BookingId}
@@ -94,12 +101,6 @@ export const EmailSendBookingConfirmation = ({
                 <li className=" pl-0 font-sans tracking-wide">
                   <Text>
                     <strong>Duration - </strong> {duration}
-                  </Text>
-                </li>
-                <li className=" pl-0 font-sans tracking-wide">
-                  <Text>
-                    <strong>Date - </strong>
-                    {date}
                   </Text>
                 </li>
                 <li className=" pl-0 font-sans tracking-wide">

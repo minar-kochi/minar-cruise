@@ -15,6 +15,7 @@ import {
   Text,
   Tailwind,
 } from "@react-email/components";
+import { format } from "date-fns";
 import * as React from "react";
 
 interface BookingConfirmationEmailForAdmin {
@@ -49,13 +50,12 @@ export function BookingConfirmationEmailForAdmin({
   // Duration
 }: BookingConfirmationEmailForAdmin) {
   const Subject = `New Booking Confirmation! for ${packageTitle} on ${scheduleDate}`;
-
   return (
     <Html>
       <Head />
       <Preview>{Subject}</Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans px-6">
+        <Body className="bg-white my-auto mx-auto font-sans ">
           <Container className="border border-solid border-[#eaeaea] shadow-lg rounded my-[40px] mx-auto p-[20px] max-w-[700px]">
             <Section className="my-[10px] ">
               <Img
@@ -67,23 +67,28 @@ export function BookingConfirmationEmailForAdmin({
               />
             </Section>
             {/* <Heading className="text-black text-[24px] font-normal text-center p-0 my-[15px] mx-0">
-                  <strong>{Title} !</strong>
-                </Heading> */}
+                <strong>{Title} !</strong>
+              </Heading> */}
             <Text className="text-black text-[14px] leading-[24px] pt-[30px]">
               Dear <strong>{"Admin"}</strong>,
             </Text>
-            <Text className="text-black text-[14px] leading-[24px] tracking-wide">
+            <Text className="text-black text-justify text-[14px] leading-[24px] tracking-wide">
               We are pleased to inform you of a <strong>New booking</strong> for{" "}
-              <strong>{packageTitle}</strong> on <strong>{scheduleDate}</strong>{" "}
-              the upcoming cruise with <strong>Booking ID: #{BookingId}</strong>{" "}
-              . Below are the details of your upcoming event:
+              <strong>{packageTitle}</strong> has been confirmed with{" "}
+              <strong>Booking ID: #{BookingId}</strong> . Below are the details
+              of your upcoming event:
             </Text>
-            <div className="pt-[20px]">
+            <div className="">
               <strong className="text-xl font-sans font-black">
                 Booking Details :-
               </strong>
+              <ul className="pl-5  ">
+                <li className=" pl-0 font-sans tracking-wide">
+                  <Text>
+                    <strong>Payment Date -</strong> {BookingDate}
+                  </Text>
+                </li>
 
-              <ul className="pl-5 list-outside grid grid-cols-2">
                 <li className=" pl-0 font-sans tracking-wide">
                   <Text>
                     <strong>Name - </strong> {Name}
@@ -98,17 +103,6 @@ export function BookingConfirmationEmailForAdmin({
                 <li className=" pl-0 font-sans tracking-wide">
                   <Text>
                     <strong>Contact - </strong> {phone}
-                  </Text>
-                </li>
-                <li className=" pl-0 font-sans tracking-wide">
-                  <Text>
-                    <strong>Booking Date</strong> {BookingDate}
-                  </Text>
-                </li>
-                <li className=" pl-0 font-sans tracking-wide">
-                  <Text>
-                    <strong>Package Name - </strong>
-                    {packageTitle}
                   </Text>
                 </li>
 
@@ -135,17 +129,17 @@ export function BookingConfirmationEmailForAdmin({
                 </li>
                 <li className=" pl-0 font-sans tracking-wide">
                   <Text>
+                    <strong>Package Name - </strong>
+                    {packageTitle}
+                  </Text>
+                </li>
+                <li className=" pl-0 font-sans tracking-wide">
+                  <Text>
                     <strong>Booking Number - </strong>
                     {"  "}
                     {BookingId}
                   </Text>
                 </li>
-
-                {/* <li className=" pl-0 font-sans tracking-wide">
-                    <Text>
-                      <strong>Duration</strong> {Duration/60} hrs
-                    </Text>
-                  </li> */}
               </ul>
             </div>
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />

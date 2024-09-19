@@ -195,7 +195,7 @@ export async function handleExistingScheduleOrder({
           Name: name,
           adultCount: adultCount,
           babyCount: babyCount,
-          BookingDate: RemoveTimeStampFromDate(booking.createdAt),
+          BookingDate: format(RemoveTimeStampFromDate(booking.createdAt), 'iii dd-MM-yyyy'),
           childCount,
           email: email,
           phone: paymentEntity.contact ?? "",
