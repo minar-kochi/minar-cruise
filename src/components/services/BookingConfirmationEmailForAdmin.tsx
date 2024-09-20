@@ -85,7 +85,7 @@ export function BookingConfirmationEmailForAdmin({
               <ul className="pl-5  ">
                 <li className=" pl-0 font-sans tracking-wide">
                   <Text>
-                    <strong>Payment Date -</strong> {BookingDate}
+                    <strong>Scheduled Date -</strong> {scheduleDate}
                   </Text>
                 </li>
 
@@ -140,6 +140,12 @@ export function BookingConfirmationEmailForAdmin({
                     {BookingId}
                   </Text>
                 </li>
+                <li className=" pl-0 font-sans tracking-wide">
+                  <Text>
+                    <strong>Payment Date -</strong> {BookingDate}
+                  </Text>
+                </li>
+
               </ul>
             </div>
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
