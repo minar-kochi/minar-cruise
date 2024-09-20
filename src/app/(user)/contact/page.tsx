@@ -39,9 +39,9 @@ const page = () => {
           <ContactCard />
         </article>
         <ContactMessageCard />
-        <div className="mt-2">
+        {/* <div className="mt-2">
           <MapView />
-        </div>
+        </div> */}
       </Bounded>
     </div>
   );
