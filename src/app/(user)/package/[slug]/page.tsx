@@ -1,10 +1,13 @@
 import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescription";
 import Bounded from "@/components/elements/Bounded";
+import ExclusivePackage from "@/components/home/ExclusivePackage";
+import Services from "@/components/home/Services";
 import ExclusivePackageEnquiryCard from "@/components/package/new-page/ExclusivePackageEnquiryCard";
 import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
 import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageImage from "@/components/package/new-page/PackageImage";
 import { PackageCarousel } from "@/components/packages/PackageCarousel";
+import TermsAndConditionsCard from "@/components/packages/TermsAndConditionsCard";
 import { CONSTANTS } from "@/constants/data/assets";
 import { db } from "@/db";
 
@@ -75,7 +78,7 @@ export async function generateMetadata({
     if (seo.ogImage) {
       return seo.ogImage;
     }
-    return  CONSTANTS.DEFAULT.IMAGE_URL
+    return CONSTANTS.DEFAULT.IMAGE_URL;
   }
   return constructMetadata({
     MetaHeadtitle: seo.title,
@@ -138,41 +141,42 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col justify-center items-center">
-            <div className="bg-white flex  gap-4 px-2 py-2">
-              <div className="">
-                <div className="flex  gap-2 items-center ">
-                  <User size="26" className="text-red-500" />
-                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                    Adult
-                  </p>
-                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                    ₹{data.adultPrice / 100}/-
-                  </p>
+          {!isPackageStatusExclusive(data.packageCategory) && (
+            <div className="flex flex-col justify-center items-center">
+              <div className="bg-white flex  gap-4 px-2 py-2">
+                <div className="">
+                  <div className="flex  gap-2 items-center ">
+                    <User size="26" className="text-red-500" />
+                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                      Adult
+                    </p>
+                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                      ₹{data.adultPrice / 100}/-
+                    </p>
+                  </div>
+                </div>
+                <div className="">
+                  <div className="flex  gap-2 items-center ">
+                    <Baby size="26" className="text-red-500" />
+                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                      Child
+                    </p>
+                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                      ₹{data.childPrice / 100}/-
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="">
-                <div className="flex  gap-2 items-center ">
-                  <Baby size="26" className="text-red-500" />
-                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                    Child
-                  </p>
-                  <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                    ₹{data.childPrice / 100}/-
-                  </p>
-                </div>
+                <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
+                  <span className="text-primary">
+                    <Clock size="26" />
+                  </span>
+                  {data.fromTime} - {data.toTime}
+                </p>
               </div>
             </div>
-            <div className="">
-              <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                <span className="text-primary">
-                  <Clock size="26" />
-                </span>
-                {data.fromTime} - {data.toTime}
-              </p>
-            </div>
-          </div>
+          )}
         </header>
 
         <div className="grid md:gap-3  2md:grid-cols-3   ">
@@ -205,7 +209,14 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
             <PackageAmmenties data={data} />
           </div>
         </div>
+        {isPackageStatusExclusive(data.packageCategory) && (
+          <div>
+            <Services />
+            <ExclusivePackage />
+          </div>
+        )}
         <PackageCarousel />
+        <TermsAndConditionsCard />
       </div>
     </Bounded>
   );
