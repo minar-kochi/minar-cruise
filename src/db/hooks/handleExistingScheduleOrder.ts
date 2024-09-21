@@ -154,6 +154,8 @@ export async function handleExistingScheduleOrder({
       }
     };
 
+    let duration = `${packageDetails?.duration ? packageDetails.duration / 60 : "--"} Hr`
+
     await Promise.all([
       // send Whats app message to client if there is contact. (hoisted above.)
       sendWhatsAppClientMessage(),
@@ -163,14 +165,14 @@ export async function handleExistingScheduleOrder({
         fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
         emailSubject: "Minar: Your Booking has Confirmed",
         emailComponent: EmailSendBookingConfirmation({
-          duration: `${packageDetails?.duration ?? 0 / 60 ?? "--"} Hr`,
+          duration,
           packageTitle: `${packageDetails?.title ?? "--"} `,
           status: "Confirmed",
           totalAmount: order.amount_paid / 100,
           totalCount: adultCount + babyCount + childCount,
           BookingId: booking.id.slice(8),
           customerName: name,
-          date: schedule?.day ? format(schedule.day, "iii dd-MM-yyyy") : "--",
+          date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
         }),
       }),
       // send whatsApp message to Admin
@@ -195,14 +197,14 @@ export async function handleExistingScheduleOrder({
           Name: name,
           adultCount: adultCount,
           babyCount: babyCount,
-          BookingDate: format(RemoveTimeStampFromDate(booking.createdAt), 'iii dd-MM-yyyy'),
+          BookingDate: format(RemoveTimeStampFromDate(booking.createdAt), 'dd-MM-yyyy'),
           childCount,
           email: email,
           phone: paymentEntity.contact ?? "",
           BookingId: booking.id.slice(8),
           packageTitle: packageDetails?.title ?? "",
           scheduleDate: schedule?.day
-            ? format(schedule.day, "iii dd-MM-yyyy")
+            ? format(schedule.day, "dd-MM-yyyy")
             : "--",
           totalAmount: order.amount_paid / 100,
         }),
