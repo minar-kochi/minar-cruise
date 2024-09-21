@@ -184,6 +184,9 @@ export async function handleCreateScheduleOrder({
         });
       }
 
+      let duration = `${packageDetails?.duration ? packageDetails.duration / 60 : "--"} Hr`
+
+
       await Promise.all([
         // send Email to Client about new booking.
         sendConfirmationEmail({
@@ -194,13 +197,13 @@ export async function handleCreateScheduleOrder({
             Name: name,
             adultCount: adultCount,
             babyCount: babyCount,
-            BookingDate: format(RemoveTimeStampFromDate(booking.createdAt), 'iii dd-MM-yyyy'),
+            BookingDate: format(RemoveTimeStampFromDate(booking.createdAt), 'dd-MM-yyyy'),
             childCount,
             email: email,
             phone: paymentEntity.contact ?? "",
             BookingId: booking.id.slice(8),
             packageTitle: packageDetails?.title ?? "",
-            scheduleDate: format(date,"iii dd-MM-yyyy"),
+            scheduleDate: format(date,"dd-MM-yyyy"),
             totalAmount: order.amount_paid / 100,
           }),
         }),
@@ -210,14 +213,14 @@ export async function handleCreateScheduleOrder({
           fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
           emailSubject: "Minar: Your Booking has Confirmed",
           emailComponent: EmailSendBookingConfirmation({
-            duration: `${packageDetails?.duration ?? "-"}`,
+            duration,
             packageTitle: `${packageDetails?.title ?? "-"} `,
             status: "Confirmed",
             totalAmount: order.amount_paid / 100,
             totalCount: adultCount + babyCount + childCount,
             BookingId: booking.id.slice(8),
             customerName: name,
-            date: format(date,"iii dd-MM-yyyy"),
+            date: format(date,"dd-MM-yyyy"),
           }),
         }),
         //Send admin Create Notification to whats app
