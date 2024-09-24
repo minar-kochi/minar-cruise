@@ -92,7 +92,7 @@ export default function InitializedMDXEditor({
       {...props}
       ref={editorRef}
       className="break-words focus-within:bg-black/40"
-      contentEditableClassName="bg-black outline-none  min-h-[300px] max-w-none text-lg caret-white prose prose-p:my-3 break-words prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
+      contentEditableClassName="bg-white outline-none  min-h-[300px] max-w-none text-lg caret-white prose prose-p:my-3 break-words prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
     />
   );
 }
