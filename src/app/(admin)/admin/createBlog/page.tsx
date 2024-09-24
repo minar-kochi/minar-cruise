@@ -197,7 +197,7 @@ export default function AddBlog() {
             </Dialog>
           </div>
         </div>
-        <div className="max-w-screen-xl focus-within:bg-black/80 mx-auto border-[1px] border-t-0 rounded-xl mb-4 p-1.5 overflow-hidden ">
+        <div className="max-w-screen-xl focus-within:bg-slate-200  mx-auto border-[1px] border-t-0 rounded-xl mb-4 p-1.5 overflow-hidden ">
           <Suspense fallback={<p>Loading editor</p>}>
             <ForwardRefEditor
               ref={EditorRef}
