@@ -197,10 +197,11 @@ export default function AddBlog() {
             </Dialog>
           </div>
         </div>
-        <div className="max-w-screen-xl focus-within:bg-slate-200  mx-auto border-[1px] border-t-0 rounded-xl mb-4 p-1.5 overflow-hidden ">
+        <Bounded className="  rounded-xl mb-4 p-1.5 overflow-hidden ">
           <Suspense fallback={<p>Loading editor</p>}>
             <ForwardRefEditor
               ref={EditorRef}
+              contentEditableClassName=""
               onChange={(e) => {
                 setValue("content", e);
               }}
@@ -209,6 +210,7 @@ export default function AddBlog() {
               }}
               placeholder={<p>Write your Beautiful content here</p>}
               markdown={``}
+              className=""
             />
             <div className="">
               <p className="min-h-4 font-medium text-center indent-1 text-red-500 my-1">
@@ -216,7 +218,7 @@ export default function AddBlog() {
               </p>
             </div>
           </Suspense>
-        </div>
+        </Bounded>
         <Bounded className="justify-center items-center flex gap-2 flex-col mb-12">
           <div className="flex flex-col justify-center items-center gap-2 mb-12">
             <Select
