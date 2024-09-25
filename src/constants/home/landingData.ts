@@ -231,7 +231,7 @@ export const footer = {
     {
       name: "Minar Instagram Url",
       icon: "/assets/Social/instagram.svg",
-      url: "https://www.instagram.com/minar_tours_cochin/",
+      url: "https://www.instagram.com/minarcruisecochin",
     },
     {
       name: "Minar Whatsapp Url",
