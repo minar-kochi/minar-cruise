@@ -28,6 +28,8 @@ import {
   DirectiveDescriptor,
   NestedLexicalEditor,
 } from "@mdxeditor/editor";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 // import { toast } from "./ui/use-toast";
 
 // Only import this to the next file
@@ -35,6 +37,7 @@ export default function InitializedMDXEditor({
   editorRef,
   ...props
 }: { editorRef: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
+  const {resolvedTheme, systemTheme} = useTheme()
   const CalloutCustomDirectiveDescriptor: DirectiveDescriptor = {
     name: "callout",
     testNode(node) {
@@ -56,6 +59,7 @@ export default function InitializedMDXEditor({
       );
     },
   };
+  
   return (
     <MDXEditor
       plugins={[
@@ -91,8 +95,10 @@ export default function InitializedMDXEditor({
       ]}
       {...props}
       ref={editorRef}
-      className="break-words focus-within:bg-black/40"
-      contentEditableClassName="bg-black outline-none  min-h-[300px] max-w-none text-lg caret-white prose prose-p:my-3 break-words prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
+      className={cn("break-words caret-black   border-2 rounded-md",{
+        "dark-editor dark-theme caret-white":resolvedTheme === 'dark'
+      })}
+      contentEditableClassName="outline-none  min-h-[300px] max-w-none text-lg  prose prose-p:my-3 break-words prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
     />
   );
 }

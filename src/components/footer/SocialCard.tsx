@@ -1,4 +1,3 @@
-import { Facebook, Instagram, Twitch } from "lucide-react";
 import { Button } from "../ui/button";
 import { footer } from "@/constants/home/landingData";
 import Image from "next/image";

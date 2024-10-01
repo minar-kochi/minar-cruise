@@ -1,4 +1,4 @@
-import { amenitiesPartialId } from "../data";
+  import { amenitiesPartialId } from "../data";
 
 export const amenities: amenitiesPartialId = [
   {
@@ -45,6 +45,7 @@ export const amenities: amenitiesPartialId = [
       "3 hours sea cruise ( timing 5:30 pm - 8:30 pm )",
       "Including Tea & Snacks",
       "Live music performances",
+      "Including Buffet Dinner",
       "Fun filled entertainment programs",
       "Live DJ programs",
     ],
