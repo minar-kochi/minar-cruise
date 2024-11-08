@@ -27,6 +27,8 @@ import {
   directivesPlugin,
   DirectiveDescriptor,
   NestedLexicalEditor,
+  linkDialogPlugin,
+  linkPlugin,
 } from "@mdxeditor/editor";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -37,7 +39,7 @@ export default function InitializedMDXEditor({
   editorRef,
   ...props
 }: { editorRef: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
-  const {resolvedTheme, systemTheme} = useTheme()
+  const { resolvedTheme, systemTheme } = useTheme();
   const CalloutCustomDirectiveDescriptor: DirectiveDescriptor = {
     name: "callout",
     testNode(node) {
@@ -59,7 +61,7 @@ export default function InitializedMDXEditor({
       );
     },
   };
-  
+
   return (
     <MDXEditor
       plugins={[
@@ -69,6 +71,8 @@ export default function InitializedMDXEditor({
         quotePlugin(),
         thematicBreakPlugin(),
         tablePlugin(),
+        linkPlugin(),
+        linkDialogPlugin(),
         directivesPlugin({
           directiveDescriptors: [CalloutCustomDirectiveDescriptor],
         }),
@@ -95,8 +99,8 @@ export default function InitializedMDXEditor({
       ]}
       {...props}
       ref={editorRef}
-      className={cn("break-words caret-black   border-2 rounded-md",{
-        "dark-editor dark-theme caret-white":resolvedTheme === 'dark'
+      className={cn("break-words caret-black   border-2 rounded-md", {
+        "dark-editor dark-theme caret-white": resolvedTheme === "dark",
       })}
       contentEditableClassName="outline-none  min-h-[300px] max-w-none text-lg  prose prose-p:my-3 break-words prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
     />
