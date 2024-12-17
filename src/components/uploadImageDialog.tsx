@@ -44,7 +44,6 @@ const UploadBlogImage = () => {
         toast.error("Please select a file.");
         return;
       }
-      console.log(image);
       await startUpload(image, { alt: altText });
       toast("File is Processing and uploading");
       setImage(null);

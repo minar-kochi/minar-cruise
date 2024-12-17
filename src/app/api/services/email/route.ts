@@ -6,6 +6,9 @@ import { sendConfirmationEmail } from "@/lib/helpers/resend";
 
 export async function POST() {
   try {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Production");
+    }
     console.log("User Reached");
     let hello = VercelInviteUserEmail({
       customerName: "Customer",
