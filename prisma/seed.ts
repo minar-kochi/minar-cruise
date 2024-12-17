@@ -29,6 +29,10 @@ const db = new PrismaClient();
 
 async function main() {
   console.log("Checking seed");
+  if(!process.env.DATABASE_URL?.includes('localhost')){
+    console.error("You are are on production")
+    process.exit()
+  }
   const isDataPresent = await iterateTable({});
 
   if (isDataPresent) {
