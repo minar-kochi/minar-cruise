@@ -105,6 +105,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@savvywombat/tailwindcss-grid-areas": "^4.0.0",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.14.9",
