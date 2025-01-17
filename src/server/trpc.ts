@@ -7,7 +7,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 // is common in i18n libraries.
 import superjson from "superjson";
 
-const t = initTRPC.create({
+export const t = initTRPC.create({
   // transformer: superjson,
   // allowOutsideOfServer: true,
 });
@@ -38,3 +38,4 @@ export const isAdmin = middleware(async (opts) => {
 });
 
 export const AdminProcedure = t.procedure.use(isAdmin);
+

@@ -1,14 +1,13 @@
-import { ContactValidators } from "@/lib/validators/ContactFormValidator";
-import { publicProcedure, router } from "../trpc";
-import { admin } from "./admin/admin";
-import { user } from "./user/user";
-import {
-  sendConfirmationEmail,
-  sendNodeMailerEmail,
-} from "@/lib/helpers/resend";
 import ContactMinarEmail from "@/components/services/sendContactEmail";
+import {
+  sendConfirmationEmail
+} from "@/lib/helpers/resend";
+import { ContactValidators } from "@/lib/validators/ContactFormValidator";
 import { TRPCError } from "@trpc/server";
 import axios from "axios";
+import { createCallerFactory, publicProcedure, router } from "../trpc";
+import { admin } from "./admin/admin";
+import { user } from "./user/user";
 
 export const appRouter = router({
   admin,
