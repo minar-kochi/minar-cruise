@@ -11,6 +11,7 @@
     "seed-ts": "tsx ./prisma/seed.ts",
     "seed-seo-package": "tsx ./prisma/seeder/seoPackageSeeder.ts",
     "postinstall": "npx prisma generate",
+    "studio": "prisma studio",
     "start": "next start",
     "lint": "eslint . --ext ts --ext tsx",
     "type-check": "tsc --pretty --noEmit",
