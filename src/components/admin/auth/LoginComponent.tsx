@@ -37,9 +37,9 @@ export default function LoginComponent() {
               }
               toast.error(error);
             }
-            if (data?.sucess) {
+            if (data?.success) {
               reset();
-              toast.success(data.sucess);
+              toast.success(data.success);
             }
           })
           .catch((err) => {
