@@ -12,10 +12,14 @@ import {
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import PackageSelectCard from "./desktop/package-select-card";
 import ChooseDateCard from "./desktop/choose-date-card";
+import { format } from "date-fns";
 
 export default function SearchMobileBar() {
+  const selected = useClientSelector((state) => ({
+    selected: state.package.selectedPackages,
+    date: state.package.date,
+  }));
   const packages = useClientSelector((state) => state.package.searchPackages);
-
   return (
     <Drawer>
       <DrawerTrigger className="w-full py-2 md:py-3 md:hidden ">
@@ -28,8 +32,12 @@ export default function SearchMobileBar() {
 
       <DrawerContent className="z-[100]">
         <DrawerHeader>
-          <DrawerTitle>Welcome to search bar</DrawerTitle>
-          <DrawerDescription>This is search description</DrawerDescription>
+          <DrawerTitle className="sr-only">Welcome to search bar</DrawerTitle>
+          <DrawerDescription className="text-center text-base font-medium">
+            {!selected.selected.length
+              ? `Search and Filter your cruise in ${format(new Date(selected.date ?? Date.now()), "MMMM")}`
+              : `You have selected ${selected.selected.length} packages to filter in ${format(new Date(selected.date ?? Date.now()), "MMMM")}`}
+          </DrawerDescription>
         </DrawerHeader>
         <ChooseDateCard />
 
