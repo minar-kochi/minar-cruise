@@ -1,0 +1,24 @@
+import { ClientRootState } from "@/lib/store/clientStore";
+import { createSelector } from "@reduxjs/toolkit";
+
+export const SelectedPackages = (state: ClientRootState) =>
+  state.package.selectedPackages;
+
+
+export const isSelectedPackage = createSelector(
+  [SelectedPackages, (_,id: string) => id],
+  (selected, id) => {
+    let indexFoundAt = selected.findIndex((fv) => fv.id === id);
+
+    if (indexFoundAt === -1) {
+      return {
+        selected: false,
+        index: -1,
+      };
+    }
+    return {
+      selected: true,
+      index: indexFoundAt,
+    };
+  },
+);

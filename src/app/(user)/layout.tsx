@@ -1,16 +1,18 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Manrope as FontSans, Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
-import Providers from "@/context/TrpcProvider";
-import Navbar from "@/components/navbar/Navbar";
-import Script from "next/script";
-import { Toaster } from "react-hot-toast";
 import Footer from "@/components/footer/Footer";
+import Navbar from "@/components/navbar/Navbar";
 import WhatsappButton from "@/components/whatsapp/WhatsappButton";
 import GoogleRecaptchaWrappers from "@/context/ReCaptchaWrapper";
 import GoogleAnalyticsWrapper from "@/context/services/GoogleAnalytics";
+import Providers from "@/context/TrpcProvider";
+import { cn } from "@/lib/utils";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
+import { Manrope as FontSans } from "next/font/google";
+import Script from "next/script";
+import { Toaster } from "react-hot-toast";
+import "./globals.css";
+import ClientStoreProvider from "@/providers/client/ClientStoreProvider";
+import InitialClientStateDispatcher from "@/wrapper/client/initial-client-state-dispatcher";
 // import Footer from "@/components/footer/Footer";
 
 const fontSans = FontSans({
@@ -39,19 +41,17 @@ export default function RootLayout({
         )}
       >
         <GoogleRecaptchaWrappers>
-          <Providers>
-            {/* <CounterStoreProvider> */}
-            <Toaster />
-
-            {modal}
-            <div id="modal-root" />
-            <Navbar />
-            <div className="">{children}</div>
-            <WhatsappButton />
-            <Footer />
-
-            {/* </CounterStoreProvider> */}
-          </Providers>
+          <InitialClientStateDispatcher>
+            <Providers>
+              <Toaster />
+              {modal}
+              <div id="modal-root" />
+              <Navbar />
+              <div className="">{children}</div>
+              <WhatsappButton />
+              <Footer />
+            </Providers>
+          </InitialClientStateDispatcher>
         </GoogleRecaptchaWrappers>
         <GoogleAnalyticsWrapper />
         <SpeedInsights />

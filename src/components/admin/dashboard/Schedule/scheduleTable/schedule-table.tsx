@@ -34,7 +34,8 @@ export default function ScheduleTable() {
       {},
       {
         getNextPageParam: (lastPage) => lastPage?.nextCursor,
-      },
+
+      }
     );
 
   if (isFetching) {

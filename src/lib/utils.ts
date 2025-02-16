@@ -363,3 +363,8 @@ export function flattenObject(obj: any, prefix = ""): Record<string, string> {
     {} as Record<string, string>,
   );
 }
+
+export function formatPrice(price: number) {
+  const RUPEE_DIVIDER = 100;
+  return price / RUPEE_DIVIDER;
+}

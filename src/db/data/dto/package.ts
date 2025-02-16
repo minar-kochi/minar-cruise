@@ -165,6 +165,13 @@ export async function getPackageSearchItems() {
       select: {
         id: true,
         title: true,
+        adultPrice: true,
+        childPrice: true,
+        amenities: true,
+        duration: true,
+        fromTime: true,
+        toTime: true,
+        packageCategory: true,
         packageImage: {
           take: 1,
           where: {
@@ -195,6 +202,15 @@ export async function getPackageSearchItems() {
     return null;
   }
 }
+
+export const cachedSearchPackage = unstable_cache(
+  getPackageSearchItems,
+  undefined,
+  {
+    revalidate: 9600,
+    tags: ["ORGANIZED_PACKAGE_KEY"],
+  },
+);
 
 export type PackageSelect = {
   id: string;

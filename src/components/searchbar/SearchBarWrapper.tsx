@@ -1,22 +1,18 @@
-import { getPackageSearchItems } from "@/db/data/dto/package";
+"use client";
+import { cn } from "@/lib/utils";
 import SearchBar from "./SearchBar";
-import { cn, isProd } from "@/lib/utils";
+import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 
-export default async function SearchBarWrapper({
+export default function SearchBarWrapper({
   className,
 }: {
   className?: string;
 }) {
-  const packages = await getPackageSearchItems();
-  if (!packages) {
-    if (isProd) {
-      return <></>;
-    }
-    return <>PACKAGE FETCHING FAILED, CHECK: SearchBar.tsx</>;
-  }
+  const packages = useClientSelector((state) => state.package.searchPackages);
+
   return (
     <div className={cn("", className)}>
-      <SearchBar packages={packages} />;
+      <SearchBar  />;
     </div>
   );
 }
