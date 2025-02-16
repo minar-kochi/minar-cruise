@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import React, { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { date } from "zod";
+import PackageCardViewer from "./package-card-viewer";
 
 export default function SearchPageWrapper({
   selected: selectedIds,
@@ -50,7 +51,7 @@ export default function SearchPageWrapper({
       {
         packageIds: selectedPackages?.map((item) => item.id) ?? undefined,
         clientDate: clientDate ?? undefined,
-        limit: 5,
+        limit: 12,
       },
       {
         getNextPageParam: (last) => {
@@ -65,7 +66,7 @@ export default function SearchPageWrapper({
     if (pages?.pages) {
       dispatch(setSearchedPackages(pages.pages));
     }
-  }, [pages?.pages,dispatch]);
+  }, [pages?.pages, dispatch]);
 
   const data = useClientSelector((state) => state.package.resultedSchedules);
 
@@ -74,7 +75,7 @@ export default function SearchPageWrapper({
     rootMargin: `${10}px 0px`,
     onChange(inView, entry) {
       if (inView) {
-        fetchNextPage();
+        // fetchNextPage();
       }
     },
   });
@@ -82,21 +83,20 @@ export default function SearchPageWrapper({
   return (
     <Bounded>
       <HeaderTitleDescription
-        title="Find your Trips!"
+        title="Find your Cruise!"
         description="Search trips in your convenance"
       />
-      <SearchBar />
-      <div className="flex items-center justify-center flex-col gap-4 max-w-md mx-auto">
-        <div className="space-y-4 w-full">
+      <div className="mb-2">
+        <SearchBar />
+      </div>
+      <div className="flex items-center justify-center flex-col gap-4  mx-auto">
+        <div className="space-y-4 w-full bg-white rounded-md xxs:px-4 px-2 py-2">
           {Object.keys(data || {}).map((key) => (
-            <div
-              key={`${key}-search-date-query`}
-              className="border rounded-lg p-4"
-            >
-              <h3 className="text-lg font-semibold mb-2">
+            <div key={`${key}-search-date-query`} className=" rounded-lg px-1 py-1 xxs:p-4">
+              <h3 className="text-xl font-medium mb-2">
                 {format(new Date(key), "MMMM do, EEEE")}
               </h3>
-              <div className="flex gap-2 flex-col">
+              <div className="grid sm:grid-cols-2 md:flex gap-2  md:flex-col md:px-6">
                 {data &&
                   data[key] &&
                   data[key]?.map((item) => {
@@ -105,9 +105,10 @@ export default function SearchPageWrapper({
                     );
                     if (!packageItem) return;
                     return (
-                      <PackageSelectCard
+                      <PackageCardViewer
                         key={`${key}-${packageItem.id}-${item.id}`}
                         item={packageItem}
+                        schedules={item}
                       />
                     );
                   })}

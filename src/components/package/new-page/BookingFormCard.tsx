@@ -32,8 +32,6 @@ export default function BookingFormCard({
   adultPrice,
   childPrice,
 }: TBookingFormCard) {
-  //   watch("numOfAdults");
-
   return (
     <div
       className={cn(

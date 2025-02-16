@@ -22,7 +22,7 @@ export default function PackageAmmenties({ data }: { data: TGetPackageById }) {
   return (
     <div>
       <div className="rounded-2xl px-4 pt-16 pb-8 ">
-        <div className="max-w-4xl mx8uto w-full">
+        <div className="max-w-4xl mx-auto w-full">
           <h4 className="text-2xl font-bold ">Amenities</h4>
           <p className="text-sm text-muted-foreground">
             Enjoy a variety of thoughtfully curated services and features,

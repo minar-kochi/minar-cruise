@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/popover";
 import PackageSelectCard from "./package-select-card";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
+import ChooseDateCard from "./choose-date-card";
 
 export function ChoosePackage() {
   const packages = useClientSelector((state) => state.package.searchPackages);
@@ -15,7 +16,7 @@ export function ChoosePackage() {
     <Popover>
       <PopoverTrigger className="w-full  py-2 md:py-2.5 border-muted-foreground   relative hidden md:flex items-start flex-col gap-0  ">
         <h4 className="text-sm hidden md:block font-semibold">Which</h4>
-        <p className="md:text-sm text-muted-foreground">Choose a package</p>
+        <p className=" md:text-sm text-muted-foreground">Choose a package</p>
         <div className="absolute h-10 w-[1px] top-auto bottom-auto right-0 bg-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent alignOffset={20} className="w-full border-muted ">

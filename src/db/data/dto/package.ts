@@ -165,6 +165,7 @@ export async function getPackageSearchItems() {
       select: {
         id: true,
         title: true,
+        slug: true,
         adultPrice: true,
         childPrice: true,
         amenities: true,

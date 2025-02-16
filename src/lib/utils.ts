@@ -111,6 +111,26 @@ export function parseDateFormatYYYMMDDToNumber(
     month: validatedDate.month,
   };
 }
+type ParseDateFalsy = { date: null; parsedDate: null; error: true };
+type ParseDateTruthy = {
+  date: string;
+  parsedDate: TSplitedFormatedDate;
+  error: false;
+};
+
+export function parseSafeFormatYYYYMMDDToNumber(
+  date: string,
+): ParseDateTruthy | ParseDateFalsy {
+  try {
+    let parsedDate = parseDateFormatYYYMMDDToNumber(date);
+    if (!parsedDate) {
+      throw new Error("Invalid Date");
+    }
+    return { date: date, parsedDate, error: false };
+  } catch (error) {
+    return { date: null, parsedDate: null, error: true };
+  }
+}
 
 export function isDateValid(date: TSplitedFormatedDate) {
   return moment([date.year, date.month - 1, date.day]).isValid();
@@ -368,3 +388,8 @@ export function formatPrice(price: number) {
   const RUPEE_DIVIDER = 100;
   return price / RUPEE_DIVIDER;
 }
+
+export const safeTotal = (value: number) => {
+  const numberValue = Number(value);
+  return isNaN(numberValue) ? 0 : numberValue;
+};

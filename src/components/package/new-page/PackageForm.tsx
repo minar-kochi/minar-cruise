@@ -1,29 +1,28 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
+import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
+import { Button } from "@/components/ui/button";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
+import { absoluteUrl, cn, RemoveTimeStampFromDate, safeTotal } from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
 } from "@/lib/validators/onlineBookingValidator";
+import { isPackageStatusSunSet } from "@/lib/validators/Package";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
-import React, { useState } from "react";
+import { TRPCClientError } from "@trpc/client";
+import { format } from "date-fns";
+import { useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import BookingFormCalender from "./BookingFormCalender";
-import ColorRepresentationInfo from "./ColorRepresentationInfo";
 import BookingFormCard from "./BookingFormCard";
-import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
-import { Button } from "@/components/ui/button";
-import { isPackageStatusSunSet } from "@/lib/validators/Package";
-import { format } from "date-fns";
-import { dataTagSymbol } from "@tanstack/react-query";
-import { TRPCClientError } from "@trpc/client";
+import ColorRepresentationInfo from "./ColorRepresentationInfo";
 
 type TPackageForm = {
   packageId: string;
@@ -31,6 +30,8 @@ type TPackageForm = {
   adultPrice: number;
   childPrice: number;
   type?: "modal" | undefined;
+  defaultDate?: string 
+  scheduleId?: string
 };
 
 export default function PackageFormN({
@@ -39,7 +40,9 @@ export default function PackageFormN({
   adultPrice,
   childPrice,
   type,
+  defaultDate
 }: TPackageForm) {
+
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
 
@@ -60,15 +63,11 @@ export default function PackageFormN({
       numOfChildren: 0,
       numOfBaby: 0,
       packageId: packageId,
-      selectedScheduleDate: RemoveTimeStampFromDate(new Date(Date.now())),
+      selectedScheduleDate: defaultDate ?? RemoveTimeStampFromDate(new Date(Date.now())),
       packageCategory: packageCategory,
-      // token: undefined,
     },
   });
-  const safeTotal = (value: number) => {
-    const numberValue = Number(value);
-    return isNaN(numberValue) ? 0 : numberValue;
-  };
+
 
   const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
@@ -80,6 +79,7 @@ export default function PackageFormN({
         toast.dismiss();
         const notes = res?.order.notes!;
         const options = {
+          
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEYID,
           name: notes?.name ?? undefined,
           currency: "INR",

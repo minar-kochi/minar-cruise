@@ -13,7 +13,12 @@ import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import { cn, flattenObject } from "@/lib/utils";
+import {
+  cn,
+  flattenObject,
+  parseDateFormatYYYMMDDToNumber,
+  parseSafeFormatYYYYMMDDToNumber,
+} from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { Baby, Clock, PersonStanding, User } from "lucide-react";
 import { Metadata } from "next";
@@ -23,6 +28,9 @@ import React from "react";
 interface IPackagePage {
   params: {
     slug: string;
+  };
+  searchParams?: {
+    selectedDate?: string;
   };
 }
 export const maxDuration = 25;
@@ -109,7 +117,14 @@ export async function generateStaticParams() {
     slug: item.slug,
   }));
 }
-export default async function PackagePage({ params: { slug } }: IPackagePage) {
+export default async function PackagePage({
+  params: { slug },
+  searchParams,
+}: IPackagePage) {
+  let parsedDate = parseSafeFormatYYYYMMDDToNumber(
+    searchParams?.selectedDate ?? "",
+  );
+
   const data = await getPackageById({ slug });
 
   if (!data)
@@ -195,6 +210,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
           >
             {!isPackageStatusExclusive(data.packageCategory) ? (
               <PackageForm
+                defaultDate={parsedDate?.date ?? undefined}
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
                 packageId={data.id}

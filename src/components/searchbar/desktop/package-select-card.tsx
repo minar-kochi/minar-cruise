@@ -34,12 +34,12 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
         />
       </div>
       <div className="w-full pr-4 pt-2 flex flex-col  items-start    ">
-        <h4 className="font-medium ">{item.title}</h4>
+        <h4 className="font-medium line-clamp-1  text-start text-pretty">{item.title}</h4>
         <p className="text-sm text-primary">
           {formatTiming(item.fromTime)} <span className="text-black">~</span>{" "}
           {formatTiming(item.toTime)}
         </p>
-        <div className="mt-2 text-sm bg-primary/10 flex w-max px-2 py-1.5 rounded-md">
+        <div className="mt-2 text-sm md:bg-primary/10 flex w-max md:px-2 py-1.5 rounded-md">
           <p className="text-primary gap-2 flex items-center justify-center ">
             <span className="flex gap-1 border-r pr-2 items-center">
               {<User size={16} />} ₹{formatPrice(item.adultPrice)}/-

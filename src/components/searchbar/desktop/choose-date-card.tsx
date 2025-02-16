@@ -1,8 +1,3 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAppSelector } from "@/hooks/adminStore/reducer";
@@ -17,9 +12,8 @@ import {
 } from "@/lib/utils";
 import { setDate } from "@/lib/features/client/packageClientSlice";
 import { TSplitedFormatedDate } from "@/Types/type";
-import ChooseDateCard from "./choose-date-card";
-let date = "2025-02-01";
-export function ChooseDates() {
+
+export default function ChooseDateCard() {
   const date = useClientSelector((state) => state.package.date);
 
   const currentDate = new Date();
@@ -101,20 +95,51 @@ export function ChooseDates() {
       dispatch(setDate(NewDateConverted));
     }
   };
-
   return (
-    <Popover>
-      <PopoverTrigger className="w-full ml-4 py-2 md:py-3 border-muted-foreground hidden md:flex items-start flex-col gap-0">
-        <h4 className="text-sm hidden md:block font-semibold">When</h4>
-        <p className="md:text-sm text-muted-foreground">Choose a Date</p>
-      </PopoverTrigger>
-      <PopoverContent
-        alignOffset={-25}
-        className="w-auto border-primary overflow-hidden p-0 bg-white"
-        align="start"
-      >
-        <ChooseDateCard />
-      </PopoverContent>
-    </Popover>
+    <div className="relative">
+      <div className="flex items-center justify-between p-2 bg-white rounded-lg shadow-sm">
+        <button
+          onClick={handlePrevMonth}
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isDisabled(month - 1, year)}
+          aria-label="Previous month"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+
+        <div className="flex-1 px-4 py-2 text-center">
+          <span className="font-medium">{months[month]}</span>
+          <span className="ml-2 text-gray-500">{year}</span>
+        </div>
+
+        <button
+          onClick={handleNextMonth}
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isDisabled(month + 1, year)}
+          aria-label="Next month"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-1 p-2">
+        {months.map((monthName, index) => (
+          <button
+            key={monthName}
+            onClick={() => !isDisabled(index, year) && handleMonthClick(index)}
+            className={cn("p-2 text-sm rounded-md transition-colors ", {
+              "bg-primary/20": month === index,
+              "hover:bg-gray-100": month !== index,
+              "opacity-50 cursor-not-allowed": isDisabled(index, year),
+            })}
+            disabled={isDisabled(index, year)}
+            role="option"
+            aria-selected={month === index}
+          >
+            {monthName}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

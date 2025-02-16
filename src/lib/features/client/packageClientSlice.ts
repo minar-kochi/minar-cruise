@@ -2,26 +2,20 @@
 import { TGetPackageSearchItems } from "@/db/data/dto/package";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { TExcludedOrganizedPackageData } from "@/Types/packages/package";
-import { ScheduleGrouped } from "@/Types/Schedule/ScheduleSelect";
+import { ScheduleGrouped, TSchedulesData } from "@/Types/Schedule/ScheduleSelect";
 import { $Enums } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // export type TOrganizedPackage = Exclude<TgetPackageScheduleDatas, null>;
 
-type TScheduleStuff = {
-  id: string;
-  packageId: string | null;
-  day: string;
-  schedulePackage: $Enums.SCHEDULED_TIME;
-  scheduleStatus: $Enums.SCHEDULE_STATUS;
-};
 
-type TScheduleRAw = {
-  schedules: TScheduleStuff[];
+
+type TScheduleQueryData = {
+  schedules: TSchedulesData[];
   nextCursor?: string | undefined;
 }[];
 
-type TScheduleResults = Record<string, TScheduleStuff[]>;
+type TScheduleResults = Record<string, TSchedulesData[]>;
 
 export type TPackageState = {
   searchPackages: TGetPackageSearchItems | null;
@@ -74,7 +68,7 @@ const packageClientSlice = createSlice({
       reducer(state, action: PayloadAction<{ data: ScheduleGrouped }>) {
         state.resultedSchedules = action.payload.data;
       },
-      prepare(data: TScheduleRAw | undefined) {
+      prepare(data: TScheduleQueryData | undefined) {
         let organizedSchedules = data?.flatMap((item) => item.schedules) ?? [];
 
         const seen = new Set<string>();

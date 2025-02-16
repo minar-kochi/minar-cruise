@@ -126,12 +126,14 @@ export type TScheduleWithBookingCountWithId = {
   totalBookings: number;
 }[];
 
+
+export type TSchedulesData = {
+  id: string;
+  packageId: string | null;
+  day: Date | string;
+  schedulePackage: $Enums.SCHEDULED_TIME;
+  scheduleStatus: $Enums.SCHEDULE_STATUS;
+};
 export type ScheduleGrouped = {
-  [key: string]: {
-    packageId: string | null;
-    id: string;
-    day: Date | string;
-    schedulePackage: $Enums.SCHEDULED_TIME;
-    scheduleStatus: $Enums.SCHEDULE_STATUS;
-  }[];
+  [key: string]: TSchedulesData[];
 };
