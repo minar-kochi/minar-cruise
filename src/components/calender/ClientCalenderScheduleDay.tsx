@@ -61,7 +61,7 @@ export default function ClientCalenderScheduleDay({
     : -1;
   // rounded-md hover:bg-blue-400  relative z-0 w-full h-full flex items-center justify-center group-disabled:text-muted group-disabled:font-bold group-disabled:bg-transparent  bg-yellow-200
   const disabled =
-    "group-disabled:bg-gray-200 group-disabled:hover:bg-gray-300 group-disabled:text-gray-500";
+    "group-disabled:bg-gray-200 group-disabled:border-none group-disabled:hover:bg-gray-300 group-disabled:text-gray-500";
 
   const loading_color =
     "group-disabled:bg-gray-200 bg-gray-200 hover:bg-gray-200 group-disabled:hover:bg-gray-300 group-disabled:text-gray-500";
@@ -69,12 +69,12 @@ export default function ClientCalenderScheduleDay({
   const blocked =
     "group-disabled:bg-red-500 group-disabled:text-white group-disabled:hover:bg-red-600 text-white font-bold";
   const not_available_booking =
-    "text-white disabled bg-red-500 hover:bg-red-700 text-white font-bold group-aria-selected:bg-red-600 group-aria-selected:hover:bg-red-700";
+    "text-white disabled bg-red-500 border-none hover:bg-red-700 text-white font-bold group-aria-selected:bg-red-600 group-aria-selected:hover:bg-red-700";
 
   const available =
     "bg-[#25b058]  hover:bg-[#3ab567] font-medium group-aria-selected:font-extrabold  text-white border-green-600 group-aria-selected:bg-[#088a38]";
   const sunSetAvailable =
-    "hover:bg-[#3ab567] bg-[#25b058]  font-medium group-aria-selected:font-extrabold  text-white border-green-600 group-aria-selected:bg-[#088a38]";
+    "hover:bg-[#3ab567] bg-[#25b058]   font-medium group-aria-selected:font-extrabold  text-white border-green-600 group-aria-selected:bg-[#088a38]";
 
   // let isSunsetBookable = false;
 
@@ -88,7 +88,7 @@ export default function ClientCalenderScheduleDay({
   return (
     <span
       className={cn(
-        "rounded-md relative z-0 w-full h-full flex  items-center justify-center ",
+        "rounded-md relative z-0 border border-muted-foreground w-full h-full flex  items-center justify-center ",
         disabled,
 
         {

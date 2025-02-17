@@ -1,10 +1,12 @@
-import { Star } from "lucide-react";
-import Image from "next/image";
+import { Star, Clock, Users } from "lucide-react";
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import BookNowBtn from "./BookNowBtn";
-import Link from "next/link";
 
-interface IPackageCard {
+interface PackageCardProps {
   url: string;
   alt: string;
   title: string;
@@ -12,7 +14,24 @@ interface IPackageCard {
   slug: string;
   adultPrice: number;
   duration: number;
+  rating?: number;
+  maxGroupSize?: number;
+  isSpecialOffer?: boolean;
 }
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(price / 100);
+};
+
+const formatDuration = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+};
 
 export default function SpecialPackageCard({
   alt,
@@ -22,32 +41,49 @@ export default function SpecialPackageCard({
   slug,
   adultPrice,
   duration,
-}: IPackageCard) {
+  rating = 4.5,
+  maxGroupSize = 10,
+  isSpecialOffer = false,
+}: PackageCardProps) {
   return (
-    <Link
-      className="w-full xl:w-[24rem] h-[30rem] shadow-sm  rounded-xl overflow-hidden relative"
-      href={slug}
+    <Card
+      className={cn(
+        "group relative h-[30rem] w-full overflow-hidden transition-all hover:shadow-lg xl:w-[24rem]",
+        className,
+      )}
     >
-      <div className="absolute h-full w-full  bg-gradient-to-t from-black/80 via-gray-500/20 to-slate-50/5" />
+      <a
+        href={slug}
+        className="block h-full"
+        aria-label={`View details for ${title}`}
+      >
+        {isSpecialOffer && (
+          <Badge className="absolute right-4 top-4 z-30 animate-pulse bg-red-500">
+            Special Offer
+          </Badge>
+        )}
 
-      <Image
-        src={url ?? "/assets/world-map.png"}
-        alt={alt ?? "package"}
-        width={3024}
-        height={4032}
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute bottom-5 left-4">
-        <h2 className="font-medium text-white text-lg hover:text-red-100">
-          {title}
-        </h2>
+        <div className="absolute h-full w-full bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity group-hover:opacity-80 z-10" />
 
-        <BookNowBtn
-          className="py-2 w-full"
-          adultPrice={adultPrice / 100}
-          duration={duration}
+        <img
+          src={url ?? "/assets/world-map.png"}
+          alt={alt ?? "Tour package"}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
         />
-      </div>
-    </Link>
+
+        <CardContent className="absolute bottom-0 left-0 right-0 z-20 p-4 text-white">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-semibold  line-clamp-2">{title}</h2>
+            {/* <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm">{rating}</span>
+            </div> */}
+          </div>
+
+          <BookNowBtn adultPrice={adultPrice} duration={duration} />
+        </CardContent>
+      </a>
+    </Card>
   );
 }

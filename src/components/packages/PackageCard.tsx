@@ -40,7 +40,7 @@ const PackageCard = ({
   return (
     <Card
       className={cn(
-        "w-full max-w-[500px]   overflow-hidden transition-all border-black duration-300 hover:shadow-lg",
+        "w-full max-w-[500px]    overflow-hidden transition-all border-black duration-300 hover:shadow-lg",
         className,
       )}
     >
@@ -77,7 +77,7 @@ const PackageCard = ({
           {amenities.description.slice(0, 4).map((item, i) => (
             <div key={item + i} className="flex items-start gap-2 text-sm">
               <Check size={16} className="mt-1 text-green-500 shrink-0" />
-              <span>{item}</span>
+              <span className="line-clamp-1">{item}</span>
             </div>
           ))}
           <Link href={`/package/${slug}`}>

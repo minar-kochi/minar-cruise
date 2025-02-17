@@ -32,7 +32,7 @@ const PackageCarousel = ({ data, className }: PackageCarouselProps) => {
   }
 
   return (
-    <div className="w-full px-4 py-6">
+    <div className="w-full sm:px-4 py-6">
       <Carousel
         opts={{
           align: "center", // Changed from 'start' to 'center' for better looping
@@ -47,7 +47,7 @@ const PackageCarousel = ({ data, className }: PackageCarouselProps) => {
           {data.map((item) => (
             <CarouselItem
               key={`${item.id}-package-carousal`}
-              className="pl-2 md:pl-4 sm:basis-1/2 lg:basis-1/3 xl:basis-[35%]"
+              className="pl-2 md:pl-4 basis-[90%] sm:basis-[55%] md:basis-[40%] lg:basis-[35%] "
             >
               <PackageCard
                 fromTime={item.fromTime}

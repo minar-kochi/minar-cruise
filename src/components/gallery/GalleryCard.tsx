@@ -22,29 +22,38 @@ const GalleryCard = ({ slug }: { slug: TGalleries }) => {
           className="object-cover max-h-[400px]   aspect-video  h-full"
         />
         <div className="absolute text-white   top-0 w-full h-full grid place-content-center text-center gap-3">
-          <h3 className="text-4xl md:text-5xl font-bold z-10">{Text.bannerHeading}</h3>
+          <h3 className="text-4xl md:text-5xl font-bold z-10">
+            {Text.bannerHeading}
+          </h3>
           <p className="text-xl font-medium z-10">{Text.bannerQuote}</p>
           <div className="absolute h-full w-full  bg-gradient-to-b from-black/70 via-black/40 to-slate-50/5" />
         </div>
       </div>
 
-      <Bounded className="">
-        <p className="text-slate-500   mx-auto md:px-28 my-16 font- tracking-wide">
+      <Bounded className="relative pb-12">
+        <p className="text-slate-500 mx-auto md:px-28 my-16 tracking-wide text-center">
           {Text.description}
         </p>
-        <article className=" flex flex-wrap  items-center gap-9 justify-center mb-20">
-          {allImages.map(({ url }, i) => (
-            <div className="" key={`${url}-${i}-${slug}`}>
-              <Image
-                src={url}
-                alt="gallery image"
-                width={1000}
-                height={400}
-                className="hover:border-8 border-primary md:hover:scale-110 hover:scale-110 duration-300 rounded-xl  object-cover max-w-[250px] aspect-square"
-              />
-            </div>
-          ))}
-        </article>
+        <div className="relative overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-6 md:px-16">
+            {allImages.map(({ url }, i) => (
+              <div
+                key={`${url}-${i}-${slug}`}
+                className="group relative overflow-hidden rounded-xl"
+              >
+                <Image
+                  src={url}
+                  alt="gallery image"
+                  width={1000}
+                  height={400}
+                  priority
+                  className="object-contain w-full h-full rounded-xl transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            ))}
+          </div>
+        </div>
       </Bounded>
     </div>
   );

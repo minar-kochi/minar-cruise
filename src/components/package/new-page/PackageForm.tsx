@@ -49,7 +49,6 @@ export default function PackageFormN({
   type,
   defaultDate,
 }: TPackageForm) {
-
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
 
@@ -222,9 +221,6 @@ export default function PackageFormN({
           )}
         >
           <div className="flex gap-2">
-            <div>
-              <ColorRepresentationInfo className="bg-red-900" title="Blocked" />
-            </div>
             <div
               className={cn({
                 hidden: isPackageStatusSunSet({
@@ -233,8 +229,14 @@ export default function PackageFormN({
               })}
             >
               <ColorRepresentationInfo
-                className={cn("bg-green-600 ")}
+                className={cn("bg-green-500 ")}
                 title="Available"
+              />
+            </div>
+            <div>
+              <ColorRepresentationInfo
+                className="bg-red-500"
+                title="Blocked / Full"
               />
             </div>
           </div>
@@ -246,8 +248,9 @@ export default function PackageFormN({
             })}
           >
             <ColorRepresentationInfo
-              className={cn("bg-white border")}
-              title="Rest of the days Minimum 25 Pax"
+              containerClass="max-w-[200px] gap-1 text-blue-600"
+              className={cn("bg-white border mt-1 self-start  flex-shrink-0 border-black rounded-sm")}
+              title="Rest of the days requires 25 guests to book"
             />
           </div>
         </div>

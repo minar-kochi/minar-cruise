@@ -26,29 +26,32 @@ export default function PackageCard({
 }: IPackageCard) {
   return (
     <Link
-      className="relative w-[100%] max-w-[380px] h-[16rem]  rounded-xl overflow-hidden shadow-sm  "
+      className="relative w-full max-w-[380px] h-[18rem] group rounded-t-2xl overflow-hidden  transition-transform group duration-300"
       href={slug}
     >
-      <div className="absolute h-full w-full  bg-gradient-to-t from-black/80 via-gray-500/20 to-slate-50/5" />
+      {/*  */}
+      <div className="absolute  inset-0 z-10 bg-gradient-to-t from-black/80 via-gray-900/30 to-transparent group-hover:from-black/30 group-hover:via-gray-900/10 " />
       <Image
         src={url ?? "/assets/world-map.png"}
         alt={alt ?? "package"}
         width={1024}
         height={1024}
-        className="w-full h-full object-cover "
+        className="w-full h-full   object-cover overflow-hidden  transform group-hover:scale-105 transition-transform  duration-300"
       />
 
-      <div className="absolute w-full bottom-3  px-3">
-        <div className="w-full flex flex-col ">
-          <h2 className="font-medium text-white text-lg mb-1 hover:text-red-100">
-            {title}
-          </h2>
-
-          <BookNowBtn
-            className="h-12 justify-between  "
-            adultPrice={adultPrice / 100}
-            duration={duration}
-          />
+      <div className="absolute  bottom-0 z-20  w-full     text-white">
+        <h2 className="font-semibold text-xl ml-4 mb-2 leading-tight ">
+          {title}
+        </h2>
+        <div className="w-full ">
+          <div className="bg-background/0 backdrop-blur-sm  overflow-hidden">
+            <BookNowBtn
+              
+              className="h-12  px-4 w-full flex items-center justify-between text-black  font-medium rounded-none  py-2 shadow-md transition-colors"
+              adultPrice={adultPrice}
+              duration={duration}
+            />
+          </div>
         </div>
       </div>
     </Link>

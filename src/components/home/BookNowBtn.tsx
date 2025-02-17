@@ -2,41 +2,53 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Clock, UserRound, Users, UsersRound } from "lucide-react";
 import React from "react";
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(price / 100);
+};
+
+const formatDuration = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+};
 
 interface TBookButton {
+  containerClass?: string;
   className?: string;
   adultPrice: number;
   duration: number;
 }
 
 export default function BookNowBtn({
+  containerClass,
   className,
   adultPrice,
   duration,
 }: TBookButton) {
   return (
-    <div className={cn("w-full", className)}>
-      <div
-        className={cn(
-          "flex justify-evenly items-center py-2  px-3 rounded-xl shadow-2xl gap-3 bg-white w-full border-3",
-          className,
-        )}
-      >
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between rounded-lg bg-black/40 p-3">
         <div className="flex gap-4">
-          <div className="flex gap-2 items-center justify-center hover:text-red-900">
-            <Users className="w-[16px] h-[16px] md:h-5 md:w-5" />
-            <p className="text-sm md:text-base font-medium">₹{adultPrice}</p>
+          <div className="flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-black">
+            <Users className="h-4 w-4" />
+            <span className="text-sm font-medium">
+              {formatPrice(adultPrice)}
+            </span>
           </div>
-          <div className="flex gap-1 items-center justify-center hover:text-red-900">
-            <Clock className="w-[16px] h-[16px] md:h-5 md:w-5" />
-            <p className="text-sm md:text-base font-medium">{duration/60} hr</p>
+          <div className="flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-black">
+            <Clock className="h-4 w-4" />
+            <span className="text-sm font-medium">
+              {formatDuration(duration)}
+            </span>
           </div>
         </div>
-        <div>
-          <Button size={"xs"} className="">
-            Book Now
-          </Button>
-        </div>
+        <Button size="sm" className="">
+          Book Now
+        </Button>
       </div>
     </div>
   );
