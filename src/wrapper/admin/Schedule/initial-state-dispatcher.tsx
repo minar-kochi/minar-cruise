@@ -3,8 +3,8 @@ import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenSchedu
 import { getOrganizedPackages } from "@/db/data/dto/package";
 import {
   getSchedulesByDateOrNow,
-  getUpcommingScheduleDates,
-  TgetUpcommingScheduleDates,
+  getupComingScheduleDates,
+  TgetupComingScheduleDates,
 } from "@/db/data/dto/schedule";
 import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 import { getUTCDate, RemoveTimeStampFromDate, sleep } from "@/lib/utils";
@@ -22,7 +22,7 @@ export default async function InitialStateDispatcher({
   );
   const [packages, data, schedules] = await Promise.all([
     getOrganizedPackages(),
-    getUpcommingScheduleDates(),
+    getupComingScheduleDates(),
     getSchedulesByDateOrNow(date),
   ]);
 
@@ -32,7 +32,7 @@ export default async function InitialStateDispatcher({
 
   const initialSchedule =
     schedules && schedules.map(convertScheduleDataDateToDateString);
-  let UpcommingSchedule: TgetUpcommingScheduleDates = data ?? {
+  let upComingSchedule: TgetupComingScheduleDates = data ?? {
     breakfast: [],
     custom: [],
     sunset: [],
@@ -44,7 +44,7 @@ export default async function InitialStateDispatcher({
       Packages={packages}
       initialDate={date}
       initialSchedule={initialSchedule}
-      upCommingSchedules={UpcommingSchedule}
+      upComingSchedules={upComingSchedule}
     >
       {children}
     </StoreProvider>

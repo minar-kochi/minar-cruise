@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import BookNowBtn from "./BookNowBtn";
+import Image from "next/image";
 
 interface PackageCardProps {
   url: string;
@@ -65,7 +66,9 @@ export default function SpecialPackageCard({
 
         <div className="absolute h-full w-full bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity group-hover:opacity-80 z-10" />
 
-        <img
+        <Image
+          width={1920}
+          height={1080}
           src={url ?? "/assets/world-map.png"}
           alt={alt ?? "Tour package"}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

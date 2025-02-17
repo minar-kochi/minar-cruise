@@ -200,7 +200,7 @@ export const schedule = router({
       throw new TRPCError({ code: "BAD_REQUEST", message: "Failed" });
     }
   }),
-  // getUpcommingScheduleDates: AdminProcedure.input().query()
+  // getupComingScheduleDates: AdminProcedure.input().query()
   createNewSchedule: AdminProcedure.input(
     ScheduleCreateSchema.required({
       packageId: true,
