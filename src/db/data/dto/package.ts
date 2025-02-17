@@ -321,6 +321,8 @@ export async function getPackageCardDetails() {
         childPrice: true,
         title: true,
         packageCategory: true,
+        fromTime: true,
+        toTime:true,
         slug: true,
         amenities: {
           select: {

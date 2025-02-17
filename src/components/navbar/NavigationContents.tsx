@@ -73,13 +73,13 @@ const NavigationContents = async () => {
         Contact
       </Link>
       <Link
-        href="/#package-section"
+        href="/search"
         className={buttonVariants({
           className: "px-4  tracking-widest  text-xs rounded-full ",
           size: "sm",
         })}
       >
-        BOOK NOW
+        Find your Cruise
       </Link>
     </div>
   );

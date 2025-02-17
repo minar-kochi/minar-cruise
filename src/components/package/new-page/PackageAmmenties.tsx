@@ -1,3 +1,4 @@
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,17 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle2 } from "lucide-react";
-import React from "react";
-import PackageFormN from "./PackageForm";
-import Image from "next/image";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import { PackageCarousel } from "@/components/packages/PackageCarousel";
 import { TGetPackageById } from "@/db/data/dto/package";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
+import { CheckCircle2 } from "lucide-react";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import Image from "next/image";
 import ExclusivePackageEnquiryCard from "./ExclusivePackageEnquiryCard";
+import PackageFormN from "./PackageForm";
 
 export default function PackageAmmenties({ data }: { data: TGetPackageById }) {
   return (
