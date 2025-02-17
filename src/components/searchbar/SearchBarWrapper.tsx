@@ -8,7 +8,7 @@ export default function SearchBarWrapper({
 }: {
   className?: string;
 }) {
-  const packages = useClientSelector((state) => state.package.searchPackages);
+  const packages = useClientSelector((state) => state.package.packages);
 
   return (
     <div className={cn("", className)}>

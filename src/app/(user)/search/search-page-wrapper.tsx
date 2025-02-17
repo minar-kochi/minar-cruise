@@ -30,7 +30,7 @@ export default function SearchPageWrapper({
   const initialized = useRef(false);
 
   if (!initialized.current && selectedIds?.length) {
-    const packages = store.getState().package.searchPackages;
+    const packages = store.getState().package.packages;
     const filteredPackages = packages?.filter((item) =>
       selectedIds.includes(item.id),
     );
@@ -40,7 +40,7 @@ export default function SearchPageWrapper({
     initialized.current = true;
   }
   // if(selected)
-  const packages = useClientSelector((state) => state.package.searchPackages);
+  const packages = useClientSelector((state) => state.package.packages);
   const selectedPackages = useClientSelector(
     (state) => state.package.selectedPackages,
   );
@@ -90,13 +90,13 @@ export default function SearchPageWrapper({
         <SearchBar />
       </div>
       <div className="flex items-center justify-center flex-col gap-4  mx-auto">
-        <div className="space-y-4 w-full bg-white rounded-md xxs:px-4 px-2 py-2">
+        <div className="space-y-4 w-full bg-white rounded-md  lg:px-4 px-2 py-2">
           {Object.keys(data || {}).map((key) => (
-            <div key={`${key}-search-date-query`} className=" rounded-lg px-1 py-1 xxs:p-4">
+            <div key={`${key}-search-date-query`} className=" rounded-lg px-1 py-1 xxs:p-2  lg:p-4">
               <h3 className="text-xl font-medium mb-2">
                 {format(new Date(key), "MMMM do, EEEE")}
               </h3>
-              <div className="grid sm:grid-cols-2 md:flex gap-2  md:flex-col md:px-6">
+              <div className="grid sm:grid-cols-2 md:flex gap-2   md:flex-col lg:px-6">
                 {data &&
                   data[key] &&
                   data[key]?.map((item) => {

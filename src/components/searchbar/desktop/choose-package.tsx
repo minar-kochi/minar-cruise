@@ -11,7 +11,7 @@ import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import ChooseDateCard from "./choose-date-card";
 
 export function ChoosePackage() {
-  const packages = useClientSelector((state) => state.package.searchPackages);
+  const packages = useClientSelector((state) => state.package.packages);
   return (
     <Popover>
       <PopoverTrigger className="w-full  py-2 md:py-2.5 border-muted-foreground   relative hidden md:flex items-start flex-col gap-0  ">

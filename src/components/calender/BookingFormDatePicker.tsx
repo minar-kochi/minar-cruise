@@ -1,12 +1,11 @@
 "use client";
 
+import { format } from "date-fns";
 import { CalculatorIcon } from "lucide-react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useState } from "react";
-import { format } from "date-fns";
-import ClientCalenderScheduleDay from "./ClientCalenderScheduleDay";
 
 export default function BookingFormDatePicker() {
   const [date, setDate] = useState<Date>();

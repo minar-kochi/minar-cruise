@@ -5,7 +5,12 @@ import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs
 import { Button } from "@/components/ui/button";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
-import { absoluteUrl, cn, RemoveTimeStampFromDate, safeTotal } from "@/lib/utils";
+import {
+  absoluteUrl,
+  cn,
+  RemoveTimeStampFromDate,
+  safeTotal,
+} from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
@@ -23,6 +28,8 @@ import toast from "react-hot-toast";
 import BookingFormCalender from "./BookingFormCalender";
 import BookingFormCard from "./BookingFormCard";
 import ColorRepresentationInfo from "./ColorRepresentationInfo";
+import { useClientSelector } from "@/hooks/clientStore/clientReducers";
+import { getPackageById } from "@/lib/features/client/packageClientSelectors";
 
 type TPackageForm = {
   packageId: string;
@@ -30,8 +37,8 @@ type TPackageForm = {
   adultPrice: number;
   childPrice: number;
   type?: "modal" | undefined;
-  defaultDate?: string 
-  scheduleId?: string
+  defaultDate?: string;
+  scheduleId?: string;
 };
 
 export default function PackageFormN({
@@ -40,7 +47,7 @@ export default function PackageFormN({
   adultPrice,
   childPrice,
   type,
-  defaultDate
+  defaultDate,
 }: TPackageForm) {
 
   const [ScheduleError, setScheduleError] =
@@ -63,11 +70,11 @@ export default function PackageFormN({
       numOfChildren: 0,
       numOfBaby: 0,
       packageId: packageId,
-      selectedScheduleDate: defaultDate ?? RemoveTimeStampFromDate(new Date(Date.now())),
+      selectedScheduleDate:
+        defaultDate ?? RemoveTimeStampFromDate(new Date(Date.now())),
       packageCategory: packageCategory,
     },
   });
-
 
   const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
@@ -79,7 +86,6 @@ export default function PackageFormN({
         toast.dismiss();
         const notes = res?.order.notes!;
         const options = {
-          
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEYID,
           name: notes?.name ?? undefined,
           currency: "INR",
@@ -190,12 +196,12 @@ export default function PackageFormN({
         className={cn("flex flex-col items-center w-full justify-center")}
       >
         <div
-          className={
-            cn(" border border-blue-300 bg-white px-4 mt-4 rounded-2xl",
+          className={cn(
+            " border border-blue-300 bg-white px-4 mt-4 rounded-2xl",
             {
               hidden: type,
-            })
-          }
+            },
+          )}
         >
           <div>{format(date, "iii dd/MM/yyyy")}</div>
         </div>
@@ -217,7 +223,7 @@ export default function PackageFormN({
         >
           <div className="flex gap-2">
             <div>
-              <ColorRepresentationInfo className="bg-muted  " title="Blocked" />
+              <ColorRepresentationInfo className="bg-red-900" title="Blocked" />
             </div>
             <div
               className={cn({

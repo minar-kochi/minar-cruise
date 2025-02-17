@@ -260,6 +260,7 @@ export function filterDateFromCalender({
   return false;
 }
 
+// return true if the schedule or bookings can be booked.
 export function checkBookingTimeConstraint({
   scheduleTime,
   startFrom,
@@ -273,10 +274,13 @@ export function checkBookingTimeConstraint({
     selectedDate,
     startFrom,
   );
+  
   if (!UTCISTDATE) {
+    console.log("FALSE BAD STATE")
     return false;
   }
   const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
+  
   if (isStatusBreakfast(scheduleTime)) {
     return timeGap > MIN_BREAKFAST_BOOKING_HOUR;
   }

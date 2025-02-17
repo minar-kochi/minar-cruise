@@ -19,7 +19,7 @@ export default function PackageCardViewer({ item,schedules }: TPackageSelectCard
       <div className="flex relative flex-col md:flex-row gap-2 md:gap-4  py-2 px-2 rounded-xl bg-white hover:bg-muted-foreground/5 border-muted-foreground/40  border shadow-md">
         <Link href={`/package/${item.slug}?selectedDate=${encodeURIComponent(RemoveTimeStampFromDate(new Date(schedules.day)))}`} className="">
           <Image
-            className="lg:max-w-[326px]  rounded-2xl aspect-video object-cover"
+            className="lg:max-w-[326px] md:max-w-[270px]  rounded-2xl aspect-video object-cover"
             src={item.packageImage[0].image.url}
             alt={item.packageImage[0].image.alt}
             width={720}

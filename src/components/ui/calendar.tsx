@@ -110,7 +110,7 @@ const CalendarVarients = ({
     cell: "h-9 w-9 md:w-9 xl:w-11 sm:w-11 rounded-md text-center text-sm p-0 mx-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
     day: cn(
       buttonVariants({ variant: "ghost" }),
-      "w-full p-0  font-normal  aria-selected:opacity-100",
+      "w-full p-0  font-normal  aria-selected:opacity-100 group",
     ),
     day_range_end: "day-range-end",
     day_selected:
@@ -122,6 +122,7 @@ const CalendarVarients = ({
     day_range_middle:
       "aria-selected:bg-accent aria-selected:text-accent-foreground",
     day_hidden: "invisible",
+    ...classNames,
   },
   sm: {
     months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
@@ -174,7 +175,6 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
-      
       showOutsideDays={showOutsideDays}
       className={cn("p-3 ", className)}
       classNames={

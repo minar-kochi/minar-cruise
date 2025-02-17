@@ -123,6 +123,7 @@ export const user = router({
           });
         }
         let packageTime = isPackageExist.packageCategory;
+
         if (packageTime === "CUSTOM" || packageTime === "EXCLUSIVE") {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -130,6 +131,7 @@ export const user = router({
           });
         }
         const date = parseDateFormatYYYMMDDToNumber(clientDate);
+        
         if (!date) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -268,6 +270,7 @@ export const user = router({
           findCorrespondingScheduleTimeFromPackageCategory(
             packageIdExists.packageCategory,
           );
+          
         if (!scheduleTimeForPackage) {
           throw new TRPCError({
             code: "UNPROCESSABLE_CONTENT",

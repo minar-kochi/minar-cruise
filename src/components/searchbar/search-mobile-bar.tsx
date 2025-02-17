@@ -15,11 +15,13 @@ import ChooseDateCard from "./desktop/choose-date-card";
 import { format } from "date-fns";
 
 export default function SearchMobileBar() {
-  const selected = useClientSelector((state) => ({
-    selected: state.package.selectedPackages,
-    date: state.package.date,
-  }));
-  const packages = useClientSelector((state) => state.package.searchPackages);
+  // const selected = useClientSelector((state) => ({
+  //   selected: state.package.selectedPackages,
+  //   date: state.package.date,
+  // }));
+  const selected = useClientSelector(state => state.package.selectedPackages)
+  const selectedDate = useClientSelector(state => state.package.date)
+  const packages = useClientSelector((state) => state.package.packages);
   return (
     <Drawer>
       <DrawerTrigger className="w-full py-2 md:py-3 md:hidden ">
@@ -34,9 +36,9 @@ export default function SearchMobileBar() {
         <DrawerHeader>
           <DrawerTitle className="sr-only">Welcome to search bar</DrawerTitle>
           <DrawerDescription className="text-center text-base font-medium">
-            {!selected.selected.length
-              ? `Search and Filter your cruise in ${format(new Date(selected.date ?? Date.now()), "MMMM")}`
-              : `You have selected ${selected.selected.length} packages to filter in ${format(new Date(selected.date ?? Date.now()), "MMMM")}`}
+            {!selected.length
+              ? `Search and Filter your cruise in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
+              : `You have selected ${selected.length} packages to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`}
           </DrawerDescription>
         </DrawerHeader>
         <ChooseDateCard />

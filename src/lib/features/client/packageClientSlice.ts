@@ -18,7 +18,7 @@ type TScheduleQueryData = {
 type TScheduleResults = Record<string, TSchedulesData[]>;
 
 export type TPackageState = {
-  searchPackages: TGetPackageSearchItems | null;
+  packages: TGetPackageSearchItems | null;
   selectedPackages: TGetPackageSearchItems;
   date: string | null;
   resultedSchedules: ScheduleGrouped;
@@ -28,7 +28,7 @@ const packageClientSlice = createSlice({
   name: "package",
   initialState: {
     date: null,
-    searchPackages: [],
+    packages: null,
     selectedPackages: [],
     resultedSchedules: {},
   } as TPackageState,
@@ -46,19 +46,20 @@ const packageClientSlice = createSlice({
       state,
       action: PayloadAction<TGetPackageSearchItems | null>,
     ) {
-      state.searchPackages = action.payload;
+      state.packages = action.payload;
     },
     setSelectedPackage(
       state,
       action: PayloadAction<TGetPackageSearchItems[number]>,
     ) {
-      const index = state.selectedPackages.findIndex(
+
+      const index = state.selectedPackages?.findIndex(
         (fv) => fv.id === action.payload.id,
       );
       if (index === -1) {
-        state.selectedPackages.push(action.payload);
+        state.selectedPackages?.push(action.payload);
       } else {
-        state.selectedPackages = state.selectedPackages.filter(
+        state.selectedPackages = state?.selectedPackages?.filter(
           (fv) => fv.id !== action.payload.id,
         );
       }

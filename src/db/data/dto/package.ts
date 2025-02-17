@@ -247,7 +247,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusLunch({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           lunch.push(PackageData);
@@ -255,7 +255,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusSunSet({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           sunset.push(PackageData);
@@ -263,7 +263,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusBreakfast({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           breakfast.push(PackageData);
@@ -271,7 +271,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusDinner({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           dinner.push(PackageData);
