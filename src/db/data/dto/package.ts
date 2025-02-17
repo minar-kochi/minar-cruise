@@ -169,6 +169,7 @@ export async function getPackageSearchItems() {
         adultPrice: true,
         childPrice: true,
         amenities: true,
+        description: true,
         duration: true,
         fromTime: true,
         toTime: true,

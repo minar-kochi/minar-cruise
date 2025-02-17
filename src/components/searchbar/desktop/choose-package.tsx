@@ -19,8 +19,8 @@ export function ChoosePackage() {
         <p className=" md:text-sm text-muted-foreground">Choose a package</p>
         <div className="absolute h-10 w-[1px] top-auto bottom-auto right-0 bg-muted-foreground" />
       </PopoverTrigger>
-      <PopoverContent alignOffset={20} className="w-full border-muted ">
-        <div className="w-full scrollbar-track-orange-lighter scrollbar-w-4 scrollbar-thumb-rounded h-full flex max-h-[40vh] overflow-y-scroll gap-2 flex-col">
+      <PopoverContent alignOffset={20} className="w-full  border-muted ">
+        <div className="w-full  scrollbar-track-orange-lighter scrollbar-w-4 scrollbar-thumb-rounded h-full flex max-h-[40vh] overflow-y-scroll gap-2 flex-col">
           {packages
             ? packages
                 .filter(

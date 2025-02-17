@@ -1,4 +1,5 @@
 import { ClientRootState } from "@/lib/store/clientStore";
+import { isStatusSunset } from "@/lib/validators/Schedules";
 import { createSelector } from "@reduxjs/toolkit";
 
 export const SelectedPackages = (state: ClientRootState) =>
@@ -29,5 +30,13 @@ export const getPackageById = createSelector(
   (packages, id) => {
     let data = (packages && packages.find((fv) => fv.id === id)) ?? null;
     return data;
+  },
+);
+
+export const getSunsetPackage = createSelector(
+  [packages],
+  (packages) => {
+    let sunset = packages?.find((item) => isStatusSunset(item.packageCategory));
+    return sunset;
   },
 );

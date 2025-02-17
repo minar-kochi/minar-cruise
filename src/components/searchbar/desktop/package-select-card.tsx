@@ -18,13 +18,13 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
         dispatch(setSelectedPackage(item));
       }}
       className={cn(
-        "flex group bg-background  hover:bg-foreground/5 gap-3 flex-shrink-0  border border-muted rounded-lg  w-full overflow-hidden",
+        "flex group bg-white   md:pr-5 hover:bg-foreground/5 gap-3 flex-shrink-0   border-muted rounded-lg  w-full overflow-hidden",
         {
-          "bg-primary/10": selected.selected,
+          "bg-blue-100": selected.selected,
         },
       )}
     >
-      <div className="">
+      <div className="x">
         <Image
           className="max-w-32 max-h-24 object-cover"
           alt="Hello world"
@@ -34,7 +34,9 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
         />
       </div>
       <div className="w-full pr-4 pt-2 flex flex-col  items-start    ">
-        <h4 className="font-medium line-clamp-1  text-start text-pretty">{item.title}</h4>
+        <h4 className="font-medium line-clamp-1  text-sm text-start text-pretty">
+          {item.title}
+        </h4>
         <p className="text-sm text-primary">
           {formatTiming(item.fromTime)} <span className="text-black">~</span>{" "}
           {formatTiming(item.toTime)}

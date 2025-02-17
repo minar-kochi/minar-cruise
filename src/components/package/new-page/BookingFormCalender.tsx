@@ -15,6 +15,8 @@ import CalendarPopover from "./CalendarPopover";
 import toast from "react-hot-toast";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
+import { useAppDispatch } from "@/hooks/adminStore/reducer";
+import { setDate } from "@/lib/features/client/packageClientSlice";
 type TBookingFormCalender = {
   setFormDateValue: (value: string) => void;
   setScheduleId: (value: string | undefined) => void;
@@ -31,12 +33,13 @@ export default function BookingFormCalender({
   popoverCalender,
   className,
 }: TBookingFormCalender) {
-  console.log(packageId);
   const packageData = useClientSelector((state) =>
     getPackageById(state, packageId),
   );
-  console.log("PACKAGE FOUND!", packageData);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+
+  // const [date, setDate] = useState<Date | undefined>(undefined);
+  const date = useClientSelector((state) => state.package.date);
+  const dispatch = useAppDispatch();
   const [month, setMonth] = useState<string>(
     RemoveTimeStampFromDate(new Date(Date.now())),
   );
@@ -54,6 +57,7 @@ export default function BookingFormCalender({
     day: new Date(item.day),
   }));
   if (!packageData) return;
+
   return popoverCalender ? (
     <CalendarPopover date={date}>
       <div
@@ -85,7 +89,7 @@ export default function BookingFormCalender({
                 isLoading: isPending,
               }),
           }}
-          selected={date}
+          selected={new Date(date ?? Date.now())}
           onSelect={(date, dat, mod, e) => {
             if (mod.disabled) {
               toast.error("This date is disabled");
@@ -93,7 +97,7 @@ export default function BookingFormCalender({
             }
 
             if (!date) return;
-            setDate(date);
+            dispatch(setDate(RemoveTimeStampFromDate(date)));
             setFormDateValue(RemoveTimeStampFromDate(date));
             if (!data || !data.schedules) return;
 
@@ -168,7 +172,7 @@ export default function BookingFormCalender({
               isLoading: isPending,
             }),
         }}
-        selected={date}
+        selected={new Date(date ?? Date.now())}
         onSelect={(date, dat, mod, e) => {
           if (mod.disabled) {
             toast.error("This date is disabled");
@@ -176,7 +180,7 @@ export default function BookingFormCalender({
           }
 
           if (!date) return;
-          setDate(date);
+          dispatch(setDate(RemoveTimeStampFromDate(date)));
           setFormDateValue(RemoveTimeStampFromDate(date));
           if (!data || !data.schedules) return;
 

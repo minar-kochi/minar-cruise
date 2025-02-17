@@ -10,7 +10,7 @@ import { CalendarIcon } from "lucide-react";
 
 interface ICalendarPopover {
   children: React.ReactNode;
-  date?: Date | undefined;
+  date: Date | string | null;
 }
 export default function CalendarPopover({ children, date }: ICalendarPopover) {
   return (

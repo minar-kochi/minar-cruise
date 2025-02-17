@@ -4,7 +4,7 @@ import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescr
 import Bounded from "@/components/elements/Bounded";
 import PackageSelectCard from "@/components/searchbar/desktop/package-select-card";
 import SearchBar from "@/components/searchbar/SearchBar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppSelector } from "@/hooks/adminStore/reducer";
 import {
   useClientDispatch,
@@ -20,6 +20,18 @@ import React, { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { date } from "zod";
 import PackageCardViewer from "./package-card-viewer";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { getSunsetPackage } from "@/lib/features/client/packageClientSelectors";
+import Link from "next/link";
+import Image from "next/image";
+import { CheckCircle2 } from "lucide-react";
 
 export default function SearchPageWrapper({
   selected: selectedIds,
@@ -41,6 +53,7 @@ export default function SearchPageWrapper({
   }
   // if(selected)
   const packages = useClientSelector((state) => state.package.packages);
+  const sunsetPackage = useClientSelector(getSunsetPackage);
   const selectedPackages = useClientSelector(
     (state) => state.package.selectedPackages,
   );
@@ -89,10 +102,65 @@ export default function SearchPageWrapper({
       <div className="mb-2">
         <SearchBar />
       </div>
+      <div className="my-6 mx-auto ">
+        {sunsetPackage ? (
+          <div className="flex justify-between max-w-md mx-auto md:max-w-full flex-col-reverse md:flex-row bg-white rounded-xl overflow-hidden  ">
+            <Card className="bg-white border-muted border-none max-w-2xl">
+              <CardHeader className="pb-2">
+                <CardTitle>Sunset cruise is available everyday day</CardTitle>
+                <CardDescription className="max-w-prose">
+                  {sunsetPackage.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-2 ">
+                <div className="grid w-full  py-2 grid-cols-2 place-content-between place-items-stretch gap-y-4     ">
+                  {sunsetPackage.amenities.description
+                    .slice(0, 4)
+                    .map((item, i) => {
+                      return (
+                        <div
+                          key={`${item}-${i}-amenities-description`}
+                          className="flex items-center gap-2"
+                        >
+                          <CheckCircle2 className="w-4 h-4 flex-shrink-0  stroke-red-500" />
+                          <p
+                            key={`${item}-${i}`}
+                            className="line-clamp-1 xxs:text-sm md:text-base text-xs   "
+                          >
+                            <span>{item}</span>
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+                <Link
+                  className={buttonVariants({})}
+                  href={`/package/${sunsetPackage.slug}`}
+                >
+                  <p>Sunset cruise -{">"}</p>
+                </Link>
+              </CardContent>
+            </Card>
+            <Image
+              className="aspect-[16/9]  md:max-w-sm object-cover"
+              src={
+                sunsetPackage.packageImage[0].image.url ??
+                "/assets/world-map.png"
+              }
+              alt={sunsetPackage.packageImage[0].image.alt}
+              width={720}
+              height={480}
+            />
+          </div>
+        ) : null}
+      </div>
       <div className="flex items-center justify-center flex-col gap-4  mx-auto">
         <div className="space-y-4 w-full bg-white rounded-md  lg:px-4 px-2 py-2">
           {Object.keys(data || {}).map((key) => (
-            <div key={`${key}-search-date-query`} className=" rounded-lg px-1 py-1 xxs:p-2  lg:p-4">
+            <div
+              key={`${key}-search-date-query`}
+              className=" rounded-lg px-1 py-1 xxs:p-2  lg:p-4"
+            >
               <h3 className="text-xl font-medium mb-2">
                 {format(new Date(key), "MMMM do, EEEE")}
               </h3>

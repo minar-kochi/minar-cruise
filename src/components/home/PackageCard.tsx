@@ -26,7 +26,7 @@ export default function PackageCard({
 }: IPackageCard) {
   return (
     <Link
-      className="relative w-full max-w-[380px] h-[18rem] group rounded-t-2xl overflow-hidden  transition-transform group duration-300"
+      className="relative w-full max-w-[380px] h-[18rem] group rounded-md overflow-hidden  transition-transform group duration-300"
       href={slug}
     >
       {/*  */}

@@ -17,7 +17,7 @@ export default async function NormalPackages() {
       </h3> */}
       </div>
       <div className="w-full lg:flex-row flex gap-4 items-center flex-col-reverse ">
-        <div className=" w-full lg:w-[60%] gap-5 grid grid-cols-[repeat(auto-fit,_minmax(256px,_1fr))] md:grid-cols-2 items-center place-items-center overflow-hidden rounded-xl ">
+        <div className=" w-full lg:w-[60%] gap-5 grid grid-cols-[repeat(auto-fit,_minmax(256px,_1fr))] md:grid-cols-2 items-center place-items-center overflow-hidden  ">
           {normalData.map((item, i) => {
             return (
               <PackageCard

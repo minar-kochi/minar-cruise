@@ -24,9 +24,9 @@ export default function SearchMobileBar() {
   const packages = useClientSelector((state) => state.package.packages);
   return (
     <Drawer>
-      <DrawerTrigger className="w-full py-2 md:py-3 md:hidden ">
+      <DrawerTrigger className="w-full  py-2 md:py-3 md:hidden ">
         <div className="flex">
-          <p className="text-sm font-medium md:text-sm textd-muted-foreground">
+          <p className="text-sm font-medium md:text-sm line-clamp-1 text-muted-foreground">
             Filter package & date
           </p>
         </div>

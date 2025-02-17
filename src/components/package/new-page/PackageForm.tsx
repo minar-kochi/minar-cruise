@@ -21,15 +21,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
 import { TRPCClientError } from "@trpc/client";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import BookingFormCalender from "./BookingFormCalender";
 import BookingFormCard from "./BookingFormCard";
 import ColorRepresentationInfo from "./ColorRepresentationInfo";
-import { useClientSelector } from "@/hooks/clientStore/clientReducers";
+import {
+  useClientSelector,
+  useClientStore,
+} from "@/hooks/clientStore/clientReducers";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
+import { setDate } from "@/lib/features/client/packageClientSlice";
 
 type TPackageForm = {
   packageId: string;
@@ -49,11 +53,22 @@ export default function PackageFormN({
   type,
   defaultDate,
 }: TPackageForm) {
+  const store = useClientStore();
+  const initialized = useRef(false);
+
+  if (!initialized.current) {
+    if (defaultDate?.length) {
+      console.log("DEFAULT DATE",defaultDate)
+      store.dispatch(setDate(defaultDate));
+    }
+    initialized.current = true;
+  }
+
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
-
+ const date = useClientSelector((state)=> state.package.date)
   const {
     register,
     handleSubmit,
@@ -176,7 +191,7 @@ export default function PackageFormN({
   const numofAdults = watch("numOfAdults");
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
-  const date = watch("selectedScheduleDate");
+
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
 
@@ -196,13 +211,13 @@ export default function PackageFormN({
       >
         <div
           className={cn(
-            " border border-blue-300 bg-white px-4 mt-4 rounded-2xl",
+            " font-semibold text-lg bg-white border rounded-full text-black px-4 mt-4 ",
             {
               hidden: type,
             },
           )}
         >
-          <div>{format(date, "iii dd/MM/yyyy")}</div>
+          <div>{format(date ?? Date.now(), "iii dd/MM/yyyy")}</div>
         </div>
         <BookingFormCalender
           setFormDateValue={(value: string) => {
@@ -233,6 +248,18 @@ export default function PackageFormN({
                 title="Available"
               />
             </div>
+            <div
+              className={cn("hidden", {
+                block: isPackageStatusSunSet({
+                  packageStatus: packageCategory,
+                }),
+              })}
+            >
+              <ColorRepresentationInfo
+                className={cn("bg-green-500 ")}
+                title="Available"
+              />
+            </div>
             <div>
               <ColorRepresentationInfo
                 className="bg-red-500"
@@ -249,7 +276,9 @@ export default function PackageFormN({
           >
             <ColorRepresentationInfo
               containerClass="max-w-[200px] gap-1 text-blue-600"
-              className={cn("bg-white border mt-1 self-start  flex-shrink-0 border-black rounded-sm")}
+              className={cn(
+                "bg-white border mt-1 self-start  flex-shrink-0 border-black rounded-sm",
+              )}
               title="Rest of the days requires 25 guests to book"
             />
           </div>
