@@ -31,7 +31,7 @@ import {
 import { getSunsetPackage } from "@/lib/features/client/packageClientSelectors";
 import Link from "next/link";
 import Image from "next/image";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, GhostIcon } from "lucide-react";
 
 export default function SearchPageWrapper({
   selected: selectedIds,
@@ -59,19 +59,22 @@ export default function SearchPageWrapper({
   );
   const clientDate = useClientSelector((state) => state.package.date);
 
-  const { data: pages, fetchNextPage } =
-    trpc.user.searchSchedules.useInfiniteQuery(
-      {
-        packageIds: selectedPackages?.map((item) => item.id) ?? undefined,
-        clientDate: clientDate ?? undefined,
-        limit: 12,
+  const {
+    data: pages,
+    fetchNextPage,
+    hasNextPage,
+  } = trpc.user.searchSchedules.useInfiniteQuery(
+    {
+      packageIds: selectedPackages?.map((item) => item.id) ?? undefined,
+      clientDate: clientDate ?? undefined,
+      limit: 12,
+    },
+    {
+      getNextPageParam: (last) => {
+        return last.nextCursor;
       },
-      {
-        getNextPageParam: (last) => {
-          return last.nextCursor;
-        },
-      },
-    );
+    },
+  );
   // hello.map(item => item.schedules.map(items => items.id))
   const dispatch = useClientDispatch();
 
@@ -156,43 +159,58 @@ export default function SearchPageWrapper({
       </div>
       <div className="flex items-center justify-center flex-col gap-4  mx-auto">
         <div className="space-y-4 w-full bg-white rounded-md  lg:px-4 px-2 py-2">
-          {Object.keys(data || {}).map((key) => (
-            <div
-              key={`${key}-search-date-query`}
-              className=" rounded-lg px-1 py-1 xxs:p-2  lg:p-4"
-            >
-              <h3 className="text-xl font-medium mb-2">
-                {format(new Date(key), "MMMM do, EEEE")}
-              </h3>
-              <div className="grid sm:grid-cols-2 md:flex gap-2   md:flex-col lg:px-6">
-                {data &&
-                  data[key] &&
-                  data[key]?.map((item) => {
-                    const packageItem = packages?.find(
-                      (fv) => fv.id === item.packageId,
-                    );
-                    if (!packageItem) return;
-                    return (
-                      <PackageCardViewer
-                        key={`${key}-${packageItem.id}-${item.id}`}
-                        item={packageItem}
-                        schedules={item}
-                      />
-                    );
-                  })}
+          {Object.keys(data).length ? (
+            Object.keys(data || {}).map((key) => (
+              <div
+                key={`${key}-search-date-query`}
+                className=" rounded-lg px-1 py-1 xxs:p-2  lg:p-4"
+              >
+                <h3 className="text-xl font-medium mb-2">
+                  {format(new Date(key), "MMMM do, EEEE")}
+                </h3>
+                <div className="grid sm:grid-cols-2 md:flex gap-2   md:flex-col lg:px-6">
+                  {data &&
+                    data[key] &&
+                    data[key]?.map((item) => {
+                      const packageItem = packages?.find(
+                        (fv) => fv.id === item.packageId,
+                      );
+                      if (!packageItem) return;
+                      return (
+                        <PackageCardViewer
+                          key={`${key}-${packageItem.id}-${item.id}`}
+                          item={packageItem}
+                          schedules={item}
+                        />
+                      );
+                    })}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div>
+              <div className="flex items-center flex-col py-6  justify-center">
+                <div>
+                  <GhostIcon size={32} />
+                </div>
+                <h3 className="text-2xl font-semibold tracking-tighter pt-2">
+                  No new schedules are opened
+                </h3>
               </div>
             </div>
-          ))}
+          )}
         </div>
         <div ref={ref} className="w-full h-2" />
-        <Button
-          className="mb-12"
-          onClick={() => {
-            fetchNextPage();
-          }}
-        >
-          Show more
-        </Button>
+        {hasNextPage ? (
+          <Button
+            className="mb-12"
+            onClick={() => {
+              fetchNextPage();
+            }}
+          >
+            Show more
+          </Button>
+        ) : null}
         {/* {data?.map(item => {
           return (
             <div>

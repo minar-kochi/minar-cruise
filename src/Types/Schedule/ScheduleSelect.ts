@@ -137,3 +137,6 @@ export type TSchedulesData = {
 export type ScheduleGrouped = {
   [key: string]: TSchedulesData[];
 };
+
+
+export type ScheduleBookingData = {}

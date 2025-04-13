@@ -121,7 +121,7 @@ export default function BookingFormCalender({
                     icon: <Info className="text-blue-600" />,
                     position: "top-center",
                     ariaProps: { "aria-live": "polite", role: "alert" },
-                    removeDelay: 300,
+                    // removeDelay: 300,
                   },
                 );
               }
@@ -202,7 +202,7 @@ export default function BookingFormCalender({
                 icon: <Info className="text-blue-600" />,
                 position: "top-center",
                 ariaProps: { "aria-live": "polite", role: "alert" },
-                removeDelay: 300,
+                // removeDelay: 300,
               });
             }
 

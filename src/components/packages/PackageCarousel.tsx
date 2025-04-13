@@ -41,7 +41,7 @@ const PackageCarousel = ({ data, className }: PackageCarouselProps) => {
           skipSnaps: true, // Allows smooth transitions between slides
         }}
         plugins={[plugin]}
-        className="w-full"
+        className="w-full "
       >
         <CarouselContent className="-ml-2 md:-ml-4">
           {data.map((item) => (

@@ -40,7 +40,7 @@ const PackageCard = ({
   return (
     <Card
       className={cn(
-        "w-full max-w-[500px]    overflow-hidden transition-all border-black duration-300 hover:shadow-lg",
+        "w-full max-w-[500px]  my-1  overflow-hidden transition-all border-muted duration-300 hover:shadow-lg",
         className,
       )}
     >

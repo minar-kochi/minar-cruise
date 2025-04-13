@@ -40,6 +40,7 @@ export type TScheduleState = {
    * to notify whether a Schedule is not same as in the database.
    */
   isChangedUpdated: TIsScheduleChange;
+  
 } & TScheduleUtilsState;
 
 const scheduleSlice = createSlice({

@@ -99,6 +99,7 @@ export const {
   setDate,
   setSearchedPackages,
 } = packageClientSlice.actions;
+
 export default packageClientSlice.reducer;
 
 // const groupedSchedules = items.reduce((acc, schedule) => {

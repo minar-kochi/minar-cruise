@@ -46,11 +46,7 @@ export default function ClientCalenderScheduleDay({
     startFrom: startFrom,
   });
 
-  console.log(
-    "IS TIME CONSTRAINED",
-    `${RemoveTimeStampFromDate(date)}`,
-    isAvailableForNewBooking,
-  );
+  
   let isBlocked = blockedDate
     ? blockedDate.findIndex((item) =>
         isSameDay(
@@ -84,7 +80,8 @@ export default function ClientCalenderScheduleDay({
   //   isSunsetBookable =  isAvailableForNewBooking ?
   //   console.log("SUNSET BOOKABLE ? ", startFrom);
   // }
-
+  const isAvailableShown =
+    isAvailableDateFound && AvailableDate && AvailableDate[idxOfAvailableDate];
   return (
     <span
       className={cn(
@@ -95,11 +92,11 @@ export default function ClientCalenderScheduleDay({
           [`${available}`]:
             isAvailableDateFound &&
             AvailableDate &&
-            AvailableDate[idxOfAvailableDate] &&
-            !isPackageSunset,
+            AvailableDate[idxOfAvailableDate],
           [`${sunSetAvailable}`]: isPackageSunset && isAvailableForNewBooking,
           [`${blocked}`]: isBlocked !== -1,
-          [`${not_available_booking}`]: !isAvailableForNewBooking,
+          [`${not_available_booking}`]:
+            !isAvailableShown && !isAvailableForNewBooking,
           [`${loading_color}`]: isLoading,
         },
       )}

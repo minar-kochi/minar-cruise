@@ -3,6 +3,11 @@
 import { trpc } from "@/app/_trpc/client";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
 import { Button } from "@/components/ui/button";
+import {
+  useClientSelector,
+  useClientStore,
+} from "@/hooks/clientStore/clientReducers";
+import { setDate } from "@/lib/features/client/packageClientSlice";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import {
@@ -28,12 +33,6 @@ import toast from "react-hot-toast";
 import BookingFormCalender from "./BookingFormCalender";
 import BookingFormCard from "./BookingFormCard";
 import ColorRepresentationInfo from "./ColorRepresentationInfo";
-import {
-  useClientSelector,
-  useClientStore,
-} from "@/hooks/clientStore/clientReducers";
-import { getPackageById } from "@/lib/features/client/packageClientSelectors";
-import { setDate } from "@/lib/features/client/packageClientSlice";
 
 type TPackageForm = {
   packageId: string;
@@ -58,7 +57,7 @@ export default function PackageFormN({
 
   if (!initialized.current) {
     if (defaultDate?.length) {
-      console.log("DEFAULT DATE",defaultDate)
+      console.log("DEFAULT DATE", defaultDate);
       store.dispatch(setDate(defaultDate));
     }
     initialized.current = true;
@@ -68,12 +67,11 @@ export default function PackageFormN({
     useState<ScheduleConflictError | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
- const date = useClientSelector((state)=> state.package.date)
+  const date = useClientSelector((state) => state.package.date);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, dirtyFields },
-    reset,
     watch,
     getValues,
     setValue,

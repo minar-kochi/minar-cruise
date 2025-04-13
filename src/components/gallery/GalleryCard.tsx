@@ -1,12 +1,7 @@
-import Image from "next/image";
-import {
-  familyGathering,
-  celebrationGathering,
-  corporateGathering,
-} from "@/constants/gallery/gallery";
-import Bounded from "../elements/Bounded";
 import { getGallery } from "@/constants/gallery/getGalleryData";
 import { TGalleries } from "@/Types/type";
+import Image from "next/image";
+import Bounded from "../elements/Bounded";
 
 const GalleryCard = ({ slug }: { slug: TGalleries }) => {
   const { bannerImages, Text, allImages } = getGallery(slug);
@@ -47,9 +42,9 @@ const GalleryCard = ({ slug }: { slug: TGalleries }) => {
                   width={1000}
                   height={400}
                   priority
-                  className="object-contain w-full h-full rounded-xl transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain w-full h-full rounded-xl transition-transform duration-500 group-hover:scale-150"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
               </div>
             ))}
           </div>
