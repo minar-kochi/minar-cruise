@@ -1,15 +1,13 @@
 import Image from "next/image";
 
-import {
-  Baby,
-  Check,
-  UserRound,
-} from "lucide-react";
-import { Button,  } from "../ui/button";
+import { Baby, Check, Clock, MapPin, UserRound } from "lucide-react";
+import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { TAmenitiesGetPackageCardDetails } from "@/db/data/dto/package";
 import Link from "next/link";
 import { PACKAGE_CATEGORY } from "@prisma/client";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "../ui/badge";
 
 interface IPackageCard {
   url: string;
@@ -22,8 +20,10 @@ interface IPackageCard {
   amenities: TAmenitiesGetPackageCardDetails;
   packageCategory: PACKAGE_CATEGORY;
   slug: string;
+  fromTime: string;
+  toTime: string;
 }
-const PackageCard = async ({
+const PackageCard = ({
   adultPrice,
   childPrice,
   slug,
@@ -34,54 +34,87 @@ const PackageCard = async ({
   amenities,
   PackageId,
   packageCategory,
+  fromTime,
 }: IPackageCard) => {
+
   return (
-    <div className={cn("max-w-[400px] w-full ", className)}>
-      <div className="relative overflow-hidden rounded-sm ">
-        <div className="relative border-4 border-white ">
-          <Image
-            src={url ?? "/assets/world-map.png"}
-            width={500}
-            height={600}
-            className="object-cover object-center aspect-[6/4] rounded-sm"
-            alt={alt ?? "/assets/world-map.png"}
-          />
-          <div className="absolute  top-0 border w-full h-full bg-black/50 z-0 rounded-sm"></div>
-          <div className="absolute top-2 sm:top-5 left-2 sm:left-5 text-white space-y-2">
-            <h1 className="text-2xl font-bold">{title}</h1>
-            <ul className="space-y-2">
-              {amenities.description.map((item, i) => {
-                return (
-                  <li
-                    key={item + i}
-                    className="text-xs  font-bold flex gap-2 items-center tracking-wider"
-                  >
-                    <Check size={12} />
-                    {item}
-                  </li>
-                );
-              })}
-            </ul>
+    <Card
+      className={cn(
+        "w-full max-w-[500px]  my-1  overflow-hidden transition-all border-muted duration-300 hover:shadow-lg",
+        className,
+      )}
+    >
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Image
+          src={url ?? "/assets/world-map.png"}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          alt={alt ?? "Package Image"}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60" />
+
+        <Badge className="absolute top-4 left-4 bg-white/90 text-black hover:bg-white/80">
+          {packageCategory}
+        </Badge>
+      </div>
+
+      <CardContent className="p-6">
+        <div className="mb-4 space-y-2">
+          <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
+
+          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+            {fromTime && (
+              <div className="flex items-center gap-1">
+                <Clock size={16} />
+                <span>{fromTime}</span>
+              </div>
+            )}
           </div>
         </div>
-        <div className="absolute flex justify-between items-center px-5 bottom-0 h-[60px] bg-white w-full rounded-xl z-10">
-          <div className=" w-full flex gap-4">
-            <div className=" flex gap-2">
-              <UserRound stroke="red" />
-              <p className="font-bold">₹{adultPrice / 100}/-</p>
-            </div>
-            <div className=" flex gap-2">
-              <Baby stroke="red" />
-              <p className="font-bold">₹{childPrice / 100}/-</p>
-            </div>
-          </div>
 
+        <div className="space-y-2">
+          {amenities.description.slice(0, 4).map((item, i) => (
+            <div key={item + i} className="flex items-start gap-2 text-sm">
+              <Check size={16} className="mt-1 text-green-500 shrink-0" />
+              <span className="line-clamp-1">{item}</span>
+            </div>
+          ))}
           <Link href={`/package/${slug}`}>
-            <Button className="rounded-full">Book Now</Button>
+            <p className="text-sm font-medium text-muted-foreground ml-5">more info</p>
           </Link>
         </div>
-      </div>
-    </div>
+      </CardContent>
+
+      <CardFooter className="p-6 pt-0 flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex gap-6">
+          <div className="flex items-center gap-2">
+            <UserRound className="text-primary" size={20} />
+            <div>
+              <p className="text-sm text-muted-foreground">Adult</p>
+              <p className="font-semibold">
+                ₹{(adultPrice / 100).toLocaleString()}/-
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Baby className="text-primary" size={20} />
+            <div>
+              <p className="text-sm text-muted-foreground">Child</p>
+              <p className="font-semibold">
+                ₹{(childPrice / 100).toLocaleString()}/-
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <Link href={`/package/${slug}`}>
+          <Button size="lg" className="font-semibold">
+            Book Now
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
   );
 };
 

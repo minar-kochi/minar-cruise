@@ -1,6 +1,6 @@
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
 import {
-  TExcludedOrganizedUpcommingSchedule,
+  TExcludedOrganizedUpComingSchedule,
   TIsScheduleChange,
   TKeyOrganizedScheduleData,
   TOrganizedScheduleData,
@@ -24,22 +24,23 @@ export type TScheduleState = {
    */
   date: string;
   /**
-   * Upcomming Schedules that are formatted in YYYY-MM-DD[]
+   * upComing Schedules that are formatted in YYYY-MM-DD[]
    */
-  upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
+  upComingSchedules: TExcludedOrganizedUpComingSchedule;
   /**
    * Current date schedule that is synced with database. (do not change is value.) but you can sync it with database.
    */
   currentDateSchedule: TOrganizedScheduleData;
   ScheduleDataRaw: TScheduleDataDayReplaceString[] | [];
   /**
-   * Locally Store and Changable Date schedule.
+   * Locally Store and Changeable Date schedule.
    */
   updatedDateSchedule: TUpdatedDateSchedulePackageId;
   /**
    * to notify whether a Schedule is not same as in the database.
    */
   isChangedUpdated: TIsScheduleChange;
+  
 } & TScheduleUtilsState;
 
 const scheduleSlice = createSlice({
@@ -97,12 +98,12 @@ const scheduleSlice = createSlice({
           payload;
         //Filtering out the dates that are removed.
         if (state.date === action.payload.updatingDate) {
-          const newFilteredUpcommingScheduleDate = state.upCommingSchedules[
+          const newFilteredUpComingScheduleDate = state.upComingSchedules[
             type
           ].filter((fv) => fv.date !== updatingDate);
 
           //removing the date from the deleted State
-          state.upCommingSchedules[type] = newFilteredUpcommingScheduleDate;
+          state.upComingSchedules[type] = newFilteredUpComingScheduleDate;
         }
         state.currentDateSchedule[type] = null;
       },
@@ -137,7 +138,7 @@ const scheduleSlice = createSlice({
           state.currentDateSchedule[action.payload.type] =
             action.payload.currentDateSchedule;
         }
-        state.upCommingSchedules[action.payload.type].push({
+        state.upComingSchedules[action.payload.type].push({
           date: action.payload.updatingDate,
           status: action.payload.scheduleStatus,
         });
@@ -171,8 +172,8 @@ const scheduleSlice = createSlice({
         if (state.date === action.payload.updatingDate) {
           state.currentDateSchedule[action.payload.type] = null;
         }
-        state.upCommingSchedules[action.payload.type] =
-          state.upCommingSchedules[action.payload.type].filter(
+        state.upComingSchedules[action.payload.type] =
+          state.upComingSchedules[action.payload.type].filter(
             (fv) => fv.date !== action.payload.updatingDate,
           );
       },
@@ -206,14 +207,14 @@ const scheduleSlice = createSlice({
       }
     },
     /**
-     * set the UpcommingOrganizedDates which is in (YYYY-MM-DD(organized))[]
-     * @param action {TExcludedOrganizedUpcommingSchedule}
+     * set the upComingOrganizedDates which is in (YYYY-MM-DD(organized))[]
+     * @param action {TExcludedOrganizedUpComingSchedule}
      */
     setInitialOrganizedScheduleDates(
       state,
-      action: PayloadAction<TExcludedOrganizedUpcommingSchedule>,
+      action: PayloadAction<TExcludedOrganizedUpComingSchedule>,
     ) {
-      state.upCommingSchedules = action.payload;
+      state.upComingSchedules = action.payload;
     },
 
     /**

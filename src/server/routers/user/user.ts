@@ -1,28 +1,28 @@
+import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
 import { db } from "@/db";
-import axios from "axios";
+import { findPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
+import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
+import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { decideCreateOrExisting } from "@/lib/helpers/RequestToCreateSchedule";
+import { sendNodeMailerEmail } from "@/lib/helpers/resend";
 import {
   isCurrentMonthSameAsRequestedMonth,
   isDateValid,
   parseDateFormatYYYMMDDToNumber,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
+import { exclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
 import { onlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { publicProcedure, router } from "@/server/trpc";
+import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import { $Enums, PrismaClient, SCHEDULED_TIME } from "@prisma/client";
+import { render } from "@react-email/components";
 import { TRPCError } from "@trpc/server";
+import axios from "axios";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
-import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { findPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
-import { decideCreateOrExisting } from "@/lib/helpers/RequestToCreateSchedule";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
-import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
-import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
-import { exclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
-import { sendNodeMailerEmail } from "@/lib/helpers/resend";
-import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
-import { render } from "@react-email/components";
 
 export type QueryObj = [
   { id: string | undefined },
@@ -122,6 +122,7 @@ export const user = router({
           });
         }
         let packageTime = isPackageExist.packageCategory;
+
         if (packageTime === "CUSTOM" || packageTime === "EXCLUSIVE") {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -129,6 +130,7 @@ export const user = router({
           });
         }
         const date = parseDateFormatYYYMMDDToNumber(clientDate);
+        
         if (!date) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -267,6 +269,7 @@ export const user = router({
           findCorrespondingScheduleTimeFromPackageCategory(
             packageIdExists.packageCategory,
           );
+          
         if (!scheduleTimeForPackage) {
           throw new TRPCError({
             code: "UNPROCESSABLE_CONTENT",
@@ -279,7 +282,7 @@ export const user = router({
         let queryObj: QueryObj = [
           // This Could be Undefined
           { id: scheduleId },
-          // This will be known, we know the date the user Whats to book, and the package they are preffered to book
+          // This will be known, we know the date the user Whats to book, and the package they are preferred to book
           {
             day: new Date(selectedScheduleDate),
             schedulePackage: scheduleTimeForPackage,
@@ -288,7 +291,7 @@ export const user = router({
 
         /**
          *  Random Id is passed then there wont be a schedule and it will go to schedule create event assuming there are no schedule.
-         *  if there are and if its set to blocked or exlusive should throw a error response
+         *  if there are and if its set to blocked or exclusive should throw a error response
          */
         const schedule = await db.schedule.findFirst({
           select: {
@@ -320,7 +323,7 @@ export const user = router({
           throw new TRPCError({
             code: "UNPROCESSABLE_CONTENT",
             message:
-              "Schedule for selected date is blocked, Please try diffrent date.",
+              "Schedule for selected date is blocked, Please try different date.",
           });
         }
         // If there is no schedule then event will try to generate a event.
@@ -454,4 +457,85 @@ export const user = router({
         });
       }
     }),
+
+  searchSchedules: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().optional().default(3),
+        cursor: z.string().optional(),
+        packageIds: z.string().array().optional(),
+        clientDate: z.string().optional(),
+      }),
+    )
+    .query(
+      async ({ ctx, input: { packageIds, clientDate, cursor, limit } }) => {
+        let reqData = clientDate ?? RemoveTimeStampFromDate(new Date());
+
+        const isSameMonth = isCurrentMonthSameAsRequestedMonth(reqData);
+
+        const currentServerDate = RemoveTimeStampFromDate(new Date(Date.now()));
+
+        const endOfTheMonthServerDate = RemoveTimeStampFromDate(
+          endOfMonth(currentServerDate),
+        );
+
+        const startOfMonthClientDate = RemoveTimeStampFromDate(
+          startOfMonth(reqData),
+        );
+
+        const endOfMonthClientDate = RemoveTimeStampFromDate(
+          endOfMonth(reqData),
+        );
+        const dateRange = isSameMonth
+          ? {
+              gte: new Date(currentServerDate),
+              lte: new Date(endOfTheMonthServerDate),
+            }
+          : {
+              gte: new Date(startOfMonthClientDate),
+              lte: new Date(endOfMonthClientDate),
+            };
+
+        const schedules = await db.schedule.findMany({
+          where: {
+            day: dateRange,
+            scheduleStatus: "AVAILABLE",
+            packageId: packageIds?.length ? { in: packageIds } : undefined,
+          },
+          select: {
+            packageId: true,
+            day: true,
+            id: true,
+            scheduleStatus: true,
+            schedulePackage: true,
+          },
+          cursor: cursor ? { id: cursor } : undefined,
+          take: limit + 1,
+          orderBy: [
+            {
+              day: "asc",
+            },
+            {
+              fromTime: "asc",
+            },
+          ],
+        });
+
+        // Get unique dates in order
+        let nextCursor: typeof cursor | undefined = undefined;
+        if (schedules.length > limit) {
+          const nextItem = schedules[limit];
+          // const nextItem = schedules.pop();
+          nextCursor = nextItem ? nextItem.id : undefined;
+        }
+
+         // Safe way to access the extra item
+
+        return {
+          schedules: schedules.slice(0, limit),
+          nextCursor,
+          hasNextPage: !!nextCursor 
+        };
+      },
+    ),
 });

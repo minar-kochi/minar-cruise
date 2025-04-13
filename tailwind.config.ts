@@ -23,6 +23,7 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       screens: {
+        "xxs": "420px",
         "2md": "860px",
       },
       colors: {

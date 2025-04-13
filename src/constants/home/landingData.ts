@@ -43,37 +43,37 @@ export const BookingData = {
     {
       icon: CONSTANTS.WHY_CHOOSE.BOAT_ICON,
       iconClass: "",
-      heading: "Professional and Certified",
+      heading: "Certified & Safe",
       description:
-        "Minar, the only privately owned catamaran class vessel in the country to get Indian Register of Shipping (IRS) registration.",
+        "Minar Cruise is Kerala’s first private luxury yacht registered under the Indian Register of Shipping (IRS), ensuring top safety and professional service.",
     },
     {
       icon: CONSTANTS.WHY_CHOOSE.CALENDER_ICON,
       iconClass: "",
-      heading: "Get Instant Tour Bookings",
+      heading: "Seamless Online Booking",
       description:
-        "Simplify your booking experience with our web-based online booking or contact directly in any of the phone number given.",
-    },
-    {
-      icon: CONSTANTS.WHY_CHOOSE.PEOPLE_ICON,
-      iconClass: "",
-      heading: "Best Price Guarantee",
-      description:
-        "Simplify your booking experience with our web-based online booking or contact directly in any of the phone number given.",
+        "Book your cruise instantly through our user-friendly online system or connect with our team for personalized assistance.",
     },
     {
       icon: CONSTANTS.WHY_CHOOSE.WALLET_ICON,
       iconClass: "",
       heading: "Best Price Guarantee",
       description:
-        "Simplify your booking experience with our web-based online booking or contact directly in any of the phone number given.",
+        "Enjoy the best cruise experience at the most competitive rates, with transparent pricing and no hidden costs.",
+    },
+    {
+      icon: CONSTANTS.WHY_CHOOSE.PEOPLE_ICON,
+      iconClass: "",
+      heading: "Customizable Events",
+      description:
+        "From weddings and birthdays to corporate meetings and private celebrations, we offer tailored experiences to suit every occasion.",
     },
     {
       icon: CONSTANTS.WHY_CHOOSE.TICK_ICON,
       iconClass: "",
-      heading: "Safe Controls",
+      heading: "Unmatched Safety Standards",
       description:
-        "Simplify your booking experience with our web-based online booking or contact directly in any of the phone number given.",
+        "Our vessel is equipped with top-tier life-saving gear and adheres to international maritime safety regulations.",
     },
   ],
 };

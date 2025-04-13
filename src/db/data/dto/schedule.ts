@@ -243,7 +243,7 @@ export const getSchedule = async () => {
 
 export type TScheduleData = Schedule;
 
-export type TgetUpcommingScheduleDates = {
+export type TgetupComingScheduleDates = {
   breakfast: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   lunch: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   sunset: { date: string; status: $Enums.SCHEDULE_STATUS }[];
@@ -300,7 +300,7 @@ export const getManySchedulesAndTotalBookingCount = async () => {
 export type TGetManySchedulesAndTotalBookingCount = Awaited<
   ReturnType<typeof getManySchedulesAndTotalBookingCount>
 >;
-export const getUpcommingScheduleDates = async () => {
+export const getupComingScheduleDates = async () => {
   try {
     const data = await db.schedule.findMany({
       where: {
@@ -311,7 +311,7 @@ export const getUpcommingScheduleDates = async () => {
       take: 60,
     });
 
-    let scheduledDate: TgetUpcommingScheduleDates = {
+    let scheduledDate: TgetupComingScheduleDates = {
       breakfast: [],
       dinner: [],
       sunset: [],

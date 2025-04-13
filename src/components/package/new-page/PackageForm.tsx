@@ -1,29 +1,38 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
+import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
+import { Button } from "@/components/ui/button";
+import {
+  useClientSelector,
+  useClientStore,
+} from "@/hooks/clientStore/clientReducers";
+import { setDate } from "@/lib/features/client/packageClientSlice";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
+import {
+  absoluteUrl,
+  cn,
+  RemoveTimeStampFromDate,
+  safeTotal,
+} from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
 } from "@/lib/validators/onlineBookingValidator";
+import { isPackageStatusSunSet } from "@/lib/validators/Package";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
-import React, { useState } from "react";
+import { TRPCClientError } from "@trpc/client";
+import { format } from "date-fns";
+import { useRef, useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import BookingFormCalender from "./BookingFormCalender";
-import ColorRepresentationInfo from "./ColorRepresentationInfo";
 import BookingFormCard from "./BookingFormCard";
-import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
-import { Button } from "@/components/ui/button";
-import { isPackageStatusSunSet } from "@/lib/validators/Package";
-import { format } from "date-fns";
-import { dataTagSymbol } from "@tanstack/react-query";
-import { TRPCClientError } from "@trpc/client";
+import ColorRepresentationInfo from "./ColorRepresentationInfo";
 
 type TPackageForm = {
   packageId: string;
@@ -31,6 +40,8 @@ type TPackageForm = {
   adultPrice: number;
   childPrice: number;
   type?: "modal" | undefined;
+  defaultDate?: string;
+  scheduleId?: string;
 };
 
 export default function PackageFormN({
@@ -39,17 +50,28 @@ export default function PackageFormN({
   adultPrice,
   childPrice,
   type,
+  defaultDate,
 }: TPackageForm) {
+  const store = useClientStore();
+  const initialized = useRef(false);
+
+  if (!initialized.current) {
+    if (defaultDate?.length) {
+      console.log("DEFAULT DATE", defaultDate);
+      store.dispatch(setDate(defaultDate));
+    }
+    initialized.current = true;
+  }
+
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
-
+  const date = useClientSelector((state) => state.package.date);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, dirtyFields },
-    reset,
     watch,
     getValues,
     setValue,
@@ -60,15 +82,11 @@ export default function PackageFormN({
       numOfChildren: 0,
       numOfBaby: 0,
       packageId: packageId,
-      selectedScheduleDate: RemoveTimeStampFromDate(new Date(Date.now())),
+      selectedScheduleDate:
+        defaultDate ?? RemoveTimeStampFromDate(new Date(Date.now())),
       packageCategory: packageCategory,
-      // token: undefined,
     },
   });
-  const safeTotal = (value: number) => {
-    const numberValue = Number(value);
-    return isNaN(numberValue) ? 0 : numberValue;
-  };
 
   const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
@@ -171,7 +189,7 @@ export default function PackageFormN({
   const numofAdults = watch("numOfAdults");
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
-  const date = watch("selectedScheduleDate");
+
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
 
@@ -190,14 +208,14 @@ export default function PackageFormN({
         className={cn("flex flex-col items-center w-full justify-center")}
       >
         <div
-          className={
-            cn(" border border-blue-300 bg-white px-4 mt-4 rounded-2xl",
+          className={cn(
+            " font-semibold text-lg bg-white border rounded-full text-black px-4 mt-4 ",
             {
               hidden: type,
-            })
-          }
+            },
+          )}
         >
-          <div>{format(date, "iii dd/MM/yyyy")}</div>
+          <div>{format(date ?? Date.now(), "iii dd/MM/yyyy")}</div>
         </div>
         <BookingFormCalender
           setFormDateValue={(value: string) => {
@@ -216,9 +234,6 @@ export default function PackageFormN({
           )}
         >
           <div className="flex gap-2">
-            <div>
-              <ColorRepresentationInfo className="bg-muted  " title="Blocked" />
-            </div>
             <div
               className={cn({
                 hidden: isPackageStatusSunSet({
@@ -227,8 +242,26 @@ export default function PackageFormN({
               })}
             >
               <ColorRepresentationInfo
-                className={cn("bg-green-600 ")}
+                className={cn("bg-green-500 ")}
                 title="Available"
+              />
+            </div>
+            <div
+              className={cn("hidden", {
+                block: isPackageStatusSunSet({
+                  packageStatus: packageCategory,
+                }),
+              })}
+            >
+              <ColorRepresentationInfo
+                className={cn("bg-green-500 ")}
+                title="Available"
+              />
+            </div>
+            <div>
+              <ColorRepresentationInfo
+                className="bg-red-500"
+                title="Blocked / Full"
               />
             </div>
           </div>
@@ -240,8 +273,11 @@ export default function PackageFormN({
             })}
           >
             <ColorRepresentationInfo
-              className={cn("bg-white border")}
-              title="Rest of the days Minimum 25 Pax"
+              containerClass="max-w-[200px] gap-1 text-blue-600"
+              className={cn(
+                "bg-white border mt-1 self-start  flex-shrink-0 border-black rounded-sm",
+              )}
+              title="Rest of the days requires 25 guests to book"
             />
           </div>
         </div>

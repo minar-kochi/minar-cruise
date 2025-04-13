@@ -6,23 +6,30 @@ import ExclusivePackageEnquiryCard from "@/components/package/new-page/Exclusive
 import PackageAmmenties from "@/components/package/new-page/PackageAmmenties";
 import PackageForm from "@/components/package/new-page/PackageForm";
 import PackageImage from "@/components/package/new-page/PackageImage";
-import { PackageCarousel } from "@/components/packages/PackageCarousel";
 import TermsAndConditionsCard from "@/components/packages/TermsAndConditionsCard";
 import { CONSTANTS } from "@/constants/data/assets";
 import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import { cn, flattenObject } from "@/lib/utils";
+import {
+  cn,
+  flattenObject,
+  parseSafeFormatYYYYMMDDToNumber,
+} from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
-import { Baby, Clock, PersonStanding, User } from "lucide-react";
+import { Baby, Clock, User } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
-import React from "react";
+import PackageHeader from "./package-header";
+import PackageCarousalWrapper from "@/components/packages/PackageCarousalWrapper";
 
 interface IPackagePage {
   params: {
     slug: string;
+  };
+  searchParams?: {
+    selectedDate?: string;
   };
 }
 export const maxDuration = 25;
@@ -109,7 +116,14 @@ export async function generateStaticParams() {
     slug: item.slug,
   }));
 }
-export default async function PackagePage({ params: { slug } }: IPackagePage) {
+export default async function PackagePage({
+  params: { slug },
+  searchParams,
+}: IPackagePage) {
+  let parsedDate = parseSafeFormatYYYYMMDDToNumber(
+    searchParams?.selectedDate ?? "",
+  );
+
   const data = await getPackageById({ slug });
 
   if (!data)
@@ -124,60 +138,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
   return (
     <Bounded className="md:px-1 ">
       <div className="">
-        <header className="sm:px-10 mx-1 flex flex-col items-center justify-center md:grid md:grid-cols-2 bg-white rounded-md my-4  w-full  gap-4 pt-3 pb-3 ">
-          <div className="flex gap-1 md:gap-3 bg-white">
-            <Image
-              src="/assets/titleicons/star.svg"
-              alt="star icon"
-              width={500}
-              height={500}
-              className="w-8 md:w-10  h-8 md:h-10 "
-            />
-            <div className="flex">
-              <div>
-                <h1 className="text-xl sm:text-2xl md:text-3xl text-[#0D3A62] font-semibold">
-                  {data.title}
-                </h1>
-              </div>
-            </div>
-          </div>
-          {!isPackageStatusExclusive(data.packageCategory) && (
-            <div className="flex flex-col justify-center items-center">
-              <div className="bg-white flex  gap-4 px-2 py-2">
-                <div className="">
-                  <div className="flex  gap-2 items-center ">
-                    <User size="26" className="text-red-500" />
-                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                      Adult
-                    </p>
-                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                      ₹{data.adultPrice / 100}/-
-                    </p>
-                  </div>
-                </div>
-                <div className="">
-                  <div className="flex  gap-2 items-center ">
-                    <Baby size="26" className="text-red-500" />
-                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                      Child
-                    </p>
-                    <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                      ₹{data.childPrice / 100}/-
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="">
-                <p className="text-blue-950 text-sm md:text-base font-medium flex items-center gap-2 mt-1">
-                  <span className="text-primary">
-                    <Clock size="26" />
-                  </span>
-                  {data.fromTime} - {data.toTime}
-                </p>
-              </div>
-            </div>
-          )}
-        </header>
+        <PackageHeader data={data} />
 
         <div className="grid md:gap-3  2md:grid-cols-3   ">
           <div className="2md:col-span-2 2md:row-start-1 2md:col-start-1">
@@ -195,6 +156,7 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
           >
             {!isPackageStatusExclusive(data.packageCategory) ? (
               <PackageForm
+                defaultDate={parsedDate?.date ?? undefined}
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
                 packageId={data.id}
@@ -215,7 +177,8 @@ export default async function PackagePage({ params: { slug } }: IPackagePage) {
             <ExclusivePackage />
           </div>
         )}
-        <PackageCarousel />
+
+        <PackageCarousalWrapper />
         <TermsAndConditionsCard />
       </div>
     </Bounded>

@@ -81,23 +81,23 @@ export default function DownloadScheduleTable({
         toast.error("Failed to fetch schedule data");
         return;
       }
-
-      type === "scheduleWithoutBookingCount"
-        ? await createExcelSheetWithoutBookingCount({
-            TableName: "Schedules",
-            TableRowData: scheduleData as TScheduleWithoutBookingCount,
-          })
-        : await createExcelSheetWithBookingCount({
-            TableName: "Schedules",
-            TableRowData: scheduleData as TScheduleWithBookingCount,
-          });
-      // console.log(scheduleData)
-
-      toast.dismiss();
+      if (type === "scheduleWithoutBookingCount") {
+        await createExcelSheetWithoutBookingCount({
+          TableName: "Schedules",
+          TableRowData: scheduleData as TScheduleWithoutBookingCount,
+        });
+        return;
+      }
+      await createExcelSheetWithBookingCount({
+        TableName: "Schedules",
+        TableRowData: scheduleData as TScheduleWithBookingCount,
+      });
     } catch (error) {
       toast.dismiss();
       toast.error("Something went wrong");
       return null;
+    } finally {
+      toast.dismiss();
     }
   }
 

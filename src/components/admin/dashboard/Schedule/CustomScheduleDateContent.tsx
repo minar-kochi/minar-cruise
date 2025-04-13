@@ -3,7 +3,7 @@ import { isSameDay } from "@/lib/utils";
 import { DayContentProps } from "react-day-picker";
 
 export function CustomDayContentWithScheduleIndicator(props: DayContentProps) {
-  const data = useAppSelector((state) => state.schedule.upCommingSchedules);
+  const data = useAppSelector((state) => state.schedule.upComingSchedules);
 
   const { date } = props;
 

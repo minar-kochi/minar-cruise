@@ -19,7 +19,7 @@ export const loginAction = async (formData: TAdminLoginValidator) => {
       redirectTo: "/admin",
     });
     console.log("success");
-    return { sucess: "Authentication Sucessfull" };
+    return { success: "Authentication Sucessfull" };
   } catch (error) {
     if (error instanceof AccessDenied) {
       return { error: "Failed to receive access" };

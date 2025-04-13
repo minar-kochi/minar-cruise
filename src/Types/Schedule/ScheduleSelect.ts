@@ -2,7 +2,7 @@ import { PackageSelect } from "@/db/data/dto/package";
 import { TScheduleDataDayReplaceString } from "../type";
 import { Dispatch, SetStateAction } from "react";
 import { $Enums } from "@prisma/client";
-import { getUpcommingScheduleDates } from "@/db/data/dto/schedule";
+import { getupComingScheduleDates } from "@/db/data/dto/schedule";
 
 export type TSelectedPackageIdsAndScheduleEnum = {
   breakfast?: {
@@ -104,14 +104,14 @@ export type TUpdatedDateSchedulePackageId = {
     scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
   };
 };
-export type TRawOrganizedUpcommingSchedule = typeof getUpcommingScheduleDates;
+export type TRawOrganizedupComingSchedule = typeof getupComingScheduleDates;
 
-export type TOrganizedUpcommingSchedule = Awaited<
-  ReturnType<TRawOrganizedUpcommingSchedule>
+export type TOrganizedupComingSchedule = Awaited<
+  ReturnType<TRawOrganizedupComingSchedule>
 >;
 
-export type TExcludedOrganizedUpcommingSchedule = Exclude<
-  TOrganizedUpcommingSchedule,
+export type TExcludedOrganizedUpComingSchedule = Exclude<
+  TOrganizedupComingSchedule,
   null
 >;
 
@@ -125,3 +125,18 @@ export type TScheduleWithBookingCountWithId = {
   }[];
   totalBookings: number;
 }[];
+
+
+export type TSchedulesData = {
+  id: string;
+  packageId: string | null;
+  day: Date | string;
+  schedulePackage: $Enums.SCHEDULED_TIME;
+  scheduleStatus: $Enums.SCHEDULE_STATUS;
+};
+export type ScheduleGrouped = {
+  [key: string]: TSchedulesData[];
+};
+
+
+export type ScheduleBookingData = {}

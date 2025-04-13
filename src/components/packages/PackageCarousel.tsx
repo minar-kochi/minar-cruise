@@ -1,37 +1,77 @@
-import { getPackageCardDetails } from "@/db/data/dto/package";
-import { EmblaCarouselProvider } from "../Carousel/EmblaCarousel";
+"use client";
+import { TGetPackageCardDetails } from "@/db/data/dto/package";
+import Autoplay from "embla-carousel-autoplay";
+import React from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 import PackageCard from "./PackageCard";
-import Bounded from "../elements/Bounded";
 
-export const PackageCarousel = async () => {
-  const data = await getPackageCardDetails();
-  if (!data) {
-    console.log("could nt receive data");
+type PackageCarouselProps = {
+  data: TGetPackageCardDetails;
+  className?: string;
+};
+
+const PackageCarousel = ({ data, className }: PackageCarouselProps) => {
+  const plugin = React.useMemo(
+    () =>
+      Autoplay({
+        delay: 4000,
+        stopOnInteraction: false, // This prevents stopping on user interaction
+        stopOnMouseEnter: true, // Optional: stops on mouse enter
+      }),
+    [],
+  );
+
+  if (!data?.length) {
     return null;
   }
+
   return (
-    <Bounded className="flex flex-col mt-10 items-center embla__viewport ">
-      <div className="overflow-hidden">
-        <EmblaCarouselProvider>
-          {data.map((item, i) => {
-            return (
+    <div className="w-full sm:px-4 py-6">
+      <Carousel
+        opts={{
+          align: "center", // Changed from 'start' to 'center' for better looping
+          loop: true,
+          dragFree: true, // Allows free-flowing drag
+          skipSnaps: true, // Allows smooth transitions between slides
+        }}
+        plugins={[plugin]}
+        className="w-full "
+      >
+        <CarouselContent className="-ml-2 md:-ml-4">
+          {data.map((item) => (
+            <CarouselItem
+              key={`${item.id}-package-carousal`}
+              className="pl-2 md:pl-4 basis-[90%] sm:basis-[55%] md:basis-[40%] lg:basis-[35%] "
+            >
               <PackageCard
-                key={item.id}
-                packageCategory={item.packageCategory}
+                fromTime={item.fromTime}
+                toTime={item.toTime}
                 PackageId={item.id}
+                packageCategory={item.packageCategory}
                 slug={item.slug}
                 amenities={item.amenities}
-                className="embla__slide select-none first-of-type:ml-2"
                 adultPrice={item.adultPrice}
                 childPrice={item.childPrice}
                 alt={item.packageImage[0]?.image.alt}
                 title={item.title}
                 url={item.packageImage[0]?.image.url}
               />
-            );
-          })}
-        </EmblaCarouselProvider>
-      </div>
-    </Bounded>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className="hidden md:block">
+          <CarouselPrevious className="left-0 w-10 h-10 disabled:text-gray-500  bg-white hover:bg-white/80 -translate-x-1/2" />
+          <CarouselNext className="right-0 w-10 h-10 bg-white disabled:text-gray-500 hover:bg-white/80 translate-x-1/2" />
+        </div>
+      </Carousel>
+    </div>
   );
 };
+
+export default PackageCarousel;

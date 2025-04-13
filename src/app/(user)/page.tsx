@@ -14,9 +14,7 @@ export const metadata = constructMetadata({});
 export default function page() {
   return (
     <main className="embla__viewport">
-      <Suspense fallback={<>Loading....</>}>
-        <HomeVideo />
-      </Suspense>
+      <HomeVideo />
       <MinarSec />
       <PackagesBento />
       <ExclusivePackage />

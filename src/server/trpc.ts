@@ -14,9 +14,21 @@ const t = initTRPC.create({
 
 export const router = t.router;
 // Base router and procedure
-export const publicProcedure = t.procedure;
-
 export const middleware = t.middleware;
+
+export const preventDevWriteMiddleware = middleware(async (opts) => {
+  const RequestType = opts.type === "mutation";
+  if (process.env.APP_ENV === "staging" && RequestType) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Wouldn't be able to make changes in staging.",
+    });
+  }
+  return opts.next();
+});
+export const publicProcedure = t.procedure.use(preventDevWriteMiddleware)
+
+
 
 /**
  * @TODO - AMJAD
@@ -37,4 +49,6 @@ export const isAdmin = middleware(async (opts) => {
   });
 });
 
-export const AdminProcedure = t.procedure.use(isAdmin);
+export const AdminProcedure = t.procedure.use(preventDevWriteMiddleware).use(isAdmin)
+
+

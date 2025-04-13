@@ -9,10 +9,14 @@ import {
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
-import { Loader2 } from "lucide-react";
+import { Info, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import CalendarPopover from "./CalendarPopover";
 import toast from "react-hot-toast";
+import { useClientSelector } from "@/hooks/clientStore/clientReducers";
+import { getPackageById } from "@/lib/features/client/packageClientSelectors";
+import { useAppDispatch } from "@/hooks/adminStore/reducer";
+import { setDate } from "@/lib/features/client/packageClientSlice";
 type TBookingFormCalender = {
   setFormDateValue: (value: string) => void;
   setScheduleId: (value: string | undefined) => void;
@@ -29,7 +33,13 @@ export default function BookingFormCalender({
   popoverCalender,
   className,
 }: TBookingFormCalender) {
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const packageData = useClientSelector((state) =>
+    getPackageById(state, packageId),
+  );
+
+  // const [date, setDate] = useState<Date | undefined>(undefined);
+  const date = useClientSelector((state) => state.package.date);
+  const dispatch = useAppDispatch();
   const [month, setMonth] = useState<string>(
     RemoveTimeStampFromDate(new Date(Date.now())),
   );
@@ -46,6 +56,8 @@ export default function BookingFormCalender({
   const disabledDays = data?.blockedScheduleDateArray.map((item) => ({
     day: new Date(item.day),
   }));
+  if (!packageData) return;
+
   return popoverCalender ? (
     <CalendarPopover date={date}>
       <div
@@ -61,23 +73,31 @@ export default function BookingFormCalender({
             filterDateFromCalender({ date, dateArray: disabledDays })
           }
           mode="single"
+          classNames={{
+            button: "[&>button]:aria-selected:bg-black",
+          }}
           components={{
             DayContent: (props) =>
               ClientCalenderScheduleDay({
                 AvailableDate: availableDateArray,
                 props,
                 packageCategory,
+                blockedDate: data?.blockedScheduleDateArray.map(
+                  (item) => item.day,
+                ),
+                startFrom: packageData.fromTime,
+                isLoading: isPending,
               }),
           }}
-          selected={date}
+          selected={new Date(date ?? Date.now())}
           onSelect={(date, dat, mod, e) => {
-            if (mod.disabled){
-              toast.error('This date is disabled')
-              return
+            if (mod.disabled) {
+              toast.error("This date is disabled");
+              return;
             }
 
             if (!date) return;
-            setDate(date);
+            dispatch(setDate(RemoveTimeStampFromDate(date)));
             setFormDateValue(RemoveTimeStampFromDate(date));
             if (!data || !data.schedules) return;
 
@@ -91,6 +111,20 @@ export default function BookingFormCalender({
               scheduleIndex !== -1 ? data.schedules[scheduleIndex] : null;
             if (!schedule) {
               setScheduleId(undefined);
+              if (packageCategory !== "SUNSET") {
+                toast(
+                  "This date requires at least 25 guests to set sail! 🌊✨",
+                  {
+                    className:
+                      "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
+                    duration: 5000,
+                    icon: <Info className="text-blue-600" />,
+                    position: "top-center",
+                    ariaProps: { "aria-live": "polite", role: "alert" },
+                    // removeDelay: 300,
+                  },
+                );
+              }
               return;
             }
             setScheduleId(schedule.id);
@@ -119,7 +153,7 @@ export default function BookingFormCalender({
   ) : (
     <div className="  py-4 rounded-md overflow-hidden shadow-xl    bg-primary-foreground  border-black relative">
       <Calendar
-        className="p-0 py-3 px-2 "
+        className="p-0 py-3 px-2  "
         sizeMode={"lg"}
         disabled={(date) =>
           filterDateFromCalender({ date, dateArray: disabledDays })
@@ -131,17 +165,22 @@ export default function BookingFormCalender({
               AvailableDate: availableDateArray,
               props,
               packageCategory,
+              blockedDate: data?.blockedScheduleDateArray.map(
+                (item) => item.day,
+              ),
+              startFrom: packageData?.fromTime,
+              isLoading: isPending,
             }),
         }}
-        selected={date}
+        selected={new Date(date ?? Date.now())}
         onSelect={(date, dat, mod, e) => {
-          if (mod.disabled){
-            toast.error('This date is disabled')
-            return
+          if (mod.disabled) {
+            toast.error("This date is disabled");
+            return;
           }
 
           if (!date) return;
-          setDate(date);
+          dispatch(setDate(RemoveTimeStampFromDate(date)));
           setFormDateValue(RemoveTimeStampFromDate(date));
           if (!data || !data.schedules) return;
 
@@ -155,6 +194,18 @@ export default function BookingFormCalender({
             scheduleIndex !== -1 ? data.schedules[scheduleIndex] : null;
           if (!schedule) {
             setScheduleId(undefined);
+            if (packageCategory !== "SUNSET") {
+              toast("This date requires at least 25 guests to set sail! 🌊✨", {
+                className:
+                  "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
+                duration: 5000,
+                icon: <Info className="text-blue-600" />,
+                position: "top-center",
+                ariaProps: { "aria-live": "polite", role: "alert" },
+                // removeDelay: 300,
+              });
+            }
+
             return;
           }
           setScheduleId(schedule.id);
