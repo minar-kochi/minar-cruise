@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { VIEW_BEFORE_PX } from "@/constants/config";
+import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -104,7 +105,7 @@ export default function BookingSchedule() {
                     {item.Booking}
                   </TableCell>
                   <TableCell className="border-r max-sm:text-[9px] max-sm:p-0 max-sm:w-[50px]">
-                    {150 - item.Booking}
+                    {MAX_BOAT_SEAT - item.Booking}
                   </TableCell>
                   <TableCell className=" max-sm:text-[8px] p-0 max-sm:hidden"></TableCell>
                 </TableRow>

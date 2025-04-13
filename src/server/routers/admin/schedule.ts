@@ -192,7 +192,7 @@ export const schedule = router({
         console.log(error);
       }
       return {
-        response: data,
+        schedules: data,
         nextCursor,
       };
     } catch (error) {

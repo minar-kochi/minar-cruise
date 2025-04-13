@@ -71,7 +71,6 @@ const packageClientSlice = createSlice({
       },
       prepare(data: TScheduleQueryData | undefined) {
         let organizedSchedules = data?.flatMap((item) => item.schedules) ?? [];
-
         const seen = new Set<string>();
         const uniqueSchedules = organizedSchedules.filter((schedule) => {
           const key = `${schedule.day}-${schedule.id}`;
