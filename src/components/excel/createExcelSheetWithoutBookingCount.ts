@@ -28,14 +28,6 @@ export async function createExcelSheetWithoutBookingCount({
       fitToPage: true,
       fitToWidth: 5,
       fitToHeight: 5,
-      // margins: {
-      //   bottom: 2,
-      //   footer: 2,
-      //   header: 2,
-      //   left: 2,
-      //   right: 2,
-      //   top: 2
-      // },
     },
   });
 

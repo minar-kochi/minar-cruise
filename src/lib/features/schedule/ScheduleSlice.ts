@@ -1,16 +1,20 @@
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
 import {
+  GroupedSchedulePackageData,
   TExcludedOrganizedUpComingSchedule,
   TIsScheduleChange,
   TKeyOrganizedScheduleData,
   TOrganizedScheduleData,
   TUpdatedDateSchedulePackageId,
+  TSchedulePackageData,
+  InfinitySchedulePackageData,
 } from "@/Types/Schedule/ScheduleSelect";
 import { TkeyDbTime, TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
+
 export type TScheduleUtilsState = {
   /**
    * Popover state variable
@@ -40,13 +44,42 @@ export type TScheduleState = {
    * to notify whether a Schedule is not same as in the database.
    */
   isChangedUpdated: TIsScheduleChange;
-  
+  AllSchedulesByDate: GroupedSchedulePackageData;
 } & TScheduleUtilsState;
 
 const scheduleSlice = createSlice({
   name: "schedule",
   initialState,
   reducers: {
+    setAllScheduleByDate: {
+      reducer(
+        state,
+        action: PayloadAction<{ data: GroupedSchedulePackageData }>,
+      ) {
+        state.AllSchedulesByDate = action.payload.data;
+      },
+      prepare(data: InfinitySchedulePackageData[] | undefined) {
+        let organizedSchedules = data?.flatMap((item) => item.schedules) ?? [];
+        const seen = new Set<string>();
+
+        const uniqueSchedules = organizedSchedules.filter((schedule) => {
+          const key = `${schedule.day}-${schedule.id}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        const groupedSchedules = uniqueSchedules.reduce((acc, schedule) => {
+          const dateKey = new Date(schedule.day).toISOString().split("T")[0];
+          (acc[dateKey] = acc[dateKey] || [])?.push(schedule);
+          return acc;
+        }, {} as GroupedSchedulePackageData);
+        return {
+          payload: { data: groupedSchedules },
+        };
+      },
+    },
+
     /**
      * @param state TSchedule
      * @param action string {YYYY-MM-DD} format string
@@ -172,10 +205,9 @@ const scheduleSlice = createSlice({
         if (state.date === action.payload.updatingDate) {
           state.currentDateSchedule[action.payload.type] = null;
         }
-        state.upComingSchedules[action.payload.type] =
-          state.upComingSchedules[action.payload.type].filter(
-            (fv) => fv.date !== action.payload.updatingDate,
-          );
+        state.upComingSchedules[action.payload.type] = state.upComingSchedules[
+          action.payload.type
+        ].filter((fv) => fv.date !== action.payload.updatingDate);
       },
       prepare(
         data: TScheduleDataDayReplaceString,
@@ -286,6 +318,7 @@ export const {
   setSyncDatabaseUpdatesScheduleCreation,
   setSyncDatabaseDeleteSchedule,
   setSyncDatabaseUpdatesScheduleDeletion,
+  setAllScheduleByDate,
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;

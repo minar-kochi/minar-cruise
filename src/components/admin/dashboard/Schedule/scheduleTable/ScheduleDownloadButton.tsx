@@ -59,7 +59,6 @@ export default function ScheduleDownloadButton({
               from: new Date(date.from),
               to: new Date(date.to),
             }}
-            
             // dayButtonClassName=""
             // sizeMode="xs"
             className="block sm:hidden max-w-lg"

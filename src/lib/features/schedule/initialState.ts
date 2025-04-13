@@ -9,6 +9,7 @@ export const resetUpdates = {
 };
 
 export const initialState: Required<TScheduleState> = {
+  AllSchedulesByDate: {},
   currentDateSchedule: {
     breakfast: null,
     custom: null,
