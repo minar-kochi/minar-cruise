@@ -161,3 +161,28 @@ export type InfinitySchedulePackageData = {
   schedules: TSchedulePackageData[];
   nextCursor?: string | undefined;
 };
+
+
+export type GroupedScheduleWithBookingCount = {
+  [key: string]: TScheduleWithBookingCount[]
+}   
+
+export type InfinitySchedulesWithBookingCount = {
+  response: TScheduleWithBookingCount[];
+  nextCursor?: string | undefined;
+}
+
+export type TScheduleWithBookingCount = {
+  id:string,
+  day:string,
+  fromTime:string | null,
+  toTime:string | null,
+  schedulePackage:$Enums.SCHEDULED_TIME,
+  scheduleStatus:$Enums.SCHEDULE_STATUS,
+  Booking:number
+  Package: { 
+    title:string,
+    fromTime:string,
+    toTime:string
+  },
+}

@@ -7,7 +7,9 @@ import {
   TOrganizedScheduleData,
   TUpdatedDateSchedulePackageId,
   TSchedulePackageData,
+  InfinitySchedulesWithBookingCount,
   InfinitySchedulePackageData,
+  GroupedScheduleWithBookingCount,
 } from "@/Types/Schedule/ScheduleSelect";
 import { TkeyDbTime, TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -45,12 +47,48 @@ export type TScheduleState = {
    */
   isChangedUpdated: TIsScheduleChange;
   AllSchedulesByDate: GroupedSchedulePackageData;
+  SchedulesWithBookingData: GroupedScheduleWithBookingCount;
 } & TScheduleUtilsState;
 
 const scheduleSlice = createSlice({
   name: "schedule",
   initialState,
   reducers: {
+    setScheduleForBooking: {
+      reducer(
+        state,
+        action: PayloadAction<{ data: GroupedScheduleWithBookingCount }>,
+      ) {
+        state.SchedulesWithBookingData = action.payload.data;
+      },
+      prepare({data}:{data: InfinitySchedulesWithBookingCount[] | undefined}) {
+        const unformattedSchedulesArray =
+          data?.flatMap((item) => item.response) ?? [];
+
+        const uniqueScheduleKeys = new Set();
+        const uniqueSchedules = unformattedSchedulesArray?.filter((item) => {
+          const key = `${item.day}-${item.id}`;
+          if (uniqueScheduleKeys.has(key)) return false;
+          uniqueScheduleKeys.add(key);
+          return true;
+        });
+
+        const formattedScheduleArray = uniqueSchedules?.reduce(
+          (acc, schedule) => {
+            const dateKey = new Date(schedule.day).toISOString().split("T")[0];
+            (acc[dateKey] = acc[dateKey] || [])?.push(schedule);
+            return acc;
+          },
+          {} as GroupedScheduleWithBookingCount,
+        );
+
+        return {
+          payload: {
+            data: formattedScheduleArray,
+          },
+        };
+      },
+    },
     setAllScheduleByDate: {
       reducer(
         state,
@@ -319,6 +357,7 @@ export const {
   setSyncDatabaseDeleteSchedule,
   setSyncDatabaseUpdatesScheduleDeletion,
   setAllScheduleByDate,
+  setScheduleForBooking
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;
