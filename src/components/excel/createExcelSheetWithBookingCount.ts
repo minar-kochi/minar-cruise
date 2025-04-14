@@ -19,6 +19,7 @@ type TCreateExcelTable = {
   TableName: string;
   TableRowData: TScheduleWithBookingCount;
 };
+
 export async function createExcelSheetWithBookingCount({
   TableName,
   TableRowData,
@@ -32,20 +33,20 @@ export async function createExcelSheetWithBookingCount({
       fitToPage: true,
       fitToWidth: 5,
       fitToHeight: 5,
-      // margins: {
-      //   bottom: 2,
-      //   footer: 2,
-      //   header: 2,
-      //   left: 2,
-      //   right: 2,
-      //   top: 2
-      // },
+      margins: {
+        bottom: 0.5,
+        footer: 0.5,
+        header: 0.5,
+        left: 0.5,
+        right: 0.5,
+        top: 1.5,
+      },
     },
   });
 
   table.columns = [
     {
-      header: "N0.",
+      header: "Num",
       key: "num",
       width: 8,
       style: {
@@ -122,19 +123,44 @@ export async function createExcelSheetWithBookingCount({
       },
     },
   ];
+// HEADER-------------------------------------------------------------------
 
-  table.getRow(1).font = {
-    name: "header",
-    family: 1,
-    size: 12,
+  const headerRow = table.getRow(1);
+  headerRow.font = {
+    name: "Calibri",
+    size: 16,
     bold: true,
+    // color: { argb: "FFFFFFFF" }, // White text
   };
+  headerRow.height = 25;
 
-  TableRowData.map((item, i) => {
+  headerRow.eachCell((cell) => {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FF0070C0" }, // Blue background
+    };
+
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+  });
+
+// HEADER-------------------------------------------------------------------
+
+  let currentDate = "";
+  let currentDay = "";
+  let dateStartRow = 2; // Row 1 is header
+  let dateCount = 0;
+  TableRowData.forEach((item, i) => {
+    const rowIndex = i + 2;
     const { Booking, Package, day, fromTime, toTime } = item;
+    const dateStr = format(day, "dd/ MM /yyyy");
+    const dayStr = format(day, "EEEE");
 
-    const date = format(day, "dd/ MM /yyyy");
-    const dayOfWeek = format(day, "EEEE");
     const data = selectFromTimeAndToTimeFromScheduleOrPackages({
       Packages: {
         packageFromTime: Package?.fromTime ?? "",
@@ -149,28 +175,116 @@ export async function createExcelSheetWithBookingCount({
 
     table.addRow({
       num: i + 1,
-      date: date,
-      day: dayOfWeek,
+      date: dateStr,
+      day: dayStr,
       duration: fromToTime,
       package: Package?.title,
       booked: Booking,
       available: MAX_BOAT_SEAT - Booking,
     });
+
+    // Styling the row
+    const newRow = table.getRow(rowIndex);
+    newRow.height = 25; // You can go 28 or 30 if needed
+    newRow.eachCell((cell) => {
+      cell.font = { name: "Calibri", size: 13 };
+      cell.alignment = {
+        vertical: "top",
+        horizontal: "center",
+        wrapText: true,
+      };
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      };
+    });
+
+    // Merging logic
+    if (dateStr !== currentDate || i === TableRowData.length - 1) {
+      if (dateCount > 1) {
+        const endRow =
+          i === TableRowData.length - 1 && dateStr === currentDate
+            ? rowIndex
+            : rowIndex - 1;
+        table.mergeCells(`B${dateStartRow}:B${endRow}`);
+        table.mergeCells(`C${dateStartRow}:C${endRow}`);
+      }
+
+      currentDate = dateStr;
+      currentDay = dayStr;
+      dateStartRow = rowIndex;
+      dateCount = 1;
+    } else {
+      // Still same date
+      dateCount++;
+      // Remove duplicate values in date/day columns
+      const row = table.getRow(rowIndex);
+      row.getCell("date").value = "";
+      row.getCell("day").value = "";
+    }
   });
 
-  //   const statusColumn = await table.getColumn(7);
-  //   statusColumn.eachCell((cell)=> {
-  //     const cellAddress = table.getCell(cell.address)
-  //     const cellValue  = cellAddress.value;
+  // let prevDate = "";
+  // let prevDay = "";
+  // TableRowData.map((item, i) => {
+  //   const { Booking, Package, day, fromTime, toTime } = item;
+  //   let date = format(day, "dd/ MM /yyyy");
+  //   let displayDate = date;
 
-  //     if(cellValue === "BLOCKED"){
-  //       cellAddress.fill = {
-  //         type: "pattern",
-  //         pattern: "lightGray",
-  //         fgColor: {argb: "FF0000"}
-  //       }
-  //     }
-  //   })
+  //   // If this date is the same as previous, don't display it
+  //   if (prevDate === date) {
+  //     displayDate = "";
+  //   }
+
+  //   const dayOfWeek = format(day, "EEEE");
+  //   let displayDay = dayOfWeek;
+  //   if (prevDay === day) {
+  //     displayDay = "";
+  //   }
+  //   const data = selectFromTimeAndToTimeFromScheduleOrPackages({
+  //     Packages: {
+  //       packageFromTime: Package?.fromTime ?? "",
+  //       packageToTime: Package?.toTime ?? "",
+  //     },
+  //     schedule: {
+  //       scheduleFromTime: fromTime,
+  //       scheduleToTime: toTime,
+  //     },
+  //   });
+  //   const fromToTime = data.fromTime + " - " + data.toTime;
+
+  //   const newRow = table.addRow({
+  //     num: i + 1,
+  //     date: displayDate,
+  //     day: displayDay,
+  //     duration: fromToTime,
+  //     package: Package?.title,
+  //     booked: Booking,
+  //     available: MAX_BOAT_SEAT - Booking,
+  //   });
+  //   newRow.eachCell((cell) => {
+  //     cell.font = {
+  //       name: "Calibri",
+  //       size: 12,
+  //     };
+
+  //     cell.alignment = {
+  //       vertical: "middle",
+  //       horizontal: "center",
+  //     };
+
+  //     cell.border = {
+  //       top: { style: "thin" },
+  //       left: { style: "thin" },
+  //       bottom: { style: "thin" },
+  //       right: { style: "thin" },
+  //     };
+  //   });
+  //   prevDate = date;
+  //   prevDay = day;
+  // });
 
   workbook.xlsx.writeBuffer().then((data: any) => {
     const blob = new Blob([data], {
