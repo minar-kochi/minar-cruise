@@ -23,7 +23,6 @@ export default function page() {
             <ScheduleDownloadButton type="scheduleWithBookingCount" />
           </div>
         </div>
-
         <AllSchedules />
       </div>
     </div>
