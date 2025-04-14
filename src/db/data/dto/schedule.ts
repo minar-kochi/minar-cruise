@@ -11,6 +11,47 @@ import {
 import { $Enums, Schedule } from "@prisma/client";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
+export type TGetScheduleWithBookingCountDTO = Awaited<ReturnType<typeof getScheduleWithBookingCount>> 
+
+export async function getScheduleWithBookingCount({ cursor, limit}:{cursor: string | null | undefined, limit: number,}){
+  const data = await db.schedule.findMany({
+    where: {
+      day: {
+        gte: new Date(Date.now()),
+      },
+      scheduleStatus: {
+        in: ["AVAILABLE", "EXCLUSIVE"],
+      },
+    },
+    select: {
+      id: true,
+      day: true,
+      fromTime: true,
+      toTime: true,
+      schedulePackage: true,
+      scheduleStatus: true,
+      Package: {
+        select: {
+          title: true,
+          fromTime: true,
+          toTime: true,
+        },
+      },
+      Booking: {
+        select: {
+          totalBooking: true,
+        },
+      },
+    },
+    cursor: cursor ? { id: cursor } : undefined,
+    take: limit + 1,
+    orderBy: {
+      day: "asc",
+    },
+  });
+
+  return data
+}
 interface ICheckScheduleStatusForTheSelectedDate {
   date: string;
   packageTime: $Enums.SCHEDULED_TIME;
