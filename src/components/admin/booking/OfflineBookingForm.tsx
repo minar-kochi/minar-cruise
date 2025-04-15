@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { TGetBookedDetails } from "@/db/data/dto/booking";
 import { useRouter } from "next/navigation";
-import { sleep } from "@/lib/utils";
+import { isProd, sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import PrefillButton from "./PrefillButton";
 
@@ -144,7 +144,7 @@ export default function OfflineBookingForm({
         </h1>
       <div className="flex justify-between items-center">
         <p className="">Offline Booking Form</p>
-        {type==='ADD' ? <PrefillButton setValue={setValue}/>: null}
+        {(type==='ADD' && !isProd) ? <PrefillButton setValue={setValue} />: null}
       </div>  
       <div className="w-full border-b border-gray-200 my-5"></div>
       <div className="grid grid-cols-3 max-md:flex max-md:flex-col gap-3 ">
