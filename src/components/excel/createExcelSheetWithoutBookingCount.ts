@@ -1,8 +1,18 @@
 import { TGetSchedulesByDateRangeExcludingNull } from "@/db/data/dto/schedule";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
-import { $Enums } from "@prisma/client";
 import { format } from "date-fns";
 import ExcelJS from "exceljs";
+import {
+  A4ExcelPageSetup,
+  HeaderFont,
+  HeaderRowCellBorder,
+  HeaderRowCellFill,
+  ScheduleTableHeader,
+  TableBodyAlignment,
+  TableBodyBorder,
+  TableBodyFont,
+} from "./excelSheetUtils";
+import { trpc } from "@/app/_trpc/client";
 
 export type TScheduleWithoutBookingCount = (Omit<
   TGetSchedulesByDateRangeExcludingNull[number],
@@ -13,116 +23,70 @@ export type TScheduleWithoutBookingCount = (Omit<
 
 type TCreateExcelTable = {
   TableName: string;
-  TableRowData: TScheduleWithoutBookingCount;
+  Schedules: TScheduleWithoutBookingCount;
 };
+
+const ScheduleSheetConfig = {
+  TitleRowIndex:1,
+  TitleHeight:40,
+  HeaderRowIndex: 2,
+  HeaderHeight: 30,
+  TableDataStartingIndex: 3,
+  TableDataRowHeight: 25,
+};
+
 export async function createExcelSheetWithoutBookingCount({
   TableName,
-  TableRowData,
+  Schedules,
 }: TCreateExcelTable) {
   const workbook = new ExcelJS.Workbook();
+  const table = workbook.addWorksheet(TableName, A4ExcelPageSetup);
 
-  const table = workbook.addWorksheet(TableName, {
-    pageSetup: {
-      paperSize: 9,
-      orientation: "landscape",
-      fitToPage: true,
-      fitToWidth: 5,
-      fitToHeight: 5,
-    },
+  table.columns = ScheduleTableHeader;
+
+  const {
+    HeaderRowIndex,
+    HeaderHeight,
+    TableDataStartingIndex,
+    TableDataRowHeight,
+    TitleRowIndex,
+    TitleHeight
+  } = ScheduleSheetConfig;
+  
+// TITLE ROW-------------------------------------------------------------------
+const title = `Schedule Details List - ${format(new Date(Date.now()),'dd/MM/yyy')}`; // Format: DD/MM/YYYY
+table.insertRow(TitleRowIndex, [title]); // Add title row
+
+const titleRow = table.getRow(TitleRowIndex);
+titleRow.height = TitleHeight;
+titleRow.font = { name: "Noto Sans Display Black", size: 20, bold: true };
+titleRow.alignment = { horizontal: "center", vertical: "middle" };
+
+// Merge all header columns to create a single heading cell
+table.mergeCells(1, 1, 1, table.columns.length);
+// TITLE ROW-------------------------------------------------------------------
+
+  // HEADER-------------------------------------------------------------------
+
+  const headerRow = table.getRow(HeaderRowIndex);
+  headerRow.font = HeaderFont;
+  headerRow.height = HeaderHeight;
+
+  headerRow.eachCell((cell) => {
+    cell.fill = HeaderRowCellFill;
+    cell.border = HeaderRowCellBorder;
   });
 
-  table.columns = [
-    {
-      header: "N0.",
-      key: "num",
-      width: 8,
-      style: {
-        alignment: {
-          vertical: "middle",
-          horizontal: "center",
-        },
-      },
-    },
-    {
-      header: "Date",
-      key: "date",
-      width: 15,
-      style: {
-        alignment: {
-          vertical: "middle",
-          horizontal: "center",
-        },
-      },
-    },
-    {
-      header: "Day",
-      key: "day",
-      width: 15,
-      style: {
-        alignment: {
-          vertical: "middle",
-          horizontal: "center",
-        },
-      },
-    },
-    {
-      header: "Duration",
-      key: "duration",
-      width: 25,
-      style: {
-        alignment: {
-          vertical: "middle",
-          horizontal: "center",
-        },
-      },
-    },
-    {
-      header: "Package Name",
-      key: "package",
-      width: 30,
-      style: {
-        alignment: {
-          vertical: "middle",
-          horizontal: "center",
-        },
-      },
-    },
-    {
-      header: "Type",
-      key: "type",
-      width: 15,
-      style: {
-        alignment: {
-          vertical: "middle",
-          horizontal: "center",
-        },
-      },
-    },
-    {
-      header: "Status",
-      key: "status",
-      width: 15,
-      style: {
-        alignment: {
-          vertical: "middle",
-          horizontal: "center",
-        },
-      },
-    },
-  ];
+  // HEADER-------------------------------------------------------------------
 
-  table.getRow(1).font = {
-    name: "header",
-    family: 1,
-    size: 12,
-    bold: true,
-  };
-
-  TableRowData.map((item, i) => {
+  // TABLE BODY -------------------------------------------------------------------
+  Schedules.map((schedule, i) => {
     const { Package, day, schedulePackage, scheduleStatus, fromTime, toTime } =
-      item;
-    const date = format(day, "dd/ MM /yyyy");
-    const dayOfWeek = format(day, "EEEE");
+      schedule;
+    const rowIndex = i + TableDataStartingIndex;
+    const dateStr = format(day, "dd/ MM /yyyy");
+    const dayStr = format(day, "EEEE");
+
     const data = selectFromTimeAndToTimeFromScheduleOrPackages({
       Packages: {
         packageFromTime: Package?.fromTime ?? "",
@@ -133,20 +97,32 @@ export async function createExcelSheetWithoutBookingCount({
         scheduleToTime: toTime,
       },
     });
+
     const fromToTime = data.fromTime + " - " + data.toTime;
 
     table.addRow({
       num: i + 1,
-      date: date,
-      day: dayOfWeek,
+      date: dateStr,
+      day: dayStr,
       duration: fromToTime,
       package: Package?.title,
       type: schedulePackage,
       status: scheduleStatus,
     });
-  });
 
-  const statusColumn = await table.getColumn(7);
+    // Styling the row
+    const newRow = table.getRow(rowIndex);
+    newRow.height = TableDataRowHeight; // You can go 28 or 30 if needed
+    newRow.eachCell((cell) => {
+      cell.font = TableBodyFont;
+      cell.alignment = TableBodyAlignment;
+      cell.border = TableBodyBorder;
+    });
+  });
+  // TABLE BODY -------------------------------------------------------------------
+
+  // BLOCKED SCHEDULE STYLING
+  const statusColumn = table.getColumn(7);
   statusColumn.eachCell((cell) => {
     const cellAddress = table.getCell(cell.address);
     const cellValue = cellAddress.value;
@@ -159,6 +135,34 @@ export async function createExcelSheetWithoutBookingCount({
       };
     }
   });
+
+  // Merge cells for the "date" and "day" columns with same value
+  let currentMergeStart = ScheduleSheetConfig.TableDataStartingIndex;
+  let previousDate = table.getCell(`B${currentMergeStart}`).value;
+
+  for (
+    let i = ScheduleSheetConfig.TableDataStartingIndex + 1;
+    i <= table.rowCount;
+    i++
+  ) {
+    const currentDate = table.getCell(`B${i}`).value;
+
+    if (currentDate !== previousDate) {
+      if (i - 1 > currentMergeStart) {
+        // Merge the previous group of same dates
+        table.mergeCells(`B${currentMergeStart}:B${i - 1}`);
+        table.mergeCells(`C${currentMergeStart}:C${i - 1}`);
+      }
+      currentMergeStart = i;
+      previousDate = currentDate;
+    }
+  }
+
+  // Merge remaining rows if they end with same date
+  if (currentMergeStart < table.rowCount) {
+    table.mergeCells(`B${currentMergeStart}:B${table.rowCount}`);
+    table.mergeCells(`C${currentMergeStart}:C${table.rowCount}`);
+  }
 
   workbook.xlsx.writeBuffer().then((data: any) => {
     const blob = new Blob([data], {
