@@ -15,6 +15,7 @@ import { TGetBookedDetails } from "@/db/data/dto/booking";
 import { useRouter } from "next/navigation";
 import { sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import PrefillButton from "./PrefillButton";
 
 /**
  * accept a type prop which will be notified as update / add ENUM
@@ -44,7 +45,7 @@ export default function OfflineBookingForm({
   prefillData,
 }: TOfflineBookingForm) {
   const { invalidate: InvalidateBookingSchedule } =
-    trpc.useUtils().admin.booking
+    trpc.useUtils().admin.booking;
   const { mutate: createOfflineBooking, isPending: isLoading } =
     trpc.admin.booking.createNewOfflineBooking.useMutation({
       onMutate() {
@@ -115,6 +116,7 @@ export default function OfflineBookingForm({
     register,
     formState: { errors, isSubmitting, isDirty },
     reset,
+    setValue
   } = useForm<TOfflineBookingFormSchema>({
     resolver: zodResolver(offlineBookingFormSchema),
     defaultValues: {
@@ -137,10 +139,13 @@ export default function OfflineBookingForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-      <h1 className="text-5xl font-extrabold">
-        {type === "ADD" ? "Add Booking" : "Update Booking"}
-      </h1>
-      <p className="my-3">Offline Booking Form</p>
+        <h1 className="text-5xl font-extrabold">
+          {type === "ADD" ? "Add Booking" : "Update Booking"}
+        </h1>
+      <div className="flex justify-between items-center">
+        <p className="">Offline Booking Form</p>
+        {type==='ADD' ? <PrefillButton setValue={setValue}/>: null}
+      </div>  
       <div className="w-full border-b border-gray-200 my-5"></div>
       <div className="grid grid-cols-3 max-md:flex max-md:flex-col gap-3 ">
         <div className="col-span-2 flex flex-col justify-between ">
