@@ -61,24 +61,24 @@ export default function ScheduleTable() {
     <div className="mt-12 mx-auto">
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="text-lg">
             <TableRow className="border-b ">
-              <TableHead className="w-[120px] border-r font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 w-[120px] border-r font-bold max-sm:text-[9px]">
                 Date
               </TableHead>
-              <TableHead className="w-[100px] border-r font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 w-[100px] border-r font-bold max-sm:text-[9px]">
                 Day
               </TableHead>
-              <TableHead className="w-[150px] border-r font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 w-[150px] border-r font-bold max-sm:text-[9px]">
                 From To
               </TableHead>
-              <TableHead className="border-r font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 border-r font-bold max-sm:text-[9px]">
                 Package Name
               </TableHead>
-              <TableHead className="w-[120px] border-r font-bold max-sm:text-[9px] max-sm:hidden">
+              <TableHead className="h-16 w-[200px] border-r font-bold max-sm:text-[9px] max-sm:hidden">
                 Package Type
               </TableHead>
-              <TableHead className="w-[120px] font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 w-[200px] font-bold max-sm:text-[9px]">
                 Package Status
               </TableHead>
             </TableRow>
