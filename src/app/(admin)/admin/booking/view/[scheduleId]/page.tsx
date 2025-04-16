@@ -40,6 +40,7 @@ export default async function ViewBooking({
   const bookings: TGetBookingsByScheduleId =
     await getBookingsByScheduleId(scheduleId);
   if (!booking) return null;
+  
   return (
     <div className="">
       <h2 className="font-bold text-3xl text-center py-5">Booking data</h2>
@@ -55,7 +56,7 @@ export default async function ViewBooking({
               }}
               className="flex pl-2 justify-between"
             />
-            <DownloadBookingButton tableData={bookings} />
+            {bookings?.length ? <DownloadBookingButton tableData={bookings}/> : null}
           </div>
         </div>
         <div className="flex flex-wrap max-sm:justify-between max-sm:w-full sm:gap-5">
@@ -120,11 +121,11 @@ export default async function ViewBooking({
         <TableBody>
           {bookings && bookings.length > 0
             ? bookings.map((booking, i) => {
-                const formattedDate = format(booking.createdAt, "P");
+                const formattedDate = format(booking.createdAt, "dd/MM/yyyy");
                 return (
                   <TableRow
                     key={`aa-${booking.id}-view-booking-table-row-${i}`}
-                    className="text-center cursor-pointer"
+                    className=" cursor-pointer"
                   >
                     <TableCell className="border-r max-sm:text-[9px] max-sm:p-0">
                       {i + 1}

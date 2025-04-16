@@ -34,9 +34,12 @@ import {
 } from "lucide-react";
 import ExcelJS from "exceljs";
 import { TGetBookingsByScheduleId } from "@/db/data/dto/schedule";
+import { format } from "date-fns";
+import toast from "react-hot-toast";
 
 interface IDownloadTable {
-  tableData?: TGetBookingsByScheduleId;
+  tableData: TGetBookingsByScheduleId;
+  date?:string
 }
 
 export default function DownloadBookingButton({ tableData }: IDownloadTable) {
@@ -49,38 +52,24 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
   function exportExcelFile() {
     const workbook = new ExcelJS.Workbook();
 
-    // workbook.creator='ASLAM'
-    // workbook.created= new Date(Date.now())
-
     const BookingTable = workbook.addWorksheet("Bookings", {
       pageSetup: {
         paperSize: 9,
         orientation: "landscape",
         fitToPage: true,
         fitToWidth: 1,
-        fitToHeight: 1,
-        // margins: {
-        //   bottom: 2,
-        //   footer: 2,
-        //   header: 2,
-        //   left: 2,
-        //   right: 2,
-        //   top: 2
-        // },
+        fitToHeight: 0,
+        margins: {
+          bottom: 0.5,
+          footer: 0.5,
+          header: 0.5,
+          left: 0.5,
+          right: 0.5,
+          top: 1.5,
+        },
       },
+       views: [{ state: 'frozen', ySplit: 2 }],
     });
-
-    // sheet.properties.defaultColWidth = 10
-
-    BookingTable.getRow(1).font = {
-      name: "header",
-      family: 1,
-      size: 12,
-      bold: true,
-    };
-    // BookingTable.eachRow(item)
-
-    // const customTableDataColumns = workbook.addWorksheet().columns
 
     BookingTable.columns = [
       {
@@ -196,15 +185,63 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
       {
         header: "Description",
         key: "description",
-        width: 20,
+        width: 30,
         style: {
           alignment: {
-            vertical: "middle",
+            vertical: "justify",
             horizontal: "center",
           },
         },
       },
     ];
+
+    if(!tableData?.length) {
+      toast.error("Table data empty")
+      return
+    }
+
+    // TITLE ROW-------------------------------------------------------------------
+    const ScheduleDate = tableData[0].schedule.day
+    const title = `Schedule Details - ${format(ScheduleDate,'dd/MM/yyy')}`; // Format: DD/MM/YYYY
+    BookingTable.insertRow(1, [title]); // Add title row
+
+    const titleRow = BookingTable.getRow(1);
+    titleRow.height = 50;
+    titleRow.font = { name: "Noto Sans Display Black", size: 20, bold: true };
+    titleRow.alignment = { horizontal: "center", vertical: "middle" };
+
+    // Merge all header columns to create a single heading cell
+    BookingTable.mergeCells(1, 1, 1, BookingTable.columns.length);
+    // TITLE ROW-------------------------------------------------------------------
+
+
+    // HEADER-------------------------------------------------------------------
+    const headerRow = BookingTable.getRow(2);
+    headerRow.font = {
+      name: "Calibri",
+      size: 16,
+      bold: true,
+      // color: { argb: "FFFFFFFF" }, // White text
+    };
+    headerRow.height = 25;
+
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF0070C0" }, // Blue background
+      };
+
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      };
+    });
+
+    // HEADER-------------------------------------------------------------------
+
     // Do something here when table data in empty
     tableData?.map((item, index) => {
       const {
@@ -219,7 +256,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         user,
       } = item;
       BookingTable.addRow({
-        num: index - 1,
+        num: index + 1,
         name: user.name,
         bookingDate: createdAt,
         package: schedule.schedulePackage,
@@ -230,6 +267,26 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
         child: numOfChildren,
         kids: numOfBaby,
         description: description,
+      });
+
+      const rowIndex = index + 3;
+
+      // Styling the row
+      const newRow = BookingTable.getRow(rowIndex);
+      newRow.height = 25; // You can go 28 or 30 if needed
+      newRow.eachCell((cell) => {
+        cell.font = { name: "Calibri", size: 13 };
+        cell.alignment = {
+          vertical: "middle",
+          horizontal: "center",
+          wrapText: true,
+        };
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" },
+        };
       });
     });
 
