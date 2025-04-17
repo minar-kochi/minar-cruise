@@ -61,7 +61,7 @@ const scheduleSlice = createSlice({
       ) {
         state.SchedulesWithBookingData = action.payload.data;
       },
-      prepare({data}:{data: InfinitySchedulesWithBookingCount[] | undefined}) {
+      prepare(data: InfinitySchedulesWithBookingCount[] | undefined) {
         const unformattedSchedulesArray =
           data?.flatMap((item) => item.response) ?? [];
 

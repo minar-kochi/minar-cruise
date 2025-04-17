@@ -51,7 +51,7 @@ export default function BookingSchedule() {
   });
 
   useEffect(() => {
-    dispatch(setScheduleForBooking({ data: bookingSchedules?.pages }));
+    dispatch(setScheduleForBooking(bookingSchedules?.pages));
   }, [bookingSchedules?.pages, dispatch]);
 
   const sortedScheduleArray = Object.entries(SchedulesWithBookingData).sort(

@@ -184,5 +184,5 @@ export type TScheduleWithBookingCount = {
     title:string,
     fromTime:string,
     toTime:string
-  },
+  } | null,
 }
