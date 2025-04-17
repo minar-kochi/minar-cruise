@@ -27,7 +27,7 @@ import RouterRefreshButton from "../booking/RouterRefresh";
 const Header = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="">
-      <header className="flex h-14 bg-background  top-0 sticky items-center gap-4 border-b  px-4 lg:h-[60px] lg:px-6 ">
+      <header className="flex h-14 z-50 bg-muted  top-0 sticky items-center gap-4 border-b  px-4 lg:h-[60px] lg:px-6 ">
         <Sheet>
           <SheetTrigger asChild>
             <Button

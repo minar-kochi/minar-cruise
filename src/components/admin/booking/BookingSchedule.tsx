@@ -61,24 +61,24 @@ export default function BookingSchedule() {
   return (
     <div className="rounded-md p-2 border m-2">
       <Table className="max-sm:m-2">
-        <TableHeader className="text-lg bg-muted-foreground/10">
+        <TableHeader className="md:text-lg bg-muted-foreground/10">
           <TableRow className="hover:bg-transparent ">
-            <TableHead className=" h-16 max-sm:text-balance center font-bold ">
+            <TableHead className=" h-16 max-sm:text-balance  font-bold ">
               Date
             </TableHead>
-            <TableHead className=" h-16 max-sm:text-balance center font-bold ">
+            <TableHead className=" h-16 max-sm:text-balance  font-bold  ">
               Day
             </TableHead>
-            <TableHead className=" h-16 max-sm:text-balance center font-bold max-sm:hidden">
+            <TableHead className=" h-16 max-sm:text-balance max-sm:p-1 font-bold max-sm:hidden">
               Timing
             </TableHead>
-            <TableHead className=" h-16 max-sm:text-balance center font-bold ">
+            <TableHead className=" h-16 max-sm:text-balance  font-bold ">
               Package
             </TableHead>
-            <TableHead className=" h-16 max-sm:text-balance center font-bold ">
+            <TableHead className=" h-16 max-sm:text-balance max-sm:text-center max-sm:p-1 font-bold ">
               Booked seats
             </TableHead>
-            <TableHead className=" h-16 max-sm:text-balance center font-bold ">
+            <TableHead className=" h-16 max-sm:text-balance max-sm:text-center max-sm:p-1 font-bold ">
               Remaining seats
             </TableHead>
           </TableRow>
@@ -114,22 +114,22 @@ export default function BookingSchedule() {
                        cursor-pointer  
                     `}
                     >
-                      <TableCell className={``}>
+                      <TableCell className={`max-sm:p-1`}>
                         {index === 0 && formattedDate}
                       </TableCell>
-                      <TableCell className={``}>
+                      <TableCell className={`max-sm:p-1`}>
                         {index === 0 && formattedDay}
                       </TableCell>
-                      <TableCell className=" max-sm:text-[9px] max-sm:hidden">
+                      <TableCell className=" max-lg:hidden">
                         {fromTime} - {toTime}
                       </TableCell>
-                      <TableCell className=" max-sm:text-[9px] max-sm:w-[80px] max-sm:p-0">
+                      <TableCell className=" max-lg:p-1">
                         <p className="">{schedule.Package?.title}</p>
                       </TableCell>
-                      <TableCell className=" max-sm:text-[9px] max-sm:p-0 max-sm:w-[50px]">
+                      <TableCell className="max-sm:text-center max-sm:p-1">
                         {schedule.Booking}
                       </TableCell>
-                      <TableCell className=" max-sm:text-[9px] max-sm:p-0 max-sm:w-[50px]">
+                      <TableCell className="max-sm:text-center ">
                         {MAX_BOAT_SEAT - schedule.Booking}
                       </TableCell>
                       {/* <TableCell className=" max-sm:text-[8px] p-0 max-sm:hidden"></TableCell>{" "} */}
