@@ -59,26 +59,26 @@ export default function ScheduleTable() {
   });
   return (
     <div className="mt-12 mx-auto">
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader className="text-lg">
-            <TableRow className="border-b ">
-              <TableHead className="h-16 w-[120px] border-r font-bold max-sm:text-[9px]">
+      <div className="rounded-md p-2 border">
+        <Table className="">
+          <TableHeader className="sm:text-sm md:text-md lg:text-lg bg-muted-foreground/10">
+            <TableRow className="border-b">
+              <TableHead className="h-16 w-[120px]  font-bold ">
                 Date
               </TableHead>
-              <TableHead className="h-16 w-[100px] border-r font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 w-[100px]  font-bold ">
                 Day
               </TableHead>
-              <TableHead className="h-16 w-[150px] border-r font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 w-[150px]  font-bold ">
                 From To
               </TableHead>
-              <TableHead className="h-16 border-r font-bold max-sm:text-[9px]">
+              <TableHead className="h-16  font-bold ">
                 Package Name
               </TableHead>
-              <TableHead className="h-16 w-[200px] border-r font-bold max-sm:text-[9px] max-sm:hidden">
+              <TableHead className="h-16 w-[200px]  font-bold  max-sm:hidden">
                 Package Type
               </TableHead>
-              <TableHead className="h-16 w-[200px] font-bold max-sm:text-[9px]">
+              <TableHead className="h-16 w-[200px] font-bold ">
                 Package Status
               </TableHead>
             </TableRow>
@@ -105,13 +105,13 @@ export default function ScheduleTable() {
                       className={`
                     ${index === 0 ? "border-t-0" : ""}
                     ${index === schedules.length - 1 ? "border-b" : "border-b-0"}
-                    ${index === 0 && groupIndex !== 0 ? "border-" : ""}
+                    ${index === 0 && groupIndex !== 0 ? "" : ""}
                     ${isBlocked ? "bg-red-600/40" : ""}
                   `}
                     >
                       <TableCell
                         className={`
-                      border-r max-sm:text-[9px] align-top
+                       max-sm:text-[9px] align-top
                       ${index === 0 ? "pt-4" : "pt-2"}
                       ${index === schedules.length - 1 ? "pb-4" : "pb-2"}
                     `}
@@ -124,7 +124,7 @@ export default function ScheduleTable() {
                       </TableCell>
                       <TableCell
                         className={`
-                      border-r max-sm:text-[9px] align-top
+                       max-sm:text-[9px] align-top
                       ${index === 0 ? "pt-4" : "pt-2"}
                       ${index === schedules.length - 1 ? "pb-4" : "pb-2"}
                     `}
@@ -135,7 +135,7 @@ export default function ScheduleTable() {
                       </TableCell>
                       <TableCell
                         className={`
-                      border-r max-sm:text-[9px]
+                       max-sm:text-[9px]
                       ${index === 0 ? "pt-4" : "pt-2"}
                       ${index === schedules.length - 1 ? "pb-4" : "pb-2"}
                     `}
@@ -148,7 +148,7 @@ export default function ScheduleTable() {
                       </TableCell>
                       <TableCell
                         className={`
-                      border-r max-sm:text-[9px]
+                       max-sm:text-[9px]
                       ${index === 0 ? "pt-4" : "pt-2"}
                       ${index === schedules.length - 1 ? "pb-4" : "pb-2"}
                     `}
@@ -157,7 +157,7 @@ export default function ScheduleTable() {
                       </TableCell>
                       <TableCell
                         className={`
-                      border-r max-sm:text-[9px] max-sm:hidden
+                       max-sm:text-[9px] max-sm:hidden
                       ${index === 0 ? "pt-4" : "pt-2"}
                       ${index === schedules.length - 1 ? "pb-4" : "pb-2"}
                     `}
@@ -219,77 +219,4 @@ export default function ScheduleTable() {
       ) : null}
     </div>
   );
-}
-
-{
-  /* <Table className="border">
-  <TableHeader className="">
-    <TableRow className="">
-      <TableHead className="border-r font-bold max-sm:text-[9px] ">
-        Date
-      </TableHead>
-      <TableHead className="border-r font-bold max-sm:text-[9px] ">
-        Day
-      </TableHead>
-      <TableHead className="border-r font-bold max-sm:text-[9px] ">
-        From To
-      </TableHead>
-      <TableHead className="border-r font-bold max-sm:text-[9px] ">
-        Package Name
-      </TableHead>
-      <TableHead className="border-r font-bold max-sm:text-[9px]  max-sm:hidden">
-        Package Type
-      </TableHead>
-      <TableHead className="font-bold max-sm:text-[9px] ">
-        Package Status
-      </TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody className="">
-    {data &&
-      data.pages?.length &&
-      data.pages.map((page) => {
-        return page.schedules.map((item, i) => {
-          const { fromTime, toTime } =
-            selectFromTimeAndToTimeFromScheduleOrPackages({
-              Packages: {
-                packageFromTime: item.Package?.fromTime ?? "",
-                packageToTime: item.Package?.toTime ?? "",
-              },
-              schedule: {
-                scheduleFromTime: item.fromTime,
-                scheduleToTime: item.toTime,
-              },
-            });
-
-          return (
-            <TableRow ref={ref} key={`${item.id}-table-row`} className="">
-              <TableCell className="border-r  max-sm:w-[70px] max-sm:text-[9px] p-0">
-                <p className="text-nowrap max-sm:text-center max-sm:px-0 px-4">
-                  {format(item.day, "dd/ MMM / yy")}
-                </p>
-              </TableCell>
-              <TableCell className="border-r  max-sm:text-[9px] max-sm:text-pretty  max-sm:px-1">
-                {format(item.day, "EEEE")}
-              </TableCell>
-              <TableCell className=" border-r  max-sm:text-[9px] max-sm:w-[110px] max-sm:p-0 max-sm:text-center">
-                <p className="">
-                  {fromTime} - {toTime}
-                </p>
-              </TableCell>
-              <TableCell className="border-r  max-sm:text-[9px] max-sm:text-pretty max-sm:p-0">
-                <p className="max-sm:text-center">{item.Package?.title}</p>
-              </TableCell>
-              <TableCell className="border-r  max-sm:text-[9px] max-sm:text-pretty max-sm:hidden">
-                {item.schedulePackage}
-              </TableCell>
-              <TableCell className=" max-sm:text-[9px] max-sm:text-pretty">
-                {item.scheduleStatus}
-              </TableCell>
-            </TableRow>
-          );
-        });
-      })}
-  </TableBody>
-</Table>; */
 }
