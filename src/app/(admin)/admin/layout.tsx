@@ -15,6 +15,8 @@ import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import LoadingState from "../../../components/custom/Loading";
+import TailwindBreakpointViewer from "@/components/TailwindBreakPointCss";
+import { isProd } from "@/lib/utils";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -51,7 +53,7 @@ export default async function RootLayout({
                 routerConfig={extractRouterConfig(ourFileRouter)}
               />
               {children}
-
+              {!isProd ? <TailwindBreakpointViewer/>:null}
               <ScheduleBarWrapper />
             </Suspense>
           </Providers>
