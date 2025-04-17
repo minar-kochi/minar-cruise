@@ -18,8 +18,9 @@ export default function OpenScheduleButton({ title }: { title?: string }) {
       onClick={() => {
         dispatch(setIsModalToggle());
       }}
+      className="w-full"
     >
-      {title ? title : "Schedule"}
+      {title ? title : "Manage Schedule"}
     </Button>
   );
 }
