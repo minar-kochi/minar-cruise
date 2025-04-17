@@ -588,6 +588,7 @@ export async function getBookingsByScheduleId(id: string) {
         schedule: {
           select: {
             schedulePackage: true,
+            day: true
           },
         },
         payment: {

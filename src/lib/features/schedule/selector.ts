@@ -238,7 +238,7 @@ export const isScheduleInputsChanged = createSelector(
     if (Changed.packageId || Changed.isTimeOnlyChanged) {
       Changed.isAnyChanged = true;
     }
-    console.log(Changed);
+    // console.log(Changed);
     return Changed;
   },
 );
