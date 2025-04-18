@@ -120,7 +120,7 @@ export default function BookingSchedule() {
                       <TableCell className={`max-sm:p-1`}>
                         {index === 0 && formattedDay}
                       </TableCell>
-                      <TableCell className=" max-lg:hidden">
+                      <TableCell className=" max-sm:hidden">
                         {fromTime} - {toTime}
                       </TableCell>
                       <TableCell className=" max-lg:p-1">

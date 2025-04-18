@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { ModalContext } from "@/context/ModalProvider";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import {
@@ -13,14 +14,13 @@ import toast from "react-hot-toast";
 export default function OpenScheduleButton({ title }: { title?: string }) {
   const dispatch = useAppDispatch();
   return (
-    <Button
-      variant={"secondary"}
+    <SidebarMenuButton
       onClick={() => {
         dispatch(setIsModalToggle());
       }}
-      className="w-full"
+      className="w-full font-bold py-6 bg-muted hover:bg-muted/50"
     >
-      {title ? title : "Manage Schedule"}
-    </Button>
+      {title ? title : <p className="text-center mx-auto">Manage Schedule</p>}
+    </SidebarMenuButton>
   );
 }
