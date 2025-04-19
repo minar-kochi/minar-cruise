@@ -105,10 +105,6 @@ export const sideBarData = {
           title: "Create blog",
           url: "/admin/blog/create",
         },
-        {
-          title: "Update blog",
-          url: "#",
-        },
       ],
     },
     {
