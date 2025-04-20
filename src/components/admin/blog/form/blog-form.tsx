@@ -86,7 +86,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
   });
 
   const { fetch } = trpc.useUtils().admin.blog.checkSlug;
-  
+
   const {
     register,
     handleSubmit,
@@ -108,19 +108,18 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
     },
   });
 
-
   const onSubmitBlog = async (data: TBlogFormValidators) => {
-    // UPDATE BLOG 
+    // UPDATE BLOG
     if (type === "UPDATE") {
       if (!prefill) {
         toast.error("Failed to update, Please try again");
         return;
       }
-      await updateBlog({ ...data, id: prefill.id });
+      updateBlog({ ...data, id: prefill.id });
       return;
     }
 
-    // CREATE BLOG 
+    // CREATE BLOG
 
     // Check if the slug already exists
     const slugExists = await fetch(data.blogSlug);
@@ -137,7 +136,6 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
   const title = getValues("title");
   const author = getValues("author");
   const content = getValues("content");
-  console.log(content);
 
   return (
     <div className="border-2">
@@ -251,7 +249,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
                 defaultSelection: "rootEnd",
               }}
               placeholder={<p>Write your Beautiful content here</p>}
-              markdown={``}
+              markdown={content}
               className=""
             />
             <div className="">

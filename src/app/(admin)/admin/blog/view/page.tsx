@@ -26,11 +26,12 @@ export default function page() {
         toast.error("Seed incomplete, Please Try again");
       },
     });
-    // remove this line when trpc types inference are available
-  const blogs: Blog[] = data;
+  // remove this line when trpc types inference are available
+
+  // const blogs: Blog[] = data ?? [];
 
   async function handleSeed() {
-    await seedBlogs({ count: 2 });
+    seedBlogs({ count: 2 });
   }
 
   return (
@@ -45,7 +46,7 @@ export default function page() {
             <div className="animate-ping w-full h-10 bg-muted"></div>
           </div>
         ) : null}
-        {blogs?.map((blog, blogIndex) => {
+        {data?.map((blog, blogIndex) => {
           return (
             <div
               key={`${blog.id}+${blogIndex}`}
@@ -66,8 +67,7 @@ export default function page() {
           );
         })}
       </div>
-      <Button onClick={handleSeed}>Seed Blogs</Button>
-
+      <Button onClick={handleSeed}>Seed data</Button>
     </div>
   );
 }
