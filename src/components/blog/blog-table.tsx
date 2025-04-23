@@ -20,6 +20,8 @@ import Image from "next/image";
 import { format } from "date-fns";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { BLOG_INFINITE_QUERY_LIMIT, VIEW_BEFORE_PX } from "@/constants/config";
+import { useInView } from "react-intersection-observer";
 
 export default function BlogTable({
   initialData,
@@ -29,9 +31,18 @@ export default function BlogTable({
     nextCursor: string | undefined;
   };
 }) {
+  const { ref } = useInView({
+    threshold: 0,
+    rootMargin: `${VIEW_BEFORE_PX}px 0px`,
+    onChange(inView, entry) {
+      if (entry.isIntersecting) {
+        fetchNextPage();
+      }
+    },
+  });
   const { data, isFetching, fetchNextPage } =
     trpc.admin.blog.fetchBlogsInfinityQuery.useInfiniteQuery(
-      { limit: 6 },
+      { limit: BLOG_INFINITE_QUERY_LIMIT },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
         initialData: {
@@ -70,13 +81,11 @@ export default function BlogTable({
     seedBlogs({ count: 6 });
   }
 
-  console.log(data);
-
   return (
     <div>
       <div className="p-2">
         <Table className="">
-          <TableCaption>A list of your recent blogs.</TableCaption>
+          {/* <TableCaption>A list of your recent blogs.</TableCaption> */}
           <TableHeader className="">
             <TableRow className="text-lg bg-muted">
               <TableHead className="">Content</TableHead>
@@ -139,17 +148,19 @@ export default function BlogTable({
         </Table>
       </div>
 
-      <div className="flex justify-between">
-        <Button onClick={() => fetchNextPage()}>
-          {isFetching ? (
-            <Loader2 className="animate-spin h-4 w-full" />
-          ) : (
-            "load more"
-          )}
-        </Button>
-
-        <Button onClick={handleSeed}>Seed data</Button>
+      <div
+        ref={ref}
+        className={cn(`h-20`, {
+          "animate-pulse bg-muted": isFetching,
+        })}
+      >
+        {isFetching ? (
+          <div className="h-20 flex items-center justify-center">
+            <Loader2 className="animate-spin h-10 w-full" />
+          </div>
+        ) : null}
       </div>
+      <Button onClick={handleSeed}>Seed data</Button>
     </div>
   );
 }

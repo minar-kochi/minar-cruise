@@ -25,7 +25,7 @@ export default function ChooseImg({
     rootMargin: `${VIEW_BEFORE_PX}px 0px`,
     onChange(inView, entry) {
       if (entry.isIntersecting) {
-        toast.success("interescted");
+        // toast.success("interescted");
         fetchNextPage();
       }
     },
