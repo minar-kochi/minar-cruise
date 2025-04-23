@@ -9,6 +9,8 @@ import {
   BlogFormValidators,
 } from "@/lib/validators/BlogFormValidators";
 import { blogsInfinityQueryPropsValidation } from "@/lib/validators/blogs";
+import { revalidateAllBlogs, revalidateUniqueBlog } from "@/revalidator/blog";
+import { revalidateAllPackageImageUse } from "@/revalidator/package";
 import { AdminProcedure, publicProcedure, router } from "@/server/trpc";
 import { faker } from "@faker-js/faker";
 import { $Enums } from "@prisma/client";
@@ -147,6 +149,7 @@ export const blog = router({
           });
         }
 
+        await revalidateAllBlogs()
         return data;
       } catch (error) {
         console.log(error);
@@ -202,6 +205,7 @@ export const blog = router({
         },
       });
 
+      await revalidateUniqueBlog({ id,blogSlug });
       return updateResponse;
     },
   ),
@@ -217,9 +221,10 @@ export const blog = router({
           id,
         },
       });
-      console.log(data);
 
-      return;
+      await revalidateAllBlogs();
+
+      return data.id;
     } catch (error) {
       console.log(error);
       throw new TRPCError({
