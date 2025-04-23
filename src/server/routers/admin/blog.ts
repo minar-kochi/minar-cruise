@@ -1,4 +1,7 @@
-import { BLOG_INFINITE_QUERY_LIMIT, INFINITE_QUERY_LIMIT } from "@/constants/config";
+import {
+  BLOG_INFINITE_QUERY_LIMIT,
+  INFINITE_QUERY_LIMIT,
+} from "@/constants/config";
 import { db } from "@/db";
 import { getBlogsListDTO } from "@/db/data/dto/blog";
 import {
@@ -10,6 +13,7 @@ import { AdminProcedure, publicProcedure, router } from "@/server/trpc";
 import { faker } from "@faker-js/faker";
 import { $Enums } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { log } from "node:console";
 import { z } from "zod";
 
 export const blog = router({
@@ -81,24 +85,24 @@ export const blog = router({
     // const { cursor, limit } = input;
     const data = await getBlogsListDTO({ cursor, limit });
 
-    if(!data) {
+    if (!data) {
       throw new TRPCError({
         code: "BAD_GATEWAY",
-        message: "Failed to retrieve data"
-      })
+        message: "Failed to retrieve data",
+      });
     }
 
-    const BlogLimit = limit ?? BLOG_INFINITE_QUERY_LIMIT
-    let nextCursor: typeof cursor | undefined = undefined 
-    
-    if(data.length > BlogLimit) {
-      const nextItem = data.pop()
-      nextCursor = nextItem?.id
+    const BlogLimit = limit ?? BLOG_INFINITE_QUERY_LIMIT;
+    let nextCursor: typeof cursor | undefined = undefined;
+
+    if (data.length > BlogLimit) {
+      const nextItem = data.pop();
+      nextCursor = nextItem?.id;
     }
     return {
       blogs: data,
-      nextCursor 
-    }
+      nextCursor,
+    };
   }),
   addBlog: AdminProcedure.input(BlogFormValidators).mutation(
     async ({ ctx, input }) => {
@@ -201,6 +205,29 @@ export const blog = router({
       return updateResponse;
     },
   ),
+
+  deleteBlog: AdminProcedure.input(
+    z.object({
+      id: z.string(),
+    }),
+  ).mutation(async ({ input: { id } }) => {
+    try {
+      const data = await db.blog.delete({
+        where: {
+          id,
+        },
+      });
+      console.log(data);
+
+      return;
+    } catch (error) {
+      console.log(error);
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Failed to seed blogs.",
+      });
+    }
+  }),
   getImagesInfinity: AdminProcedure.input(
     z.object({
       limit: z.number().nullish(),

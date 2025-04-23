@@ -73,10 +73,24 @@ export default function BlogTable({
         toast.success("Seeding complete");
       },
       onError() {
+        toast.dismiss();
         toast.error("Seed incomplete, Please Try again");
       },
     });
 
+  const { mutate: deleteBlog } = trpc.admin.blog.deleteBlog.useMutation({
+    onMutate() {
+      toast.loading("Deleting record");
+    },
+    onError() {
+      toast.dismiss();
+      toast.error("Failed to delete record");
+    },
+    onSuccess() {
+      toast.dismiss();
+      toast.success("Blog Deleted Successfully");
+    },
+  });
   async function handleSeed() {
     seedBlogs({ count: 6 });
   }
@@ -87,11 +101,11 @@ export default function BlogTable({
         <Table className="">
           {/* <TableCaption>A list of your recent blogs.</TableCaption> */}
           <TableHeader className="">
-            <TableRow className="text-lg bg-muted">
-              <TableHead className="">Content</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead className="">status</TableHead>
-              <TableHead className="">Date Published</TableHead>
+            <TableRow className="bg-muted">
+              <TableHead className="">CONTENT</TableHead>
+              <TableHead>AUTHOR</TableHead>
+              <TableHead className="">STATUS</TableHead>
+              <TableHead className="text-center">DATE PUBLISHED</TableHead>
               <TableHead className="text-center"></TableHead>
             </TableRow>
           </TableHeader>
@@ -100,38 +114,47 @@ export default function BlogTable({
               items.blogs.map(
                 (
                   { author, blogStatus, createdAt, id, image, shortDes, title },
-                  i,
+                  index,
                 ) => {
                   return (
                     <TableRow
-                      key={`${id}-${createdAt}-${i}`}
+                      key={`${id}-${createdAt}-${index}`}
                       className="cursor-pointer"
                     >
-                      <TableCell className=" flex  gap-5">
+                      <TableCell className="flex  gap-5">
                         <Image
                           src={image.url}
                           alt={image.alt}
                           width={640}
                           height={480}
-                          className="w-28 h-16 object-cover rounded-md"
+                          className="w-28 h-16 object-cover rounded-md "
                         />
                         <div className="flex flex-col justify-center">
-                          <h2 className="font-medium">{title}</h2>
+                          <h2 className="font-bold">{title}</h2>
                           <p>{shortDes}</p>
                         </div>
                       </TableCell>
                       <TableCell>{author}</TableCell>
                       <TableCell>{blogStatus}</TableCell>
-                      <TableCell className="">
+                      <TableCell className="text-center">
                         {format(createdAt, "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell>
-                        <Link
-                          href={`/admin/blog/update/${id}`}
-                          className={cn(buttonVariants({ variant: "link" }))}
-                        >
-                          Update
-                        </Link>
+                        <div className="flex flex-col">
+                          <Link
+                            href={`/admin/blog/update/${id}`}
+                            className={cn(buttonVariants({ variant: "link" }))}
+                          >
+                            Update
+                          </Link>
+                          <Button
+                            className={cn("")}
+                            variant={"dangerLink"}
+                            onClick={() => deleteBlog({ id })}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -150,7 +173,7 @@ export default function BlogTable({
 
       <div
         ref={ref}
-        className={cn(`h-20`, {
+        className={cn(``, {
           "animate-pulse bg-muted": isFetching,
         })}
       >
@@ -160,7 +183,12 @@ export default function BlogTable({
           </div>
         ) : null}
       </div>
-      <Button onClick={handleSeed}>Seed data</Button>
+      <div className="flex items-center text-center w-fit mx-auto">
+        <p className="text-lg font-bold">Seed blogs here :</p>
+        <Button onClick={handleSeed} variant={"link"} className="px-2">
+          Seed blogs
+        </Button>
+      </div>
     </div>
   );
 }
