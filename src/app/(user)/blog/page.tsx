@@ -1,8 +1,10 @@
-import BlogCard from "@/components/blog/BlogCard";
 import Bounded from "@/components/elements/Bounded";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
-import { getBlogPosts } from "@/db/data/dto/blog";
+import { getBlogPosts, getBlogWithPagination } from "@/db/data/dto/blog";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
+import BlogPagination from "@/components/blog/blog-pagination";
+import { BLOG_PAGINATION_QUERY_LIMIT } from "@/constants/config";
+import BlogList from "@/components/blog/blog-list";
 
 export const metadata = constructMetadata({
   MetaHeadtitle: "Blog Page | Minar Cruise",
@@ -11,9 +13,11 @@ export const metadata = constructMetadata({
 });
 
 const AllBlogsPage = async () => {
-  const blogPosts = await getBlogPosts();
-
-  if (!blogPosts) {
+  const data = await getBlogWithPagination({
+    pageNumber: 1,
+    pageSize: BLOG_PAGINATION_QUERY_LIMIT,
+  });
+  if (!data.blogs.length) {
     console.log("could not fetch data");
     return null;
   }
@@ -21,16 +25,8 @@ const AllBlogsPage = async () => {
   return (
     <div className="bg-white">
       <FacilitiesImageCard label="Blog" overlapTitle="Blogs" />
-      <Bounded className="grid grid-cols-3 pt-10 pb-28 gap-5">
-        {blogPosts.map((blog) => (
-          <BlogCard
-            key={`${blog.id}-BlogCard`}
-            title={blog.title}
-            desc={blog.shortDes}
-            imgUrl={blog.image?.url ?? "/fallback-image.jpg"}
-            link={`/blog/${blog.blogSlug}`}
-          />
-        ))}
+      <Bounded className="">
+        <BlogList paginatedInitialData={data} />
       </Bounded>
     </div>
   );
