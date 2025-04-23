@@ -1,5 +1,39 @@
+import { BLOG_INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { TBlogsInfinityQueryPropsValidation } from "@/lib/validators/blogs";
+
+export type TGetBlogsListDTO = Awaited<ReturnType<typeof getBlogsListDTO>>;
+export async function getBlogsListDTO({
+  cursor,
+  limit,
+}: TBlogsInfinityQueryPropsValidation) {
+  try {
+    const data = await db.blog.findMany({
+      take: limit ? limit + 1 : BLOG_INFINITE_QUERY_LIMIT,
+      cursor: cursor ? { id: cursor } : undefined,
+      select: {
+        image: {
+          select: {
+            url: true,
+            alt: true,
+          }
+        },
+        id: true,
+        author: true,
+        title: true,
+        shortDes: true,
+        blogStatus: true,
+        createdAt: true,
+      }
+    });
+
+    return data;
+  } catch (error) {
+    ErrorLogger(error);
+    return null;
+  }
+}
 
 export type TGetBlogPosts = Awaited<ReturnType<typeof getBlogPosts>>;
 export async function getBlogPosts() {

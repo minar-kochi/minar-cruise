@@ -1,9 +1,11 @@
-import { INFINITE_QUERY_LIMIT } from "@/constants/config";
+import { BLOG_INFINITE_QUERY_LIMIT, INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { db } from "@/db";
+import { getBlogsListDTO } from "@/db/data/dto/blog";
 import {
   BlogFormUpdateValidator,
   BlogFormValidators,
 } from "@/lib/validators/BlogFormValidators";
+import { blogsInfinityQueryPropsValidation } from "@/lib/validators/blogs";
 import { AdminProcedure, publicProcedure, router } from "@/server/trpc";
 import { faker } from "@faker-js/faker";
 import { $Enums } from "@prisma/client";
@@ -73,20 +75,31 @@ export const blog = router({
       });
     }
   }),
-  fetchAllBlogsInfinityQuery: AdminProcedure
-    // .input(
-    //   z.object({ cursor: z.string().nullish(), limit: z.number().nullish() }),
-    // )
-    .query(async ({ input }) => {
-      // const { cursor, limit } = input;
+  fetchBlogsInfinityQuery: AdminProcedure.input(
+    blogsInfinityQueryPropsValidation,
+  ).query(async ({ input: { cursor, limit } }) => {
+    // const { cursor, limit } = input;
+    const data = await getBlogsListDTO({ cursor, limit });
 
-      const data = await db.blog.findMany({
-        // cursor: cursor ? { id: cursor } : undefined,
-        // take: limit ? limit + 1 : INFINITE_QUERY_LIMIT,
-      });
+    if(!data) {
+      throw new TRPCError({
+        code: "BAD_GATEWAY",
+        message: "Failed to retrieve data"
+      })
+    }
 
-      return data;
-    }),
+    const BlogLimit = limit ?? BLOG_INFINITE_QUERY_LIMIT
+    let nextCursor: typeof cursor | undefined = undefined 
+    
+    if(data.length > BlogLimit) {
+      const nextItem = data.pop()
+      nextCursor = nextItem?.id
+    }
+    return {
+      blogs: data,
+      nextCursor 
+    }
+  }),
   addBlog: AdminProcedure.input(BlogFormValidators).mutation(
     async ({ ctx, input }) => {
       const {
@@ -184,8 +197,8 @@ export const blog = router({
           title,
         },
       });
-      
-      return updateResponse
+
+      return updateResponse;
     },
   ),
   getImagesInfinity: AdminProcedure.input(
