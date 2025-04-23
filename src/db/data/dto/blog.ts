@@ -17,7 +17,7 @@ export async function getBlogsListDTO({
           select: {
             url: true,
             alt: true,
-          }
+          },
         },
         id: true,
         author: true,
@@ -25,7 +25,7 @@ export async function getBlogsListDTO({
         shortDes: true,
         blogStatus: true,
         createdAt: true,
-      }
+      },
     });
 
     return data;
@@ -35,6 +35,48 @@ export async function getBlogsListDTO({
   }
 }
 
+export type TGetBlogWithPagination = Awaited<
+  ReturnType<typeof getBlogWithPagination>
+>;
+interface IGetBlogWithPagination {
+  pageNumber: number;
+  pageSize: number;
+}
+export async function getBlogWithPagination({
+  pageNumber,
+  pageSize,
+}: IGetBlogWithPagination) {
+  const [totalBlogsCount, blogs] = await Promise.all([
+    db.blog.count({
+      where: { blogStatus: "PUBLISHED" },
+    }),
+    db.blog.findMany({
+      skip: (pageNumber - 1) * pageSize,
+      take: pageSize,
+      where: {
+        blogStatus: "PUBLISHED",
+      },
+      select: {
+        id: true,
+        title: true,
+        shortDes: true,
+        image: true,
+        imageId: true,
+        author: true,
+        blogSlug: true,
+      },
+    }),
+  ]);
+
+  return {
+    blogs,
+    meta: {
+      totalItems: totalBlogsCount,
+      totalPages: Math.ceil(totalBlogsCount / pageSize),
+      currentPage: pageNumber,
+    },
+  };
+}
 export type TGetBlogPosts = Awaited<ReturnType<typeof getBlogPosts>>;
 export async function getBlogPosts() {
   try {

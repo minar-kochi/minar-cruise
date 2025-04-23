@@ -3,7 +3,7 @@ import {
   INFINITE_QUERY_LIMIT,
 } from "@/constants/config";
 import { db } from "@/db";
-import { getBlogsListDTO } from "@/db/data/dto/blog";
+import { getBlogsListDTO, getBlogWithPagination } from "@/db/data/dto/blog";
 import {
   BlogFormUpdateValidator,
   BlogFormValidators,
@@ -106,6 +106,23 @@ export const blog = router({
       nextCursor,
     };
   }),
+  fetchPaginatedBlogs: AdminProcedure.input(
+    z.object({
+      pageNumber: z.number(),
+      pageSize: z.number(),
+    }),
+  ).query(async ({ input: { pageNumber, pageSize } }) => {
+    try {
+      const data = await getBlogWithPagination({ pageNumber, pageSize });
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw new TRPCError({
+        code: "BAD_GATEWAY",
+        message: "Failed to retrieve data",
+      });
+    }
+  }),
   addBlog: AdminProcedure.input(BlogFormValidators).mutation(
     async ({ ctx, input }) => {
       const {
@@ -149,7 +166,7 @@ export const blog = router({
           });
         }
 
-        await revalidateBlogs({})
+        await revalidateBlogs({});
         return data;
       } catch (error) {
         console.log(error);
@@ -205,7 +222,7 @@ export const blog = router({
         },
       });
 
-      await revalidateBlogs({ id,blogSlug });
+      await revalidateBlogs({ id, blogSlug });
       return updateResponse;
     },
   ),
