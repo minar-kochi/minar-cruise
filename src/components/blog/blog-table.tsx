@@ -40,28 +40,30 @@ export default function BlogTable({
       }
     },
   });
+
+  const utils = trpc.useUtils();
+  const paginationInput = { limit: BLOG_INFINITE_QUERY_LIMIT };
   const { data, isFetching, fetchNextPage } =
-    trpc.admin.blog.fetchBlogsInfinityQuery.useInfiniteQuery(
-      { limit: BLOG_INFINITE_QUERY_LIMIT },
-      {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-        initialData: {
-          pages: [
-            {
-              blogs: (initialData?.blogs ?? []).map((blog) => ({
-                ...blog,
-                createdAt:
-                  blog.createdAt instanceof Date
-                    ? blog.createdAt.toISOString()
-                    : blog.createdAt,
-              })),
-              nextCursor: initialData?.nextCursor ?? undefined,
-            },
-          ],
-          pageParams: [null],
-        },
+    trpc.admin.blog.fetchBlogsInfinityQuery.useInfiniteQuery(paginationInput, {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      initialData: {
+        pages: [
+          {
+            blogs: (initialData?.blogs ?? []).map((blog) => ({
+              ...blog,
+              createdAt:
+                blog.createdAt instanceof Date
+                  ? blog.createdAt.toISOString()
+                  : blog.createdAt,
+            })),
+            nextCursor: initialData?.nextCursor ?? undefined,
+          },
+        ],
+        pageParams: [null],
       },
-    );
+    });
+
+  // console.log("data:", data);
 
   const { mutate: seedBlogs, isPending } =
     trpc.admin.blog.seedBlogs.useMutation({
@@ -78,19 +80,43 @@ export default function BlogTable({
       },
     });
 
-  const { mutate: deleteBlog } = trpc.admin.blog.deleteBlog.useMutation({
-    onMutate() {
-      toast.loading("Deleting record");
-    },
-    onError() {
-      toast.dismiss();
-      toast.error("Failed to delete record");
-    },
-    onSuccess() {
-      toast.dismiss();
-      toast.success("Blog Deleted Successfully");
-    },
-  });
+  const { mutate: deleteBlog, data: deletedData } =
+    trpc.admin.blog.deleteBlog.useMutation({
+      onMutate() {
+        toast.loading("Deleting record");
+      },
+      onError() {
+        toast.dismiss();
+        toast.error("Failed to delete record");
+      },
+      onSuccess(deletedId) {
+        utils.admin.blog.fetchBlogsInfinityQuery.setInfiniteData(
+          paginationInput,
+          (old) => {
+            console.log("old:", old);
+
+            if (!old) return old;
+
+            const newPage = old.pages.map((page) => {
+              return {
+                ...page,
+                blogs: page.blogs.filter((blog) => blog.id !== deletedId),
+              };
+            });
+            // console.log("new page", newPage);
+
+            return {
+              ...old,
+              pages: newPage,
+            };
+          },
+        );
+        // console.log("id:", deletedId);
+
+        toast.dismiss();
+        toast.success("Blog Deleted Successfully");
+      },
+    });
   async function handleSeed() {
     seedBlogs({ count: 6 });
   }
