@@ -42,9 +42,9 @@ export default function BlogTable({
   });
 
   const utils = trpc.useUtils();
-  const paginationInput = { limit: BLOG_INFINITE_QUERY_LIMIT };
+  const infiniteQueryInput = { limit: BLOG_INFINITE_QUERY_LIMIT };
   const { data, isFetching, fetchNextPage } =
-    trpc.admin.blog.fetchBlogsInfinityQuery.useInfiniteQuery(paginationInput, {
+    trpc.admin.blog.fetchBlogsInfinityQuery.useInfiniteQuery(infiniteQueryInput, {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       initialData: {
         pages: [
@@ -91,7 +91,7 @@ export default function BlogTable({
       },
       onSuccess(deletedId) {
         utils.admin.blog.fetchBlogsInfinityQuery.setInfiniteData(
-          paginationInput,
+          infiniteQueryInput,
           (old) => {
             console.log("old:", old);
 

@@ -2,7 +2,7 @@ import PackagesInBlog from "@/components/blog/PackagesInBlog";
 import RecentBlogPosts from "@/components/blog/RecentBlogPosts";
 import Bounded from "@/components/elements/Bounded";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
-import { getBlogPostById, getBlogPosts } from "@/db/data/dto/blog";
+import { getBlogPostById } from "@/db/data/dto/blog";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import Link from "next/link";

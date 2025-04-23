@@ -397,3 +397,10 @@ export const safeTotal = (value: number) => {
   const numberValue = Number(value);
   return isNaN(numberValue) ? 0 : numberValue;
 };
+
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + '...';
+  }
+  return text;
+}
