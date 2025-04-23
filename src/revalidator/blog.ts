@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { revalidatePath } from "next/cache";
 
-export async function revalidateUniqueBlog({
+export async function revalidateBlogs({
   id,
   blogSlug,
 }: {
@@ -10,16 +10,10 @@ export async function revalidateUniqueBlog({
 }) {
   if (blogSlug) {
     revalidatePath(`/blog/${blogSlug}`);
-    revalidatePath(`/blog`, "layout");
-    revalidatePath(`/blog`, "page");
   }
   if (id) {
     revalidatePath(`/admin/blog/update/${id}`);
-    revalidatePath(`/admin/blog/update`, "page");
   }
-}
-
-export async function revalidateAllBlogs() {
   revalidatePath(`/admin/blog/view`);
   revalidatePath(`/admin/blog/view`, "page");
   revalidatePath(`/blog`);
