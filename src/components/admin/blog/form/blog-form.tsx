@@ -66,7 +66,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
     onSuccess() {
       toast.dismiss();
       toast.success("Blog Added updated!");
-      // Add redirect here
+      router.push('/admin/blog/view')
       reset();
     },
   });
