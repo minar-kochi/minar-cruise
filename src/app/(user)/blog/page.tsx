@@ -3,7 +3,7 @@ import Bounded from "@/components/elements/Bounded";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
 import { getBlogPosts } from "@/db/data/dto/blog";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import Link from "next/link";
+
 export const metadata = constructMetadata({
   MetaHeadtitle: "Blog Page | Minar Cruise",
   description:
@@ -21,13 +21,13 @@ const AllBlogsPage = async () => {
   return (
     <div className="bg-white">
       <FacilitiesImageCard label="Blog" overlapTitle="Blogs" />
-      <Bounded className="grid grid-cols-3 pt-10 pb-28">
+      <Bounded className="grid grid-cols-3 pt-10 pb-28 gap-5">
         {blogPosts.map((blog) => (
           <BlogCard
             key={`${blog.id}-BlogCard`}
             title={blog.title}
             desc={blog.shortDes}
-            imgUrl={blog.image?.url ?? ""}
+            imgUrl={blog.image?.url ?? "/fallback-image.jpg"}
             link={`/blog/${blog.blogSlug}`}
           />
         ))}
