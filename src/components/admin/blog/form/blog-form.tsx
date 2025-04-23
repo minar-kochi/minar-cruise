@@ -138,7 +138,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
   const content = getValues("content");
 
   return (
-    <div className="border-2">
+    <div className="">
       <Dialog>
         <DialogTrigger className="sticky top-[90%] left-full mr-10   z-30 bg-green-700 px-4 py-2 rounded-3xl hover:bg-green-600">
           See blog
@@ -249,7 +249,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
                 defaultSelection: "rootEnd",
               }}
               placeholder={<p>Write your Beautiful content here</p>}
-              markdown={content}
+              markdown={content ?? ''}
               className=""
             />
             <div className="">
