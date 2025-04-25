@@ -140,13 +140,6 @@ export default function BookingSchedule() {
             ))}
         </TableBody>
       </Table>
-      <div className="">
-        {isLoading ? (
-          <>
-            <LoadingState />
-          </>
-        ) : null}
-      </div>
     </div>
   );
 }
