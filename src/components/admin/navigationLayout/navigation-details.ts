@@ -37,14 +37,6 @@ export const sideBarData = {
           title: "View dashboard",
           url: "/admin",
         },
-        {
-          title: "Empty",
-          url: "#",
-        },
-        {
-          title: "Empty",
-          url: "#",
-        },
       ],
     },
     {
@@ -56,14 +48,6 @@ export const sideBarData = {
         {
           title: "Manage schedules",
           url: "/admin/schedule",
-        },
-        {
-          title: "View upcoming schedules",
-          url: "#",
-        },
-        {
-          title: "View previous schedules",
-          url: "#",
         },
       ],
     },
