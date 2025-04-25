@@ -28,7 +28,7 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
         <Image
           className="max-w-32 max-h-24 object-cover"
           alt="Hello world"
-          src={item.packageImage[0].image.url!}
+          src={item.packageImage?.[0]?.image?.url || "/fallback-image.jpg"}
           width={420}
           height={550}
         />
