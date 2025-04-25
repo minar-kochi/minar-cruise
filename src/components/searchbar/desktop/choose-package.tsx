@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+'use client'
+
 import {
   Popover,
   PopoverContent,
@@ -12,11 +11,21 @@ import ChooseDateCard from "./choose-date-card";
 
 export function ChoosePackage() {
   const packages = useClientSelector((state) => state.package.packages);
+  const { selectedPackages } = useClientSelector((state) => state.package);
+
   return (
     <Popover>
-      <PopoverTrigger className="w-full  py-2 md:py-2.5 border-muted-foreground   relative hidden md:flex items-start flex-col gap-0  ">
-        <h4 className="text-sm hidden md:block font-semibold">Which</h4>
-        <p className=" md:text-sm text-muted-foreground">Choose a package</p>
+      <PopoverTrigger className="hover:bg-primary/10 hover:rounded-r-full w-full rounded-l-full py-2 md:py-2.5 border-muted-foreground relative hidden md:flex items-start justify-center  ">
+        <div className="">
+          <h4 className=" text-left text-sm hidden md:block font-bold">Which</h4>
+          <div className="md:text-sm text-muted-foreground flex font-semibold">
+            {selectedPackages.length ? (
+              <p className="">{selectedPackages.length} package selected</p>
+            ) : (
+              <p className=""> Choose a package</p>
+            )}
+          </div>
+        </div>
         <div className="absolute h-10 w-[1px] top-auto bottom-auto right-0 bg-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent alignOffset={20} className="w-full  border-muted ">
