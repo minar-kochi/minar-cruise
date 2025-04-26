@@ -1,11 +1,11 @@
+"use client"
+
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import { useClientDispatch } from "@/hooks/clientStore/clientReducers";
-import { setPageNumber } from "@/lib/features/client/Blog/BlogSlice";
 import { cn } from "@/lib/utils";
 
 interface IBlogPagination {
@@ -16,7 +16,6 @@ export default function BlogPagination({
   totalNumberOfPages,
   currentPageNumber,
 }: IBlogPagination) {
-  const dispatch = useClientDispatch();
   return (
     <Pagination className="pb-10">
       <PaginationContent>
@@ -24,10 +23,12 @@ export default function BlogPagination({
           return (
             <PaginationItem
               key={index}
-              className={cn("", { "bg-muted rounded-md": currentPageNumber === index + 1 })}
+              className={cn("", {
+                "bg-muted rounded-md": index + 1  === Number(currentPageNumber),
+              })}
             >
               <PaginationLink
-                onClick={() => dispatch(setPageNumber(index + 1))}
+                href={`/blogs/${index + 1}`}
                 className="cursor-pointer"
               >
                 {index + 1}
