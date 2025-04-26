@@ -49,6 +49,10 @@ export const sideBarData = {
           title: "Manage schedules",
           url: "/admin/schedule",
         },
+        {
+          title: "View schedules",
+          url: "/admin/schedule/view",
+        },
       ],
     },
     {

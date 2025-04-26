@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
+import ScheduleDownloadButton from "./ScheduleDownloadButton";
 
 const VIEW_BEFORE_PX = 50;
 
@@ -57,23 +58,23 @@ export default function ScheduleTable() {
     },
   });
   return (
-    <div className="mt-12 mx-auto">
-      <div className="rounded-md p-2 border bg-sidebar">
+    <div className=" mx-auto w-full ">
+        <div className="m-2 text-4xl font-bold text-center py-4">
+          Schedule Table
+        </div>
+      <div className="flex justify-end mr-2">
+        <ScheduleDownloadButton type="scheduleWithoutBookingCount" />
+      </div>
+      <div className="rounded-md p-2 border bg-sidebar m-2">
         <Table className="">
           <TableHeader className="sm:text-sm md:text-md lg:text-lg bg-muted-foreground/10">
             <TableRow className="border-b">
-              <TableHead className="h-16 w-[120px]  font-bold ">
-                Date
-              </TableHead>
-              <TableHead className="h-16 w-[100px]  font-bold ">
-                Day
-              </TableHead>
+              <TableHead className="h-16 w-[120px]  font-bold ">Date</TableHead>
+              <TableHead className="h-16 w-[100px]  font-bold ">Day</TableHead>
               <TableHead className="h-16 w-[150px]  font-bold ">
                 From To
               </TableHead>
-              <TableHead className="h-16  font-bold ">
-                Package Name
-              </TableHead>
+              <TableHead className="h-16  font-bold ">Package Name</TableHead>
               <TableHead className="h-16 w-[200px]  font-bold  max-sm:hidden">
                 Package Type
               </TableHead>
