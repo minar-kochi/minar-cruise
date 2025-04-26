@@ -1,7 +1,6 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import LoadingState from "@/components/custom/Loading";
 import { Button } from "@/components/ui/button";
 import {
   Table,

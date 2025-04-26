@@ -1,10 +1,6 @@
-import LoadingState from "@/components/custom/Loading";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { Inter as FontSans } from "next/font/google";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import Providers from "@/context/TrpcProvider";
 import InitialStateDispatcher from "@/wrapper/admin/Schedule/initial-state-dispatcher";
 import { Suspense } from "react";
@@ -46,16 +42,12 @@ export default async function RootLayout({
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
-            <Header/>
+            <Header />
             <Toaster />
-            <Suspense fallback={<LoadingState />}>
-              <NextSSRPlugin
-                routerConfig={extractRouterConfig(ourFileRouter)}
-              />
-              {children}
-              {!isProd ? <TailwindBreakpointViewer /> : null}
-              <ScheduleBarWrapper />
-            </Suspense>
+            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+            {children}
+            {!isProd ? <TailwindBreakpointViewer /> : null}
+            <ScheduleBarWrapper />
           </SidebarInset>
         </SidebarProvider>
       </Providers>{" "}

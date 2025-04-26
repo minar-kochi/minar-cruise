@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import LoadingState from "@/components/custom/Loading";
+import TableLoadingAnimation from "@/components/custom/skeltons/table-loading-animation";
 import {
   Table,
   TableBody,
@@ -58,6 +58,9 @@ export default function BookingSchedule() {
     ([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime(),
   );
 
+  if (isLoading) {
+    return <TableLoadingAnimation />;
+  }
   return (
     <div className="rounded-md p-2 border m-2">
       <Table className="max-sm:m-2">
