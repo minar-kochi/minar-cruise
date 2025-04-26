@@ -13,7 +13,7 @@ export const metadata = constructMetadata({});
 // console.log(metadata)
 export default function page() {
   return (
-    <main className="embla__viewport relative">
+    <main className="embla__viewport relative ">
       <HomeVideo />
       <MinarSec />
       <PackagesBento />
@@ -22,9 +22,7 @@ export default function page() {
       <Facilities />
       <BookingDescription />
       <GalleryCarousel />
-      <div className="fixed h-screen top-0 left-0 w-full z-30">
-        <SearchBarWrapper className="absolute -bottom-0 md:bottom-0 w-full" />
-      </div>
+      <SearchBarWrapper className="fixed bottom-0 w-full z-30" />
     </main>
   );
 }
