@@ -19,13 +19,13 @@ export default async function BookingTable({
   bookings,
   scheduleId,
 }: {
-  bookings?: TGetBookingsByScheduleId;
+  bookings: TGetBookingsByScheduleId;
   scheduleId: string;
 }) {
   return (
     <Table className="">
-      <TableHeader className="bg-muted-foreground/10 ">
-        <TableRow className="text-md ">
+      <TableHeader className="bg-muted-foreground/10">
+        <TableRow className="text-md">
           <TableHead className="h-16 text-center max-sm:text-[9px] font-bold max-sm:text-pretty max-sm:p-2">
             Id
           </TableHead>

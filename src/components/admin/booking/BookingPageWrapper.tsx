@@ -51,8 +51,8 @@ export default async function BookingPageWrapper({
           />
         </div>
       </div>
-      <div className="rounded-md p-2 border m-2">
-        <BookingTable scheduleId={scheduleId} />
+      <div className="rounded-md p-2 border m-2 bg-sidebar">
+        <BookingTable scheduleId={scheduleId} bookings={bookings}/>
       </div>
       <div className="py-5 font-bold">
         {!bookings?.length ? (

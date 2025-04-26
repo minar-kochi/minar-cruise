@@ -122,12 +122,12 @@ export default function BlogTable({
   }
 
   return (
-    <div>
-      <div className="p-2">
+    <div className="">
+      <div className="border  rounded-md p-2 bg-sidebar m-2">
         <Table className="">
           {/* <TableCaption>A list of your recent blogs.</TableCaption> */}
-          <TableHeader className="">
-            <TableRow className="bg-muted">
+          <TableHeader className="bg-muted-foreground/10">
+            <TableRow className="">
               <TableHead className="">CONTENT</TableHead>
               <TableHead>AUTHOR</TableHead>
               <TableHead className="">STATUS</TableHead>

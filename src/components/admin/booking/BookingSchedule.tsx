@@ -62,8 +62,8 @@ export default function BookingSchedule() {
     return <TableLoadingAnimation />;
   }
   return (
-    <div className="rounded-md p-2 border m-2">
-      <Table className="max-sm:m-2">
+    <div className="rounded-md p-2 border m-2 ">
+      <Table className="max-sm:m-2 bg-sidebar">
         <TableHeader className="md:text-lg bg-muted-foreground/10">
           <TableRow className="hover:bg-transparent ">
             <TableHead className=" h-16 max-sm:text-balance  font-bold ">

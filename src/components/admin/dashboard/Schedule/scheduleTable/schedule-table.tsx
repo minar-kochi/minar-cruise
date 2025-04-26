@@ -58,7 +58,7 @@ export default function ScheduleTable() {
   });
   return (
     <div className="mt-12 mx-auto">
-      <div className="rounded-md p-2 border">
+      <div className="rounded-md p-2 border bg-sidebar">
         <Table className="">
           <TableHeader className="sm:text-sm md:text-md lg:text-lg bg-muted-foreground/10">
             <TableRow className="border-b">
