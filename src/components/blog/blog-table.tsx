@@ -15,13 +15,19 @@ import {
 import { trpc } from "@/app/_trpc/client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { TGetBlogsListDTO } from "@/db/data/dto/blog";
-import { Loader2 } from "lucide-react";
+import { EllipsisVertical, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, truncateText } from "@/lib/utils";
 import { BLOG_INFINITE_QUERY_LIMIT, VIEW_BEFORE_PX } from "@/constants/config";
 import { useInView } from "react-intersection-observer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export default function BlogTable({
   initialData,
@@ -44,24 +50,27 @@ export default function BlogTable({
   const utils = trpc.useUtils();
   const infiniteQueryInput = { limit: BLOG_INFINITE_QUERY_LIMIT };
   const { data, isFetching, fetchNextPage } =
-    trpc.admin.blog.fetchBlogsInfinityQuery.useInfiniteQuery(infiniteQueryInput, {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      initialData: {
-        pages: [
-          {
-            blogs: (initialData?.blogs ?? []).map((blog) => ({
-              ...blog,
-              createdAt:
-                blog.createdAt instanceof Date
-                  ? blog.createdAt.toISOString()
-                  : blog.createdAt,
-            })),
-            nextCursor: initialData?.nextCursor ?? undefined,
-          },
-        ],
-        pageParams: [null],
+    trpc.admin.blog.fetchBlogsInfinityQuery.useInfiniteQuery(
+      infiniteQueryInput,
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        initialData: {
+          pages: [
+            {
+              blogs: (initialData?.blogs ?? []).map((blog) => ({
+                ...blog,
+                createdAt:
+                  blog.createdAt instanceof Date
+                    ? blog.createdAt.toISOString()
+                    : blog.createdAt,
+              })),
+              nextCursor: initialData?.nextCursor ?? undefined,
+            },
+          ],
+          pageParams: [null],
+        },
       },
-    });
+    );
 
   // console.log("data:", data);
 
@@ -120,22 +129,27 @@ export default function BlogTable({
   async function handleSeed() {
     seedBlogs({ count: 6 });
   }
-
+  const temp =
+    "title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title  title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title ";
   return (
     <div className="">
       <div className="border  rounded-md p-2 bg-sidebar m-2">
         <Table className="">
           {/* <TableCaption>A list of your recent blogs.</TableCaption> */}
-          <TableHeader className="bg-muted-foreground/10">
+          <TableHeader className="bg-muted-foreground/10 ">
             <TableRow className="">
-              <TableHead className="">CONTENT</TableHead>
-              <TableHead>AUTHOR</TableHead>
-              <TableHead className="">STATUS</TableHead>
-              <TableHead className="text-center">DATE PUBLISHED</TableHead>
-              <TableHead className="text-center"></TableHead>
+              <TableHead className="text-[12px] md:text-sm text-center sm:text-left">CONTENT</TableHead>
+              <TableHead className="text-[12px] md:text-sm  max-sm:hidden">
+                AUTHOR
+              </TableHead>
+              <TableHead className="text-[12px] md:text-sm ">STATUS</TableHead>
+              <TableHead className="text-[12px] md:text-sm  max-lg:hidden text-center">
+                DATE PUBLISHED
+              </TableHead>
+              <TableHead className="text-[12px] md:text-sm  text-center "></TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="">
             {data?.pages.map((items) =>
               items.blogs.map(
                 (
@@ -145,28 +159,44 @@ export default function BlogTable({
                   return (
                     <TableRow
                       key={`${id}-${createdAt}-${index}`}
-                      className="cursor-pointer"
+                      className="cursor-pointer "
                     >
-                      <TableCell className="flex  gap-5">
-                        <Image
-                          src={image.url}
-                          alt={image.alt}
-                          width={640}
-                          height={480}
-                          className="w-28 h-16 object-cover rounded-md "
-                        />
-                        <div className="flex flex-col justify-center">
-                          <h2 className="font-bold">{title}</h2>
-                          <p>{shortDes}</p>
+                      <TableCell className="flex gap-5 ">
+                        <div className="border w-fit h-fit ">
+                          <div className="w-16 h-14  md:w-28 md:h-20 ">
+                            <Image
+                              src={image.url}
+                              alt={image.alt}
+                              width={640}
+                              height={480}
+                              className="w-16 h-14 md:w-28 md:h-20 object-cover rounded-md "
+                            />
+                          </div>
+                        </div>
+                        <div className="flex flex-col max-w-[600px] w-full">
+                          <h2 className="font-bold text-[14px] md:text-sm lg:text-[17px] line-clamp-1">
+                            {truncateText(temp, 60)}
+                          </h2>
+                          <p className="text-ellipsis overflow-hidden lg:text-[15px] line-clamp-2 md:line-clamp-3">
+                            {truncateText(temp, 200)}
+                          </p>
                         </div>
                       </TableCell>
-                      <TableCell>{author}</TableCell>
-                      <TableCell>{blogStatus}</TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className=" px-0 min-w-max max-sm:hidden">
+                        <p className="text-xs w-full  pl-1 md:text-sm md:px-2 lg:px-3 xl:px-4">
+                          {truncateText(author, 12)}
+                        </p>
+                      </TableCell>
+                      <TableCell className=" px-0 min-w-max ">
+                        <p className="text-xs w-full  pl-1 md:text-sm md:px-2 lg:px-3 xl:px-4">
+                          {blogStatus}
+                        </p>
+                      </TableCell>
+                      <TableCell className="max-lg:hidden text-center text-xs lg:text-sm px-1 md:px-1 lg:px-2 xl:px-3">
                         {format(createdAt, "dd/MM/yyyy")}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col">
+                      <TableCell className="text-xs lg:text-sm px-1 md:px-1 lg:px-2 xl:px-3 ">
+                        <div className="flex flex-col max-sm:hidden">
                           <Link
                             href={`/admin/blog/update/${id}`}
                             className={cn(buttonVariants({ variant: "link" }))}
@@ -181,6 +211,32 @@ export default function BlogTable({
                             Delete
                           </Button>
                         </div>
+                        <div className="sm:hidden">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <EllipsisVertical size={16} />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="">
+                              <DropdownMenuItem>
+                              <Link
+                            href={`/admin/blog/update/${id}`}
+                            className={cn(buttonVariants({ variant: "link" }))}
+                          >
+                            Update
+                          </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                              <Button
+                            className={cn("")}
+                            variant={"dangerLink"}
+                            onClick={() => deleteBlog({ id })}
+                          >
+                            Delete
+                          </Button>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>{" "}
+                          </DropdownMenu>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -188,12 +244,6 @@ export default function BlogTable({
               ),
             )}
           </TableBody>
-          {/* <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter> */}
         </Table>
       </div>
 
