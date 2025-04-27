@@ -398,6 +398,13 @@ export const safeTotal = (value: number) => {
   return isNaN(numberValue) ? 0 : numberValue;
 };
 
+/**
+ * Truncates a string to a specified maximum length and appends an ellipsis ('...') if needed.
+ *
+ * @param {string} text - The string to be truncated.
+ * @param {number} maxLength - The maximum allowed length of the string before truncation.
+ * @returns {string} The truncated string, with an ellipsis if it was cut off.
+ */
 export function truncateText(text: string, maxLength: number): string {
   if (text.length > maxLength) {
     return text.substring(0, maxLength) + '...';
