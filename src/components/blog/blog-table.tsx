@@ -102,8 +102,6 @@ export default function BlogTable({
         utils.admin.blog.fetchBlogsInfinityQuery.setInfiniteData(
           infiniteQueryInput,
           (old) => {
-            console.log("old:", old);
-
             if (!old) return old;
 
             const newPage = old.pages.map((page) => {
@@ -129,8 +127,6 @@ export default function BlogTable({
   async function handleSeed() {
     seedBlogs({ count: 6 });
   }
-  const temp =
-    "title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title  title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title title ";
   return (
     <div className="">
       <div className="border  rounded-md p-2 bg-sidebar m-2">
@@ -138,11 +134,15 @@ export default function BlogTable({
           {/* <TableCaption>A list of your recent blogs.</TableCaption> */}
           <TableHeader className="bg-muted-foreground/10 ">
             <TableRow className="">
-              <TableHead className="text-[12px] md:text-sm text-center sm:text-left">CONTENT</TableHead>
+              <TableHead className="text-[12px] md:text-sm text-center sm:text-left">
+                CONTENT
+              </TableHead>
               <TableHead className="text-[12px] md:text-sm  max-sm:hidden">
                 AUTHOR
               </TableHead>
-              <TableHead className="text-[12px] md:text-sm ">STATUS</TableHead>
+              <TableHead className="text-[12px] md:text-sm max-[380px]:hidden">
+                STATUS
+              </TableHead>
               <TableHead className="text-[12px] md:text-sm  max-lg:hidden text-center">
                 DATE PUBLISHED
               </TableHead>
@@ -162,7 +162,7 @@ export default function BlogTable({
                       className="cursor-pointer "
                     >
                       <TableCell className="flex gap-5 ">
-                        <div className="border w-fit h-fit ">
+                        <div className="border w-fit h-fit max-[220px]:hidden">
                           <div className="w-16 h-14  md:w-28 md:h-20 ">
                             <Image
                               src={image.url}
@@ -175,10 +175,10 @@ export default function BlogTable({
                         </div>
                         <div className="flex flex-col max-w-[600px] w-full">
                           <h2 className="font-bold text-[14px] md:text-sm lg:text-[17px] line-clamp-1">
-                            {truncateText(temp, 60)}
+                            {truncateText(title, 60)}
                           </h2>
                           <p className="text-ellipsis overflow-hidden lg:text-[15px] line-clamp-2 md:line-clamp-3">
-                            {truncateText(temp, 200)}
+                            {truncateText(shortDes, 200)}
                           </p>
                         </div>
                       </TableCell>
@@ -187,7 +187,7 @@ export default function BlogTable({
                           {truncateText(author, 12)}
                         </p>
                       </TableCell>
-                      <TableCell className=" px-0 min-w-max ">
+                      <TableCell className=" px-0 min-w-max max-[380px]:hidden">
                         <p className="text-xs w-full  pl-1 md:text-sm md:px-2 lg:px-3 xl:px-4">
                           {blogStatus}
                         </p>
@@ -218,21 +218,23 @@ export default function BlogTable({
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="">
                               <DropdownMenuItem>
-                              <Link
-                            href={`/admin/blog/update/${id}`}
-                            className={cn(buttonVariants({ variant: "link" }))}
-                          >
-                            Update
-                          </Link>
+                                <Link
+                                  href={`/admin/blog/update/${id}`}
+                                  className={cn(
+                                    buttonVariants({ variant: "link" }),
+                                  )}
+                                >
+                                  Update
+                                </Link>
                               </DropdownMenuItem>
                               <DropdownMenuItem>
-                              <Button
-                            className={cn("")}
-                            variant={"dangerLink"}
-                            onClick={() => deleteBlog({ id })}
-                          >
-                            Delete
-                          </Button>
+                                <Button
+                                  className={cn("")}
+                                  variant={"dangerLink"}
+                                  onClick={() => deleteBlog({ id })}
+                                >
+                                  Delete
+                                </Button>
                               </DropdownMenuItem>
                             </DropdownMenuContent>{" "}
                           </DropdownMenu>
