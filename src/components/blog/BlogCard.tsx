@@ -44,10 +44,23 @@ export default function BlogCard({ imgUrl, title, desc, link }: BlogCardType) {
 
         <p className="mb-6 text-sm text-gray-600 line-clamp-2">{desc}</p>
 
-        <div className="mt-auto flex items-center justify-end">
-        
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 overflow-hidden rounded-full bg-gray-100">
+              <Image
+                src="/api/placeholder/40/40"
+                alt="Author"
+                width={32}
+                height={32}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="text-xs font-medium text-gray-700">
+              Author Name
+            </span>
+          </div>
 
-          <div className="flex items-center text-sm font-medium text-red-500 transition-all group-hover:pr-1">
+          <div className="flex items-center text-sm font-medium text-blue-600 transition-all group-hover:pr-1">
             Read
             <ArrowUpRight className="ml-1 h-4 w-4 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
           </div>

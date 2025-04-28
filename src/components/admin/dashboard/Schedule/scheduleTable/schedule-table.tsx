@@ -107,6 +107,7 @@ export default function ScheduleTable() {
                     ${index === schedules.length - 1 ? "border-b" : "border-b-0"}
                     ${index === 0 && groupIndex !== 0 ? "" : ""}
                     ${isBlocked ? "bg-red-600/40" : ""}
+                    
                   `}
                     >
                       <TableCell
