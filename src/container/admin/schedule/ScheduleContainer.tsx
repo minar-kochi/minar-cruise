@@ -1,4 +1,3 @@
-"use client";
 import Bounded from "@/components/elements/Bounded";
 import React from "react";
 import {
@@ -15,6 +14,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { trpc } from "@/app/_trpc/client";
 import Link from "next/link";
+import BlockMultipleSchedulesButton from "@/components/admin/dashboard/Schedule/block-multiple-schedules-button";
 
 export default function ScheduleBar() {
   return (
@@ -33,16 +33,8 @@ export default function ScheduleBar() {
               <ScheduleDatePicker />
               <ScheduleButtonInfo />
             </div>
-            <div>
-              <Link
-                href={"/admin/schedule#schedule-table"}
-                className={buttonVariants({
-                  variant: "default",
-                  className: "group-[.schedule-sheet]:hidden",
-                })}
-              >
-                Go to Schedules
-              </Link>
+            <div className="gap-3 md:inline-flex hidden ">
+              <BlockMultipleSchedulesButton />
             </div>
           </div>
           <div className=" mx-auto left-0 right-0">

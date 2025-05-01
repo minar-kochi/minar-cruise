@@ -1,6 +1,5 @@
 import { DataTableDemo } from "@/components/admin/dashboard/Schedule/ScheduleTable";
 import { Suspense } from "react";
-import ScheduleBarWrapper from "@/container/admin/schedule/ScheduleBarWrapper";
 import ScheduleSelectorLoader from "@/components/admin/dashboard/Schedule/Loader/ScheduleSelectorLoader";
 import ScheduleTable from "@/components/admin/dashboard/Schedule/scheduleTable/schedule-table";
 import { trpc } from "@/app/_trpc/client";
@@ -22,7 +21,7 @@ export default async function ScheduleAdminPage() {
       />
       <div className=" lg:grid">
         <div className="px-2">
-          <div className="hidden lg:block px-2  group schedule-page">
+          <div className=" px-2  group schedule-page">
             <ScheduleBar />
           </div>
         </div>
