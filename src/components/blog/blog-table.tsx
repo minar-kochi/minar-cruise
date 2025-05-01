@@ -153,7 +153,7 @@ export default function BlogTable({
             {data?.pages.map((items) =>
               items.blogs.map(
                 (
-                  { author, blogStatus, createdAt, id, image, shortDes, title },
+                  { author, blogStatus, createdAt, id, image, shortDes, title, blogSlug },
                   index,
                 ) => {
                   return (
@@ -161,26 +161,28 @@ export default function BlogTable({
                       key={`${id}-${createdAt}-${index}`}
                       className="cursor-pointer "
                     >
-                      <TableCell className="flex gap-5 ">
-                        <div className="border w-fit h-fit max-[220px]:hidden">
-                          <div className="w-16 h-14  md:w-28 md:h-20 ">
-                            <Image
-                              src={image.url}
-                              alt={image.alt}
-                              width={640}
-                              height={480}
-                              className="w-16 h-14 md:w-28 md:h-20 object-cover rounded-md "
-                            />
+                      <TableCell className=" ">
+                        <Link className="flex gap-5" href={`/admin/blog/view/${blogSlug}`}>
+                          <div className="w-fit h-fit max-[220px]:hidden">
+                            <div className="w-16 h-14  md:w-28 md:h-20 ">
+                              <Image
+                                src={image.url}
+                                alt={image.alt}
+                                width={640}
+                                height={480}
+                                className="w-16 h-14 md:w-28 md:h-20 object-cover rounded-md "
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col max-w-[600px] w-full">
-                          <h2 className="font-bold text-[14px] md:text-sm lg:text-[17px] line-clamp-1">
-                            {truncateText(title, 60)}
-                          </h2>
-                          <p className="text-ellipsis overflow-hidden lg:text-[15px] line-clamp-2 md:line-clamp-3">
-                            {truncateText(shortDes, 200)}
-                          </p>
-                        </div>
+                          <div className="flex flex-col max-w-[600px] w-full">
+                            <h2 className="font-bold text-[14px] md:text-sm lg:text-[17px] line-clamp-1">
+                              {truncateText(title, 60)}
+                            </h2>
+                            <p className="text-ellipsis overflow-hidden lg:text-[15px] line-clamp-2 md:line-clamp-3">
+                              {truncateText(shortDes, 200)}
+                            </p>
+                          </div>
+                        </Link>
                       </TableCell>
                       <TableCell className=" px-0 min-w-max max-sm:hidden">
                         <p className="text-xs w-full  pl-1 md:text-sm md:px-2 lg:px-3 xl:px-4">
