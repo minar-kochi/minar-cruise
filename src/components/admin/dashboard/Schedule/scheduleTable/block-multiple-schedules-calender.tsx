@@ -38,7 +38,7 @@ export default function BlockMultipleSchedulesCalender() {
   });
 
   // trpc Infinite query logic
-  const { fetch } =
+  const { fetch, refetch } =
     trpc.useUtils().admin.schedule.getBlockedSchedulesByDateRangeQuery;
 
   const { data: blockedScheduleDays, isLoading } =
@@ -47,7 +47,7 @@ export default function BlockMultipleSchedulesCalender() {
       toDate: visibleMonths.endMonth,
     });
 
-    // Month change handler
+  // Month change handler
   async function handleMonthChange(month: Date) {
     setVisibleMonths({
       startMonth: RemoveTimeStampFromDate(month),
@@ -60,12 +60,16 @@ export default function BlockMultipleSchedulesCalender() {
     });
   }
 
-  // trpc Mutation  
+  // trpc Mutation
   const { mutate } = trpc.admin.schedule.blockScheduleByDateRange.useMutation({
     onMutate() {
       toast.loading("Blocking...");
     },
     onSuccess() {
+      refetch({
+        fromDate: visibleMonths.startMonth,
+        toDate: visibleMonths.endMonth,
+      });
       toast.dismiss();
       toast.success("Successfully blocked schedules!");
     },
