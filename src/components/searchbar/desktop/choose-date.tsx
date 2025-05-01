@@ -108,9 +108,9 @@ export function ChooseDates() {
 
   return (
     <Popover>
-      <PopoverTrigger className="hover:bg-primary/10 hover:rounded-full w-full relative py-2 md:py-2.5 border-muted-foreground hidden md:flex items-start justify-center">
+      <PopoverTrigger className="w-full relative py-2 md:py-2.5 border-muted-foreground hidden md:flex items-start justify-center">
         <div className="">
-          <h4 className="text-left text-sm hidden md:block font-bold">When</h4>
+          <h4 className="text-left text-sm hidden md:block font-bold">Date</h4>
           <div className="md:text-sm text-muted-foreground font-semibold">
             {date ? <p>{format(date, "dd/MM/yyyy")}</p>  : <p>Choose a Date</p> }
           </div>

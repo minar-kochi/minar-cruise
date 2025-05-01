@@ -12,7 +12,7 @@ export default function SearchButton() {
       <Link
         href={`/search?selected=${encodeURI(JSON.stringify(isPackageSelected.selectedPackages?.map((item) => item.id)))}`}
       >
-        <div className="bg-primary/20 font-semibold hover:bg-primary/30 h-full rounded-full mr-1.5 flex  text-md items-center pl-3 w-36 text-muted-foreground justify-center gap-3 px-2">
+        <div className="bg-primary/20 font-semibold h-full rounded-full mr-1.5 flex  text-md items-center pl-3 w-36 text-muted-foreground justify-center gap-3 px-2">
           <div className="">
             {isPackageSelected.selectedPackages.length ? (
               <p className="">Search {isPackageSelected.selectedPackages.length}</p>

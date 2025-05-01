@@ -15,9 +15,9 @@ export function ChoosePackage() {
 
   return (
     <Popover>
-      <PopoverTrigger className="hover:bg-primary/10 hover:rounded-r-full w-full rounded-l-full py-2 md:py-2.5 border-muted-foreground relative hidden md:flex items-start justify-center  ">
+      <PopoverTrigger className="w-full rounded-l-full py-2 md:py-2.5 border-muted-foreground relative hidden md:flex items-start justify-center  ">
         <div className="">
-          <h4 className=" text-left text-sm hidden md:block font-bold">Which</h4>
+          <h4 className=" text-left text-sm hidden md:block font-bold">Package</h4>
           <div className="md:text-sm text-muted-foreground flex font-semibold">
             {selectedPackages.length ? (
               <p className="">{selectedPackages.length} package selected</p>
