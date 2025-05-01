@@ -90,7 +90,7 @@ export const sideBarData = {
           url: "/admin/blog/view",
         },
         {
-          title: "Create blog",
+          title: "Add blog",
           url: "/admin/blog/create",
         },
       ],
