@@ -176,17 +176,17 @@ export default function BlogTable({
                           </div>
                           <div className="flex flex-col max-w-[600px] w-full">
                             <h2 className="font-bold text-[14px] md:text-sm lg:text-[17px] line-clamp-1">
-                              {truncateText(title, 60)}
+                              {title}
                             </h2>
                             <p className="text-ellipsis overflow-hidden lg:text-[15px] line-clamp-2 md:line-clamp-3">
-                              {truncateText(shortDes, 200)}
+                              {shortDes}
                             </p>
                           </div>
                         </Link>
                       </TableCell>
                       <TableCell className=" px-0 min-w-max max-sm:hidden">
                         <p className="text-xs w-full  pl-1 md:text-sm md:px-2 lg:px-3 xl:px-4">
-                          {truncateText(author, 12)}
+                          {author}
                         </p>
                       </TableCell>
                       <TableCell className=" px-0 min-w-max max-[380px]:hidden">
