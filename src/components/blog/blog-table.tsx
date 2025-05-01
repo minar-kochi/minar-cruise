@@ -128,147 +128,138 @@ export default function BlogTable({
     seedBlogs({ count: 6 });
   }
   return (
-    <div className="">
-      <div className="border  rounded-md p-2 bg-sidebar m-2">
-        <Table className="">
-          {/* <TableCaption>A list of your recent blogs.</TableCaption> */}
-          <TableHeader className="bg-muted-foreground/10 ">
-            <TableRow className="">
-              <TableHead className="text-[12px] md:text-sm text-center sm:text-left">
-                CONTENT
-              </TableHead>
-              <TableHead className="text-[12px] md:text-sm  max-sm:hidden">
-                AUTHOR
-              </TableHead>
-              <TableHead className="text-[12px] md:text-sm max-[380px]:hidden">
-                STATUS
-              </TableHead>
-              <TableHead className="text-[12px] md:text-sm  max-lg:hidden text-center">
-                DATE PUBLISHED
-              </TableHead>
-              <TableHead className="text-[12px] md:text-sm  text-center "></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="">
-            {data?.pages.map((items) =>
-              items.blogs.map(
-                (
-                  { author, blogStatus, createdAt, id, image, shortDes, title, blogSlug },
-                  index,
-                ) => {
-                  return (
-                    <TableRow
-                      key={`${id}-${createdAt}-${index}`}
-                      className="cursor-pointer "
+    <div className="p-4 space-y-6">
+  {/* Blog Table Card */}
+  <div className="bg-sidebar border rounded-2xl shadow-sm p-4">
+    <Table>
+      <TableHeader className="bg-muted-foreground/10">
+        <TableRow>
+          <TableHead className="text-xs md:text-sm text-center sm:text-left">
+            CONTENT
+          </TableHead>
+          <TableHead className="text-xs md:text-sm max-sm:hidden">AUTHOR</TableHead>
+          <TableHead className="text-xs md:text-sm max-[380px]:hidden">STATUS</TableHead>
+          <TableHead className="text-xs md:text-sm max-lg:hidden text-center">
+            DATE PUBLISHED
+          </TableHead>
+          <TableHead className="text-xs md:text-sm text-center"></TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data?.pages.map((items) =>
+          items.blogs.map(
+            (
+              { author, blogStatus, createdAt, id, image, shortDes, title, blogSlug },
+              index,
+            ) => (
+              <TableRow
+                key={`${id}-${createdAt}-${index}`}
+                className="hover:bg-muted/30 transition cursor-pointer"
+              >
+                {/* CONTENT */}
+                <TableCell>
+                  <Link href={`/admin/blog/view/${blogSlug}`} className="flex gap-4">
+                    <div className="hidden max-[220px]:hidden sm:block">
+                      <Image
+                        src={image.url}
+                        alt={image.alt}
+                        width={640}
+                        height={480}
+                        className="w-16 h-14 md:w-28 md:h-20 object-cover rounded-md"
+                      />
+                    </div>
+                    <div className="flex flex-col max-w-[600px] w-full">
+                      <h2 className="font-semibold text-sm md:text-base lg:text-lg line-clamp-1">
+                        {title}
+                      </h2>
+                      <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 md:line-clamp-3">
+                        {shortDes}
+                      </p>
+                    </div>
+                  </Link>
+                </TableCell>
+
+                {/* AUTHOR */}
+                <TableCell className="max-sm:hidden text-sm">{author}</TableCell>
+
+                {/* STATUS */}
+                <TableCell className="max-[380px]:hidden text-sm">{blogStatus}</TableCell>
+
+                {/* DATE */}
+                <TableCell className="max-lg:hidden text-center text-sm">
+                  {format(createdAt, "dd/MM/yyyy")}
+                </TableCell>
+
+                {/* ACTIONS */}
+                <TableCell className="text-right">
+                  <div className="hidden sm:flex flex-col items-end gap-1">
+                    <Link
+                      href={`/admin/blog/update/${id}`}
+                      className={cn(buttonVariants({ variant: "link" }))}
                     >
-                      <TableCell className=" ">
-                        <Link className="flex gap-5" href={`/admin/blog/view/${blogSlug}`}>
-                          <div className="w-fit h-fit max-[220px]:hidden">
-                            <div className="w-16 h-14  md:w-28 md:h-20 ">
-                              <Image
-                                src={image.url}
-                                alt={image.alt}
-                                width={640}
-                                height={480}
-                                className="w-16 h-14 md:w-28 md:h-20 object-cover rounded-md "
-                              />
-                            </div>
-                          </div>
-                          <div className="flex flex-col max-w-[600px] w-full">
-                            <h2 className="font-bold text-[14px] md:text-sm lg:text-[17px] line-clamp-1">
-                              {title}
-                            </h2>
-                            <p className="text-ellipsis overflow-hidden lg:text-[15px] line-clamp-2 md:line-clamp-3">
-                              {shortDes}
-                            </p>
-                          </div>
-                        </Link>
-                      </TableCell>
-                      <TableCell className=" px-0 min-w-max max-sm:hidden">
-                        <p className="text-xs w-full  pl-1 md:text-sm md:px-2 lg:px-3 xl:px-4">
-                          {author}
-                        </p>
-                      </TableCell>
-                      <TableCell className=" px-0 min-w-max max-[380px]:hidden">
-                        <p className="text-xs w-full  pl-1 md:text-sm md:px-2 lg:px-3 xl:px-4">
-                          {blogStatus}
-                        </p>
-                      </TableCell>
-                      <TableCell className="max-lg:hidden text-center text-xs lg:text-sm px-1 md:px-1 lg:px-2 xl:px-3">
-                        {format(createdAt, "dd/MM/yyyy")}
-                      </TableCell>
-                      <TableCell className="text-xs lg:text-sm px-1 md:px-1 lg:px-2 xl:px-3 ">
-                        <div className="flex flex-col max-sm:hidden">
+                      Update
+                    </Link>
+                    <Button
+                      variant="dangerLink"
+                      className="text-sm"
+                      onClick={() => deleteBlog({ id })}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                  <div className="sm:hidden">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <EllipsisVertical size={18} />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
                           <Link
                             href={`/admin/blog/update/${id}`}
                             className={cn(buttonVariants({ variant: "link" }))}
                           >
                             Update
                           </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
                           <Button
-                            className={cn("")}
-                            variant={"dangerLink"}
+                            variant="dangerLink"
+                            className="w-full text-left"
                             onClick={() => deleteBlog({ id })}
                           >
                             Delete
                           </Button>
-                        </div>
-                        <div className="sm:hidden">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger>
-                              <EllipsisVertical size={16} />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="">
-                              <DropdownMenuItem>
-                                <Link
-                                  href={`/admin/blog/update/${id}`}
-                                  className={cn(
-                                    buttonVariants({ variant: "link" }),
-                                  )}
-                                >
-                                  Update
-                                </Link>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Button
-                                  className={cn("")}
-                                  variant={"dangerLink"}
-                                  onClick={() => deleteBlog({ id })}
-                                >
-                                  Delete
-                                </Button>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>{" "}
-                          </DropdownMenu>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                },
-              ),
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ),
+          ),
+        )}
+      </TableBody>
+    </Table>
+  </div>
 
-      <div
-        ref={ref}
-        className={cn(``, {
-          "animate-pulse bg-muted": isFetching,
-        })}
-      >
-        {isFetching ? (
-          <div className="h-20 flex items-center justify-center">
-            <Loader2 className="animate-spin h-10 w-full" />
-          </div>
-        ) : null}
-      </div>
-      <div className="flex items-center text-center w-fit mx-auto">
-        <p className="text-lg font-bold">Seed blogs here :</p>
-        <Button onClick={handleSeed} variant={"link"} className="px-2">
-          Seed blogs
-        </Button>
-      </div>
-    </div>
+  {/* Loader */}
+  <div
+    ref={ref}
+    className={cn("transition", {
+      "animate-pulse bg-muted h-20 flex items-center justify-center rounded-md": isFetching,
+    })}
+  >
+    {isFetching && <Loader2 className="animate-spin h-10 w-10 text-muted-foreground" />}
+  </div>
+
+  {/* Seed Blogs */}
+  <div className="flex items-center justify-center gap-2">
+    <p className="text-lg font-semibold">Seed blogs here:</p>
+    <Button onClick={handleSeed} variant="link" className="px-2 text-primary font-medium">
+      Seed blogs
+    </Button>
+  </div>
+</div>
+
   );
 }
