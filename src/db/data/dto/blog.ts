@@ -101,6 +101,7 @@ export async function getBlogWithPagination({
         imageId: true,
         author: true,
         blogSlug: true,
+        createdAt: true,
       },
     }),
   ]);

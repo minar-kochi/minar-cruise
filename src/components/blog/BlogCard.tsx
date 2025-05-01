@@ -1,15 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, User } from "lucide-react";
+import { format } from "date-fns";
 
 interface BlogCardType {
   imgUrl: string;
   title: string;
   desc: string;
   link: string;
+  date: string;
+  author: string;
 }
 
-export default function BlogCard({ imgUrl, title, desc, link }: BlogCardType) {
+export default function BlogCard({
+  imgUrl,
+  title,
+  desc,
+  link,
+  date,
+  author,
+}: BlogCardType) {
   return (
     <Link
       href={link}
@@ -33,9 +43,10 @@ export default function BlogCard({ imgUrl, title, desc, link }: BlogCardType) {
       {/* Content Area */}
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 flex items-center justify-between">
-          {/* @todo @amjad */}
-          <span className="text-xs text-gray-500">Apr 28, 2025</span>
-          <span className="text-xs text-gray-500">5 min read</span>
+          <span className="text-xs text-gray-500">
+            {format(date, "MMM yyyy")}
+          </span>
+          {/* <span className="text-xs text-gray-500">5 min read</span> */}
         </div>
 
         <h3 className="mb-3 text-lg font-bold tracking-tight text-gray-900 line-clamp-2">
@@ -46,18 +57,10 @@ export default function BlogCard({ imgUrl, title, desc, link }: BlogCardType) {
 
         <div className="mt-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 overflow-hidden rounded-full bg-gray-100">
-              <Image
-                src="/api/placeholder/40/40"
-                alt="Author"
-                width={32}
-                height={32}
-                className="h-full w-full object-cover"
-              />
+            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-100">
+              <User size={20} className="text-gray-500" />
             </div>
-            <span className="text-xs font-medium text-gray-700">
-              Author Name
-            </span>
+            <span className="text-xs font-medium text-gray-700">{author}</span>
           </div>
 
           <div className="flex items-center text-sm font-medium text-blue-600 transition-all group-hover:pr-1">
