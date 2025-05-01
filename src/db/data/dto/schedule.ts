@@ -11,9 +11,17 @@ import {
 import { $Enums, Schedule } from "@prisma/client";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
-export type TGetScheduleWithBookingCountDTO = Awaited<ReturnType<typeof getScheduleWithBookingCount>> 
+export type TGetScheduleWithBookingCountDTO = Awaited<
+  ReturnType<typeof getScheduleWithBookingCount>
+>;
 
-export async function getScheduleWithBookingCount({ cursor, limit}:{cursor: string | null | undefined, limit: number,}){
+export async function getScheduleWithBookingCount({
+  cursor,
+  limit,
+}: {
+  cursor: string | null | undefined;
+  limit: number;
+}) {
   const data = await db.schedule.findMany({
     where: {
       day: {
@@ -50,7 +58,7 @@ export async function getScheduleWithBookingCount({ cursor, limit}:{cursor: stri
     },
   });
 
-  return data
+  return data;
 }
 interface ICheckScheduleStatusForTheSelectedDate {
   date: string;
@@ -76,6 +84,31 @@ export async function checkScheduleStatusForTheSelectedDate({
   return scheduleStatus;
 }
 
+export async function getScheduleCount({
+  FromDate,
+  ToDate,
+}: {
+  FromDate: Date;
+  ToDate: Date;
+}) {
+  const count = await db.schedule.count({
+    where: {
+      day: {
+        gte: FromDate,
+        lte: ToDate,
+      },
+      NOT: [
+        {
+          scheduleStatus: "BLOCKED",
+        },
+        {
+          scheduleStatus: "MAINTENANCE",
+        },
+      ],
+    },
+  });
+  return count;
+}
 export type TGetSchedulesByDateRange = Awaited<
   ReturnType<typeof getSchedulesByDateRange>
 >;
@@ -117,6 +150,32 @@ export async function getSchedulesByDateRange(FromDate: Date, ToDate: Date) {
     ErrorLogger(error);
     return null;
   }
+}
+
+export type TGetBlockedScheduleDays = Awaited<
+  ReturnType<typeof getSchedulesByDateRangeWithBookingCount>
+>;
+
+export async function getBlockedScheduleDays({
+  fromDate,
+  toDate,
+}: {
+  fromDate: Date;
+  toDate: Date;
+}) {
+  const data = await db.schedule.findMany({
+    where: {
+      scheduleStatus: "BLOCKED",
+      day: {
+        gte: fromDate,
+        lte: toDate,
+      },
+    },
+    select: {
+      day: true,
+    },
+  });
+  return data;
 }
 
 export type TGetSchedulesByDateRangeWithBookingCount = Exclude<
@@ -588,7 +647,7 @@ export async function getBookingsByScheduleId(id: string) {
         schedule: {
           select: {
             schedulePackage: true,
-            day: true
+            day: true,
           },
         },
         payment: {
