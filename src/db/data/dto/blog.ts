@@ -3,14 +3,42 @@ import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { TBlogsInfinityQueryPropsValidation } from "@/lib/validators/blogs";
 
-export type TGetPublishedBlogsCount = Awaited<ReturnType<typeof getPublishedBlogsCount>>;
+export type TGetPublishedBlogsCount = Awaited<
+  ReturnType<typeof getPublishedBlogsCount>
+>;
 export async function getPublishedBlogsCount() {
   const totalBlogs = await db.blog.count({
     where: { blogStatus: "PUBLISHED" },
   });
-  return totalBlogs
+  return totalBlogs;
 }
 
+export type TGetBlogDetailsFromSlug = Awaited<
+  ReturnType<typeof getBlogDetailsFromSlug>
+>;
+export async function getBlogDetailsFromSlug({
+  blogSlug,
+}: {
+  blogSlug: string;
+}) {
+  const data = await db.blog.findUnique({
+    where: {
+      blogSlug: blogSlug,
+    },
+    select: {
+      author: true,
+      title: true,
+      content: true,
+      image: {
+        select: {
+          url: true,
+          alt: true,
+        },
+      },
+    },
+  });
+  return data;
+}
 export type TGetBlogsListDTO = Awaited<ReturnType<typeof getBlogsListDTO>>;
 export async function getBlogsListDTO({
   cursor,
@@ -33,6 +61,7 @@ export async function getBlogsListDTO({
         shortDes: true,
         blogStatus: true,
         createdAt: true,
+        blogSlug: true,
       },
     });
 
