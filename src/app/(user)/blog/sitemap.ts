@@ -1,34 +1,47 @@
+import { BLOG_PAGINATION_QUERY_LIMIT } from "@/constants/config";
 import { db } from "@/db";
+import { getPublishedBlogsCount } from "@/db/data/dto/blog";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  let data: {
+  let blogs: {
     blogSlug: string;
   }[] = [];
+
+  let totalPages = 1;
+
   try {
-    data = await db.blog.findMany({
+    blogs = await db.blog.findMany({
       select: {
         blogSlug: true,
       },
+      where: {
+        blogStatus: "PUBLISHED",
+      },
     });
+    totalPages = Math.ceil(blogs.length / BLOG_PAGINATION_QUERY_LIMIT);
   } catch (error) {}
-  if (!data.length) {
+
+  if (!blogs.length) {
     return [
       {
-        url: `${process.env.NEXT_PUBLIC_DOMAIN}/blog`,
+        url: `${process.env.NEXT_PUBLIC_DOMAIN}/blogs/1`,
         changeFrequency: "monthly",
       },
     ];
   }
-  return [
-    {
-      url: `${process.env.NEXT_PUBLIC_DOMAIN}/blog`,
-      changeFrequency: "monthly",
-    },
-    ...data.map((item) => {
-      return {
-        url: `${process.env.NEXT_PUBLIC_DOMAIN}/blog/${item.blogSlug}`,
-      };
-    }),
-  ];
+
+  // Paginated blog pages
+  const paginatedBlogUrl: MetadataRoute.Sitemap = Array.from({
+    length: totalPages,
+  }).map((_, index) => ({
+    url: `${process.env.NEXT_PUBLIC_DOMAIN}/blogs/${index + 1}`,
+  }));
+
+  // Individual blog pages
+  const blogPages = blogs.map((item) => ({
+    url: `${process.env.NEXT_PUBLIC_DOMAIN}/blog/${item.blogSlug}`,
+  }));
+
+  return [...blogPages, ...paginatedBlogUrl];
 }
