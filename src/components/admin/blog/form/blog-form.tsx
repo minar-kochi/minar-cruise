@@ -130,6 +130,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
     }
 
     addBlog(data);
+    router.push('/admin/blog/view')
   };
 
   watch();
