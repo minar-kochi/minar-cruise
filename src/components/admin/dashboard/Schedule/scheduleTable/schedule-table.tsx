@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -18,6 +18,8 @@ import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import ScheduleDownloadButton from "./ScheduleDownloadButton";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const VIEW_BEFORE_PX = 50;
 
@@ -64,6 +66,7 @@ export default function ScheduleTable() {
         </div>
       <div className="flex justify-end mr-2">
         <ScheduleDownloadButton type="scheduleWithoutBookingCount" />
+        <Link href={'/admin/schedule'} className={cn(buttonVariants({variant:'default'}))}>Manage Schedule</Link>
       </div>
       <div className="rounded-md p-2 border bg-sidebar m-2">
         <Table className="">
