@@ -21,7 +21,10 @@ import { useForm } from "react-hook-form";
 import { date } from "zod";
 import {} from "embla-carousel";
 import { Button } from "@/components/ui/button";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import {
+  MAX_BOAT_SEAT,
+  MIN_NEW_BOOKING_COUNT,
+} from "@/constants/config/business";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
 import CalendarPopover from "./CalendarPopover";
@@ -55,7 +58,6 @@ export default function ExclusivePackageEnquiryCard({
     watch,
   } = useForm<TExclusivePackageValidator>({
     defaultValues: {
-      count: 25,
       selectedDate: RemoveTimeStampFromDate(new Date(Date.now())),
     },
     resolver: zodResolver(exclusivePackageValidator),
@@ -188,24 +190,6 @@ export default function ExclusivePackageEnquiryCard({
             errorMessage={errors.phone ? `${errors.phone.message}` : null}
           />
         </div>
-
-        <div className="w-[90%]  max-w-sm ">
-          <InputLabel
-            errorClassName="justify-start ml-1"
-            label="Number of People"
-            labelClassName="text-sm"
-            InputProps={{
-              placeholder: "max 150 Pax",
-              ...register("count", {
-                valueAsNumber: true,
-              }),
-              className:
-                " placeholder:font-medium  w-full h-[80%]  placeholder:text-gray-500 bg-white border-[#B3B3B3]",
-            }}
-            containerClassName="w-full "
-            errorMessage={errors.count ? `${errors.count.message}` : null}
-          />
-        </div>
         <div className="w-[90%]  max-w-sm ">
           <InputLabel
             errorClassName="justify-start ml-1"
@@ -227,7 +211,7 @@ export default function ExclusivePackageEnquiryCard({
             label="Events"
             labelClassName="text-sm"
             InputProps={{
-              placeholder: "Familiy, corporate, Party Etc...",
+              placeholder: "Family, corporate, Party Etc...",
               ...register("eventType"),
               className:
                 " placeholder:font-medium  w-full h-[80%]  placeholder:text-gray-500 bg-white border-[#B3B3B3]",

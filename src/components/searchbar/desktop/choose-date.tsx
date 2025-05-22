@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Popover,
   PopoverContent,
@@ -18,6 +20,8 @@ import {
 import { setDate } from "@/lib/features/client/packageClientSlice";
 import { TSplitedFormatedDate } from "@/Types/type";
 import ChooseDateCard from "./choose-date-card";
+import { format } from "date-fns";
+import { Separator } from "@/components/ui/separator";
 let date = "2025-02-01";
 export function ChooseDates() {
   const date = useClientSelector((state) => state.package.date);
@@ -104,9 +108,15 @@ export function ChooseDates() {
 
   return (
     <Popover>
-      <PopoverTrigger className="w-full ml-4 py-2 md:py-3 border-muted-foreground hidden md:flex items-start flex-col gap-0">
-        <h4 className="text-sm hidden md:block font-semibold">When</h4>
-        <p className="md:text-sm text-muted-foreground">Choose a Date</p>
+      <PopoverTrigger className="w-full relative py-2 md:py-2.5 border-muted-foreground hidden md:flex items-start justify-center">
+        <div className="">
+          <h4 className="text-left text-sm hidden md:block font-bold">Date</h4>
+          <div className="md:text-sm text-muted-foreground font-semibold">
+            {date ? <p>{format(date, "dd/MM/yyyy")}</p>  : <p>Choose a Date</p> }
+          </div>
+        </div>
+        {/* <div className="absolute h-10 w-[1px] top-auto bottom-auto right-0 bg-muted-foreground" /> */}
+
       </PopoverTrigger>
       <PopoverContent
         alignOffset={-25}

@@ -103,7 +103,7 @@ export default function MoveAllBookingsButton({
   return (
     <Dialog>
       <DialogTrigger disabled={disabled} asChild className={cn("", className)}>
-        <Button variant="destructive">Move all bookings</Button>
+        <Button>Move all bookings</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>

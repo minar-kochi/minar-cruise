@@ -1,4 +1,4 @@
-import { getBlogPosts, getRecentPosts } from "@/db/data/dto/blog";
+import { getRecentPosts } from "@/db/data/dto/blog";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";

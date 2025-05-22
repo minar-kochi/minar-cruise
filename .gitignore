@@ -13,7 +13,7 @@
 # next.js
 /.next/
 /out/
-**/.fuse_hidden* 
+**/.fuse_hidden*
 # production
 /build
 
@@ -38,3 +38,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .devnotes.txt
+
+#code-editor
+.zed

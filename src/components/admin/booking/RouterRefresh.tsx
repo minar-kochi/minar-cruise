@@ -13,7 +13,7 @@ export default function RouterRefreshButton({
   const router = useRouter();
   return (
     <Button
-      variant={"ghost"}
+      variant={"outline"}
       className={cn("", className)}
       onClick={() => router.refresh()}
     >

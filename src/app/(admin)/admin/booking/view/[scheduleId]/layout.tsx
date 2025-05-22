@@ -34,8 +34,8 @@ import DownloadTable from "@/components/excel/DownloadBookingButton";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative border min-h-[calc(100vh-60px)]">
-      <div className="absolute right-5 bottom-8">{/* <DownloadTable /> */}</div>
+    <div className="relative min-h-[calc(100vh-60px)]">
+      {/* <div className="absolute right-5 bottom-8"><DownloadTable /></div> */}
       {children}
     </div>
   );

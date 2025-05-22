@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Drawer,
@@ -13,21 +15,29 @@ import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import PackageSelectCard from "./desktop/package-select-card";
 import ChooseDateCard from "./desktop/choose-date-card";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
-export default function SearchMobileBar() {
+export default function SearchMobileBar({ className }: { className?: string }) {
   // const selected = useClientSelector((state) => ({
   //   selected: state.package.selectedPackages,
   //   date: state.package.date,
   // }));
-  const selected = useClientSelector(state => state.package.selectedPackages)
-  const selectedDate = useClientSelector(state => state.package.date)
+  const selected = useClientSelector((state) => state.package.selectedPackages);
+  const selectedDate = useClientSelector((state) => state.package.date);
   const packages = useClientSelector((state) => state.package.packages);
   return (
     <Drawer>
-      <DrawerTrigger className="w-full  py-2 md:py-3 md:hidden ">
+      <DrawerTrigger
+        className={cn(
+          "w-full rounded-l-full pl-7 py-2 md:py-3 h-14",
+          className,
+        )}
+      >
         <div className="flex">
           <p className="text-sm font-medium md:text-sm line-clamp-1 text-muted-foreground">
-            Filter package & date
+            {selected.length
+              ? `${selected.length} Package selected to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
+              : "Filter package & date"}
           </p>
         </div>
       </DrawerTrigger>

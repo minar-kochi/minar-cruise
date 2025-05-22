@@ -6,14 +6,14 @@ import HomeVideo from "@/components/home/HomeVideo";
 import MinarSec from "@/components/home/MinarSec";
 import PackagesBento from "@/components/home/PackagesBento";
 import Services from "@/components/home/Services";
+import SearchBarWrapper from "@/components/searchbar/SearchBarWrapper";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import { Suspense } from "react";
 
 export const metadata = constructMetadata({});
 // console.log(metadata)
 export default function page() {
   return (
-    <main className="embla__viewport">
+    <main className="embla__viewport relative ">
       <HomeVideo />
       <MinarSec />
       <PackagesBento />
@@ -22,6 +22,7 @@ export default function page() {
       <Facilities />
       <BookingDescription />
       <GalleryCarousel />
+      <SearchBarWrapper className="fixed bottom-0 w-full z-30" />
     </main>
   );
 }

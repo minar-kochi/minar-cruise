@@ -21,7 +21,7 @@ const CompanyInfoCard = ({ className }: { className: string }) => {
         >
           Facilities
         </Link>
-        <Link href="/blog" className="max-sm:mx-auto font-medium text-white">
+        <Link href="/blogs/1" className="max-sm:mx-auto font-medium text-white">
           News And Blogs
         </Link>
       </div>

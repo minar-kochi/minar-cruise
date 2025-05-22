@@ -1,3 +1,4 @@
+import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 import { CreateUser } from "@/db/data/creator/user";
 import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
@@ -50,10 +51,10 @@ export async function CreateBookingForCreateSchedule({
   const totalCount = numOfAdults + numOfChildren;
 
   if (!isStatusSunset(scheduleTime)) {
-    if (totalCount < 25) {
+    if (totalCount < MIN_NEW_BOOKING_COUNT) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Count Should of minimum 25, for a new created schedule",
+        message: `Count Should of minimum ${MIN_NEW_BOOKING_COUNT}, for a new created schedule`,
       });
     }
   }

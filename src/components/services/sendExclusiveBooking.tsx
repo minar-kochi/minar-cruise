@@ -27,14 +27,13 @@ interface ExclusiveBookingEmailToAdmin {
   babyCount: number;
   selectedDate: string;
   selectedTime: string;
-  token:string | undefined
+  token: string | undefined;
 }
 
 // const domain = process.env.NEXT_PUBLIC_DOMAIN;
 
 export default function ExclusiveBookingEmailToAdmin({
   Duration,
-  count,
   token,
   eventType,
   email,
@@ -66,14 +65,10 @@ export default function ExclusiveBookingEmailToAdmin({
             <Text className="text-[24px] font-semibold leading-[32px] text-indigo-400">
               Qoute requested for exclusive Booking from {name}.
             </Text>
-            <Text>
-              This is the actual content that the accented text above refers to.
-            </Text>
             <Text>Phone: {phone}</Text>
             <Text>Email: {email}</Text>
             <Text>Phone: {phone}</Text>
             <Text>Date: {selectedDate}</Text>
-            <Text>Aproximate Count: {count}</Text>
             <Text>Event Type: {eventType}</Text>
             <Text>Duration: {Duration}</Text>
 
@@ -98,20 +93,3 @@ export default function ExclusiveBookingEmailToAdmin({
     </Html>
   );
 }
-
-//   BookingConfirmation.PreviewProps = {
-//     BookingId: "2544351",
-//     totalCount: 5,
-//     packageTitle: "Dinner Cruise",
-//     Name: "Amjus",
-//     email: "amsj@mailc.com",
-//     phone: "954853212",
-//     scheduleDate: "12-sep-24",
-//     totalAmount: 7820,
-//     BookingDate: "22/4/24",
-//     adultCount: 2,
-//     childCount: 5,
-//     babyCount: 5
-//   } as BookingConfirmationProps;
-
-// export default ExclusiveBookingEmailToAdmin;

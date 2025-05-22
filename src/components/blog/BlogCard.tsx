@@ -1,38 +1,74 @@
 import Image from "next/image";
-import Bounded from "../elements/Bounded";
 import Link from "next/link";
+import { ArrowUpRight, User } from "lucide-react";
+import { format } from "date-fns";
 
-interface BlogcardType {
+interface BlogCardType {
   imgUrl: string;
   title: string;
   desc: string;
   link: string;
+  date: string;
+  author: string;
 }
 
-export default function BlogCard({ imgUrl, title, desc, link }: BlogcardType) {
+export default function BlogCard({
+  imgUrl,
+  title,
+  desc,
+  link,
+  date,
+  author,
+}: BlogCardType) {
   return (
-    <div className="border-[1px] border-muted max-w-[350px] rounded-xl flex flex-col h-fit">
-      <Link href={link} className="h-1/2 max-h-[250px]">
+    <Link
+      href={link}
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:shadow-md"
+    >
+      {/* Image Container */}
+      <div className="relative h-48 w-full overflow-hidden">
         <Image
-          src={imgUrl ?? "/assets/world-map.png"}
-          alt="ship"
-          width={400}
-          height={300}
-          className="overflow-hidden rounded-xl"
+          src={imgUrl}
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
-      </Link>
-      <div className="h-1/2 px-7 pt-9 pb-6  rounded-t-3xl ">
-        <Link
-          href={link}
-          className="text-xl font-semibold py-2 hover:text-red-500 cursor-pointer"
-        >
-          {title}
-        </Link>
-        <p className="text-muted-foreground py-2 text-base">{desc}</p>
-        <Link className="py-2 text-red-500 font-semibold text-sm" href={link}>
-          READ MORE
-        </Link>
+
+        {/* Category Badge - You can add this if needed */}
+        <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-800 backdrop-blur-sm">
+          Blog
+        </div>
       </div>
-    </div>
+
+      {/* Content Area */}
+      <div className="flex flex-1 flex-col p-5">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-xs text-gray-500">
+            {format(date, "MMM yyyy")}
+          </span>
+          {/* <span className="text-xs text-gray-500">5 min read</span> */}
+        </div>
+
+        <h3 className="mb-3 text-lg font-bold tracking-tight text-gray-900 line-clamp-2">
+          {title}
+        </h3>
+
+        <p className="mb-6 text-sm text-gray-600 line-clamp-2">{desc}</p>
+
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-100">
+              <User size={20} className="text-gray-500" />
+            </div>
+            <span className="text-xs font-medium text-gray-700">{author}</span>
+          </div>
+
+          <div className="flex items-center text-sm font-medium text-blue-600 transition-all group-hover:pr-1">
+            Read
+            <ArrowUpRight className="ml-1 h-4 w-4 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }
