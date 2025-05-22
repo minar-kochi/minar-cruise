@@ -16,10 +16,6 @@ export const exclusivePackageValidator = z.object({
     .refine((num) => num === "" || indianPhoneRegex.test(num), {
       message: "Should be a valid Phone number, only indian number are allowed",
     }),
-  count: z
-    .number({ required_error: "Please  a Count" })
-    .min(25, { message: "Number should be Greater than 25" })
-    .default(25),
   Duration: z.string(),
   eventType: z.string().min(3),
   selectedDate: z.string(),

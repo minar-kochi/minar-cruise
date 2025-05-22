@@ -193,7 +193,6 @@ export default function QuickPackageForm({
             errors={errors}
             adultPrice={item.adultPrice / 100}
             childPrice={item.childPrice / 100}
-            //   className={cn("", { "": type === "modal" })}
           />
           <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
             <div>

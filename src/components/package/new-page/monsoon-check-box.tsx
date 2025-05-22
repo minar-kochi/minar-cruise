@@ -12,13 +12,13 @@ export default function MonsoonCheckBox() {
   useEffect(() => {
     const currentTime = new Date(Date.now());
     const currentMonth = getMonth(currentTime);
-    if (currentMonth > 4 && currentMonth < 7) {
+    if (currentMonth >= 4 && currentMonth <= 6) {
       setIsVisible(true);
     }
   }, []);
-  
-  if(typeof window === 'undefined') return
-  
+
+  if (typeof window === "undefined") return;
+
   return (
     <div className={cn("flex items-center pb-2", { hidden: !isVisible })}>
       <Checkbox id="terms-and-privacy-condition" required aria-required />
@@ -26,8 +26,9 @@ export default function MonsoonCheckBox() {
         htmlFor="terms-and-privacy-condition"
         className="ml-2 text-xs font-normal"
       >
-        During monsoon season, cruises are unable to travel through the
-        backwaters due to regulatory safety policies.{" "}
+        Due to monsoon restrictions, the sea cruise will not be available in
+        June, July, and August. However, the same trip will be offered through
+        the backwaters and ship channels.{" "}
       </Label>
     </div>
   );

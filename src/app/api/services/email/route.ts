@@ -1,6 +1,7 @@
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import VercelInviteUserEmail from "@/components/services/EmailService";
 import NewScheduleCreatedAlertEmail from "@/components/services/NewScheduleCreatedAlertEmail";
+import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 // import { sendConfirmationEmail } from "@/lib/helpers/CommonBuisnessHelpers";
 
@@ -14,7 +15,7 @@ export async function POST() {
       customerName: "Customer",
       BookingId: "#12as2d158ssads",
       packageTitle: "Sunset Cruise",
-      totalCount: 25,
+      totalCount: MIN_NEW_BOOKING_COUNT,
       duration: "5:30 - 6:30",
       totalAmount: 5000,
       status: "Confirmed",

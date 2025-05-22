@@ -17,6 +17,7 @@ import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
 import { useAppDispatch } from "@/hooks/adminStore/reducer";
 import { setDate } from "@/lib/features/client/packageClientSlice";
+import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 type TBookingFormCalender = {
   setFormDateValue: (value: string) => void;
   setScheduleId: (value: string | undefined) => void;
@@ -113,7 +114,7 @@ export default function BookingFormCalender({
               setScheduleId(undefined);
               if (packageCategory !== "SUNSET") {
                 toast(
-                  "This date requires at least 25 guests to set sail! 🌊✨",
+                  `This date requires at least ${MIN_NEW_BOOKING_COUNT} guests to set sail! 🌊✨`,
                   {
                     className:
                       "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
@@ -195,7 +196,7 @@ export default function BookingFormCalender({
           if (!schedule) {
             setScheduleId(undefined);
             if (packageCategory !== "SUNSET") {
-              toast("This date requires at least 25 guests to set sail! 🌊✨", {
+              toast(`This date requires at least ${MIN_NEW_BOOKING_COUNT} guests to set sail! 🌊✨`, {
                 className:
                   "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
                 duration: 5000,

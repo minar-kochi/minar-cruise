@@ -147,10 +147,10 @@ export default function SearchPageWrapper({
             <Image
               className="aspect-[16/9]  md:max-w-sm object-cover"
               src={
-                sunsetPackage.packageImage[0].image.url ??
+                sunsetPackage?.packageImage[0]?.image?.url ??
                 "/assets/world-map.png"
               }
-              alt={sunsetPackage.packageImage[0].image.alt}
+              alt={sunsetPackage?.packageImage[0]?.image?.alt ?? ""}
               width={720}
               height={480}
             />
