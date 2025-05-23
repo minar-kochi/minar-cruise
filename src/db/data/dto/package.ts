@@ -175,9 +175,11 @@ export async function getPackageSearchItems() {
         toTime: true,
         packageCategory: true,
         packageImage: {
-          take: 1,
+          take: 2,
           where: {
-            ImageUse: "PROD_FEATURED",
+            ImageUse: {
+              in: ["PROD_FEATURED", "PROD_THUMBNAIL", "COMMON"],
+            },
           },
           select: {
             image: {
@@ -323,7 +325,7 @@ export async function getPackageCardDetails() {
         title: true,
         packageCategory: true,
         fromTime: true,
-        toTime:true,
+        toTime: true,
         slug: true,
         amenities: {
           select: {
