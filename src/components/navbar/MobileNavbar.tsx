@@ -1,4 +1,4 @@
-import { Menu } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -102,12 +102,13 @@ export default function MobileNavbar({ packages }: Props) {
             {/* Primary CTA */}
             <DrawerClose asChild>
               <Link
-                href="/"
+                href="/search"
                 className={cn(
                   buttonVariants({ variant: "default" }),
-                  "w-full text-center text-lg",
+                  "w-full text-center text-lg flex gap-1 items-center",
                 )}
               >
+                <Search className="text-white" size={18} />
                 Find Your Cruise
               </Link>
             </DrawerClose>
@@ -116,7 +117,7 @@ export default function MobileNavbar({ packages }: Props) {
                 <Accordion type="single" collapsible>
                   <AccordionItem value="packages">
                     <AccordionTrigger className="text-lg font-medium">
-                      Available Packages
+                      Packages
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2 pt-2">
@@ -136,7 +137,7 @@ export default function MobileNavbar({ packages }: Props) {
                 </Accordion>
               </div>
             }
-            <hr/>
+            <hr />
             {/* Main Navigation */}
             <nav className="space-y-1">
               {navigation.map((item) =>

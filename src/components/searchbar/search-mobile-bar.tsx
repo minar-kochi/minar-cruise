@@ -1,21 +1,19 @@
 "use client";
 
-import React from "react";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
+  DrawerTrigger
 } from "@/components/ui/drawer";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
-import PackageSelectCard from "./desktop/package-select-card";
-import ChooseDateCard from "./desktop/choose-date-card";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import ChooseDateCard from "./desktop/choose-date-card";
+import PackageSelectCard from "./desktop/package-select-card";
+import { SearchButtonShad } from "./SearchButton";
 
 export default function SearchMobileBar({ className }: { className?: string }) {
   // const selected = useClientSelector((state) => ({
@@ -71,6 +69,7 @@ export default function SearchMobileBar({ className }: { className?: string }) {
               : null}
           </div>
         </div>
+        <SearchButtonShad />
       </DrawerContent>
     </Drawer>
   );
