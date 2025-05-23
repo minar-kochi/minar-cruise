@@ -1,16 +1,22 @@
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
 import {
-  TExcludedOrganizedUpcommingSchedule,
+  GroupedSchedulePackageData,
+  TExcludedOrganizedUpComingSchedule,
   TIsScheduleChange,
   TKeyOrganizedScheduleData,
   TOrganizedScheduleData,
   TUpdatedDateSchedulePackageId,
+  TSchedulePackageData,
+  InfinitySchedulesWithBookingCount,
+  InfinitySchedulePackageData,
+  GroupedScheduleWithBookingCount,
 } from "@/Types/Schedule/ScheduleSelect";
 import { TkeyDbTime, TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
+
 export type TScheduleUtilsState = {
   /**
    * Popover state variable
@@ -24,28 +30,94 @@ export type TScheduleState = {
    */
   date: string;
   /**
-   * Upcomming Schedules that are formatted in YYYY-MM-DD[]
+   * upComing Schedules that are formatted in YYYY-MM-DD[]
    */
-  upCommingSchedules: TExcludedOrganizedUpcommingSchedule;
+  upComingSchedules: TExcludedOrganizedUpComingSchedule;
   /**
    * Current date schedule that is synced with database. (do not change is value.) but you can sync it with database.
    */
   currentDateSchedule: TOrganizedScheduleData;
   ScheduleDataRaw: TScheduleDataDayReplaceString[] | [];
   /**
-   * Locally Store and Changable Date schedule.
+   * Locally Store and Changeable Date schedule.
    */
   updatedDateSchedule: TUpdatedDateSchedulePackageId;
   /**
    * to notify whether a Schedule is not same as in the database.
    */
   isChangedUpdated: TIsScheduleChange;
+  AllSchedulesByDate: GroupedSchedulePackageData;
+  SchedulesWithBookingData: GroupedScheduleWithBookingCount;
 } & TScheduleUtilsState;
 
 const scheduleSlice = createSlice({
   name: "schedule",
   initialState,
   reducers: {
+    setScheduleForBooking: {
+      reducer(
+        state,
+        action: PayloadAction<{ data: GroupedScheduleWithBookingCount }>,
+      ) {
+        state.SchedulesWithBookingData = action.payload.data;
+      },
+      prepare(data: InfinitySchedulesWithBookingCount[] | undefined) {
+        const unformattedSchedulesArray =
+          data?.flatMap((item) => item.response) ?? [];
+
+        const uniqueScheduleKeys = new Set();
+        const uniqueSchedules = unformattedSchedulesArray?.filter((item) => {
+          const key = `${item.day}-${item.id}`;
+          if (uniqueScheduleKeys.has(key)) return false;
+          uniqueScheduleKeys.add(key);
+          return true;
+        });
+
+        const formattedScheduleArray = uniqueSchedules?.reduce(
+          (acc, schedule) => {
+            const dateKey = new Date(schedule.day).toISOString().split("T")[0];
+            (acc[dateKey] = acc[dateKey] || [])?.push(schedule);
+            return acc;
+          },
+          {} as GroupedScheduleWithBookingCount,
+        );
+
+        return {
+          payload: {
+            data: formattedScheduleArray,
+          },
+        };
+      },
+    },
+    setAllScheduleByDate: {
+      reducer(
+        state,
+        action: PayloadAction<{ data: GroupedSchedulePackageData }>,
+      ) {
+        state.AllSchedulesByDate = action.payload.data;
+      },
+      prepare(data: InfinitySchedulePackageData[] | undefined) {
+        let organizedSchedules = data?.flatMap((item) => item.schedules) ?? [];
+        const seen = new Set<string>();
+
+        const uniqueSchedules = organizedSchedules.filter((schedule) => {
+          const key = `${schedule.day}-${schedule.id}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        const groupedSchedules = uniqueSchedules.reduce((acc, schedule) => {
+          const dateKey = new Date(schedule.day).toISOString().split("T")[0];
+          (acc[dateKey] = acc[dateKey] || [])?.push(schedule);
+          return acc;
+        }, {} as GroupedSchedulePackageData);
+        return {
+          payload: { data: groupedSchedules },
+        };
+      },
+    },
+
     /**
      * @param state TSchedule
      * @param action string {YYYY-MM-DD} format string
@@ -97,12 +169,12 @@ const scheduleSlice = createSlice({
           payload;
         //Filtering out the dates that are removed.
         if (state.date === action.payload.updatingDate) {
-          const newFilteredUpcommingScheduleDate = state.upCommingSchedules[
+          const newFilteredUpComingScheduleDate = state.upComingSchedules[
             type
           ].filter((fv) => fv.date !== updatingDate);
 
           //removing the date from the deleted State
-          state.upCommingSchedules[type] = newFilteredUpcommingScheduleDate;
+          state.upComingSchedules[type] = newFilteredUpComingScheduleDate;
         }
         state.currentDateSchedule[type] = null;
       },
@@ -137,7 +209,7 @@ const scheduleSlice = createSlice({
           state.currentDateSchedule[action.payload.type] =
             action.payload.currentDateSchedule;
         }
-        state.upCommingSchedules[action.payload.type].push({
+        state.upComingSchedules[action.payload.type].push({
           date: action.payload.updatingDate,
           status: action.payload.scheduleStatus,
         });
@@ -171,10 +243,9 @@ const scheduleSlice = createSlice({
         if (state.date === action.payload.updatingDate) {
           state.currentDateSchedule[action.payload.type] = null;
         }
-        state.upCommingSchedules[action.payload.type] =
-          state.upCommingSchedules[action.payload.type].filter(
-            (fv) => fv.date !== action.payload.updatingDate,
-          );
+        state.upComingSchedules[action.payload.type] = state.upComingSchedules[
+          action.payload.type
+        ].filter((fv) => fv.date !== action.payload.updatingDate);
       },
       prepare(
         data: TScheduleDataDayReplaceString,
@@ -206,14 +277,14 @@ const scheduleSlice = createSlice({
       }
     },
     /**
-     * set the UpcommingOrganizedDates which is in (YYYY-MM-DD(organized))[]
-     * @param action {TExcludedOrganizedUpcommingSchedule}
+     * set the upComingOrganizedDates which is in (YYYY-MM-DD(organized))[]
+     * @param action {TExcludedOrganizedUpComingSchedule}
      */
     setInitialOrganizedScheduleDates(
       state,
-      action: PayloadAction<TExcludedOrganizedUpcommingSchedule>,
+      action: PayloadAction<TExcludedOrganizedUpComingSchedule>,
     ) {
-      state.upCommingSchedules = action.payload;
+      state.upComingSchedules = action.payload;
     },
 
     /**
@@ -285,6 +356,8 @@ export const {
   setSyncDatabaseUpdatesScheduleCreation,
   setSyncDatabaseDeleteSchedule,
   setSyncDatabaseUpdatesScheduleDeletion,
+  setAllScheduleByDate,
+  setScheduleForBooking
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;

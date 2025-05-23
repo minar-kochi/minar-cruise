@@ -30,9 +30,9 @@ const FacilitiesImageCard = ({
         <FacilitiesTitle title={overlapTitle ?? ""} author={author ?? ""} />
       </div>
       <Bounded className="relative -top-16 flex justify-end items-end">
-        <div className="flex bottom-0 font-bold bg-white  px-7 py-5 rounded-t-xl">
+        <div className="flex bottom-0 font-bold bg-white dark:text-black  px-7 py-5 rounded-t-xl">
           <Link href={"/"}>Home</Link> /
-          <p className="text-primary whitespace-pre-line  indent-2">{label}</p>
+          <p className="text-primary whitespace-pre-line  dark:text-red-500 indent-2">{label}</p>
         </div>
       </Bounded>
     </div>

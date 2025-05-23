@@ -27,7 +27,7 @@ export function ShouldPackageBeAvailableForPublicToSchedule(
 }
 export type IsPackageTypeOrExclusiveChecker = {
   packageStatus: string;
-  exlcusive?: boolean;
+  exclusive?: boolean;
 };
 export function isPackageStatusExclusive(packageStatus: string) {
   return packageStatus === $Enums.PACKAGE_CATEGORY.EXCLUSIVE;
@@ -37,39 +37,39 @@ export function isPackageStatusCustom(packageStatus: string) {
 }
 export function isPackageStatusBreakfast({
   packageStatus,
-  exlcusive,
+  exclusive,
 }: IsPackageTypeOrExclusiveChecker) {
   return (
     packageStatus === $Enums.PACKAGE_CATEGORY.BREAKFAST ||
-    (exlcusive && isPackageStatusExclusive(packageStatus))
+    (exclusive && isPackageStatusExclusive(packageStatus))
   );
 }
 
 export function isPackageStatusLunch({
   packageStatus,
-  exlcusive,
+  exclusive,
 }: IsPackageTypeOrExclusiveChecker) {
   return (
     packageStatus === $Enums.PACKAGE_CATEGORY.LUNCH ||
-    (exlcusive && isPackageStatusExclusive(packageStatus))
+    (exclusive && isPackageStatusExclusive(packageStatus))
   );
 }
 export function isPackageStatusDinner({
   packageStatus,
-  exlcusive,
+  exclusive,
 }: IsPackageTypeOrExclusiveChecker) {
   return (
     packageStatus === $Enums.PACKAGE_CATEGORY.DINNER ||
-    (exlcusive && isPackageStatusExclusive(packageStatus))
+    (exclusive && isPackageStatusExclusive(packageStatus))
   );
 }
 export function isPackageStatusSunSet({
   packageStatus,
-  exlcusive,
+  exclusive,
 }: IsPackageTypeOrExclusiveChecker) {
   return (
     packageStatus === $Enums.PACKAGE_CATEGORY.SUNSET ||
-    (exlcusive && isPackageStatusExclusive(packageStatus))
+    (exclusive && isPackageStatusExclusive(packageStatus))
   );
 }
 

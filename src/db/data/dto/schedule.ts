@@ -11,6 +11,55 @@ import {
 import { $Enums, Schedule } from "@prisma/client";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
+export type TGetScheduleWithBookingCountDTO = Awaited<
+  ReturnType<typeof getScheduleWithBookingCount>
+>;
+
+export async function getScheduleWithBookingCount({
+  cursor,
+  limit,
+}: {
+  cursor: string | null | undefined;
+  limit: number;
+}) {
+  const data = await db.schedule.findMany({
+    where: {
+      day: {
+        gte: new Date(Date.now()),
+      },
+      scheduleStatus: {
+        in: ["AVAILABLE", "EXCLUSIVE"],
+      },
+    },
+    select: {
+      id: true,
+      day: true,
+      fromTime: true,
+      toTime: true,
+      schedulePackage: true,
+      scheduleStatus: true,
+      Package: {
+        select: {
+          title: true,
+          fromTime: true,
+          toTime: true,
+        },
+      },
+      Booking: {
+        select: {
+          totalBooking: true,
+        },
+      },
+    },
+    cursor: cursor ? { id: cursor } : undefined,
+    take: limit + 1,
+    orderBy: {
+      day: "asc",
+    },
+  });
+
+  return data;
+}
 interface ICheckScheduleStatusForTheSelectedDate {
   date: string;
   packageTime: $Enums.SCHEDULED_TIME;
@@ -35,6 +84,31 @@ export async function checkScheduleStatusForTheSelectedDate({
   return scheduleStatus;
 }
 
+export async function getScheduleCount({
+  FromDate,
+  ToDate,
+}: {
+  FromDate: Date;
+  ToDate: Date;
+}) {
+  const count = await db.schedule.count({
+    where: {
+      day: {
+        gte: FromDate,
+        lte: ToDate,
+      },
+      NOT: [
+        {
+          scheduleStatus: "BLOCKED",
+        },
+        {
+          scheduleStatus: "MAINTENANCE",
+        },
+      ],
+    },
+  });
+  return count;
+}
 export type TGetSchedulesByDateRange = Awaited<
   ReturnType<typeof getSchedulesByDateRange>
 >;
@@ -76,6 +150,32 @@ export async function getSchedulesByDateRange(FromDate: Date, ToDate: Date) {
     ErrorLogger(error);
     return null;
   }
+}
+
+export type TGetBlockedScheduleDays = Awaited<
+  ReturnType<typeof getSchedulesByDateRangeWithBookingCount>
+>;
+
+export async function getBlockedScheduleDays({
+  fromDate,
+  toDate,
+}: {
+  fromDate: Date;
+  toDate: Date;
+}) {
+  const data = await db.schedule.findMany({
+    where: {
+      scheduleStatus: "BLOCKED",
+      day: {
+        gte: fromDate,
+        lte: toDate,
+      },
+    },
+    select: {
+      day: true,
+    },
+  });
+  return data;
 }
 
 export type TGetSchedulesByDateRangeWithBookingCount = Exclude<
@@ -243,7 +343,7 @@ export const getSchedule = async () => {
 
 export type TScheduleData = Schedule;
 
-export type TgetUpcommingScheduleDates = {
+export type TgetupComingScheduleDates = {
   breakfast: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   lunch: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   sunset: { date: string; status: $Enums.SCHEDULE_STATUS }[];
@@ -300,7 +400,7 @@ export const getManySchedulesAndTotalBookingCount = async () => {
 export type TGetManySchedulesAndTotalBookingCount = Awaited<
   ReturnType<typeof getManySchedulesAndTotalBookingCount>
 >;
-export const getUpcommingScheduleDates = async () => {
+export const getupComingScheduleDates = async () => {
   try {
     const data = await db.schedule.findMany({
       where: {
@@ -311,7 +411,7 @@ export const getUpcommingScheduleDates = async () => {
       take: 60,
     });
 
-    let scheduledDate: TgetUpcommingScheduleDates = {
+    let scheduledDate: TgetupComingScheduleDates = {
       breakfast: [],
       dinner: [],
       sunset: [],
@@ -547,6 +647,7 @@ export async function getBookingsByScheduleId(id: string) {
         schedule: {
           select: {
             schedulePackage: true,
+            day: true,
           },
         },
         payment: {

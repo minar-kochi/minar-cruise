@@ -2,7 +2,8 @@ import PackagesInBlog from "@/components/blog/PackagesInBlog";
 import RecentBlogPosts from "@/components/blog/RecentBlogPosts";
 import Bounded from "@/components/elements/Bounded";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
-import { getBlogPostById, getBlogPosts } from "@/db/data/dto/blog";
+import { db } from "@/db";
+import { getBlogPostById } from "@/db/data/dto/blog";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +16,16 @@ interface BlogPage {
 }
 const defaultImage =
   "https://cochincruiseline.com/wp-content/uploads/2023/10/dinner-9-580x450.jpg";
+
+export async function generateStaticParams() {
+  const data = await db.blog.findMany({
+    where: {
+      blogStatus: "PUBLISHED",
+    },
+    select: { blogSlug: true },
+  });
+  return data.map(({blogSlug}) => ({ blogSlug }));
+}
 
 export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
   const blogPost = await getBlogPostById({ id: blogSlug });
@@ -37,7 +48,7 @@ export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
               alt={blogPost.title}
               width={1140}
               height={760}
-              className="w-full max-h-[550px] rounded-max-lg"
+              className="w-full max-h-[550px] rounded-max-lg object-cover"
             />
           </div>
 

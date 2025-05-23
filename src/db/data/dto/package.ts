@@ -165,6 +165,15 @@ export async function getPackageSearchItems() {
       select: {
         id: true,
         title: true,
+        slug: true,
+        adultPrice: true,
+        childPrice: true,
+        amenities: true,
+        description: true,
+        duration: true,
+        fromTime: true,
+        toTime: true,
+        packageCategory: true,
         packageImage: {
           take: 1,
           where: {
@@ -195,6 +204,15 @@ export async function getPackageSearchItems() {
     return null;
   }
 }
+
+export const cachedSearchPackage = unstable_cache(
+  getPackageSearchItems,
+  undefined,
+  {
+    revalidate: 9600,
+    tags: ["ORGANIZED_PACKAGE_KEY"],
+  },
+);
 
 export type PackageSelect = {
   id: string;
@@ -230,7 +248,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusLunch({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           lunch.push(PackageData);
@@ -238,7 +256,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusSunSet({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           sunset.push(PackageData);
@@ -246,7 +264,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusBreakfast({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           breakfast.push(PackageData);
@@ -254,7 +272,7 @@ export const getOrganizedPackages = unstable_cache(
         if (
           isPackageStatusDinner({
             packageStatus: PackageData.packageCategory,
-            exlcusive: true,
+            exclusive: true,
           })
         ) {
           dinner.push(PackageData);
@@ -304,6 +322,8 @@ export async function getPackageCardDetails() {
         childPrice: true,
         title: true,
         packageCategory: true,
+        fromTime: true,
+        toTime:true,
         slug: true,
         amenities: {
           select: {
@@ -469,12 +489,13 @@ export async function getPackagesForBlog() {
     const data = await db.package.findMany({
       where: {
         packageCategory: {
-          not: "CUSTOM",
+          notIn: ["CUSTOM", "EXCLUSIVE"],
         },
       },
       select: {
         id: true,
         adultPrice: true,
+        childPrice: true,
         title: true,
         slug: true,
         packageImage: {

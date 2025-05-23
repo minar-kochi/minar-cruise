@@ -3,8 +3,11 @@ import Link from "next/link";
 import Bounded from "../elements/Bounded";
 import NavigationContents from "./NavigationContents";
 import MobileNavbar from "./MobileNavbar";
+import { getPackageNavigation } from "@/db/data/dto/package";
 
 const Navbar = async () => {
+  const packages = await getPackageNavigation();
+
   return (
     <div className="sticky top-0 w-full bg-white z-50 shadow-sm">
       <Bounded
@@ -16,17 +19,17 @@ const Navbar = async () => {
             <Image
               src={"/assets/logo.png"}
               alt="ship logo"
-              width={150}
+              width={120}
               height={100}
               priority={true}
             />
           </Link>
         </div>
         <div className="w-full justify-end items-center hidden md:flex ">
-          <NavigationContents />
+          <NavigationContents packages={packages} />
         </div>
         <div className="md:hidden ">
-          <MobileNavbar />
+          <MobileNavbar packages={packages ?? []} />
         </div>
       </Bounded>
     </div>

@@ -31,14 +31,16 @@ export default function GalleryCarousel() {
             </div>
           ))}
         </HomeCarousalProvider>
+      </div>
+      <div className="flex items-center justify-center w-full">
         <Link
           href={"/gallery/family-gathering"}
           className={buttonVariants({
             size: "sm",
-            className: "absolute right-0 bg-[#0D3A62] text-destructive-foreground hover:bg-blue-900",
+            variant: "ghost",
           })}
         >
-          View Gallery
+          View all our Gallery here -{'>'}
         </Link>
       </div>
     </Bounded>

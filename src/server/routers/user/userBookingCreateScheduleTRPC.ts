@@ -1,3 +1,4 @@
+import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 import { CreateUser } from "@/db/data/creator/user";
 import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
@@ -28,11 +29,11 @@ export async function CreateBookingForCreateSchedule({
   /**
    * To generate the event we need certain condition to be met.
    * 1. Total condition should be 25. [done]
-   * 2. Event should be not blocked or exlusive or it must be Sunset cruise with not an exclusive package.
+   * 2. Event should be not blocked or exclusive or it must be Sunset cruise with not an exclusive package.
    *              - [Checked on Hoisted Level that The schedule Date] [done]
    * 3. Date must be validated. [InProgress]
-   * 4. Schedule timing should be either booked before the certain buisness condition timing [done]
-   * 5. Schedule timing should not be CUSTOM / Exlusive. [done]
+   * 4. Schedule timing should be either booked before the certain business condition timing [done]
+   * 5. Schedule timing should not be CUSTOM / Exclusive. [done]
    * 6. Schedule CreateSchedule Should not be Sunset. [Done]
    * 7.
    *
@@ -50,10 +51,10 @@ export async function CreateBookingForCreateSchedule({
   const totalCount = numOfAdults + numOfChildren;
 
   if (!isStatusSunset(scheduleTime)) {
-    if (totalCount < 25) {
+    if (totalCount < MIN_NEW_BOOKING_COUNT) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Count Should of minimum 25, for a new created schedule",
+        message: `Count Should of minimum ${MIN_NEW_BOOKING_COUNT}, for a new created schedule`,
       });
     }
   }
@@ -73,7 +74,7 @@ export async function CreateBookingForCreateSchedule({
     throw new TRPCError({
       code: "BAD_REQUEST",
       message:
-        "Could not complete booking as it is too late for the selected data, please select a different package or date",
+        "Could not complete booking as it is too late for selected date, please select a different package or date",
     });
   }
   const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;

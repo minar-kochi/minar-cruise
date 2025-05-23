@@ -2,6 +2,7 @@ import { $Enums } from "@prisma/client";
 import { error } from "console";
 import { setErrorMap, z } from "zod";
 import { isStatusSunset } from "./Schedules";
+import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 
 export type TOnlineBookingFormValidator = z.infer<
   typeof onlineBookingFormValidator
@@ -80,7 +81,7 @@ export const onlineBookingFormValidator = z
       let totalCount = data.numOfAdults + data.numOfChildren;
       if (
         !data.scheduleId &&
-        totalCount < 25 &&
+        totalCount < MIN_NEW_BOOKING_COUNT &&
         !isStatusSunset(data.packageCategory)
       ) {
         return false;
@@ -88,7 +89,7 @@ export const onlineBookingFormValidator = z
       return true;
     },
     {
-      message: "Should select at least a total of 25 seats (adult + child)",
+      message: `Should select at least a total of ${MIN_NEW_BOOKING_COUNT} seats (adult + child)`,
       path: ["numOfAdults"],
     },
   )

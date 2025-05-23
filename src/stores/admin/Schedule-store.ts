@@ -1,6 +1,6 @@
 // // import { TselectDate } from "@/components/admin/dashboard/ScheduleSelector";
 // import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
-// import { TgetUpcommingScheduleDates } from "@/db/data/dto/schedule";
+// import { TgetupComingScheduleDates } from "@/db/data/dto/schedule";
 // import { organizeScheduleData } from "@/lib/helpers/organizedData";
 // import {
 //   TOrganizedScheduleData,
@@ -11,7 +11,7 @@
 
 // export type ScheduleState = {
 //   packages: Exclude<TgetPackageScheduleDatas, null>;
-//   UpcommingScheduleDates: TgetUpcommingScheduleDates;
+//   upComingScheduleDates: TgetupComingScheduleDates;
 //   organizedSchedule?: TOrganizedScheduleData;
 //   selectedSchedulePackageId?: TSelectedPackageIdsAndScheduleEnum;
 //   date: string;
@@ -19,8 +19,8 @@
 
 // export type ScheduleActions = {
 //   setOrganizedData: (param: TScheduleDataDayReplaceString[]) => void;
-//   updateUpcommingScheduleDates: (
-//     param: keyof TgetUpcommingScheduleDates,
+//   updateupComingScheduleDates: (
+//     param: keyof TgetupComingScheduleDates,
 //     data: Date[]
 //   ) => void;
 //   updateSelectedSchedulePackageId: <
@@ -68,13 +68,13 @@
 //         };
 //       });
 //     },
-//     updateUpcommingScheduleDates: (param, data) => {
+//     updateupComingScheduleDates: (param, data) => {
 //       set((state) => {
-//         let newData = [...state.UpcommingScheduleDates[param], ...data];
+//         let newData = [...state.upComingScheduleDates[param], ...data];
 //         let uniqueData = Array.from(new Set(newData));
 //         return {
-//           UpcommingScheduleDates: {
-//             ...state.UpcommingScheduleDates,
+//           upComingScheduleDates: {
+//             ...state.upComingScheduleDates,
 //             [param]: uniqueData,
 //           },
 //         };

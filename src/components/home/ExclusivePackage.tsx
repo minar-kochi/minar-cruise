@@ -1,11 +1,8 @@
-import { Star } from "lucide-react";
-import React from "react";
-import BookNowBtn from "./BookNowBtn";
-import Image from "next/image";
 import Bounded from "@/components/elements/Bounded";
 import { Exclusive } from "@/constants/home/landingData";
-import { Button } from "../ui/button";
+import Image from "next/image";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 export default function ExclusivePackage() {
   const { mainHeading, subHeading, desc, video1 } = Exclusive;

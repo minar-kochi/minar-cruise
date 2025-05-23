@@ -1,12 +1,20 @@
 import Ripple from "@/components/magicui/ripple";
+import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
-export default function LoadingState() {
+export default function Loader({
+  className,
+  size,
+}: {
+  size?: number;
+  className: string;
+}) {
   return (
-    <div className="relative flex min-h-[320px] aspect-square max-h-[calc(100dvh-14rem)] w-full flex-col items-center justify-center overflow-hidden ">
-      <p className="z-10 text-center tracking-tighter text-muted-foreground dark:text-white/40 text-2xl p-6 font-semibold">
-        Loading . . .
-      </p>
-      <Ripple />
+    <div className={cn("flex justify-center items-center", className)}>
+      <div className="flex items-center gap-4">
+        <Loader2 className="animate-spin" size={size ?? 50} />
+        <p className="text-4xl">loading...</p>
+      </div>
     </div>
   );
 }

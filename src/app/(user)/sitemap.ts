@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${process.env.NEXT_PUBLIC_DOMAIN}/blog`,
+      url: `${process.env.NEXT_PUBLIC_DOMAIN}/blogs/1`,
       changeFrequency: "monthly",
       lastModified: new Date(Date.now()),
       priority: 0.8,

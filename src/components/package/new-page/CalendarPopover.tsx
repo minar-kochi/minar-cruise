@@ -10,7 +10,7 @@ import { CalendarIcon } from "lucide-react";
 
 interface ICalendarPopover {
   children: React.ReactNode;
-  date?: Date | undefined;
+  date: Date | string | null;
 }
 export default function CalendarPopover({ children, date }: ICalendarPopover) {
   return (
@@ -30,7 +30,7 @@ export default function CalendarPopover({ children, date }: ICalendarPopover) {
       </PopoverTrigger>
       <PopoverContent
         align="center"
-        className="w-full max-w-[350px] border border-muted shadow-lg mt-2"
+        className="w-full max-w-max border border-muted shadow-lg mt-2"
       >
         {children}
       </PopoverContent>

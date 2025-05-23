@@ -9,6 +9,7 @@ import {
   findBookingById,
   findScheduleById,
   findScheduleToAndFrom,
+  getScheduleWithBookingCount,
 } from "@/db/data/dto/schedule";
 import { combineDateWithSplitedTime, sleep, splitTimeColon } from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
@@ -643,41 +644,7 @@ export const booking = router({
     const { cursor } = input;
     const limit = input.limit ?? INFINITE_QUERY_LIMIT;
 
-    const data = await db.schedule.findMany({
-      where: {
-        day: {
-          gte: new Date(Date.now()),
-        },
-        scheduleStatus: {
-          in: ["AVAILABLE", "EXCLUSIVE"],
-        },
-      },
-      select: {
-        id: true,
-        day: true,
-        fromTime: true,
-        toTime: true,
-        schedulePackage: true,
-        scheduleStatus: true,
-        Package: {
-          select: {
-            title: true,
-            fromTime: true,
-            toTime: true,
-          },
-        },
-        Booking: {
-          select: {
-            totalBooking: true,
-          },
-        },
-      },
-      cursor: cursor ? { id: cursor } : undefined,
-      take: limit + 1,
-      orderBy: {
-        day: "asc",
-      },
-    });
+    const data = await getScheduleWithBookingCount({limit,cursor})
 
     try {
       data.sort((a, b) => {

@@ -9,6 +9,8 @@ export const resetUpdates = {
 };
 
 export const initialState: Required<TScheduleState> = {
+  AllSchedulesByDate: {},
+  SchedulesWithBookingData: {},
   currentDateSchedule: {
     breakfast: null,
     custom: null,
@@ -20,7 +22,7 @@ export const initialState: Required<TScheduleState> = {
   date: RemoveTimeStampFromDate(new Date(Date.now())),
   isPopOverDateOpened: false,
   isChangedUpdated: resetUpdates,
-  upCommingSchedules: {
+  upComingSchedules: {
     breakfast: [],
     custom: [],
     sunset: [],

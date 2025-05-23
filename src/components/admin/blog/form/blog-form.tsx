@@ -1,20 +1,5 @@
 "use client";
 
-import { ForwardRefEditor } from "@/components/admin/blog/ForwardRefEditor";
-import Markdown from "react-markdown";
-import Bounded from "@/components/elements/Bounded";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 import {
   BlogFormValidators,
   TBlogFormValidators,
@@ -43,12 +28,48 @@ import { getBlogPostById } from "@/db/data/dto/blog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
 import DisplayBlog from "@/components/admin/blog/DisplayBlog";
+import { ForwardRefEditor } from "@/components/admin/blog/ForwardRefEditor";
+import Markdown from "react-markdown";
+import Bounded from "@/components/elements/Bounded";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { Blog } from "@prisma/client";
 
-export default function AddBlog() {
+interface IBlogFormProps {
+  type: "CREATE" | "UPDATE";
+  prefill?: Blog;
+}
+
+export default function BlogForm({ type, prefill }: IBlogFormProps) {
   const router = useRouter();
   const EditorRef = useRef<MDXEditorMethods | null>(null);
   const [selectedImageId, setSelectedImageId] = useState<string>("");
 
+  const { mutate: updateBlog } = trpc.admin.blog.updateBlog.useMutation({
+    onMutate() {
+      toast.loading("Updating Blog Post");
+    },
+    onError(error) {
+      toast.dismiss();
+      toast.error(error.message);
+    },
+    onSuccess() {
+      toast.dismiss();
+      toast.success("Blog Added updated!");
+      router.push("/admin/blog/view");
+      reset();
+    },
+  });
   const { mutate: addBlog } = trpc.admin.blog.addBlog.useMutation({
     onMutate() {
       toast.loading("Adding Blog Post");
@@ -64,6 +85,8 @@ export default function AddBlog() {
     },
   });
 
+  const { fetch } = trpc.useUtils().admin.blog.checkSlug;
+
   const {
     register,
     handleSubmit,
@@ -74,11 +97,30 @@ export default function AddBlog() {
     reset,
   } = useForm<TBlogFormValidators>({
     resolver: zodResolver(BlogFormValidators),
+    defaultValues: {
+      author: prefill?.author,
+      blogSlug: prefill?.blogSlug,
+      blogStatus: prefill?.blogStatus,
+      content: prefill?.content,
+      imageId: prefill?.imageId,
+      shortDes: prefill?.shortDes,
+      title: prefill?.title,
+    },
   });
 
-  const { fetch } = trpc.useUtils().admin.blog.checkSlug;
-
   const onSubmitBlog = async (data: TBlogFormValidators) => {
+    // UPDATE BLOG
+    if (type === "UPDATE") {
+      if (!prefill) {
+        toast.error("Failed to update, Please try again");
+        return;
+      }
+      updateBlog({ ...data, id: prefill.id });
+      return;
+    }
+
+    // CREATE BLOG
+
     // Check if the slug already exists
     const slugExists = await fetch(data.blogSlug);
 
@@ -88,14 +130,16 @@ export default function AddBlog() {
     }
 
     addBlog(data);
+    router.push("/admin/blog/view");
   };
 
   watch();
   const title = getValues("title");
   const author = getValues("author");
   const content = getValues("content");
+
   return (
-    <div className="border-2">
+    <div className="">
       <Dialog>
         <DialogTrigger className="sticky top-[90%] left-full mr-10   z-30 bg-green-700 px-4 py-2 rounded-3xl hover:bg-green-600">
           See blog
@@ -111,9 +155,6 @@ export default function AddBlog() {
           </DialogClose>
         </DialogContent>
       </Dialog>
-
-      <h2 className="text-2xl font-semibold text-center">Create Your Blog!</h2>
-
       <form onSubmit={handleSubmit(onSubmitBlog)}>
         <div className="flex my-12 flex-col  gap-2 flex-wrap  items-center justify-center  "></div>
         <div className="flex gap-2 mx-auto flex-col  max-w-2xl flex-wrap items-center justify-center p-1.5">
@@ -209,7 +250,7 @@ export default function AddBlog() {
                 defaultSelection: "rootEnd",
               }}
               placeholder={<p>Write your Beautiful content here</p>}
-              markdown={``}
+              markdown={content ?? ""}
               className=""
             />
             <div className="">
@@ -250,7 +291,7 @@ export default function AddBlog() {
             type="submit"
             disabled={isSubmitting}
           >
-            Submit
+            {type === "CREATE" ? "Create" : "Update"}
           </Button>
         </Bounded>
       </form>

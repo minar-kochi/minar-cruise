@@ -1,3 +1,4 @@
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,23 +7,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle2 } from "lucide-react";
-import React from "react";
-import PackageFormN from "./PackageForm";
-import Image from "next/image";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import { PackageCarousel } from "@/components/packages/PackageCarousel";
 import { TGetPackageById } from "@/db/data/dto/package";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
+import { CheckCircle2 } from "lucide-react";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import Image from "next/image";
 import ExclusivePackageEnquiryCard from "./ExclusivePackageEnquiryCard";
+import PackageFormN from "./PackageForm";
 
 export default function PackageAmmenties({ data }: { data: TGetPackageById }) {
   return (
     <div>
       <div className="rounded-2xl px-4 pt-16 pb-8 ">
-        <div className="max-w-4xl mx8uto w-full">
+        <div className="max-w-4xl mx-auto w-full">
           <h4 className="text-2xl font-bold ">Amenities</h4>
           <p className="text-sm text-muted-foreground">
             Enjoy a variety of thoughtfully curated services and features,

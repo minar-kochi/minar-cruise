@@ -12,6 +12,7 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
+import MonsoonCheckBox from "./monsoon-check-box";
 type TBookingFormCard = {
   adultPrice: number;
   childPrice: number;
@@ -32,8 +33,7 @@ export default function BookingFormCard({
   adultPrice,
   childPrice,
 }: TBookingFormCard) {
-  //   watch("numOfAdults");
-
+  
   return (
     <div
       className={cn(
@@ -264,6 +264,7 @@ export default function BookingFormCard({
             Yes, I agree with the privacy policy and terms and conditions.
           </Label>
         </div>
+        <MonsoonCheckBox/>
       </div>
     </div>
   );

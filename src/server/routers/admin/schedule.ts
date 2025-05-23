@@ -4,11 +4,13 @@ import { db } from "@/db";
 import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
 import {
   combineDateWithSplitedTime,
+  getDateRangeArray,
   isDateValid,
   isProd,
   isValidMergeTimeCycle,
   mergeTimeCycle,
   parseDateFormatYYYMMDDToNumber,
+  RemoveTimeStampFromDate,
   splitTimeColon,
 } from "@/lib/utils";
 import {
@@ -28,27 +30,16 @@ import {
 } from "@/lib/validators/Package";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import {
+  getBlockedScheduleDays,
+  getScheduleCount,
   getSchedulesByDateRange,
   getSchedulesByDateRangeWithBookingCount,
 } from "@/db/data/dto/schedule";
-import { toDate } from "date-fns";
+import { isSameDay, toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
-
-// export type TGetScheduleByDateRange = {
-//   Package: {
-//       fromTime: string;
-//       toTime: string;
-//       title: string;
-//   } | null;
-//   day: Date;
-//   schedulePackage: $Enums.SCHEDULED_TIME;
-//   scheduleStatus: $Enums.SCHEDULE_STATUS;
-//   fromTime: string | null;
-//   toTime: string | null;
-// }[]
+import { $Enums } from "@prisma/client";
 
 export const schedule = router({
-  //
   getSchedulesByDateRange: AdminProcedure.input(
     scheduleDateRangeValidator,
   ).query(async ({ input: { fromDate, toDate, type } }) => {
@@ -192,7 +183,7 @@ export const schedule = router({
         console.log(error);
       }
       return {
-        response: data,
+        schedules: data,
         nextCursor,
       };
     } catch (error) {
@@ -200,7 +191,7 @@ export const schedule = router({
       throw new TRPCError({ code: "BAD_REQUEST", message: "Failed" });
     }
   }),
-  // getUpcommingScheduleDates: AdminProcedure.input().query()
+  // getupComingScheduleDates: AdminProcedure.input().query()
   createNewSchedule: AdminProcedure.input(
     ScheduleCreateSchema.required({
       packageId: true,
@@ -443,6 +434,147 @@ export const schedule = router({
       }
     },
   ),
+  getBlockedSchedulesByDateRangeQuery: AdminProcedure.input(
+    z.object({
+      fromDate: z.string(),
+      toDate: z.string(),
+    }),
+  ).query(async ({ input: { fromDate, toDate } }) => {
+    const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
+    const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
+
+    if (!fromDateParser || !toDateParser) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Date Format is not valid YYYY-MM-DD",
+      });
+    }
+
+    const validatedFromDate = isDateValid(fromDateParser);
+    const validatedToDate = isDateValid(toDateParser);
+
+    if (!validatedToDate || !validatedFromDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates is invalid",
+      });
+    }
+
+    const FromDate = new Date(fromDate);
+    const ToDate = new Date(toDate);
+
+    try {
+      const days = await getBlockedScheduleDays({
+        fromDate: FromDate,
+        toDate: ToDate,
+      });
+
+      const dayArr = days.map((item) => RemoveTimeStampFromDate(item.day));
+      const FilteredDays = dayArr.filter(
+        (date, index, self) => self.indexOf(date) === index,
+      );
+
+      return { days: FilteredDays };
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something unexpected happened, Please try again.",
+      });
+    }
+  }),
+  blockScheduleByDateRange: AdminProcedure.input(
+    z.object({
+      fromDate: z.string(),
+      toDate: z.string(),
+    }),
+  ).mutation(async ({ input: { fromDate, toDate } }) => {
+    const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
+    const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
+
+    if (!fromDateParser || !toDateParser) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Date Format is not valid YYYY-MM-DD",
+      });
+    }
+
+    const validatedFromDate = isDateValid(fromDateParser);
+    const validatedToDate = isDateValid(toDateParser);
+
+    if (!validatedToDate || !validatedFromDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates is invalid",
+      });
+    }
+
+    const FromDate = new Date(fromDate);
+    const ToDate = new Date(toDate);
+
+    // check if any schedules are active in the received date range - if yes return, else continue
+
+    const scheduleCount = await getScheduleCount({ FromDate, ToDate });
+
+    if (scheduleCount > 0) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "Schedule cannot be blocked because the date range you've selected overlaps with an existing schedule",
+      });
+    }
+
+    // creating date array using received dates
+    const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
+
+    const blockScheduleData: {
+      day: Date;
+      schedulePackage: $Enums.SCHEDULED_TIME;
+      scheduleStatus: $Enums.SCHEDULE_STATUS;
+    }[] = [];
+
+    const schedulePackage: $Enums.SCHEDULED_TIME[] = [
+      "BREAKFAST",
+      "LUNCH",
+      "SUNSET",
+      "DINNER",
+      "CUSTOM",
+    ];
+
+    // creating date for bulk update
+    dates.forEach((date) =>
+      schedulePackage.forEach((scheduleTime) =>
+        blockScheduleData.push({
+          day: new Date(date),
+          schedulePackage: scheduleTime,
+          scheduleStatus: "BLOCKED",
+        }),
+      ),
+    );
+
+    // block schedule for the given date range
+    try {
+      const result = await db.$transaction((tx) =>
+        tx.schedule.createMany({
+          data: blockScheduleData,
+          skipDuplicates: true,
+        }),
+      );
+      return result;
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something unexpected happened, Please try again.",
+      });
+    }
+
+    return;
+  }),
   blockScheduleByDateAndStatus: AdminProcedure.input(
     z.object({
       date: z.string(),

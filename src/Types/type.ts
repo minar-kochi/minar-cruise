@@ -45,3 +45,6 @@ export type TTimeCycle = {
   Cycle: TMeridianCycle;
 };
 export type TkeyDbTime = "fromTime" | "toTime";
+
+
+

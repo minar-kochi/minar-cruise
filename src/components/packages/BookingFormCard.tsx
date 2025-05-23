@@ -1,43 +1,24 @@
 "use client";
 
+import { trpc } from "@/app/_trpc/client";
+import { TGetPackageById } from "@/db/data/dto/package";
+import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
+import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
-import { InputLabel } from "../cnWrapper/InputLabel";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
 } from "@/lib/validators/onlineBookingValidator";
-import { TGetPackageById } from "@/db/data/dto/package";
-import { Button } from "../ui/button";
-import BookingFormDatePicker from "../calender/BookingFormDatePicker";
-import { $Enums } from "@prisma/client";
-import { z } from "zod";
-import { trpc } from "@/app/_trpc/client";
-import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import Script from "next/script";
-import toast from "react-hot-toast";
-import { Orders } from "razorpay/dist/types/orders";
-import { $RazorPay } from "@/lib/helpers/RazorPay";
-import Razorpay from "razorpay";
-import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
-import Link from "next/link";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "@radix-ui/react-label";
-import CustomCheckboxLabel from "../custom/CustomCheckboxLabel";
-import { ArrowLeft } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { format } from "date-fns";
-import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { $Enums } from "@prisma/client";
+import { ArrowLeft } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { InputLabel } from "../cnWrapper/InputLabel";
+import CustomCheckboxLabel from "../custom/CustomCheckboxLabel";
+import { Button } from "../ui/button";
 import PackageScheduleDialogs from "./PackageScheduleDialogs";
 
 interface IBookingFormCard {

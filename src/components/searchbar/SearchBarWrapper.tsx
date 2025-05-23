@@ -1,22 +1,15 @@
-import { getPackageSearchItems } from "@/db/data/dto/package";
+import { cn } from "@/lib/utils";
 import SearchBar from "./SearchBar";
-import { cn, isProd } from "@/lib/utils";
 
-export default async function SearchBarWrapper({
+export default function SearchBarWrapper({
   className,
 }: {
   className?: string;
 }) {
-  const packages = await getPackageSearchItems();
-  if (!packages) {
-    if (isProd) {
-      return <></>;
-    }
-    return <>PACKAGE FETCHING FAILED, CHECK: SearchBar.tsx</>;
-  }
+
   return (
     <div className={cn("", className)}>
-      <SearchBar packages={packages} />;
+      <SearchBar  />;
     </div>
   );
 }

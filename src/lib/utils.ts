@@ -2,7 +2,7 @@
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { $Enums } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
-import { formatISO, isSameMonth } from "date-fns";
+import { addDays, formatISO, isBefore, isEqual, isSameMonth, startOfDay } from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { DateTime } from "luxon";
@@ -111,6 +111,26 @@ export function parseDateFormatYYYMMDDToNumber(
     month: validatedDate.month,
   };
 }
+type ParseDateFalsy = { date: null; parsedDate: null; error: true };
+type ParseDateTruthy = {
+  date: string;
+  parsedDate: TSplitedFormatedDate;
+  error: false;
+};
+
+export function parseSafeFormatYYYYMMDDToNumber(
+  date: string,
+): ParseDateTruthy | ParseDateFalsy {
+  try {
+    let parsedDate = parseDateFormatYYYMMDDToNumber(date);
+    if (!parsedDate) {
+      throw new Error("Invalid Date");
+    }
+    return { date: date, parsedDate, error: false };
+  } catch (error) {
+    return { date: null, parsedDate: null, error: true };
+  }
+}
 
 export function isDateValid(date: TSplitedFormatedDate) {
   return moment([date.year, date.month - 1, date.day]).isValid();
@@ -120,6 +140,31 @@ export const sleep = (ms: number) => {
   if (isProd) return;
   return new Promise((r) => setTimeout(r, ms));
 };
+
+export function getDateRangeArray({
+  fromDate,
+  toDate,
+}: {
+  fromDate: Date;
+  toDate: Date;
+}) {
+  const dates = [];
+  
+  // Ensure we're working with the start of each day
+  const startDate = startOfDay(addDays(fromDate,1));
+  const endDate = startOfDay(addDays(toDate,1));
+  
+  // Initialize current date as the start date
+  let currentDate = startDate;
+  
+  // Keep adding dates until we reach or pass the end date
+  while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
+    dates.push(new Date(currentDate));
+    currentDate = addDays(currentDate, 1);
+  }
+  
+  return dates;
+}
 
 export const getUTCDate = (dateStr: string): number => {
   const date = new Date(dateStr);
@@ -240,6 +285,7 @@ export function filterDateFromCalender({
   return false;
 }
 
+// return true if the schedule or bookings can be booked.
 export function checkBookingTimeConstraint({
   scheduleTime,
   startFrom,
@@ -253,10 +299,13 @@ export function checkBookingTimeConstraint({
     selectedDate,
     startFrom,
   );
+
   if (!UTCISTDATE) {
+    console.log("FALSE BAD STATE");
     return false;
   }
   const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
+
   if (isStatusBreakfast(scheduleTime)) {
     return timeGap > MIN_BREAKFAST_BOOKING_HOUR;
   }
@@ -362,4 +411,28 @@ export function flattenObject(obj: any, prefix = ""): Record<string, string> {
     },
     {} as Record<string, string>,
   );
+}
+
+export function formatPrice(price: number) {
+  const RUPEE_DIVIDER = 100;
+  return price / RUPEE_DIVIDER;
+}
+
+export const safeTotal = (value: number) => {
+  const numberValue = Number(value);
+  return isNaN(numberValue) ? 0 : numberValue;
+};
+
+/**
+ * Truncates a string to a specified maximum length and appends an ellipsis ('...') if needed.
+ *
+ * @param {string} text - The string to be truncated.
+ * @param {number} maxLength - The maximum allowed length of the string before truncation.
+ * @returns {string} The truncated string, with an ellipsis if it was cut off.
+ */
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + "...";
+  }
+  return text;
 }
