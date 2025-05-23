@@ -6,7 +6,7 @@ import {
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger
+  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { cn } from "@/lib/utils";
