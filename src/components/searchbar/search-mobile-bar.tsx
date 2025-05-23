@@ -13,9 +13,14 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import ChooseDateCard from "./desktop/choose-date-card";
 import PackageSelectCard from "./desktop/package-select-card";
-import { SearchButtonShad } from "./SearchButton";
+import { SearchButtonShad, SearchPageButton } from "./SearchButton";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function SearchMobileBar({ className }: { className?: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathName = usePathname();
+  const isSearchPage = pathName?.split("/")?.reverse()?.[0] === "search";
   // const selected = useClientSelector((state) => ({
   //   selected: state.package.selectedPackages,
   //   date: state.package.date,
@@ -24,7 +29,7 @@ export default function SearchMobileBar({ className }: { className?: string }) {
   const selectedDate = useClientSelector((state) => state.package.date);
   const packages = useClientSelector((state) => state.package.packages);
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger
         className={cn(
           "w-full rounded-l-full pl-7 py-2 md:py-3 h-14",
@@ -50,7 +55,6 @@ export default function SearchMobileBar({ className }: { className?: string }) {
           </DrawerDescription>
         </DrawerHeader>
         <ChooseDateCard />
-
         <div>
           <div className="w-full pb-12 pt-6 px-4 scrollbar-track-orange-lighter scrollbar-w-4 scrollbar-thumb-rounded h-full flex max-h-[50vh] overflow-y-scroll gap-2 flex-col">
             {packages
@@ -69,7 +73,16 @@ export default function SearchMobileBar({ className }: { className?: string }) {
               : null}
           </div>
         </div>
-        <SearchButtonShad />
+
+        {!isSearchPage ? (
+          <SearchButtonShad />
+        ) : (
+          <SearchPageButton
+            callback={() => {
+              setIsOpen(false);
+            }}
+          />
+        )}
       </DrawerContent>
     </Drawer>
   );
