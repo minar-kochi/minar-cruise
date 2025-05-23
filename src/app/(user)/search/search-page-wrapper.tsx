@@ -161,6 +161,7 @@ export default function SearchPageWrapper({
               alt={sunsetPackage?.packageImage[0]?.image?.alt ?? ""}
               width={720}
               height={480}
+              loading="eager"
             />
           </div>
         ) : null}
