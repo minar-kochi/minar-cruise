@@ -5,7 +5,7 @@ import { useClientDispatch } from "@/hooks/clientStore/clientReducers";
 import { isSelectedPackage } from "@/lib/features/client/packageClientSelectors";
 import { setSelectedPackage } from "@/lib/features/client/packageClientSlice";
 import { cn, formatPrice } from "@/lib/utils";
-import { Baby, User } from "lucide-react";
+import { Baby, Check, User } from "lucide-react";
 import Image from "next/image";
 type TPackageSelectCard = {
   item: TGetPackageSearchItems[number];
@@ -19,7 +19,7 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
         dispatch(setSelectedPackage(item));
       }}
       className={cn(
-        "flex group bg-white   md:pr-5 hover:bg-foreground/5 gap-3 flex-shrink-0   border-muted rounded-lg  w-full overflow-hidden",
+        "flex group bg-white  pr-4  md:pr-5 hover:bg-foreground/5 gap-3 flex-shrink-0   border-muted rounded-lg  w-full overflow-hidden",
         // {
         //   "bg-blue-100": selected.selected,
         // },
@@ -54,7 +54,10 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
             </p>
           </div>
         </div>
-        <Checkbox id={`${selected.index}`} checked={selected.selected} />
+        <div className="w-5 h-5 border flex border-primary items-center justify-center rounded-md">
+          {selected.selected ? <Check className="w-4 h-4 text-primary " /> : null}
+        </div>
+        {/* <Checkbox type="" id={`${selected.index}`} checked={selected.selected} /> */}
       </div>
     </button>
   );
