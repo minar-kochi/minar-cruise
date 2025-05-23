@@ -31,7 +31,15 @@ import {
 import { getSunsetPackage } from "@/lib/features/client/packageClientSelectors";
 import Link from "next/link";
 import Image from "next/image";
-import { CheckCircle2, GhostIcon } from "lucide-react";
+import {
+  Calendar,
+  CheckCircle2,
+  Compass,
+  GhostIcon,
+  Search,
+  Ship,
+} from "lucide-react";
+import NoSearchFound from "./no-search-found";
 
 export default function SearchPageWrapper({
   selected: selectedIds,
@@ -188,16 +196,7 @@ export default function SearchPageWrapper({
               </div>
             ))
           ) : (
-            <div>
-              <div className="flex items-center flex-col py-6  justify-center">
-                <div>
-                  <GhostIcon size={32} />
-                </div>
-                <h3 className="text-2xl font-semibold tracking-tighter pt-2">
-                  No new schedules are opened
-                </h3>
-              </div>
-            </div>
+            <NoSearchFound />
           )}
         </div>
         <div ref={ref} className="w-full h-2" />

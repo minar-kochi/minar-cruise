@@ -489,12 +489,13 @@ export async function getPackagesForBlog() {
     const data = await db.package.findMany({
       where: {
         packageCategory: {
-          not: "CUSTOM",
+          notIn: ["CUSTOM", "EXCLUSIVE"],
         },
       },
       select: {
         id: true,
         adultPrice: true,
+        childPrice: true,
         title: true,
         slug: true,
         packageImage: {

@@ -63,7 +63,7 @@ export default function BlogCard({
             <span className="text-xs font-medium text-gray-700">{author}</span>
           </div>
 
-          <div className="flex items-center text-sm font-medium text-blue-600 transition-all group-hover:pr-1">
+          <div className="flex items-center text-sm font-medium text-primary transition-all group-hover:pr-1">
             Read
             <ArrowUpRight className="ml-1 h-4 w-4 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
           </div>

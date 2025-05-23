@@ -10,7 +10,7 @@ const CompanyInfoCard = ({ className }: { className: string }) => {
           About Us
         </Link>
         <Link
-          href="/package/premium-cruise"
+          href="/search"
           className="max-sm:mx-auto font-medium text-white"
         >
           Packages

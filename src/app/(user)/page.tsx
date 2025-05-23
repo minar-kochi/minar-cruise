@@ -1,3 +1,4 @@
+import Bounded from "@/components/elements/Bounded";
 import BookingDescription from "@/components/home/BookingDescription";
 import ExclusivePackage from "@/components/home/ExclusivePackage";
 import Facilities from "@/components/home/Facilities";
@@ -6,6 +7,8 @@ import HomeVideo from "@/components/home/HomeVideo";
 import MinarSec from "@/components/home/MinarSec";
 import PackagesBento from "@/components/home/PackagesBento";
 import Services from "@/components/home/Services";
+import CruisePackageHeader from "@/components/packages/package-select-header";
+import PackageCarousalWrapper from "@/components/packages/PackageCarousalWrapper";
 import SearchBarWrapper from "@/components/searchbar/SearchBarWrapper";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
 
@@ -21,7 +24,12 @@ export default function page() {
       <Services />
       <Facilities />
       <BookingDescription />
+      <Bounded className="my-12">
+        <CruisePackageHeader />
+        <PackageCarousalWrapper />
+      </Bounded>
       <GalleryCarousel />
+
       <SearchBarWrapper className="fixed bottom-0 w-full z-30" />
     </main>
   );

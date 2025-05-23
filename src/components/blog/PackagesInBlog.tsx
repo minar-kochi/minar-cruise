@@ -34,7 +34,7 @@ export default async function PackagesInBlog() {
                 <p className="text-muted-foreground">
                   From{" "}
                   <span className="font-normal text-red-600">
-                    {`₹${item.adultPrice}`}
+                    {`₹${item.childPrice / 100}`}
                   </span>{" "}
                 </p>
               </div>

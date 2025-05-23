@@ -66,7 +66,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
     onSuccess() {
       toast.dismiss();
       toast.success("Blog Added updated!");
-      router.push('/admin/blog/view')
+      router.push("/admin/blog/view");
       reset();
     },
   });
@@ -130,7 +130,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
     }
 
     addBlog(data);
-    router.push('/admin/blog/view')
+    router.push("/admin/blog/view");
   };
 
   watch();
@@ -250,7 +250,7 @@ export default function BlogForm({ type, prefill }: IBlogFormProps) {
                 defaultSelection: "rootEnd",
               }}
               placeholder={<p>Write your Beautiful content here</p>}
-              markdown={content ?? ''}
+              markdown={content ?? ""}
               className=""
             />
             <div className="">

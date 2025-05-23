@@ -16,7 +16,6 @@ export default async function SearchPage(reqParam: TSearchPage) {
 
   return (
     <main className="min-h-[calc(100vh-20rem)]">
-      
       <SearchPageWrapper selected={data} />
     </main>
   );

@@ -16,7 +16,7 @@ export default async function page({
         <DisplayBlog
           author={data.author}
           title={data.title}
-          selectedImg={data.image.url}
+          selectedImg={data?.image?.url}
           content={data.content}
         />{" "}
       </DialogClose>

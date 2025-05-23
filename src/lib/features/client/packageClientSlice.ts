@@ -2,13 +2,14 @@
 import { TGetPackageSearchItems } from "@/db/data/dto/package";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { TExcludedOrganizedPackageData } from "@/Types/packages/package";
-import { ScheduleGrouped, TSchedulesData } from "@/Types/Schedule/ScheduleSelect";
+import {
+  ScheduleGrouped,
+  TSchedulesData,
+} from "@/Types/Schedule/ScheduleSelect";
 import { $Enums } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // export type TOrganizedPackage = Exclude<TgetPackageScheduleDatas, null>;
-
-
 
 type TScheduleQueryData = {
   schedules: TSchedulesData[];
@@ -52,7 +53,6 @@ const packageClientSlice = createSlice({
       state,
       action: PayloadAction<TGetPackageSearchItems[number]>,
     ) {
-
       const index = state.selectedPackages?.findIndex(
         (fv) => fv.id === action.payload.id,
       );
@@ -64,7 +64,10 @@ const packageClientSlice = createSlice({
         );
       }
     },
-
+    clearPackageSearch(state) {
+      state.date = null;
+      state.selectedPackages = [];
+    },
     setSearchedPackages: {
       reducer(state, action: PayloadAction<{ data: ScheduleGrouped }>) {
         state.resultedSchedules = action.payload.data;
@@ -97,6 +100,7 @@ export const {
   setInitialSelectedPackage,
   setDate,
   setSearchedPackages,
+  clearPackageSearch,
 } = packageClientSlice.actions;
 
 export default packageClientSlice.reducer;

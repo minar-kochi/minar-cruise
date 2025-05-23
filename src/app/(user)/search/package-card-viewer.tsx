@@ -25,8 +25,8 @@ export default function PackageCardViewer({
         >
           <Image
             className="lg:max-w-[326px] md:max-w-[270px]  rounded-2xl aspect-video object-cover"
-            src={item.packageImage[0].image.url}
-            alt={item.packageImage[0].image.alt}
+            src={item?.packageImage[0]?.image?.url}
+            alt={item?.packageImage[0]?.image?.alt}
             width={720}
             height={420}
           />

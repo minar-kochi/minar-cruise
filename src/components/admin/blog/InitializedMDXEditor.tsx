@@ -1,7 +1,7 @@
-"use client";
 // InitializedMDXEditor.tsx
-import "@mdxeditor/editor/style.css";
-// import { mdxJsxFromMarkdown, mdxJsxToMarkdown } from "mdast-util-mdx-jsx";
+"use client";
+import "@/styles/editor-styles.css";
+
 import type { ForwardedRef } from "react";
 import {
   headingsPlugin,
@@ -99,10 +99,9 @@ export default function InitializedMDXEditor({
       ]}
       {...props}
       ref={editorRef}
-      className={cn("break-words caret-black   border-2 rounded-md", {
-        "dark-editor dark-theme caret-white": resolvedTheme === "dark",
-      })}
-      contentEditableClassName="outline-none  min-h-[300px] max-w-none text-lg  prose prose-p:my-3 break-words prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
+      className="dark-editor dark-theme prose prose-blue  w-full max-w-7xl break-words rounded-md border-2 text-lg dark:!text-white caret-prime outline-none dark:prose-invert prose-headings:my-4 prose-p:my-3 prose-p:leading-relaxed prose-blockquote:my-4 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-[''] prose-ul:my-2 prose-li:my-0"
+      contentEditableClassName="min-h-[400px]"
+      // contentEditableClassName="outline-none  min-h-[300px] max-w-none text-lg prose prose-p:my-3 break-words prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
     />
   );
 }

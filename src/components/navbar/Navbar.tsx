@@ -19,7 +19,7 @@ const Navbar = async () => {
             <Image
               src={"/assets/logo.png"}
               alt="ship logo"
-              width={150}
+              width={120}
               height={100}
               priority={true}
             />

@@ -61,12 +61,11 @@ export default function ScheduleTable() {
   });
   return (
     <div className=" mx-auto w-full ">
-        <div className="m-2 text-4xl font-bold text-center py-4">
-          Schedule Table
-        </div>
-      <div className="flex justify-end mr-2">
+      <div className="m-2 text-4xl font-bold text-center py-4">
+        Schedule Table
+      </div>
+      <div className="flex gap-2 justify-end mr-2">
         <ScheduleDownloadButton type="scheduleWithoutBookingCount" />
-        <Link href={'/admin/schedule'} className={cn(buttonVariants({variant:'default'}))}>Manage Schedule</Link>
       </div>
       <div className="rounded-md p-2 border bg-sidebar m-2">
         <Table className="">
@@ -109,7 +108,7 @@ export default function ScheduleTable() {
                     ${index === 0 ? "border-t-0" : ""}
                     ${index === schedules.length - 1 ? "border-b" : "border-b-0"}
                     ${index === 0 && groupIndex !== 0 ? "" : ""}
-                    ${isBlocked ? "bg-red-600/10" : ""}
+                    ${isBlocked ? "bg-red-800/20" : ""}
                     
                   `}
                     >
@@ -180,7 +179,7 @@ export default function ScheduleTable() {
                       inline-flex px-2 py-1 rounded-full text-xs font-medium
                       ${schedule.scheduleStatus === "AVAILABLE" ? "bg-green-100 text-green-700" : ""}
                       ${schedule.scheduleStatus === "EXCLUSIVE" ? "bg-yellow-100 text-yellow-700" : ""}
-                      ${schedule.scheduleStatus === "BLOCKED" ? "bg-red-100 text-red-700/40" : ""}
+                      ${schedule.scheduleStatus === "BLOCKED" ? "bg-red-800 text-white " : ""}
                     `}
                         >
                           {schedule.scheduleStatus}
