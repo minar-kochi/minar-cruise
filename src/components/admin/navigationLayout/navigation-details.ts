@@ -65,6 +65,10 @@ export const sideBarData = {
           title: "View bookings",
           url: "/admin/booking",
         },
+        {
+          title: "Recent bookings",
+          url: "/admin/booking/recent",
+        },
       ],
     },
     {
