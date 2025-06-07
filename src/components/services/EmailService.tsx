@@ -48,7 +48,7 @@ export const EmailSendBookingConfirmation = ({
       <Preview>{Subject}</Preview>
       <Tailwind>
         <Body className="bg-gray-50 font-sans">
-          <Container className="max-w-[600px] mx-auto my-8 bg-white rounded-xl shadow-lg overflow-hidden">
+          <Container className="px-2 mx-auto my-8 bg-white rounded-xl shadow-lg overflow-hidden">
             {/* Header Section */}
             <Section className="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-12 text-center">
               <Img

@@ -1,3 +1,4 @@
+
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import { Badge } from "@/components/ui/badge";
@@ -243,7 +244,11 @@ export default function RecentBookingsPage() {
   const { mutate: resendEmailMutation, isPending: isResendingEmail } =
     trpc.admin.booking.resendConfirmationEmail.useMutation({
       onSuccess(data, variables, context) {
-        toast.success("Email sent successfully!");
+        if (data.isAdminFailed) {
+          toast.error("Failed to send email to admin, but was sent user.");
+        } else {
+          toast.success("Email sent successfully!");
+        }
       },
       onError(error, variables, context) {
         if (error instanceof TRPCError) {
