@@ -669,3 +669,101 @@ export async function getBookingsByScheduleId(id: string) {
     return null;
   }
 }
+
+export type TGetRecentBookingInfo = Awaited<
+  ReturnType<typeof getRecentBookings>
+>;
+
+export async function getRecentBookings({
+  cursor,
+  limit,
+  search,
+}: {
+  cursor: string | null | undefined;
+  limit: number;
+  search?: string;
+}) {
+  const data = await db.booking.findMany({
+    where: {
+      OR: [
+        {
+          id: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          user: {
+            name: {
+              contains: search,
+              mode: "insensitive", // Case-insensitive search
+            },
+          },
+        },
+        {
+          user: {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            contact: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      numOfAdults: true,
+      numOfBaby: true,
+      numOfChildren: true,
+      totalBooking: true,
+      scheduleId: true,
+      user: {
+        select: {
+          contact: true,
+          email: true,
+          id: true,
+          name: true,
+        },
+      },
+      payment: {
+        select: {
+          totalAmount: true,
+          advancePaid: true,
+          modeOfPayment: true,
+        },
+      },
+      schedule: {
+        select: {
+          id: true,
+          fromTime: true,
+          toTime: true,
+          packageId: true,
+          day: true,
+          Package: {
+            select: {
+              title: true,
+              fromTime: true,
+              toTime: true,
+            },
+          },
+        },
+      },
+    },
+    cursor: cursor ? { id: cursor } : undefined,
+    take: limit + 1,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return data;
+}
