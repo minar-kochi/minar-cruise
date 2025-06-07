@@ -192,7 +192,7 @@ export async function handleCreateScheduleOrder({
         sendConfirmationEmail({
           recipientEmail: process.env.ADMIN_EMAIL!,
           fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
-          emailSubject: "Minar: New Booking Recieved",
+          emailSubject: "Minar: New Booking Received",
           emailComponent: BookingConfirmationEmailForAdmin({
             Name: name,
             adultCount: adultCount,
