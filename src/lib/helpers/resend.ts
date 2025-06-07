@@ -1,6 +1,5 @@
-import nodemailer from "nodemailer";
 import { render } from "@react-email/components";
-import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
+import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: "smtp.hostinger.com",
   port: 465,
@@ -14,7 +13,7 @@ const transporter = nodemailer.createTransport({
 type TSendConfirmationEmail = {
   fromEmail?: string;
   emailSubject: string;
-  recipientEmail: string;
+  recipientEmail: string | string[];
   emailComponent: JSX.Element;
 };
 
@@ -44,8 +43,8 @@ export async function sendConfirmationEmail({
 
 type TSendEmail = {
   subject: string;
-  fromEmail?: string;
-  toEmail: string;
+  fromEmail?: string 
+  toEmail: string | string[];
   reactEmailComponent: JSX.Element | string;
 };
 

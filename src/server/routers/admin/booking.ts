@@ -1,3 +1,5 @@
+import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
+import EmailSendBookingConfirmation from "@/components/services/EmailService";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
@@ -9,9 +11,16 @@ import {
   findBookingById,
   findScheduleById,
   findScheduleToAndFrom,
+  getRecentBookings,
   getScheduleWithBookingCount,
 } from "@/db/data/dto/schedule";
-import { combineDateWithSplitedTime, sleep, splitTimeColon } from "@/lib/utils";
+import { sendConfirmationEmail } from "@/lib/helpers/resend";
+import {
+  combineDateWithSplitedTime,
+  RemoveTimeStampFromDate,
+  sleep,
+  splitTimeColon,
+} from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
 import {
   offlineBookingFormSchema,
@@ -19,6 +28,7 @@ import {
 } from "@/lib/validators/offlineBookingValidator";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
+import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -310,9 +320,9 @@ export const booking = router({
 
         return data.scheduleId;
       } catch (error) {
-        console.log(error)
-        if(error instanceof TRPCError){
-          throw new TRPCError({code: error.code, message: error.message})
+        console.log(error);
+        if (error instanceof TRPCError) {
+          throw new TRPCError({ code: error.code, message: error.message });
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -634,6 +644,163 @@ export const booking = router({
       }
     },
   ),
+  resendConfirmationEmail: AdminProcedure.input(
+    z.object({
+      bookingId: z.string({
+        message: "Booking id is required",
+      }),
+    }),
+  ).mutation(async ({ ctx, input }) => {
+    const bookingId = input.bookingId;
+    const booking = await db.booking.findFirst({
+      where: {
+        id: bookingId,
+      },
+      select: {
+        createdAt: true,
+        id: true,
+        scheduleId: true,
+        numOfAdults: true,
+        numOfBaby: true,
+        numOfChildren: true,
+        description: true,
+        user: {
+          select: {
+            contact: true,
+            email: true,
+            id: true,
+            name: true,
+          },
+        },
+        schedule: {
+          select: {
+            day: true,
+            Package: {
+              select: {
+                title: true,
+                duration: true,
+              },
+            },
+          },
+        },
+        payment: {
+          select: {
+            advancePaid: true,
+            discount: true,
+            id: true,
+            modeOfPayment: true,
+            totalAmount: true,
+          },
+        },
+      },
+    });
+    if (!booking?.id) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Unable to find booking",
+      });
+    }
+    if (!booking.user.email) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Email not found for the user.",
+      });
+    }
+    const bookedPackage = booking.schedule.Package;
+    const payment = booking.payment;
+    let duration = `${bookedPackage?.duration ? bookedPackage?.duration / 60 : "--"} Hr`;
+    let isAdminMessageFailed: boolean = false;
+    const adminEmailResponse = sendConfirmationEmail({
+      recipientEmail: process.env.ADMIN_EMAIL!,
+      fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
+      emailSubject: "Minar: New Booking Received",
+      emailComponent: BookingConfirmationEmailForAdmin({
+        scheduleId: booking.scheduleId,
+        Name: booking.user.name,
+        adultCount: booking.numOfAdults,
+        babyCount: booking.numOfBaby,
+        childCount: booking.numOfChildren,
+        BookingDate: format(
+          RemoveTimeStampFromDate(booking.createdAt),
+          "dd-MM-yyyy",
+        ),
+        email: booking.user.email,
+        phone: booking.user.contact ?? "",
+        BookingId: booking.id,
+        packageTitle: bookedPackage?.title ?? "",
+        scheduleDate: booking.schedule?.day
+          ? format(booking.schedule?.day, "dd-MM-yyyy")
+          : "--",
+        totalAmount: payment.totalAmount,
+      }),
+    });
+
+    if (!adminEmailResponse || adminEmailResponse === null) {
+      isAdminMessageFailed = true;
+    }
+    if ("error" in adminEmailResponse) {
+      isAdminMessageFailed = true;
+    }
+
+    const emailResponse = await sendConfirmationEmail({
+      fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
+      recipientEmail: [booking.user.email, process.env.ADMIN_EMAIL!],
+      emailSubject: "Minar: Your Booking has Confirmed",
+      emailComponent: EmailSendBookingConfirmation({
+        duration,
+        packageTitle: `${bookedPackage?.title ?? "--"} `,
+        status: "Confirmed",
+        totalAmount: payment.totalAmount,
+        totalCount:
+          booking.numOfAdults + booking.numOfBaby + booking.numOfChildren,
+        BookingId: booking.id,
+        customerName: booking.user.name,
+        date: booking.schedule?.day
+          ? format(booking.schedule.day, "dd-MM-yyyy")
+          : "--",
+      }),
+    });
+
+    if (!emailResponse || emailResponse === null) {
+      throw new TRPCError({
+        code: "SERVICE_UNAVAILABLE",
+        message: "Failed to send email, service error",
+      });
+    }
+    if ("error" in emailResponse) {
+      throw new TRPCError({
+        message: "Failed to send email",
+        code: "SERVICE_UNAVAILABLE",
+      });
+    }
+    return {
+      success: emailResponse,
+      isAdminFailed: isAdminMessageFailed,
+    };
+  }),
+
+  getRecentBookingsInfinity: AdminProcedure.input(
+    z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(),
+      search: z.string().optional(),
+    }),
+  ).query(async ({ ctx, input }) => {
+    const { cursor } = input;
+    const limit = input.limit ?? INFINITE_QUERY_LIMIT;
+    const search = input.search;
+    const data = await getRecentBookings({ cursor, limit, search });
+
+    let nextCursor: typeof cursor | undefined = undefined;
+    if (data.length > limit) {
+      const nextItem = data.pop();
+      nextCursor = nextItem?.id;
+    }
+    return {
+      response: data,
+      nextCursor,
+    };
+  }),
 
   bookingScheduleInfinity: AdminProcedure.input(
     z.object({
@@ -644,7 +811,7 @@ export const booking = router({
     const { cursor } = input;
     const limit = input.limit ?? INFINITE_QUERY_LIMIT;
 
-    const data = await getScheduleWithBookingCount({limit,cursor})
+    const data = await getScheduleWithBookingCount({ limit, cursor });
 
     try {
       data.sort((a, b) => {

@@ -154,7 +154,7 @@ export async function handleExistingScheduleOrder({
       }
     };
 
-    let duration = `${packageDetails?.duration ? packageDetails.duration / 60 : "--"} Hr`
+    let duration = `${packageDetails?.duration ? packageDetails.duration / 60 : "--"} Hr`;
 
     await Promise.all([
       // send Whats app message to client if there is contact. (hoisted above.)
@@ -170,7 +170,7 @@ export async function handleExistingScheduleOrder({
           status: "Confirmed",
           totalAmount: order.amount_paid / 100,
           totalCount: adultCount + babyCount + childCount,
-          BookingId: booking.id.slice(8),
+          BookingId: booking.id,
           customerName: name,
           date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
         }),
@@ -194,14 +194,18 @@ export async function handleExistingScheduleOrder({
         fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
         emailSubject: "Minar: New Booking Recieved",
         emailComponent: BookingConfirmationEmailForAdmin({
+          scheduleId,
           Name: name,
           adultCount: adultCount,
           babyCount: babyCount,
-          BookingDate: format(RemoveTimeStampFromDate(booking.createdAt), 'dd-MM-yyyy'),
+          BookingDate: format(
+            RemoveTimeStampFromDate(booking.createdAt),
+            "dd-MM-yyyy",
+          ),
           childCount,
           email: email,
           phone: paymentEntity.contact ?? "",
-          BookingId: booking.id.slice(8),
+          BookingId: booking.id,
           packageTitle: packageDetails?.title ?? "",
           scheduleDate: schedule?.day
             ? format(schedule.day, "dd-MM-yyyy")
