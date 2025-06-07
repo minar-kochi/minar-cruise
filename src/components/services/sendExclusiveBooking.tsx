@@ -41,7 +41,7 @@ export default function ExclusiveBookingEmailToAdmin({
   phone,
   selectedDate,
 }: TExclusivePackageValidator) {
-  const Subject = `You have recieved new messsage fron ${name}`;
+  const Subject = `You have received new message from ${name}`;
 
   return (
     <Html>
