@@ -24,6 +24,8 @@ model Payments {
   discount      Int
   modeOfPayment String
   Booking       Booking[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Booking {
@@ -41,9 +43,17 @@ model Booking {
   user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   scheduleId String
   schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  Events     Events[]
+
+  @@index([userId]) // For user's bookings queries
+  @@index([scheduleId]) // For schedule-based queries
+  @@index([paymentsId]) // For payment lookups
+  @@index([createdAt]) // For date-based filtering
+  @@index([userId, createdAt]) // Composite for user's recent bookings
 }
 
 model User {
@@ -52,6 +62,9 @@ model User {
   email    String?
   contact  String?
   bookings Booking[]
+
+  @@index([email]) // For login/lookup by email
+  @@index([contact]) // If used for contact-based lookups
 }
 
 model FoodMenu {
@@ -85,6 +98,14 @@ model Schedule {
   scheduleStatus  SCHEDULE_STATUS
   Package         Package?        @relation(fields: [packageId], references: [id])
   Booking         Booking[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([day]) // Essential for date-based queries
+  @@index([packageId]) // For package-schedule relationships
+  @@index([scheduleStatus]) // For filtering by status
+  @@index([day, scheduleStatus]) // Composite for available schedules on specific days
+  @@index([packageId, day]) // For package availability queries
 }
 
 model Amenities {
@@ -115,15 +136,20 @@ model Package {
   foodMenuId      String
   fromTime        String
   toTime          String
-  createdAt       DateTime         @default(now()) @db.Timestamp()
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id], onDelete: Cascade)
   packageCategory PACKAGE_CATEGORY
   Schedule        Schedule[]
   packageImage    PackageImage[]
   PackageSeo      PackageSeo[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@index([slug, id])
+  @@index([packageCategory]) // For filtering by category
+  @@index([packageType]) // If used for filtering
+  @@index([adultPrice]) // For price-based sorting/filtering
+  @@index([childPrice]) // For price-based sorting/filtering
 }
 
 enum IMAGE_USE {
@@ -145,8 +171,18 @@ model Events {
   description String?
   FailedCount Int
   status      PROCESSING_STATUS
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  payload     Json?
+  metadata    Json?
+
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  bookingId String?
 
   @@index([eventId])
+  @@index([status]) // For filtering by processing status
+  @@index([createdAt]) // For time-based queries
+  @@index([status, createdAt]) // For recent failed events, etc.
 }
 
 model Image {
@@ -157,6 +193,11 @@ model Image {
   ImageUse     IMAGE_USE[]    @default([COMMON])
   packageImage PackageImage[]
   Blog         Blog[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([fileKey]) // For file-based lookups
+  @@index([ImageUse]) // For filtering by usage type
 }
 
 enum BlogStatus {
@@ -175,10 +216,15 @@ model Blog {
   imageId    String
   banner     String?
   blogStatus BlogStatus
-  createdAt  DateTime   @default(now())
   BlogSeo    BlogSeo[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 
   @@index([blogSlug])
+  @@index([blogStatus])
+  @@index([author])
+  @@index([createdAt])
+  @@index([blogStatus, createdAt])
 }
 
 model PackageImage {
@@ -188,8 +234,11 @@ model PackageImage {
   imageId   String
   package   Package   @relation(fields: [packageId], references: [id], onDelete: Cascade)
   image     Image     @relation(fields: [imageId], references: [id], onDelete: Cascade)
-}
 
+  @@index([packageId])
+  @@index([ImageUse])
+  @@index([packageId, ImageUse])
+}
 
 // @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
 // pg_dump -U postgres --clean | pg_restore -U postgres
@@ -207,20 +256,26 @@ model Seo {
   metaRobots     String
   PackageSeo     PackageSeo[]
   BlogSeo        BlogSeo[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model PackageSeo {
-  id        String  @id @unique @default(cuid())
+  id        String   @id @unique @default(cuid())
   seoId     String
-  seo       Seo     @relation(fields: [seoId], references: [id])
+  seo       Seo      @relation(fields: [seoId], references: [id])
   packageId String
-  package   Package @relation(fields: [packageId], references: [id])
+  package   Package  @relation(fields: [packageId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BlogSeo {
-  id     String @id @unique @default(cuid())
-  seoId  String
-  seo    Seo    @relation(fields: [seoId], references: [id])
-  blogId String
-  blog   Blog   @relation(fields: [blogId], references: [id])
+  id        String   @id @unique @default(cuid())
+  seoId     String
+  seo       Seo      @relation(fields: [seoId], references: [id])
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

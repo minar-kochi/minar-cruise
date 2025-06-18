@@ -139,7 +139,7 @@ export async function handleCreateScheduleOrder({
               create: {
                 advancePaid: 0,
                 discount: 0,
-                // Amount paid recieved sa paise: convert by 100 to make to ruppe
+                // Amount paid received sa paise: convert by 100 to make to rupee
                 totalAmount: order.amount_paid / 100,
                 modeOfPayment: "ONLINE",
               },
