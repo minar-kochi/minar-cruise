@@ -109,6 +109,7 @@ export async function CreateBookingForCreateSchedule({
   };
   const notes = getNotes({
     eventType: "schedule.create",
+    packageTitle: packageIdExists.title,
     date: selectedScheduleDate,
     ScheduleTime: scheduleTime,
     packageId: packageIdExists.id,

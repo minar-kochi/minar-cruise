@@ -633,7 +633,7 @@ export const schedule = router({
       }
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Something unexpected happpened, Please try again.",
+        message: "Something unexpected happened, Please try again.",
       });
     }
   }),

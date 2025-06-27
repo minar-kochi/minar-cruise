@@ -2,7 +2,15 @@
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { $Enums } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
-import { addDays, formatISO, isBefore, isEqual, isSameMonth, startOfDay } from "date-fns";
+import {
+  addDays,
+  differenceInMinutes,
+  formatISO,
+  isBefore,
+  isEqual,
+  isSameMonth,
+  startOfDay,
+} from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { DateTime } from "luxon";
@@ -26,7 +34,6 @@ export function cn(...inputs: ClassValue[]) {
 export const isProd = process.env.NODE_ENV !== "development";
 export const isProduction = isProd ? "production" : "development";
 /**
- * @description sajdhasjdfjk hjsdb hjavdjhv asjhdv asfnhasvfhgv asfvshag v
  * @example absoluteUrl('/api/get')
  *
  * @param path String thats Rest needed to combine with the Domain URL
@@ -36,6 +43,7 @@ export const isProduction = isProd ? "production" : "development";
  */
 export function absoluteUrl(path: string): string {
   if (typeof window !== "undefined") return path;
+
   if (process.env.NODE_ENV === "production") {
     return `${process.env.NEXT_PUBLIC_DOMAIN as string}${path}`;
   } else {
@@ -149,20 +157,20 @@ export function getDateRangeArray({
   toDate: Date;
 }) {
   const dates = [];
-  
+
   // Ensure we're working with the start of each day
-  const startDate = startOfDay(addDays(fromDate,1));
-  const endDate = startOfDay(addDays(toDate,1));
-  
+  const startDate = startOfDay(addDays(fromDate, 1));
+  const endDate = startOfDay(addDays(toDate, 1));
+
   // Initialize current date as the start date
   let currentDate = startDate;
-  
+
   // Keep adding dates until we reach or pass the end date
   while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
     dates.push(new Date(currentDate));
     currentDate = addDays(currentDate, 1);
   }
-  
+
   return dates;
 }
 
@@ -435,4 +443,18 @@ export function truncateText(text: string, maxLength: number): string {
     return text.substring(0, maxLength) + "...";
   }
   return text;
+}
+
+/**
+ * Checks if the given date is older than the specified number of minutes.
+ * @param dateString - ISO 8601 date string
+ * @param minutesAgo - Threshold in minutes
+ * @returns boolean
+ */
+export function isOlderThan(
+  dateString: string | Date,
+  minutesAgo: number,
+): boolean {
+  const date = new Date(dateString);
+  return differenceInMinutes(new Date(), date) > minutesAgo;
 }

@@ -159,22 +159,22 @@ enum IMAGE_USE {
 }
 
 enum PROCESSING_STATUS {
-  PENDING
   PROCESSING
   FAILED
   SUCCESS
 }
 
 model Events {
-  id          String            @id @unique @default(cuid())
-  eventId     String
-  description String?
-  FailedCount Int
-  status      PROCESSING_STATUS
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  payload     Json?
-  metadata    Json?
+  id                    String            @id @unique @default(cuid())
+  eventId               String
+  description           String?
+  FailedCount           Int
+  status                PROCESSING_STATUS
+  lastProcessingAttempt DateTime
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  payload               Json?
+  metadata              Json?
 
   booking   Booking? @relation(fields: [bookingId], references: [id])
   bookingId String?
@@ -239,9 +239,6 @@ model PackageImage {
   @@index([ImageUse])
   @@index([packageId, ImageUse])
 }
-
-// @TODO: URGENT :- Add FileKey and update the UploadThingURL with the uploadThing FileKey  
-// pg_dump -U postgres --clean | pg_restore -U postgres
 
 model Seo {
   id             String       @id @default(cuid())

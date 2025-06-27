@@ -9,6 +9,7 @@ import { getNotes } from "@/lib/razorpay/getNotes";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { Schedule } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { format } from "date-fns";
 
 export async function CreateBookingForExistingSchedule({
   input: { email, name, numOfAdults, numOfBaby, numOfChildren, phone },
@@ -90,6 +91,8 @@ export async function CreateBookingForExistingSchedule({
     eventType: "schedule.existing",
     packageId: packageIdExists.id,
     scheduleId: schedule.id,
+    packageTitle: packageIdExists.title,
+    scheduledDate: format(schedule.day, "dd-MM-yyyy"),
     ...booking,
   });
 

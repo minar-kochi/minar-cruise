@@ -1,10 +1,8 @@
 import {
-  TEventType,
-  TOrderBooking,
   TRazorPayEventsCreateSchedule,
   TRazorPayEventsExistingSchedule,
 } from "@/Types/razorpay/type";
-import { isProd, isProduction } from "../utils";
+import { isProduction } from "../utils";
 export function getNotes(
   data: TRazorPayEventsExistingSchedule | TRazorPayEventsCreateSchedule,
 ): TRazorPayEventsExistingSchedule | TRazorPayEventsCreateSchedule {
@@ -15,6 +13,7 @@ export function getNotes(
       packageId: data.packageId,
       date: data.date,
       ScheduleTime: data.ScheduleTime,
+      packageTitle: data.packageTitle,
       userId: data.userId,
       name: data.name,
       email: data.email,
@@ -29,6 +28,8 @@ export function getNotes(
     eventType: "schedule.existing",
     packageId: data.packageId,
     scheduleId: data.scheduleId,
+    packageTitle: data.packageTitle,
+    scheduledDate: data.scheduledDate,
     userId: data.userId,
     name: data.name,
     email: data.email,

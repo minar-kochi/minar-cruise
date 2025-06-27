@@ -86,20 +86,3 @@ export default function AdminGenericEmail({
     </Html>
   );
 }
-
-//   BookingConfirmation.PreviewProps = {
-//     BookingId: "2544351",
-//     totalCount: 5,
-//     packageTitle: "Dinner Cruise",
-//     Name: "Amjus",
-//     email: "amsj@mailc.com",
-//     phone: "954853212",
-//     scheduleDate: "12-sep-24",
-//     totalAmount: 7820,
-//     BookingDate: "22/4/24",
-//     adultCount: 2,
-//     childCount: 5,
-//     babyCount: 5
-//   } as BookingConfirmationProps;
-
-// export default AdminGenericEmail;

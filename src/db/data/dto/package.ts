@@ -547,7 +547,15 @@ export const getPackageAllImage = async (id: string) => {
         title: true,
         packageImage: {
           include: {
-            image: true,
+            image: {
+              select: {
+                alt: true,
+                id: true,
+                fileKey: true,
+                ImageUse: true,
+                url: true,
+              },
+            },
           },
         },
       },
