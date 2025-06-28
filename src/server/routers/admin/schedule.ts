@@ -232,6 +232,7 @@ export const schedule = router({
 
         const isPackageFound =
           await getPackageByIdWithStatusAndCount(packageId);
+
         if (!isPackageFound) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -240,8 +241,9 @@ export const schedule = router({
         }
 
         //________________Validate Input ends _____________
-        // Testout the date that is recieved (UTC format.)
+        // Test out the date that is received (UTC format.)
         let SafelyParsedDate = new Date(ScheduleDate);
+
         let fromTimeObj =
           mergeTimeCycle(ScheduleDateTime?.fromTime ?? defaultEmptyTrigger) ??
           null;
@@ -249,14 +251,17 @@ export const schedule = router({
         let toTimeObjParsed =
           mergeTimeCycle(ScheduleDateTime?.toTime ?? defaultEmptyTrigger) ??
           null;
+
         let toTime = isValidMergeTimeCycle(toTimeObjParsed ?? "");
         let fromTime = isValidMergeTimeCycle(fromTimeObj ?? "");
+
         if (isStatusCustom(ScheduleTime) && (!toTime || !fromTime)) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: `Time is Required for ${ScheduleTime} Packages.`,
           });
         }
+
         if (
           (isPackageStatusExclusive(isPackageFound.packageCategory) ||
             isPackageStatusCustom(isPackageFound.packageCategory)) &&

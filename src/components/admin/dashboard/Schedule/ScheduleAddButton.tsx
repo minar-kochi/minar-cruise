@@ -40,6 +40,7 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
   const { invalidate: InvalidateScheduleInfinity } =
     trpc.useUtils().admin.schedule.getSchedulesInfinity;
   const dispatch = useAppDispatch();
+
   const { mutate: createNewSchedule, isPending: isLoading } =
     trpc.admin.schedule.createNewSchedule.useMutation({
       async onMutate(variables) {
@@ -114,7 +115,6 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
           );
         }
       }
-
       createNewSchedule({
         packageId: updatedDateSchedule[type].packageId,
         ScheduleDate: date,
@@ -196,7 +196,7 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
         </DialogHeader>
         <div>
           <div className="flex gap-1">
-            <DialogClose>
+            <DialogClose asChild>
               <Button className="" variant={"ghost"}>
                 Cancel
               </Button>

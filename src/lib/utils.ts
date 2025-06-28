@@ -99,6 +99,7 @@ export function parseDateFormatYYYMMDDToNumber(
 ): TSplitedFormatedDate | null {
   const splitValue = date.split("-");
   if (!splitValue || splitValue.length !== 3) return null;
+
   let validatedDate = {
     year: ParseStringToNumber(splitValue[0]),
     month: ParseStringToNumber(splitValue[1]),
@@ -275,11 +276,11 @@ export function filterDateFromCalender({
       }[]
     | undefined;
 }) {
-  let currDate = getPrevTimeStamp(Date.now());
-
   if (!dateArray) {
     return false;
   }
+
+  // Check if the date exists in the dateArray
   let fi = dateArray.findIndex(
     (fv) => RemoveTimeStampFromDate(fv.day) === RemoveTimeStampFromDate(date),
   );
@@ -287,9 +288,30 @@ export function filterDateFromCalender({
   if (fi !== -1) {
     return true;
   }
-  if (date < new Date(currDate)) {
+
+  // Get current date in Indian Standard Time (date only, no time)
+  let currDate = new Date(
+    new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    }),
+  );
+  // Reset to start of day to avoid time comparison issues
+  currDate.setHours(0, 0, 0, 0);
+
+  // Convert the input date to IST for comparison (date only, no time)
+  let dateInIST = new Date(
+    date.toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    }),
+  );
+  // Reset to start of day to avoid time comparison issues
+  dateInIST.setHours(0, 0, 0, 0);
+
+  // Only disable if the date is strictly before today
+  if (dateInIST < currDate) {
     return true;
   }
+
   return false;
 }
 
@@ -457,4 +479,15 @@ export function isOlderThan(
 ): boolean {
   const date = new Date(dateString);
   return differenceInMinutes(new Date(), date) > minutesAgo;
+}
+
+export function combineDateAndTime(dateStr: string, timeStr: string): Date {
+  const dt = DateTime.fromFormat(
+    `${dateStr} ${timeStr}`,
+    "yyyy-MM-dd hh:mm:a",
+    {
+      zone: "Asia/Kolkata",
+    },
+  );
+  return dt.toJSDate(); // Convert Luxon DateTime to JS Date
 }

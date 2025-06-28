@@ -52,6 +52,8 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
       select: {
         id: true,
         packageCategory: true,
+        fromTime: true,
+        toTime: true,
       },
     });
     if (!data) return null;
