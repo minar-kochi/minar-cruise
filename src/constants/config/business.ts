@@ -10,4 +10,5 @@ export const MIN_SUNSET_BOOKING_HOUR = 1;
 
 // 2 Hour for Lunch
 export const MIN_DINNER_BOOKING_HOUR = 2;
+
 export const MIN_NEW_BOOKING_COUNT = 30;

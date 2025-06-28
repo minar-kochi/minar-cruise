@@ -62,7 +62,7 @@ export default function BookingFormCalender({
   console.log("hello", disabledDays);
   return (
     <>
-      <BookingCloseIn disabled={disabledDays} packageId={packageId} />
+      <BookingCloseIn  availableDates={availableDateArray} disabled={disabledDays} packageId={packageId} />
       {popoverCalender ? (
         <CalendarPopover date={date}>
           <div

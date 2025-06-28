@@ -1,18 +1,24 @@
-import { trpc } from "@/app/_trpc/client";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
+import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
-import { cn, combineDateAndTime, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
-  isPast,
-  differenceInSeconds,
-  differenceInMinutes,
-  differenceInHours,
+  checkBookingTimeConstraint,
+  cn,
+  combineDateAndTime,
+  RemoveTimeStampFromDate,
+} from "@/lib/utils";
+import {
   differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+  isPast,
 } from "date-fns";
 import { useEffect, useState } from "react";
 
 type TBookingCloseIn = {
   packageId: string;
+  availableDates: string[] | undefined;
   disabled:
     | {
         day: Date;
@@ -31,6 +37,7 @@ interface TimeLeft {
 export default function BookingCloseIn({
   packageId,
   disabled,
+  availableDates,
 }: TBookingCloseIn) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
@@ -41,6 +48,11 @@ export default function BookingCloseIn({
   });
 
   const date = useClientSelector((state) => state.package.date);
+
+  const availableDateFound = availableDates?.findIndex((item) => item === date);
+
+  const isAvailable = availableDateFound !== -1;
+
   const disabledDate = disabled?.findIndex(
     (fv) => RemoveTimeStampFromDate(fv.day) === date,
   );
@@ -51,6 +63,19 @@ export default function BookingCloseIn({
   );
 
   const fromTime = packageTime?.fromTime ?? "";
+  const scheduleTimeForPackage = packageTime?.packageCategory
+    ? findCorrespondingScheduleTimeFromPackageCategory(
+        packageTime?.packageCategory,
+      )
+    : null;
+  const isAvailableForNewBooking =
+    date && scheduleTimeForPackage
+      ? checkBookingTimeConstraint({
+          selectedDate: date,
+          startFrom: fromTime,
+          scheduleTime: scheduleTimeForPackage,
+        })
+      : false;
 
   const unformattedDate =
     typeof date !== "string"
@@ -85,7 +110,8 @@ export default function BookingCloseIn({
 
   const getCompactTimeText = () => {
     if (isDisabledDateFound) return "Blocked";
-    if (timeLeft.isExpired) return "Closed";
+    if (timeLeft.isExpired) return "Ship Sailed";
+    if (!isAvailable && !isAvailableForNewBooking) return "Too late";
 
     const { days, hours, minutes, seconds } = timeLeft;
 
@@ -101,17 +127,20 @@ export default function BookingCloseIn({
   return (
     <div
       className={cn(
-        `inline-flex items-center  px-2 py-1 rounded-full my-2 text-base font-medium border bg-green-100 text-green-700 border-green-200`,
+        `inline-flex items-center  px-2 py-1 rounded-full my-2  font-medium border bg-green-100 text-green-700 border-green-200`,
         {
           "bg-red-100 text-red-700 border-red-200":
-            timeLeft.isExpired || totalMinutes <= 30 || !isDisabledDateFound,
+            timeLeft.isExpired ||
+            totalMinutes <= 30 ||
+            isDisabledDateFound ||
+            (!isAvailable && !isAvailableForNewBooking),
           "bg-orange-100 text-orange-700 border-orange-200":
             totalMinutes <= 120,
         },
       )}
     >
       <span className="mr-1 text-md">🕗</span>
-      {getCompactTimeText()}
+      <p className="text-sm font-semibold">{getCompactTimeText()}</p>
     </div>
   );
 }
