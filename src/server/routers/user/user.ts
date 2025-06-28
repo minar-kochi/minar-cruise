@@ -318,7 +318,6 @@ export const user = router({
 
         // If the schedule is set to blocked then throw that time is already booked or blocked.
         if (
-          //
           schedule?.scheduleStatus === "BLOCKED" ||
           schedule?.scheduleStatus === "EXCLUSIVE"
         ) {

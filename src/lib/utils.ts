@@ -331,7 +331,6 @@ export function checkBookingTimeConstraint({
   );
 
   if (!UTCISTDATE) {
-    console.log("FALSE BAD STATE");
     return false;
   }
   const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
@@ -374,6 +373,7 @@ export function convertYYYMMDDStringAndTimeStringToUTCDate(
 ) {
   try {
     const DateCycle = parseDateFormatYYYMMDDToNumber(dates);
+
     const timeCycle = splitTimeColon(time);
     if (!timeCycle || !DateCycle) {
       return null;
