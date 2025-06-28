@@ -475,6 +475,7 @@ export const schedule = router({
       });
 
       const dayArr = days.map((item) => RemoveTimeStampFromDate(item.day));
+
       const FilteredDays = dayArr.filter(
         (date, index, self) => self.indexOf(date) === index,
       );
@@ -520,7 +521,6 @@ export const schedule = router({
     const ToDate = new Date(toDate);
 
     // check if any schedules are active in the received date range - if yes return, else continue
-
     const scheduleCount = await getScheduleCount({ FromDate, ToDate });
 
     if (scheduleCount > 0) {
@@ -535,6 +535,7 @@ export const schedule = router({
     const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
 
     const blockScheduleData: {
+      id?: string;
       day: Date;
       schedulePackage: $Enums.SCHEDULED_TIME;
       scheduleStatus: $Enums.SCHEDULE_STATUS;
@@ -550,13 +551,13 @@ export const schedule = router({
 
     // creating date for bulk update
     dates.forEach((date) =>
-      schedulePackage.forEach((scheduleTime) =>
+      schedulePackage.forEach((scheduleTime) => {
         blockScheduleData.push({
           day: new Date(date),
           schedulePackage: scheduleTime,
           scheduleStatus: "BLOCKED",
-        }),
-      ),
+        });
+      }),
     );
 
     // block schedule for the given date range

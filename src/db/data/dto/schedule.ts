@@ -97,14 +97,6 @@ export async function getScheduleCount({
         gte: FromDate,
         lte: ToDate,
       },
-      NOT: [
-        {
-          scheduleStatus: "BLOCKED",
-        },
-        {
-          scheduleStatus: "MAINTENANCE",
-        },
-      ],
     },
   });
   return count;
@@ -172,7 +164,10 @@ export async function getBlockedScheduleDays({
       },
     },
     select: {
+      id: true,
       day: true,
+      schedulePackage: true,
+      scheduleStatus: true,
     },
   });
   return data;
