@@ -262,6 +262,17 @@ export default function BlogTable({
             )}
           </TableBody>
         </Table>
+        {/* Seed Blogs */}
+        {/* <div className="flex items-center justify-center gap-2">
+          <p className="text-lg font-semibold">Seed blogs here:</p>
+          <Button
+            onClick={handleSeed}
+            variant="link"
+            className="px-2 text-primary font-medium"
+          >
+            Seed blogs
+          </Button>
+        </div> */}
       </div>
 
       {/* Loader */}
