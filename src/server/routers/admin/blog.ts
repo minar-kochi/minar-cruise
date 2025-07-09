@@ -9,13 +9,12 @@ import {
   BlogFormValidators,
 } from "@/lib/validators/BlogFormValidators";
 import { blogsInfinityQueryPropsValidation } from "@/lib/validators/blogs";
-import { revalidateBlogs } from "@/revalidator/blog";
+import { revalidateAllBlogs } from "@/revalidator/blog";
 import { revalidateAllPackageImageUse } from "@/revalidator/package";
 import { AdminProcedure, publicProcedure, router } from "@/server/trpc";
 import { faker } from "@faker-js/faker";
 import { $Enums } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { log } from "node:console";
 import { z } from "zod";
 
 export const blog = router({
@@ -166,7 +165,7 @@ export const blog = router({
           });
         }
 
-        await revalidateBlogs({});
+        await revalidateAllBlogs();
         return data;
       } catch (error) {
         console.log(error);
@@ -222,7 +221,7 @@ export const blog = router({
         },
       });
 
-      await revalidateBlogs({ id, blogSlug });
+      await revalidateAllBlogs();
       return updateResponse;
     },
   ),
@@ -239,7 +238,7 @@ export const blog = router({
         },
       });
 
-      await revalidateBlogs({});
+      await revalidateAllBlogs();
 
       return data.id;
     } catch (error) {

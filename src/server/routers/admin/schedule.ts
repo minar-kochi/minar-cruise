@@ -38,6 +38,7 @@ import {
 import { isSameDay, toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
 import { $Enums } from "@prisma/client";
+import { Logger } from "@/lib/helpers/logger";
 
 export const schedule = router({
   getSchedulesByDateRange: AdminProcedure.input(
@@ -544,15 +545,27 @@ export const schedule = router({
     ];
 
     // creating date for bulk update
-    dates.forEach((date) =>
+    dates.forEach((date) => {
+      const normalizedDate = new Date(date);
+      normalizedDate.setUTCHours(0, 0, 0, 0); // Set to start of day UTC
+
       schedulePackage.forEach((scheduleTime) =>
         blockScheduleData.push({
-          day: new Date(date),
+          day: normalizedDate,
           schedulePackage: scheduleTime,
           scheduleStatus: "BLOCKED",
         }),
-      ),
-    );
+      );
+    });
+    // Logger("updated schedules  schedule days:", blockScheduleData);
+    // Logger("Number of dates received: ", dates.length);
+    // Logger(
+    //   "Number of schedules going to be updated: ",
+    //   blockScheduleData.length,
+    //   " | Actual number to be updated",
+    //   dates.length * 5,
+    // );
+    // Logger(dates);
 
     // block schedule for the given date range
     try {

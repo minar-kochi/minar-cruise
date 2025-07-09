@@ -1,22 +1,17 @@
-import { db } from "@/db";
+import { BLOG_PAGINATION_QUERY_LIMIT } from "@/constants/config";
+import { getPublishedBlogsCount } from "@/db/data/dto/blog";
 import { revalidatePath } from "next/cache";
 
-export async function revalidateBlogs({
-  id,
-  blogSlug,
-}: {
-  id?: string;
-  blogSlug?: string;
-}) {
-  if (blogSlug) {
-    revalidatePath(`/blog/${blogSlug}`);
-  }
-  if (id) {
-    revalidatePath(`/admin/blog/update/${id}`);
-  }
-  revalidatePath(`/admin/blog/view`);
-  revalidatePath(`/admin/blog/view`, "page");
-  revalidatePath(`/blog`);
-  revalidatePath(`/blog`, "layout");
-  revalidatePath(`/blog`, "page");
+export async function revalidateAllBlogs() {
+  const totalBlogs = await getPublishedBlogsCount();
+  const lastPage = Math.ceil(totalBlogs / BLOG_PAGINATION_QUERY_LIMIT);
+
+  // console.log(lastPage);
+
+  Array.from({ length: lastPage }, (_, index) => {
+    revalidatePath(`/blogs/${index + 1}`);
+  });
+}
+export async function revalidateBlog({ slug }: { slug: string }) {
+  revalidatePath(`/blog/${slug}`);
 }
