@@ -25,7 +25,7 @@ model Payments {
   modeOfPayment String
   Booking       Booking[]
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime  @updatedAt @default(now())
 }
 
 model Booking {
@@ -43,7 +43,7 @@ model Booking {
   user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 
   scheduleId String
   schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
@@ -99,7 +99,7 @@ model Schedule {
   Package         Package?        @relation(fields: [packageId], references: [id])
   Booking         Booking[]
   createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  updatedAt       DateTime        @updatedAt @default(now())
 
   @@index([day]) // Essential for date-based queries
   @@index([packageId]) // For package-schedule relationships
@@ -143,7 +143,7 @@ model Package {
   packageImage    PackageImage[]
   PackageSeo      PackageSeo[]
   createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  updatedAt       DateTime         @updatedAt @default(now())
 
   @@index([slug, id])
   @@index([packageCategory]) // For filtering by category
@@ -172,7 +172,7 @@ model Events {
   status                PROCESSING_STATUS
   lastProcessingAttempt DateTime
   createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
+  updatedAt             DateTime          @updatedAt @default(now())
   payload               Json?
   metadata              Json?
 
@@ -194,7 +194,7 @@ model Image {
   packageImage PackageImage[]
   Blog         Blog[]
   createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  updatedAt    DateTime       @updatedAt @default(now())
 
   @@index([fileKey]) // For file-based lookups
   @@index([ImageUse]) // For filtering by usage type
@@ -218,7 +218,7 @@ model Blog {
   blogStatus BlogStatus
   BlogSeo    BlogSeo[]
   createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  updatedAt  DateTime   @updatedAt @default(now())
 
   @@index([blogSlug])
   @@index([blogStatus])
@@ -254,7 +254,7 @@ model Seo {
   PackageSeo     PackageSeo[]
   BlogSeo        BlogSeo[]
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  updatedAt      DateTime     @updatedAt @default(now())
 }
 
 model PackageSeo {
@@ -264,7 +264,7 @@ model PackageSeo {
   packageId String
   package   Package  @relation(fields: [packageId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 model BlogSeo {
@@ -274,5 +274,5 @@ model BlogSeo {
   blogId    String
   blog      Blog     @relation(fields: [blogId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 }
