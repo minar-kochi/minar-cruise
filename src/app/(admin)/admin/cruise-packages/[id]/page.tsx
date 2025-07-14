@@ -48,6 +48,7 @@ export default function PackageImagePage({
               <PackageImageCard
                 key={`${dbImage.imageId}-${dbImage.packageId}-PackageImageCard`}
                 dbImage={dbImage}
+                
               />
             );
           })}

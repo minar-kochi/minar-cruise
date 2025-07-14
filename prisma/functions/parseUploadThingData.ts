@@ -31,6 +31,8 @@ export async function parseUploadThingData() {
       alt: name.name,
       fileKey: item.key,
       ImageUse: ["COMMON"],
+      updatedAt: new Date(Date.now()),
+      createdAt: new Date(Date.now()),
       url: item.url,
     });
   });

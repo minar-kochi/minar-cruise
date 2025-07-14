@@ -232,6 +232,7 @@ export const schedule = router({
 
         const isPackageFound =
           await getPackageByIdWithStatusAndCount(packageId);
+
         if (!isPackageFound) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -240,8 +241,9 @@ export const schedule = router({
         }
 
         //________________Validate Input ends _____________
-        // Testout the date that is recieved (UTC format.)
+        // Test out the date that is received (UTC format.)
         let SafelyParsedDate = new Date(ScheduleDate);
+
         let fromTimeObj =
           mergeTimeCycle(ScheduleDateTime?.fromTime ?? defaultEmptyTrigger) ??
           null;
@@ -249,14 +251,17 @@ export const schedule = router({
         let toTimeObjParsed =
           mergeTimeCycle(ScheduleDateTime?.toTime ?? defaultEmptyTrigger) ??
           null;
+
         let toTime = isValidMergeTimeCycle(toTimeObjParsed ?? "");
         let fromTime = isValidMergeTimeCycle(fromTimeObj ?? "");
+
         if (isStatusCustom(ScheduleTime) && (!toTime || !fromTime)) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: `Time is Required for ${ScheduleTime} Packages.`,
           });
         }
+
         if (
           (isPackageStatusExclusive(isPackageFound.packageCategory) ||
             isPackageStatusCustom(isPackageFound.packageCategory)) &&
@@ -470,6 +475,7 @@ export const schedule = router({
       });
 
       const dayArr = days.map((item) => RemoveTimeStampFromDate(item.day));
+
       const FilteredDays = dayArr.filter(
         (date, index, self) => self.indexOf(date) === index,
       );
@@ -515,7 +521,6 @@ export const schedule = router({
     const ToDate = new Date(toDate);
 
     // check if any schedules are active in the received date range - if yes return, else continue
-
     const scheduleCount = await getScheduleCount({ FromDate, ToDate });
 
     if (scheduleCount > 0) {
@@ -530,6 +535,7 @@ export const schedule = router({
     const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
 
     const blockScheduleData: {
+      id?: string;
       day: Date;
       schedulePackage: $Enums.SCHEDULED_TIME;
       scheduleStatus: $Enums.SCHEDULE_STATUS;
@@ -545,13 +551,13 @@ export const schedule = router({
 
     // creating date for bulk update
     dates.forEach((date) =>
-      schedulePackage.forEach((scheduleTime) =>
+      schedulePackage.forEach((scheduleTime) => {
         blockScheduleData.push({
           day: new Date(date),
           schedulePackage: scheduleTime,
           scheduleStatus: "BLOCKED",
-        }),
-      ),
+        });
+      }),
     );
 
     // block schedule for the given date range
@@ -633,7 +639,7 @@ export const schedule = router({
       }
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Something unexpected happpened, Please try again.",
+        message: "Something unexpected happened, Please try again.",
       });
     }
   }),

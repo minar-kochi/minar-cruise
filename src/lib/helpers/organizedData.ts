@@ -94,6 +94,8 @@ export function convertScheduleDataDateToDateString(
 ): TScheduleDataDayReplaceString {
   return {
     ...Schedule,
+    createdAt: RemoveTimeStampFromDate(Schedule.day),
     day: RemoveTimeStampFromDate(Schedule.day),
+    updatedAt: RemoveTimeStampFromDate(Schedule.day),
   };
 }

@@ -52,6 +52,8 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
       select: {
         id: true,
         packageCategory: true,
+        fromTime: true,
+        toTime: true,
       },
     });
     if (!data) return null;
@@ -547,7 +549,15 @@ export const getPackageAllImage = async (id: string) => {
         title: true,
         packageImage: {
           include: {
-            image: true,
+            image: {
+              select: {
+                alt: true,
+                id: true,
+                fileKey: true,
+                ImageUse: true,
+                url: true,
+              },
+            },
           },
         },
       },

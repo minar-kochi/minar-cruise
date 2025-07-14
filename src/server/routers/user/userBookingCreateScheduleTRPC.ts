@@ -79,7 +79,9 @@ export async function CreateBookingForCreateSchedule({
   }
   const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;
   const TotalChildPrice = packageIdExists.childPrice * numOfChildren;
+  
   const GrandTotal = TotalAdultPrice + TotalChildPrice;
+  
   if (GrandTotal <= 0) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
@@ -109,6 +111,7 @@ export async function CreateBookingForCreateSchedule({
   };
   const notes = getNotes({
     eventType: "schedule.create",
+    packageTitle: packageIdExists.title,
     date: selectedScheduleDate,
     ScheduleTime: scheduleTime,
     packageId: packageIdExists.id,

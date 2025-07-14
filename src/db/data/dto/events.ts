@@ -24,10 +24,14 @@ export async function createEventorThrow({
   eventId,
   status,
   description,
+  payload,
+  metadata,
 }: {
   eventId: string;
   status: PROCESSING_STATUS;
   description?: string;
+  payload?: any;
+  metadata?: any;
 }) {
   try {
     const createdEvents = await db.events.create({
@@ -35,62 +39,92 @@ export async function createEventorThrow({
         eventId,
         status,
         description,
+        lastProcessingAttempt: new Date(Date.now()),
         FailedCount: 0,
+        payload: payload || null,
+        metadata: metadata || null,
       },
     });
     return createdEvents;
   } catch (error) {
     ErrorLogger(error);
-    throw new Error("Failed to create");
+    throw new Error("Failed to create event");
   }
 }
-export async function updateEventToSucess({ id }: { id: string }) {
-  try {
-    const createdEvents = await db.events.update({
-      where: {
-        id: id,
-      },
-      data: {
-        status: "SUCCESS",
-      },
-    });
-    return createdEvents;
-  } catch (error) {
-    ErrorLogger(error);
-    throw new Error("Failed to create");
-  }
-}
-export async function updateEventToFailed({
+
+export async function updateEventToSucess({
   id,
-  description,
-  failedCountSetter,
+  bookingId,
 }: {
   id: string;
-  description?: string;
-  failedCountSetter?: number;
+  bookingId: string;
 }) {
   try {
-    let FailedCount = failedCountSetter
-      ? {
-          set: failedCountSetter,
-        }
-      : undefined;
+    const updateData: any = {
+      status: "SUCCESS" as PROCESSING_STATUS,
+    };
+
+    // Only add bookingId if provided
+    if (bookingId) {
+      updateData.bookingId = bookingId;
+    }
+
     const updatedEvent = await db.events.update({
       where: {
         id: id,
       },
-      data: {
-        description,
-        FailedCount,
-        status: "FAILED",
-      },
+      data: updateData,
     });
     return updatedEvent;
   } catch (error) {
     ErrorLogger(error);
-    throw new Error("Failed to create");
+    throw new Error("Failed to update event to success");
   }
 }
+
+export async function updateEventToFailed({
+  id,
+  description,
+  failedCountSetter,
+  bookingId,
+}: {
+  id: string;
+  description?: string;
+  failedCountSetter?: number;
+  bookingId?: string;
+}) {
+  try {
+    const updateData: any = {
+      status: "FAILED" as PROCESSING_STATUS,
+    };
+
+    if (description) {
+      updateData.description = description;
+    }
+
+    if (failedCountSetter !== undefined) {
+      updateData.FailedCount = {
+        set: failedCountSetter,
+      };
+    }
+
+    if (bookingId) {
+      updateData.bookingId = bookingId;
+    }
+
+    const updatedEvent = await db.events.update({
+      where: {
+        id: id,
+      },
+      data: updateData,
+    });
+    return updatedEvent;
+  } catch (error) {
+    ErrorLogger(error);
+    throw new Error("Failed to update event to failed");
+  }
+}
+
 export async function UpdateFailedCount(id: string) {
   try {
     const data = await db.events.update({
@@ -98,6 +132,7 @@ export async function UpdateFailedCount(id: string) {
         id,
       },
       data: {
+        status: "PROCESSING",
         FailedCount: {
           increment: 1,
         },
@@ -105,19 +140,132 @@ export async function UpdateFailedCount(id: string) {
     });
     return data;
   } catch (error) {
-    console.log(error);
+    ErrorLogger(error);
     return null;
   }
 }
 
-export async function ThrowTemplate(number: number) {
+// New function to update processing timestamp without incrementing failed count
+export async function updateEventProcessingTimestamp(id: string) {
   try {
-    if (number === 2) {
-      return { id: 1 };
-    }
-    console.log("Throw Template errored", number);
-    throw new Error("something went wrong");
+    const data = await db.events.update({
+      where: {
+        id,
+      },
+      data: {
+        status: "PROCESSING",
+        lastProcessingAttempt: new Date(),
+      },
+    });
+    return data;
   } catch (error) {
-    throw new Error("Failed to create");
+    ErrorLogger(error);
+    return null;
+  }
+}
+
+// New function to update event with booking relationship
+export async function updateEventWithBooking({
+  id,
+  bookingId,
+  status,
+  description,
+}: {
+  id: string;
+  bookingId: string;
+  status?: PROCESSING_STATUS;
+  description?: string;
+}) {
+  try {
+    const updateData: any = {
+      bookingId,
+    };
+
+    if (status) {
+      updateData.status = status;
+    }
+
+    if (description) {
+      updateData.description = description;
+    }
+
+    const updatedEvent = await db.events.update({
+      where: {
+        id,
+      },
+      data: updateData,
+    });
+    return updatedEvent;
+  } catch (error) {
+    ErrorLogger(error);
+    throw new Error("Failed to update event with booking");
+  }
+}
+
+// Function to get events by status for monitoring/cleanup
+export async function getEventsByStatus(
+  status: PROCESSING_STATUS,
+  limit: number = 100,
+) {
+  try {
+    const events = await db.events.findMany({
+      where: {
+        status,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: limit,
+    });
+    return events;
+  } catch (error) {
+    ErrorLogger(error);
+    return [];
+  }
+}
+
+// Function to get stuck events (PROCESSING for too long)
+export async function getStuckEvents(olderThanMinutes: number = 10) {
+  try {
+    const cutoffTime = new Date(Date.now() - olderThanMinutes * 60 * 1000);
+
+    const stuckEvents = await db.events.findMany({
+      where: {
+        status: "PROCESSING",
+        updatedAt: {
+          lt: cutoffTime,
+        },
+      },
+      orderBy: {
+        updatedAt: "asc",
+      },
+    });
+    return stuckEvents;
+  } catch (error) {
+    ErrorLogger(error);
+    return [];
+  }
+}
+
+// Clean up old successful events (optional cleanup job)
+export async function cleanupOldSuccessfulEvents(olderThanDays: number = 30) {
+  try {
+    const cutoffTime = new Date(
+      Date.now() - olderThanDays * 24 * 60 * 60 * 1000,
+    );
+
+    const deletedEvents = await db.events.deleteMany({
+      where: {
+        status: "SUCCESS",
+        createdAt: {
+          lt: cutoffTime,
+        },
+      },
+    });
+
+    return deletedEvents.count;
+  } catch (error) {
+    ErrorLogger(error);
+    throw new Error("Failed to cleanup old events");
   }
 }

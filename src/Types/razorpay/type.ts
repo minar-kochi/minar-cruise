@@ -17,6 +17,8 @@ export type TRazorPayEventsExistingSchedule = {
   eventType: TEventType["schedule.existing"];
   packageId: string;
   scheduleId: string;
+  packageTitle: string;
+  scheduledDate: string;
 } & TOrderBooking &
   TMode;
 
@@ -25,6 +27,7 @@ export type TRazorPayEventsCreateSchedule = {
   packageId: string;
   date: string;
   ScheduleTime: $Enums.PACKAGE_CATEGORY;
+  packageTitle: string;
 } & TOrderBooking &
   TMode;
 

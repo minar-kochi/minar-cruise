@@ -20,16 +20,20 @@ export default function MonsoonCheckBox() {
   if (typeof window === "undefined") return;
 
   return (
-    <div className={cn("flex items-center pb-2", { hidden: !isVisible })}>
-      <Checkbox id="terms-and-privacy-condition" required aria-required />
-      <Label
-        htmlFor="terms-and-privacy-condition"
-        className="ml-2 text-xs font-normal"
-      >
-        Due to monsoon restrictions, the sea cruise will not be available in
-        June, July, and August. However, the same trip will be offered through
-        the backwaters and ship channels.{" "}
-      </Label>
-    </div>
+    <>
+      {isVisible ? (
+        <div className={cn("flex items-center pb-2", { hidden: !isVisible })}>
+          <Checkbox id="terms-and-privacy-condition" required aria-required />
+          <Label
+            htmlFor="terms-and-privacy-condition"
+            className="ml-2 text-xs font-normal"
+          >
+            Due to monsoon restrictions, the sea cruise will not be available in
+            June, July, and August. However, the same trip will be offered
+            through the backwaters and ship channels.{" "}
+          </Label>
+        </div>
+      ) : null}
+    </>
   );
 }

@@ -18,3 +18,8 @@ export function getDescription() {
 }
 
 export function getFatalityCount() {}
+
+
+export function getEventTypesWithData(event: string) {
+
+}

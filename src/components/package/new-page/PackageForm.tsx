@@ -13,6 +13,7 @@ import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import {
   absoluteUrl,
   cn,
+  combineDateAndTime,
   RemoveTimeStampFromDate,
   safeTotal,
 } from "@/lib/utils";
@@ -33,6 +34,8 @@ import toast from "react-hot-toast";
 import BookingFormCalender from "./BookingFormCalender";
 import BookingFormCard from "./BookingFormCard";
 import ColorRepresentationInfo from "./ColorRepresentationInfo";
+import { getPackageById } from "@/lib/features/client/packageClientSelectors";
+import BookingCloseIn from "./booking-close-in";
 
 type TPackageForm = {
   packageId: string;
@@ -193,6 +196,19 @@ export default function PackageFormN({
   const total =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
 
+  const packageTime = useClientSelector((state) =>
+    getPackageById(state, packageId),
+  );
+
+  const fromTime = packageTime?.fromTime ?? "";
+
+  const unformattedDate =
+    typeof date !== "string"
+      ? RemoveTimeStampFromDate(new Date(date ?? Date.now()))
+      : date;
+
+  const selectedDate = combineDateAndTime(unformattedDate, fromTime);
+
   return (
     <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full ">
       <p
@@ -230,7 +246,7 @@ export default function PackageFormN({
         />
         <div
           className={cn(
-            "flex flex-col items-center justify-center gap-2 mt-5 ",
+            "flex flex-col items-center justify-center gap-2 mt-2 ",
           )}
         >
           <div className="flex gap-2">

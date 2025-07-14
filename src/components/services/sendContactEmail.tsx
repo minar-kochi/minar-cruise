@@ -24,8 +24,6 @@ interface ContactMinarEmail {
   description: string;
 }
 
-// const domain = process.env.NEXT_PUBLIC_DOMAIN;
-
 export default function ContactMinarEmail({
   Name = "John Doe",
   email = "john@example.com",
@@ -33,7 +31,7 @@ export default function ContactMinarEmail({
   description = "",
 }: // Duration
 ContactMinarEmail) {
-  const Subject = `You have recieved new messsage fron ${Name}`;
+  const Subject = `You have received new message from ${Name}`;
 
   return (
     <Html>
@@ -55,11 +53,9 @@ ContactMinarEmail) {
               Dear <strong>{"Admin"}</strong>,
             </Text>
             <Text className="text-[24px] font-semibold leading-[32px] text-indigo-400">
-              Minar has recieved a new message from {Name}
+              Minar has received a new message from {Name}
             </Text>
-            <Text>
-              This is the actual content that the accented text above refers to.
-            </Text>
+
             <Text>Email: {email}</Text>
             <Text>Phone: {phone}</Text>
             <Text>description</Text>
@@ -86,20 +82,3 @@ ContactMinarEmail) {
     </Html>
   );
 }
-
-//   BookingConfirmation.PreviewProps = {
-//     BookingId: "2544351",
-//     totalCount: 5,
-//     packageTitle: "Dinner Cruise",
-//     Name: "Amjus",
-//     email: "amsj@mailc.com",
-//     phone: "954853212",
-//     scheduleDate: "12-sep-24",
-//     totalAmount: 7820,
-//     BookingDate: "22/4/24",
-//     adultCount: 2,
-//     childCount: 5,
-//     babyCount: 5
-//   } as BookingConfirmationProps;
-
-// export default ContactMinarEmail;
