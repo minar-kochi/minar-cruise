@@ -27,13 +27,13 @@ export default function ScheduleBar() {
           </CardDescription>
         </CardHeader>
         <CardContent className="w-full  ">
-          <div className="flex md:flex-row flex-col justify-between mt-2 ">
+          <div className="flex justify-between mt-2 ">
             <div className="max-w-sm group-[.schedule-sheet]:w-full group-[.schedule-sheet]:max-w-full">
               <p className="font-medium text-sm">Pick a date</p>
               <ScheduleDatePicker />
               <ScheduleButtonInfo />
             </div>
-            <div className="gap-3 inline-flex">
+            <div className="gap-3 md:inline-flex hidden ">
               <BlockMultipleSchedulesButton />
             </div>
           </div>

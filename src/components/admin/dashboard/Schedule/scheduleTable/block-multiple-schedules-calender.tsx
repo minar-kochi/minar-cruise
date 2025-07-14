@@ -84,7 +84,7 @@ export default function BlockMultipleSchedulesCalender() {
     mutate({ fromDate: date.from, toDate: date.to });
   }
   return (
-    <div className="space-y-5 ">
+    <div className="space-y-5">
       <Calendar
         initialFocus
         mode="range"
@@ -96,7 +96,7 @@ export default function BlockMultipleSchedulesCalender() {
         className=" bg-sidebar rounded-md"
         classNames={{
           button: "hover:bg-sidebar-primary hover:text-muted",
-          day_selected: "bg-sidebar-primary text-muted dark:text0-white",
+          day_selected: "bg-sidebar-primary text-muted dark:text0-white ",
         }}
         onSelect={(selectedDate) => {
           setDate((prev) => {
