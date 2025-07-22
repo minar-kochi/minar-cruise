@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Popover,
@@ -8,19 +8,26 @@ import {
 import PackageSelectCard from "./package-select-card";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import ChooseDateCard from "./choose-date-card";
-
+export const SEARCH_BAR_MAX_PACKAGES = 7;
 export function ChoosePackage() {
   const packages = useClientSelector((state) => state.package.packages);
   const { selectedPackages } = useClientSelector((state) => state.package);
 
   return (
     <Popover>
-      <PopoverTrigger className="w-full rounded-l-full py-2 md:py-2.5 border-muted-foreground relative hidden md:flex items-start justify-center  ">
+      <PopoverTrigger className="w-full basis-[38%] rounded-l-full py-2 md:py-2.5 border-muted-foreground relative hidden md:flex items-start justify-center  ">
         <div className="">
-          <h4 className=" text-left text-sm hidden md:block font-bold">Package</h4>
+          <h4 className=" text-left text-sm hidden md:block font-bold">
+            Package
+          </h4>
           <div className="md:text-sm text-muted-foreground flex font-semibold">
             {selectedPackages.length ? (
-              <p className="">{selectedPackages.length} package selected</p>
+              <p className="">
+                {selectedPackages.length === SEARCH_BAR_MAX_PACKAGES
+                  ? "All"
+                  : selectedPackages.length}{" "}
+                package selected
+              </p>
             ) : (
               <p className=""> Choose a package</p>
             )}

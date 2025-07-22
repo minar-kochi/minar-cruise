@@ -8,21 +8,22 @@ export default function SearchButton() {
   const isPackageSelected = useClientSelector((state) => state.package);
 
   return (
-    <div className=" py-1 md:py-1.5 rounded-r-full">
+    <div className="w-full basis-1/3 rounded-r-full p-2">
       <Link
         href={`/search?selected=${encodeURI(JSON.stringify(isPackageSelected.selectedPackages?.map((item) => item.id)))}`}
       >
-        <div className="bg-primary/20 font-semibold h-full rounded-full mr-1.5 flex  text-md items-center pl-3 w-36 text-muted-foreground justify-center gap-3 px-2">
+        <div className="bg-primary h-full rounded-full mr-1.5 flex  text-md items-center pl-3 w-full text-primary-foreground text-sm justify-around font-bold px-2">
           <div className="">
-            {isPackageSelected.selectedPackages.length ? (
+            {/* {isPackageSelected.selectedPackages.length ? ( */}
               <p className="">
-                Search {isPackageSelected.selectedPackages.length}
+                Find your cruise 
+                {/* {isPackageSelected.selectedPackages.length} */}
               </p>
-            ) : (
-              <p className="">Search </p>
-            )}
+            {/* ) : ( */}
+              {/* <p className="">Search </p> */}
+            {/* )} */}
           </div>
-          <Search className="text-primary" size={28} />
+          <Search className="text-primary" stroke="white" strokeWidth={3} size={20} />
         </div>
       </Link>
     </div>
