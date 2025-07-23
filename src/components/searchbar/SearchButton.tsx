@@ -1,19 +1,20 @@
 "use client";
 
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
+import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import Link from "next/link";
 
-export default function SearchButton() {
+export default function SearchButton({ className }: { className?: string }) {
   const isPackageSelected = useClientSelector((state) => state.package);
 
   return (
-    <div className="w-full basis-1/3 rounded-r-full p-2">
+    <div className={cn("min-w-44 sm:min-w-48 md:w-full rounded-r-full border p-2",className)}>
       <Link
         href={`/search?selected=${encodeURI(JSON.stringify(isPackageSelected.selectedPackages?.map((item) => item.id)))}`}
       >
-        <div className="bg-primary h-full rounded-full mr-1.5 flex  text-md items-center pl-3 w-full text-primary-foreground text-sm justify-around font-bold px-2">
-          <div className="">
+        <div className="bg-primary h-full rounded-full mr-1.5 flex  text-md items-center w-full text-primary-foreground text-xs sm:text-sm justify-around font-bold px-2">
+          {/* <div className=""> */}
             {/* {isPackageSelected.selectedPackages.length ? ( */}
               <p className="">
                 Find your cruise 
@@ -22,8 +23,8 @@ export default function SearchButton() {
             {/* ) : ( */}
               {/* <p className="">Search </p> */}
             {/* )} */}
-          </div>
-          <Search className="text-primary" stroke="white" strokeWidth={3} size={20} />
+          {/* </div> */}
+          <Search className="text-primary size-[20px]" stroke="white" strokeWidth={3} />
         </div>
       </Link>
     </div>

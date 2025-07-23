@@ -92,11 +92,18 @@
   width: 0rem;
   height: 0rem;
 }
+
 .scrollbar-w-2::-webkit-scrollbar {
   width: 0.25rem;
   height: 0.25rem;
 }
 
+
+
+.scrollbar-w-hidden::-webkit-scrollbar {
+  width: 0rem;
+  height: 0rem;
+}
 
 /* Hide scrollbar for IE, Edge and Firefox */
 
@@ -105,4 +112,8 @@
   flex: 0 0 var(--slider-product-size);
   min-width: 0;
   /* padding-left: var(--slide-spacing); */
+}
+
+.cb {
+  @apply border-green-500 border-2
 }

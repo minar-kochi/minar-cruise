@@ -16,6 +16,7 @@ import PackageSelectCard from "./desktop/package-select-card";
 import { SearchButtonShad, SearchPageButton } from "./SearchButton";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { SEARCH_BAR_MAX_PACKAGES } from "./desktop/choose-package";
 
 export default function SearchMobileBar({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,14 +33,15 @@ export default function SearchMobileBar({ className }: { className?: string }) {
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger
         className={cn(
-          "w-full rounded-l-full pl-7 py-2 md:py-3 h-14",
+          "w-full rounded-l-full h-14",
           className,
         )}
       >
         <div className="flex">
-          <p className="text-sm font-medium md:text-sm line-clamp-1 text-muted-foreground">
+          <p className="text-sm text-left font-medium md:text-sm line-clamp-1 text-muted-foreground pl-8 w-full">
             {selected.length
-              ? `${selected.length} Package selected to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
+              ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected`
+              // ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
               : "Filter package & date"}
           </p>
         </div>
