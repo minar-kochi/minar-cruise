@@ -123,7 +123,7 @@ export async function createExcelSheetWithBookingCount({
       },
     },
   ];
-// HEADER-------------------------------------------------------------------
+  // HEADER-------------------------------------------------------------------
 
   const headerRow = table.getRow(1);
   headerRow.font = {
@@ -149,7 +149,7 @@ export async function createExcelSheetWithBookingCount({
     };
   });
 
-// HEADER-------------------------------------------------------------------
+  // HEADER-------------------------------------------------------------------
 
   let currentDate = "";
   let currentDay = "";

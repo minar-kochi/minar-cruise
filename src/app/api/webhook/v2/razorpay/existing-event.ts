@@ -50,7 +50,7 @@ export async function processEvent({
       return { action: "EVENT_CREATION_FAILED", event: null };
     }
   }
-  
+
   switch (event.status) {
     case "FAILED": {
       if (event.FailedCount >= MAX_EVENT_RETRY_WEBHOOK_COUNT) {

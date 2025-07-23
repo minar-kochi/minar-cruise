@@ -81,7 +81,7 @@ export function sendUnprocessableEventEmail({
               <Text className="text-[14px] leading-[20px] m-0 mb-1">
                 <strong>Event Type:</strong> {"UNPROCESSABLE_CONTENT"}
               </Text>
-               <Text className="text-[14px] leading-[20px] m-0 mb-1">
+              <Text className="text-[14px] leading-[20px] m-0 mb-1">
                 <strong>Event ID:</strong> {event}
               </Text>
               {/*  */}

@@ -39,7 +39,7 @@ import toast from "react-hot-toast";
 
 interface IDownloadTable {
   tableData: TGetBookingsByScheduleId;
-  date?:string
+  date?: string;
 }
 
 export default function DownloadBookingButton({ tableData }: IDownloadTable) {
@@ -68,7 +68,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
           top: 1.5,
         },
       },
-       views: [{ state: 'frozen', ySplit: 2 }],
+      views: [{ state: "frozen", ySplit: 2 }],
     });
 
     BookingTable.columns = [
@@ -195,14 +195,14 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
       },
     ];
 
-    if(!tableData?.length) {
-      toast.error("Table data empty")
-      return
+    if (!tableData?.length) {
+      toast.error("Table data empty");
+      return;
     }
 
     // TITLE ROW-------------------------------------------------------------------
-    const ScheduleDate = tableData[0].schedule.day
-    const title = `Schedule Details - ${format(ScheduleDate,'dd/MM/yyy')}`; // Format: DD/MM/YYYY
+    const ScheduleDate = tableData[0].schedule.day;
+    const title = `Schedule Details - ${format(ScheduleDate, "dd/MM/yyy")}`; // Format: DD/MM/YYYY
     BookingTable.insertRow(1, [title]); // Add title row
 
     const titleRow = BookingTable.getRow(1);
@@ -213,7 +213,6 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
     // Merge all header columns to create a single heading cell
     BookingTable.mergeCells(1, 1, 1, BookingTable.columns.length);
     // TITLE ROW-------------------------------------------------------------------
-
 
     // HEADER-------------------------------------------------------------------
     const headerRow = BookingTable.getRow(2);

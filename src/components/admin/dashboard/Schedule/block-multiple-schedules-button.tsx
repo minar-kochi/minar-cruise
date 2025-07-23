@@ -15,7 +15,10 @@ export default function BlockMultipleSchedulesButton() {
       <DialogTrigger asChild>
         <Button>Block Multiple Schedules</Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col min-w-max" aria-describedby="block-multiple-schedule-days">
+      <DialogContent
+        className="flex flex-col min-w-max"
+        aria-describedby="block-multiple-schedule-days"
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl">
             Please select date-range

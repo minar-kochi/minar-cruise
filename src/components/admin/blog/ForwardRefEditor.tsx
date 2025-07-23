@@ -16,10 +16,9 @@ const Editor = dynamic(() => import("./InitializedMDXEditor"), {
 // This is what is imported by other components. Pre-initialized with plugins, and ready
 // to accept other props, including a ref.
 export const ForwardRefEditor = forwardRef<MDXEditorMethods, MDXEditorProps>(
-  (props, ref) => <Editor 
-  className="dark-theme dark-editor"
-  
-  {...props} editorRef={ref} />,
+  (props, ref) => (
+    <Editor className="dark-theme dark-editor" {...props} editorRef={ref} />
+  ),
 );
 
 // TS complains without the following line

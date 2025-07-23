@@ -27,8 +27,8 @@ type TCreateExcelTable = {
 };
 
 const ScheduleSheetConfig = {
-  TitleRowIndex:1,
-  TitleHeight:40,
+  TitleRowIndex: 1,
+  TitleHeight: 40,
   HeaderRowIndex: 2,
   HeaderHeight: 30,
   TableDataStartingIndex: 3,
@@ -50,21 +50,21 @@ export async function createExcelSheetWithoutBookingCount({
     TableDataStartingIndex,
     TableDataRowHeight,
     TitleRowIndex,
-    TitleHeight
+    TitleHeight,
   } = ScheduleSheetConfig;
-  
-// TITLE ROW-------------------------------------------------------------------
-const title = `Schedule Details List - ${format(new Date(Date.now()),'dd/MM/yyy')}`; // Format: DD/MM/YYYY
-table.insertRow(TitleRowIndex, [title]); // Add title row
 
-const titleRow = table.getRow(TitleRowIndex);
-titleRow.height = TitleHeight;
-titleRow.font = { name: "Noto Sans Display Black", size: 20, bold: true };
-titleRow.alignment = { horizontal: "center", vertical: "middle" };
+  // TITLE ROW-------------------------------------------------------------------
+  const title = `Schedule Details List - ${format(new Date(Date.now()), "dd/MM/yyy")}`; // Format: DD/MM/YYYY
+  table.insertRow(TitleRowIndex, [title]); // Add title row
 
-// Merge all header columns to create a single heading cell
-table.mergeCells(1, 1, 1, table.columns.length);
-// TITLE ROW-------------------------------------------------------------------
+  const titleRow = table.getRow(TitleRowIndex);
+  titleRow.height = TitleHeight;
+  titleRow.font = { name: "Noto Sans Display Black", size: 20, bold: true };
+  titleRow.alignment = { horizontal: "center", vertical: "middle" };
+
+  // Merge all header columns to create a single heading cell
+  table.mergeCells(1, 1, 1, table.columns.length);
+  // TITLE ROW-------------------------------------------------------------------
 
   // HEADER-------------------------------------------------------------------
 

@@ -4,9 +4,9 @@ import { FloatingWhatsApp } from "react-floating-whatsapp";
 
 export default function WhatsappButton() {
   return (
-    <div className="relative">  
+    <div className="relative">
       <FloatingWhatsApp
-       className="z-[60]"
+        className="z-[60]"
         phoneNumber="7034191993"
         accountName="Minar Cruise Cochin"
         avatar="/assets/whatsapplogo.png"

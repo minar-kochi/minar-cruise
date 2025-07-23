@@ -5,7 +5,6 @@ import Link from "next/link";
 import FacilitiesTitle from "./FacilitiesTitle";
 import { facilitiesImages } from "@/constants/facilities/images";
 
-
 const FacilitiesImageCard = ({
   label,
   overlapTitle,
@@ -32,7 +31,9 @@ const FacilitiesImageCard = ({
       <Bounded className="relative -top-16 flex justify-end items-end">
         <div className="flex bottom-0 font-bold bg-white dark:text-black  px-7 py-5 rounded-t-xl">
           <Link href={"/"}>Home</Link> /
-          <p className="text-primary whitespace-pre-line  dark:text-red-500 indent-2">{label}</p>
+          <p className="text-primary whitespace-pre-line  dark:text-red-500 indent-2">
+            {label}
+          </p>
         </div>
       </Bounded>
     </div>

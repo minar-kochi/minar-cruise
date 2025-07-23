@@ -31,18 +31,13 @@ export default function SearchMobileBar({ className }: { className?: string }) {
   const packages = useClientSelector((state) => state.package.packages);
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger
-        className={cn(
-          "w-full rounded-l-full h-14",
-          className,
-        )}
-      >
+      <DrawerTrigger className={cn("w-full rounded-l-full h-14", className)}>
         <div className="flex">
           <p className="text-sm text-left font-medium md:text-sm line-clamp-1 text-muted-foreground pl-8 w-full">
             {selected.length
               ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected`
-              // ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
-              : "Filter package & date"}
+              : // ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
+                "Filter package & date"}
           </p>
         </div>
       </DrawerTrigger>

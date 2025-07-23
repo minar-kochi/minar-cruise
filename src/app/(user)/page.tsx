@@ -30,7 +30,7 @@ export default function page() {
         <PackageCarousalWrapper />
       </Bounded>
       <GalleryCarousel />
-      <MinarLocationMap/>
+      <MinarLocationMap />
       <SearchBarWrapper className="fixed bottom-0 w-full z-30" />
     </main>
   );

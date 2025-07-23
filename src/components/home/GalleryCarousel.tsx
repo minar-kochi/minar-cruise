@@ -40,7 +40,7 @@ export default function GalleryCarousel() {
             variant: "ghost",
           })}
         >
-          View all our Gallery here -{'>'}
+          View all our Gallery here -{">"}
         </Link>
       </div>
     </Bounded>

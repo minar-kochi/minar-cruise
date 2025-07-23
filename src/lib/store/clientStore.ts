@@ -6,7 +6,7 @@ export const makeClientStore = () => {
     devTools: true,
     reducer: {
       package: packageClient,
-      blog: blogSlice
+      blog: blogSlice,
     },
   });
 };

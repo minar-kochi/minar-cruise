@@ -16,7 +16,12 @@ export function ChoosePackage({ className }: { className?: string }) {
 
   return (
     <Popover>
-      <PopoverTrigger className={cn("w-full rounded-l-full py-2 md:py-2.5 border-muted-foreground relative items-start justify-center",className)}>
+      <PopoverTrigger
+        className={cn(
+          "w-full rounded-l-full py-2 md:py-2.5 border-muted-foreground relative items-start justify-center",
+          className,
+        )}
+      >
         <div className="">
           <h4 className=" text-left text-sm hidden md:block font-bold">
             Package

@@ -46,7 +46,6 @@ export default function ClientCalenderScheduleDay({
     startFrom: startFrom,
   });
 
-  
   let isBlocked = blockedDate
     ? blockedDate.findIndex((item) =>
         isSameDay(
