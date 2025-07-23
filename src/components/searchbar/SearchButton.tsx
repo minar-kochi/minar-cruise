@@ -9,11 +9,11 @@ export default function SearchButton({ className }: { className?: string }) {
   const isPackageSelected = useClientSelector((state) => state.package);
 
   return (
-    <div className={cn("min-w-44 sm:min-w-48 md:w-full rounded-r-full border p-2",className)}>
+    <div className={cn("min-w-44 sm:min-w-48 md:w-full rounded-r-full p-2",className)}>
       <Link
         href={`/search?selected=${encodeURI(JSON.stringify(isPackageSelected.selectedPackages?.map((item) => item.id)))}`}
       >
-        <div className="bg-primary h-full rounded-full mr-1.5 flex  text-md items-center w-full text-primary-foreground text-xs sm:text-sm justify-around font-bold px-2">
+        <div className="bg-primary h-full rounded-full mr-1.5 flex text-md items-center w-full text-primary-foreground text-xs sm:text-sm justify-around font-bold px-2">
           {/* <div className=""> */}
             {/* {isPackageSelected.selectedPackages.length ? ( */}
               <p className="">
