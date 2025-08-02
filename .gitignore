@@ -41,3 +41,6 @@ next-env.d.ts
 
 #code-editor
 .zed
+
+#log-files
+logs
