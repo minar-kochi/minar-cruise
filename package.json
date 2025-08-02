@@ -77,6 +77,7 @@
     "embla-carousel-class-names": "^8.2.1",
     "embla-carousel-react": "^8.1.5",
     "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "framer-motion": "^11.5.4",
     "label": "^0.2.2",
     "lint-staged": "^15.2.7",
@@ -125,6 +126,7 @@
   },
   "devDependencies": {
     "@savvywombat/tailwindcss-grid-areas": "^4.0.0",
+    "@types/file-saver": "^2.0.7",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.14.9",
     "@types/nodemailer": "^6.4.15",
