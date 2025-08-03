@@ -13,7 +13,7 @@ import {
 import { renderAsync } from "docx-preview";
 import { saveAs } from "file-saver";
 import { RefObject } from "react";
-import { QrCode } from "./doc-contents";
+import { CreateQrCode } from "./doc-contents";
 
 export class BoardingPass {
   public async createDoc({
@@ -23,6 +23,7 @@ export class BoardingPass {
     viewDoc?: boolean;
     docViewRef?: RefObject<HTMLDivElement>;
   }) {
+    const qrCode = await CreateQrCode();
     const doc = new Document({
       sections: [
         {
@@ -32,18 +33,20 @@ export class BoardingPass {
                 new Paragraph({
                   alignment: "center",
                   text: "Minar Cruise E-Ticker",
-                  border: this.createBorder(),
+                  // border: this.createBorder(),
                 }),
               ],
             }),
           },
-          children: [QrCode],
+          children: [qrCode],
         },
       ],
     });
 
+    // converting generated document to blob
     const docBlob = await Packer.toBlob(doc);
 
+    // checking if document needs to be made visible on DOM
     if (viewDoc) {
       if (!docViewRef) return docBlob;
       await this.viewDocument(docViewRef, docBlob);
@@ -52,6 +55,7 @@ export class BoardingPass {
     return docBlob;
   }
 
+  // Draws a border around the element on document
   private createBorder() {
     const border: IBordersOptions = {
       top: {
@@ -82,11 +86,23 @@ export class BoardingPass {
     return border;
   }
 
-  async DownloadDocument(doc: Document) {
+  /**
+   *
+   * @param doc Takes a Document type which will be converted for download
+   * @param nameOfDocument Argument is used as name of the file after download 
+   * @returns void
+   */
+  async DownloadDocument(doc: Document, nameOfDocument?: string) {
     const fileBlob = await Packer.toBlob(doc);
-    saveAs(fileBlob, "My Document.docx");
+    saveAs(fileBlob, nameOfDocument ?? "My Document.docx");
   }
 
+  /**
+   * 
+   * @param ref reference to the html, in which the content of document will be visible
+   * @param file Document file which needs to be made visible on DOM
+   * @returns void
+   */
   async viewDocument(ref: RefObject<HTMLDivElement>, file: Blob) {
     if (!ref.current) return;
 
