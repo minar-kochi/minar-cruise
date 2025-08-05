@@ -1,5 +1,22 @@
-import { IBorderOptions, IBordersOptions, UnderlineType } from "docx";
+import {
+  BorderStyle,
+  IBorderOptions,
+  IBordersOptions,
+  Paragraph,
+  TableCell,
+  TableRow,
+  TextRun,
+  UnderlineType,
+} from "docx";
 
+export const RemoveTableBorder = {
+  top: { style: BorderStyle.NONE },
+  bottom: { style: BorderStyle.NONE },
+  left: { style: BorderStyle.NONE },
+  right: { style: BorderStyle.NONE },
+  insideHorizontal: { style: BorderStyle.NONE },
+  insideVertical: { style: BorderStyle.NONE },
+};
 // Common underline types
 export const DOCXunderlineTypes = {
   SINGLE: UnderlineType.SINGLE,
@@ -59,8 +76,7 @@ export const DOCXhighlightColors = [
 ];
 
 // Draws a border around the element on document
-
-export function createBorder() {
+export function createBorderForParagraph() {
   const border: IBordersOptions = {
     top: {
       color: "auto",
