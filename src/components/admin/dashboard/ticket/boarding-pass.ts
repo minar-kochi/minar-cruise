@@ -1,8 +1,28 @@
-import { Document, Packer } from "docx";
+import {
+  Border,
+  BorderStyle,
+  Document,
+  Packer,
+  Paragraph,
+  SectionProperties,
+  Table,
+  TableCell,
+  TableRow,
+  TextRun,
+  VerticalAlign,
+  WidthType,
+} from "docx";
 import { renderAsync } from "docx-preview";
 import { saveAs } from "file-saver";
 import { RefObject } from "react";
-import { HeaderSection } from "./doc-contents";
+import {
+  BoardingAndPackageInformation,
+  BookingInformation,
+  BookingInformationContent,
+  BookingInformationHeading,
+  HeaderSection,
+} from "./doc-contents";
+import { DOCXcolors, RemoveTableBorder } from "./doc-utils";
 
 export class BoardingPass {
   public async createDoc({
@@ -16,7 +36,12 @@ export class BoardingPass {
       sections: [
         {
           headers: await HeaderSection(),
-          children: [],
+          children: [
+            BookingInformation,
+            await BoardingAndPackageInformation(),
+            BookingInformationHeading,
+            // BookingInformationContent
+          ],
         },
       ],
     });

@@ -10,55 +10,29 @@ import {
   VerticalAlign,
   WidthType,
 } from "docx";
-import { CreateMinarHeading, CreateMinarImage, CreateQrCode } from "./minar-data";
-import { RemoveTableBorder } from "./doc-utils";
+import {
+  CreateMinarHeading,
+  CreateMinarImage,
+  CreateMinarLogo,
+  CreateQrCode,
+  CreateRow,
+  CreateTable,
+} from "./doc-helper";
+import {
+  createBorderForParagraph,
+  createTextRunBorder,
+  DOCXcolors,
+  RemoveTableBorder,
+} from "./doc-utils";
 
 export const HeaderSection = async () => {
   const CreateQrCodeImageRun = await CreateQrCode();
   const CreateMinarImageRun = await CreateMinarImage();
-
   return {
     default: new Header({
       children: [CreateMinarHeading, CreateQrCodeImageRun, CreateMinarImageRun],
     }),
   };
-};
-
-export const CreateRow = (name: string, value: string) => {
-  return new TableRow({
-    children: [
-      new TableCell({
-        children: [new Paragraph({
-          children: [
-            new TextRun({
-              text: name,
-              size: 16,
-              bold: true
-            })
-          ]
-        })],
-        width: {
-          size: 30,
-          type: "pct",
-        },
-      }),
-      new TableCell({
-        children: [new Paragraph({
-          children: [
-            new TextRun({
-              text: `:  ${value}`,
-              size: 16,
-              bold: true
-            })
-          ]
-        })],
-        width: {
-          size: 70,
-          type: "pct",
-        },
-      }),
-    ],
-  });
 };
 
 export const BookingInformation = new Table({
@@ -89,9 +63,9 @@ export const BookingInformation = new Table({
                 type: WidthType.PERCENTAGE,
               },
               rows: [
-                CreateRow("Booking Id","123123123"),
-                CreateRow("Contact Num","9565412022"),
-                CreateRow("Email Id","example@gmail.com"),
+                CreateRow("Booking Id", "123123123"),
+                CreateRow("Contact Num", "9565412022"),
+                CreateRow("Email Id", "example@gmail.com"),
               ],
               borders: RemoveTableBorder,
             }),
@@ -113,17 +87,128 @@ export const BookingInformation = new Table({
             new Table({
               width: {
                 size: 100,
-                type: "pct"
+                type: "pct",
               },
-              rows:[
-                CreateRow("Booking Mode","Online"),
-                CreateRow("Booking Date","04/07/25"),
+              rows: [
+                CreateRow("Booking Mode", "Online"),
+                CreateRow("Booking Date", "04/07/25"),
               ],
               borders: RemoveTableBorder,
-            })            // your second table content goes here
+            }), // your second table content goes here
           ],
         }),
       ],
     }),
   ],
+});
+
+export const BoardingAndPackageInformation = async () => {
+  const CreateLogoImageRun = await CreateMinarLogo();
+
+  return new Table({
+    width: {
+      size: 100,
+      type: WidthType.PERCENTAGE,
+    },
+    margins: {
+      top: 480,
+      bottom: 480,
+    },
+    borders: RemoveTableBorder,
+    rows: [
+      new TableRow({
+        children: [
+          new TableCell({
+            width: {
+              size: 40,
+              type: "pct",
+            },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Booking Package",
+                    size: 22,
+                    bold: true,
+                  }),
+                ],
+                alignment: "center",
+                // spacing: {
+                //   before: 240,
+                // },
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: `Sunset cruise`,
+                    size: 22,
+                  }),
+                ],
+                alignment: "center",
+              }),
+            ],
+          }),
+          new TableCell({
+            width: {
+              size: 20,
+              type: "pct",
+            },
+            children: [CreateLogoImageRun],
+            verticalAlign: "center",
+          }),
+          new TableCell({
+            width: {
+              size: 40,
+              type: "pct",
+            },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Boarding Time",
+                    size: 22,
+                    bold: true,
+                  }),
+                ],
+                alignment: "center",
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "12:50",
+                    size: 22,
+                  }),
+                ],
+                alignment: "center",
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
+};
+
+export const BookingInformationHeading = new Paragraph({
+  children: [
+    new TextRun({
+      text: "Booking Information",
+      size: 28,
+      bold: true,
+      underline: {
+        color: DOCXcolors.black,
+        type: "single",
+      },
+      // border: createTextRunBorder(),
+    }),
+  ],
+  alignment: "center",
+  // border: createBorderForParagraph()
+});
+
+export const BookingInformationContent = CreateTable({
+  columns: 2,
+  rows: 5,
+  columnWidthRatio: 5,
+  showBorder: false,
 });
