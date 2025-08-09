@@ -16,6 +16,7 @@ import { renderAsync } from "docx-preview";
 import { saveAs } from "file-saver";
 import { RefObject } from "react";
 import {
+  BillingDetails,
   BoardingAndPackageInformation,
   BookingInformation,
   BookingInformationContent,
@@ -40,7 +41,8 @@ export class BoardingPass {
             BookingInformation,
             await BoardingAndPackageInformation(),
             BookingInformationHeading,
-            // BookingInformationContent
+            BookingInformationContent,
+            // BillingDetails
           ],
         },
       ],
@@ -64,14 +66,14 @@ export class BoardingPass {
    * @param nameOfDocument Argument is used as name of the file after download
    * @returns void
    */
-  async DownloadDocument(doc: Document, nameOfDocument?: string) {
-    const fileBlob = await Packer.toBlob(doc);
-    saveAs(fileBlob, nameOfDocument ?? "My Document.docx");
+  async DownloadDocument(docBlob: Blob, nameOfDocument?: string) {
+    // const fileBlob = await Packer.toBlob(doc);
+    saveAs(docBlob, nameOfDocument ?? "My Document.docx");
   }
 
   /**
    *
-   * @param ref reference to the html, in which the content of document will be visible
+   * @param ref Reference to the html div element, in which the content of document needs to be rendered visible
    * @param file Document file which needs to be made visible on DOM
    * @returns void
    */

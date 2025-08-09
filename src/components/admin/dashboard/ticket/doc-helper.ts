@@ -2,6 +2,7 @@ import {
   AlignmentType,
   ImageRun,
   Paragraph,
+  ParagraphChild,
   Table,
   TableCell,
   TableRow,
@@ -180,5 +181,57 @@ export const CreateTable = ({
       type: "pct",
     },
     // borders: showBorder ? {} : RemoveTableBorder,
+  });
+};
+
+/**
+ *
+ * @param name first row child
+ * @param value second row child
+ * @returns New Table Row with two columns, which can be used inside a table `rows` array
+ */
+
+export const CreateBookingInformationRow = (
+  name: string,
+  value: string,
+  width?: string[],
+) => {
+  return new TableRow({
+    children: [
+      new TableCell({
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: name,
+                size: 16,
+                bold: true,
+              }),
+            ],
+          }),
+        ],
+        width: {
+          size: width?.length ? parseInt(width[0]) : 40,
+          type: "pct",
+        },
+      }),
+      new TableCell({
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `${value}`,
+                size: 16,
+                bold: true,
+              }),
+            ],
+          }),
+        ],
+        width: {
+          size: width?.length ? parseInt(width[1]) :60,
+          type: "pct",
+        },
+      }),
+    ],
   });
 };

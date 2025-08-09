@@ -6,11 +6,13 @@ import {
   Table,
   TableCell,
   TableRow,
+  TabStopPosition,
   TextRun,
   VerticalAlign,
   WidthType,
 } from "docx";
 import {
+  CreateBookingInformationRow,
   CreateMinarHeading,
   CreateMinarImage,
   CreateMinarLogo,
@@ -202,13 +204,72 @@ export const BookingInformationHeading = new Paragraph({
       // border: createTextRunBorder(),
     }),
   ],
-  alignment: "center",
+  // alignment: "center",
+  spacing:{
+    after: 360
+  }
   // border: createBorderForParagraph()
 });
 
-export const BookingInformationContent = CreateTable({
-  columns: 2,
-  rows: 5,
-  columnWidthRatio: 5,
-  showBorder: false,
+export const BookingInformationContent = new Table({
+  borders: RemoveTableBorder,
+  rows: [
+    CreateBookingInformationRow("Departure Date", ": Monday 24/05/25",["20","80"]),
+    CreateBookingInformationRow("Reporting Time", ": 11:00",["20","80"]),
+    CreateBookingInformationRow("Departure Time", ": 11:30",["20","80"]),
+    new TableRow({
+      children: [
+        new TableCell({
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: "Passengers",
+                  size: 16,
+                  bold: true,
+                }),
+              ],
+            }),
+          ],
+        }),
+        new TableCell({
+          children: [
+            new Table({
+              borders: RemoveTableBorder,
+              width: {
+                size: 100,
+                type: "pct",
+              },
+              rows: [
+                CreateBookingInformationRow(": Adult", " 2", ["12", "90"]),
+                CreateBookingInformationRow(": Child", " 1", ["12", "90"]),
+                CreateBookingInformationRow(": Infant", " 0", ["12", "90"]),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+  ],
+  width: {
+    size: 100,
+    type: "pct",
+  },
 });
+
+export const BillingDetails = new Paragraph({
+  children : [
+    new TextRun({
+      text: "Passenger charges"
+    }),
+    new TextRun({
+      text: "Some other charges"
+    }),
+    new TextRun({
+      text: "other charges"
+    }),
+  ],
+  tabStops: [
+    {position: TabStopPosition.MAX,type: "right"}
+  ]
+})
