@@ -6,6 +6,7 @@ import { getNotes } from "@/lib/razorpay/getNotes";
 import { checkBookingTimeConstraint } from "@/lib/utils";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { isStatusSunset } from "@/lib/validators/Schedules";
+import { createId } from "@paralleldrive/cuid2";
 import { $Enums } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
@@ -100,7 +101,8 @@ export async function CreateBookingForCreateSchedule({
       message: "Failed to add in user Details, Please try again",
     });
   }
-
+  const bookingId = createId()
+  console.log("id",bookingId)
   let booking = {
     name: name,
     email: email,
@@ -115,6 +117,7 @@ export async function CreateBookingForCreateSchedule({
     date: selectedScheduleDate,
     ScheduleTime: scheduleTime,
     packageId: packageIdExists.id,
+    bookingId,
     ...booking,
   });
   const payment_capture = 1;
@@ -132,7 +135,8 @@ export async function CreateBookingForCreateSchedule({
     order,
     phone: user.contact,
     email: user.email,
-  };
+    bookingId
+  };  
 
   return data;
 }

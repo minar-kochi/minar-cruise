@@ -1,3 +1,4 @@
+import { createId } from "@paralleldrive/cuid2";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
 import { CreateUser } from "@/db/data/creator/user";
@@ -87,13 +88,16 @@ export async function CreateBookingForExistingSchedule({
     babyCount: numOfBaby,
     userId: user.id,
   };
+  const bookingId = createId()
+  console.log("id",bookingId)
+
   const notes = getNotes({
     eventType: "schedule.existing",
     packageId: packageIdExists.id,
     scheduleId: schedule.id,
     packageTitle: packageIdExists.title,
     scheduledDate: format(schedule.day, "dd-MM-yyyy"),
-    ...booking,
+    bookingId,    ...booking,
   });
 
   const payment_capture = 1;
@@ -112,7 +116,7 @@ export async function CreateBookingForExistingSchedule({
       message: "success",
       order,
       phone: user.contact,
-      email: user.email,
+      email: user.email,bookingId
     };
 
     return data;

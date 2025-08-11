@@ -37,6 +37,7 @@ export async function handleExistingScheduleOrder({
     scheduleId,
     userId,
     packageId,
+    bookingId,
   } = notes;
   let scheduleDate: Date | null = null;
   let schedulePackage: $Enums.SCHEDULED_TIME | null = null;
@@ -60,6 +61,7 @@ export async function handleExistingScheduleOrder({
           async (tx) => {
             const booking = await tx.booking.create({
               data: {
+                id: bookingId,
                 numOfAdults: adultCount,
                 numOfBaby: babyCount,
                 schedule: {
