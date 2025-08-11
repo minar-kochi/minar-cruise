@@ -32,6 +32,7 @@ export type TRazorPayEventsCreateSchedule = {
   TMode;
 
 export type TOrderBooking = {
+  bookingId:string;
   userId: string;
   name: string;
   email: string;

@@ -107,7 +107,7 @@ export default function PackageFormN({
           amount: res?.order?.amount,
           order_id: res?.order.id,
           callback_url: absoluteUrl(
-            `/success?email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate") ?? ""), "iii dd-MM-yyyy") ?? ""}`,
+            `/success?b_id=${res.bookingId}&email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate") ?? ""), "iii dd-MM-yyyy") ?? ""}`,
           ),
           prefill: {
             name: notes.name ?? undefined,

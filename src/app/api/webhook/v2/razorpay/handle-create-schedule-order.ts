@@ -41,6 +41,7 @@ export async function handleCreateScheduleOrder({
     Mode,
     date,
     userId,
+    bookingId
   } = notes;
 
   const scheduleTimeForPackage =
@@ -91,6 +92,7 @@ export async function handleCreateScheduleOrder({
 
             const booking = await tx.booking.create({
               data: {
+                id:bookingId,
                 numOfAdults: adultCount,
                 numOfBaby: babyCount,
                 schedule: {
