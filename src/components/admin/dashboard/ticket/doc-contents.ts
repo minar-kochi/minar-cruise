@@ -17,8 +17,9 @@ import {
   CreateMinarImage,
   CreateMinarLogo,
   CreateQrCode,
-  CreateRow,
   CreateTable,
+  createTableRow,
+  CreateTwoColumnRow,
 } from "./doc-helper";
 import {
   createBorderForParagraph,
@@ -65,9 +66,9 @@ export const BookingInformation = new Table({
                 type: WidthType.PERCENTAGE,
               },
               rows: [
-                CreateRow("Booking Id", "123123123"),
-                CreateRow("Contact Num", "9565412022"),
-                CreateRow("Email Id", "example@gmail.com"),
+                CreateTwoColumnRow("Booking Id", "123123123"),
+                CreateTwoColumnRow("Contact Num", "9565412022"),
+                CreateTwoColumnRow("Email Id", "example@gmail.com"),
               ],
               borders: RemoveTableBorder,
             }),
@@ -92,8 +93,8 @@ export const BookingInformation = new Table({
                 type: "pct",
               },
               rows: [
-                CreateRow("Booking Mode", "Online"),
-                CreateRow("Booking Date", "04/07/25"),
+                CreateTwoColumnRow("Booking Mode", "Online"),
+                CreateTwoColumnRow("Booking Date", "04/07/25"),
               ],
               borders: RemoveTableBorder,
             }), // your second table content goes here
@@ -204,19 +205,23 @@ export const BookingInformationHeading = new Paragraph({
       // border: createTextRunBorder(),
     }),
   ],
-  // alignment: "center",
-  spacing:{
-    after: 360
-  }
+  alignment: "center",
+  spacing: {
+    after: 360,
+  },
   // border: createBorderForParagraph()
 });
 
 export const BookingInformationContent = new Table({
   borders: RemoveTableBorder,
+  alignment: "center",
   rows: [
-    CreateBookingInformationRow("Departure Date", ": Monday 24/05/25",["20","80"]),
-    CreateBookingInformationRow("Reporting Time", ": 11:00",["20","80"]),
-    CreateBookingInformationRow("Departure Time", ": 11:30",["20","80"]),
+    CreateBookingInformationRow("Departure Date", ": Monday 24/05/25", [
+      "50",
+      "50",
+    ]),
+    CreateBookingInformationRow("Reporting Time", ": 11:00", ["50", "50"]),
+    CreateBookingInformationRow("Departure Time", ": 11:30", ["50", "50"]),
     new TableRow({
       children: [
         new TableCell({
@@ -229,6 +234,7 @@ export const BookingInformationContent = new Table({
                   bold: true,
                 }),
               ],
+              tabStops: [{ position: 10, type: "center" }],
             }),
           ],
         }),
@@ -241,9 +247,9 @@ export const BookingInformationContent = new Table({
                 type: "pct",
               },
               rows: [
-                CreateBookingInformationRow(": Adult", " 2", ["12", "90"]),
-                CreateBookingInformationRow(": Child", " 1", ["12", "90"]),
-                CreateBookingInformationRow(": Infant", " 0", ["12", "90"]),
+                CreateBookingInformationRow(": Adult", " 2", ["40", "60"]),
+                CreateBookingInformationRow(": Child", " 1", ["40", "60"]),
+                CreateBookingInformationRow(": Infant", " 0", ["40", "60"]),
               ],
             }),
           ],
@@ -252,24 +258,78 @@ export const BookingInformationContent = new Table({
     }),
   ],
   width: {
+    size: 50,
+    type: "pct",
+  },
+});
+
+export const BillingDetails = new Table({
+  rows: [
+    createTableRow({
+      items: [
+        { content: "Passenger Charges in INR" },
+        { bold: true, content: " 400.00" },
+        { content: "Vehicle Charges in INR" },
+        { bold: true, content: " 0.00" },
+      ],
+    }),
+    createTableRow({
+      items: [
+        { content: "Additional Charges in INR" },
+        { bold: true, content: " 0.00" },
+        { content: "Total Fare in INR" },
+        { bold: true, content: " 400.00" },
+      ],
+    }),
+  ],
+  // alignment: "left",
+  width: {
     size: 100,
     type: "pct",
   },
 });
 
-export const BillingDetails = new Paragraph({
-  children : [
-    new TextRun({
-      text: "Passenger charges"
+export const PassengerDetails = new Table({
+  rows: [
+    createTableRow({
+      items: [
+        { color: DOCXcolors.gray,bold: true, size: 16, content: "Sr.No" },
+        { color: DOCXcolors.gray,bold: true, size: 16, content: "First Name" },
+        { color: DOCXcolors.gray,bold: true, size: 16, content: "Last Name" },
+        { color: DOCXcolors.gray,bold: true, size: 16, content: "Age / Gender" },
+        { color: DOCXcolors.gray,bold: true, size: 16, content: "Seat No." },
+        { color: DOCXcolors.gray,bold: true, size: 16, content: "Status" },
+      ],
     }),
-    new TextRun({
-      text: "Some other charges"
+    createTableRow({
+      items: [
+        { size: 14, content: "1" },
+        { size: 14, content: "Muhammed Aslam" },
+        { size: 14, content: "CK" },
+        { size: 14, content: "27 / Male" },
+        { size: 14, content: "EB103" },
+        { size: 14, content: "Confirmed" },
+      ],
     }),
-    new TextRun({
-      text: "other charges"
+    createTableRow({
+      items: [
+        { size: 14, content: "2" },
+        { size: 14, content: "Muhammed Aslam" },
+        { size: 14, content: "CK" },
+        { size: 14, content: "27 / Male" },
+        { size: 14, content: "EB103" },
+        { size: 14, content: "Confirmed" },
+      ],
+    }),
+    createTableRow({
+      items: [
+        { size: 14, content: "3" },
+        { size: 14, content: "Muhammed Aslam" },
+        { size: 14, content: "CK" },
+        { size: 14, content: "27 / Male" },
+        { size: 14, content: "EB103" },
+        { size: 14, content: "Confirmed" },
+      ],
     }),
   ],
-  tabStops: [
-    {position: TabStopPosition.MAX,type: "right"}
-  ]
-})
+});

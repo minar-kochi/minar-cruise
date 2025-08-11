@@ -2,10 +2,6 @@ import {
   BorderStyle,
   IBorderOptions,
   IBordersOptions,
-  Paragraph,
-  TableCell,
-  TableRow,
-  TextRun,
   UnderlineType,
 } from "docx";
 

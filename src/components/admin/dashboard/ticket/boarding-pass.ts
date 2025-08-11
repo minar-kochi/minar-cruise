@@ -22,8 +22,15 @@ import {
   BookingInformationContent,
   BookingInformationHeading,
   HeaderSection,
+  PassengerDetails,
 } from "./doc-contents";
 import { DOCXcolors, RemoveTableBorder } from "./doc-utils";
+import {
+  AddSpacing,
+  footerNote,
+  ImportantNotes,
+  TermsAndConditions,
+} from "./doc-helper";
 
 export class BoardingPass {
   public async createDoc({
@@ -42,10 +49,118 @@ export class BoardingPass {
             await BoardingAndPackageInformation(),
             BookingInformationHeading,
             BookingInformationContent,
-            // BillingDetails
+            BillingDetails,
+            AddSpacing(),
+            PassengerDetails,
+            new Paragraph({
+              spacing: {
+                before: 300,
+                line: 150,
+              },
+              children: [
+                new TextRun({
+                  text: "Passenger should report at terminal One Hour (1 Hour) before departure time. Terminal gate close 30 minutes before scheduled departure.",
+                  size: 12,
+                }),
+              ],
+            }),
+            new Paragraph({
+              heading: "Heading6",
+              style: DOCXcolors.black,
+              children: [
+                new TextRun({
+                  text: "Terms and Conditions :",
+                  bold: true,
+                  size: 16,
+                }),
+              ],
+              spacing: {
+                before: 360,
+              },
+            }),
+            ...TermsAndConditions.map((text) => {
+              return new Paragraph({
+                children: [
+                  new TextRun({
+                    text,
+                    size: 12,
+                  }),
+                ],
+                spacing: {
+                  line: 170,
+                },
+                numbering: {
+                  reference: "my-numbering",
+                  level: 0,
+                },
+              });
+            }),
+            new Paragraph({
+              heading: "Heading6",
+              style: DOCXcolors.black,
+              children: [
+                new TextRun({
+                  text: "Important Note:",
+                  bold: true,
+                  size: 16,
+                }),
+              ],
+              spacing: {
+                before: 360,
+              },
+            }),
+            ...ImportantNotes.map((note) => {
+              return new Paragraph({
+                children: [
+                  new TextRun({
+                    text: note,
+                    size: 12,
+                  }),
+                ],
+                spacing: {
+                  after: 120,
+                  line: 150,
+                },
+              });
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: footerNote,
+                  size: 14,
+                  bold: true,
+                }),
+              ],
+              spacing: {
+                line: 150,
+              },
+            }),
           ],
         },
       ],
+      numbering: {
+        config: [
+          {
+            reference: "my-numbering",
+            levels: [
+              {
+                level: 0,
+                format: "decimal",
+                text: "%1.",
+                alignment: "start",
+                style: {
+                  paragraph: {
+                    indent: { left: 480, hanging: 260 },
+                  },
+                  run: {
+                    size: 12,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
     });
 
     // converting generated document to blob
