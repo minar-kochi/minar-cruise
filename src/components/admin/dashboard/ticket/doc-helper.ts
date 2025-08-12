@@ -2,7 +2,6 @@ import {
   AlignmentType,
   ImageRun,
   Paragraph,
-  ParagraphChild,
   Table,
   TableCell,
   TableRow,

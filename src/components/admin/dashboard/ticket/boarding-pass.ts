@@ -1,16 +1,8 @@
 import {
-  Border,
-  BorderStyle,
   Document,
   Packer,
   Paragraph,
-  SectionProperties,
-  Table,
-  TableCell,
-  TableRow,
   TextRun,
-  VerticalAlign,
-  WidthType,
 } from "docx";
 import { renderAsync } from "docx-preview";
 import { saveAs } from "file-saver";
@@ -24,7 +16,7 @@ import {
   HeaderSection,
   PassengerDetails,
 } from "./doc-contents";
-import { DOCXcolors, RemoveTableBorder } from "./doc-utils";
+import { DOCXcolors } from "./doc-utils";
 import {
   AddSpacing,
   footerNote,
@@ -43,12 +35,19 @@ export class BoardingPass {
     const doc = new Document({
       sections: [
         {
-          headers: await HeaderSection(),
+          properties: {
+            titlePage: true,
+          },
+          headers: {
+            first: await HeaderSection(),
+          },
           children: [
+            // await HeaderSection(),
             BookingInformation,
             await BoardingAndPackageInformation(),
             BookingInformationHeading,
             BookingInformationContent,
+            AddSpacing(),
             BillingDetails,
             AddSpacing(),
             PassengerDetails,
@@ -95,6 +94,7 @@ export class BoardingPass {
                 },
               });
             }),
+            AddSpacing(),
             new Paragraph({
               heading: "Heading6",
               style: DOCXcolors.black,
