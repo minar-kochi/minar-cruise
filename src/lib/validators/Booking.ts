@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { cuidRegex } from "../helpers/regex";
 
 export const updateScheduleIdOfBooking = z.object({
   toScheduleId: z.string(),
@@ -20,3 +21,10 @@ export const moveAllBookingsSchema = z
   });
 
 export type TMoveAllBookingsSchema = z.infer<typeof moveAllBookingsSchema>;
+
+export const BookingCuidValidator = z.object({
+  bookingId: z
+    .string()
+    // .regex(cuidRegex, "Invalid Booking Id")
+    // .length(25, "Invalid Booking Id"),
+})

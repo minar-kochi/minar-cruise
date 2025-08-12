@@ -20,6 +20,7 @@ export function getNotes(
       adultCount: data.adultCount,
       childCount: data.childCount,
       babyCount: data.babyCount,
+      bookingId: data.bookingId
     };
   }
 
@@ -36,5 +37,6 @@ export function getNotes(
     adultCount: data.adultCount,
     childCount: data.childCount,
     babyCount: data.babyCount,
+    bookingId: data.bookingId
   };
 }

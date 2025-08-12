@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { ChangeType } from "@/db/types/TBookingSchedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 
 export async function getAllBookingDataFromToday() {
@@ -145,4 +146,27 @@ export async function BookingTotalCount(bookingid: string) {
   } catch (error) {
     return null;
   }
+}
+
+export type TGetUserBookingDetailsExcludedNull = Exclude<
+  TRawGetUserBookingDetails,
+  null
+>;
+
+export type TGetUserBookingDetails = ChangeType<
+  TGetUserBookingDetailsExcludedNull,
+  "createdAt" | "updatedAt",
+  string
+> | null;
+
+export type TRawGetUserBookingDetails = Awaited<
+  ReturnType<typeof getUserBookingDetails>
+>;
+
+export async function getUserBookingDetails(BookingId: string) {
+  return await db.booking.findUnique({
+    where: {
+      id: BookingId,
+    },
+  });
 }
