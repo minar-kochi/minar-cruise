@@ -14,7 +14,7 @@ import {
   differenceInSeconds,
   isPast,
 } from "date-fns";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type TBookingCloseIn = {
   packageId: string;
@@ -34,11 +34,12 @@ interface TimeLeft {
   isExpired: boolean;
 }
 
-export default function BookingCloseIn({
+export const BookingCloseIn = ({
   packageId,
   disabled,
   availableDates,
-}: TBookingCloseIn) {
+}: TBookingCloseIn) => {
+  const timerRef = useRef<NodeJS.Timeout>();
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -50,7 +51,6 @@ export default function BookingCloseIn({
   const date = useClientSelector((state) => state.package.date);
 
   const availableDateFound = availableDates?.findIndex((item) => item === date);
-
   const isAvailable = availableDateFound !== -1;
 
   const disabledDate = disabled?.findIndex(
@@ -68,6 +68,7 @@ export default function BookingCloseIn({
         packageTime?.packageCategory,
       )
     : null;
+  
   const isAvailableForNewBooking =
     date && scheduleTimeForPackage
       ? checkBookingTimeConstraint({
@@ -77,14 +78,16 @@ export default function BookingCloseIn({
         })
       : false;
 
-  const unformattedDate =
-    typeof date !== "string"
-      ? RemoveTimeStampFromDate(new Date(date ?? Date.now()))
-      : date;
+  // Memoize the selectedDate to prevent unnecessary recalculations
+  const selectedDate = useMemo(() => {
+    const unformattedDate =
+      typeof date !== "string"
+        ? RemoveTimeStampFromDate(new Date(date ?? Date.now()))
+        : date;
+    return combineDateAndTime(unformattedDate, fromTime);
+  }, [date, fromTime]);
 
-  const selectedDate = combineDateAndTime(unformattedDate, fromTime);
-
-  const calculateTimeLeft = (): TimeLeft => {
+  const calculateTimeLeft = useCallback((): TimeLeft => {
     const now = new Date();
 
     if (isPast(selectedDate)) {
@@ -97,16 +100,29 @@ export default function BookingCloseIn({
     const seconds = differenceInSeconds(selectedDate, now) % 60;
 
     return { days, hours, minutes, seconds, isExpired: false };
-  };
+  }, [selectedDate]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 10000);
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
 
+    // Calculate initial time immediately
     setTimeLeft(calculateTimeLeft());
-    return () => clearInterval(timer);
-  }, [selectedDate]);
+
+    // Set up the interval
+    timerRef.current = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000); // Changed to 1 second for better UX
+
+    // Cleanup function
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [calculateTimeLeft]); // Only depend on calculateTimeLeft, which is memoized with selectedDate
 
   const getCompactTimeText = () => {
     if (isDisabledDateFound) return "Blocked";
@@ -127,7 +143,7 @@ export default function BookingCloseIn({
   return (
     <div
       className={cn(
-        `inline-flex items-center  px-2 py-1 rounded-full my-2  font-medium border bg-green-100 text-green-700 border-green-200`,
+        `inline-flex items-center px-2 py-1 rounded-full my-2 font-medium border bg-green-100 text-green-700 border-green-200`,
         {
           "bg-red-100 text-red-700 border-red-200":
             timeLeft.isExpired ||
@@ -143,4 +159,6 @@ export default function BookingCloseIn({
       <p className="text-sm font-semibold">{getCompactTimeText()}</p>
     </div>
   );
-}
+};
+
+export default memo(BookingCloseIn);
