@@ -59,7 +59,7 @@ export default function BookingFormCalender({
     day: new Date(item.day),
   }));
   if (!packageData) return;
-  console.log("hello", disabledDays);
+  // console.log("hello", disabledDays);
   return (
     <>
       <BookingCloseIn

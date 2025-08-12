@@ -1,14 +1,10 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import CustomDialog from "@/components/custom/CustomDialog";
 import BoxReveal from "@/components/magicui/box-reveal";
 import GradualSpacing from "@/components/magicui/gradual-spacing";
 import RetroGrid from "@/components/magicui/RetroGrid";
-import { db } from "@/db";
-import { TGetUserBookingDetails } from "@/db/data/dto/booking";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
 
 interface ISearchParams {
   searchParams: {
@@ -20,68 +16,34 @@ interface ISearchParams {
 }
 
 export default function SuccessPage(params: ISearchParams) {
-  const [bookingState, setBookingState] = useState<{
-    loading: Boolean;
-    data: TGetUserBookingDetails;
-  }>({
-    loading: true,
-    data: null,
-  });
   const time = params.searchParams.time;
 
-  const utils = trpc.useUtils();
-  const { fetch } = utils.user.getUserBookingDetails;
-
-  useEffect(() => {
-    let retryCount = 0;
-    console.log(retryCount)
-    let canceled = false;
-    let timeoutId: NodeJS.Timeout; // Track timeout for cleanup
-
-    async function startPoll() {
-      if(canceled) return
-
-      retryCount++;
-      const data = await fetch({ bookingId: params.searchParams.b_id ?? "" });
-
-      console.log("date", data)
-
-      if(canceled) return
-
-      if (!data && retryCount > 10) {
-        setBookingState({
-          data: null,
-          loading: false,
-        });
-        return;
-      } else if (!data) {
-        if (!canceled) {
-          timeoutId = setTimeout(() => {
-            startPoll();
-          }, 1000);
+  const { data, isLoading } = trpc.user.getUserBookingDetails.useQuery(
+    {
+      bookingId: params.searchParams.b_id ?? "",
+    },
+    {
+      refetchInterval({ state }) {
+        //do your logic
+        let retryLoop = 0;
+        if (retryLoop > 10) {
+          return false;
         }
-      } else {
-        setBookingState({ data, loading: false });
-        return;
-      }
-    }
-
-    startPoll();
-
-    return () => {
-      canceled = true;
-      clearTimeout(timeoutId);
-    };
-
-  }, [fetch, setBookingState, params.searchParams.b_id]);
-
+        if (!state.data) {
+          retryLoop++;
+          return 1000;
+        }
+        return false;
+      },
+    },
+  );
   return (
     <div className="relative min-h-screen flex flex-col justify-around items-center">
       <div
         className="rounded-xl bg-slate-100 z-0  max-w-[400px] sm:max-w-[700px] w-full bg-transparent
          border-slate-200 shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]"
       >
-        {bookingState.loading ? "loading..." : (bookingState.data ? "data received": "no data received")}
+        {isLoading ? "loading..." : data ? `data received ${JSON.stringify(data)}` : "no data received"}
         {/* shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] */}
         {/* md:max-w-2xl md:z-10 md:shadow-lg md:absolute md:top-0 md:mt-48 lg:w-3/5 lg:left-0 lg:mt-20 lg:ml-20 xl:mt-24 xl:ml-12 */}
         <div className="flex flex-col p-12 md:px-16">
