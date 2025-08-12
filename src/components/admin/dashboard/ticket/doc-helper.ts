@@ -52,11 +52,12 @@ export const CreateQrCode = async () => {
         },
       }),
     ],
+    // border: RemoveTableBorder
     // Add negative spacing to pull it up and overlap with title
-    spacing: {
-      before: -800, // Negative value to pull up (adjust as needed)
-      after: 0,
-    },
+    // spacing: {
+    //   before: -800, // Negative value to pull up (adjust as needed)
+    //   after: 0,
+    // },
   });
 };
 
@@ -71,12 +72,13 @@ export const CreateMinarImage = async () => {
           height: 80,
         },
         type: "png",
-      }),
-    ],
-    spacing: {
-      before: -1400, // Negative value to pull up (adjust as needed)
-      after: 0,
-    },
+      })
+      ],
+      border: RemoveTableBorder
+    // spacing: {
+    //   before: -1400, // Negative value to pull up (adjust as needed)
+    //   after: 0,
+    // },
   });
 };
 

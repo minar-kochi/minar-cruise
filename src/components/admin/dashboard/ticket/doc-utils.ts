@@ -6,13 +6,13 @@ import {
 } from "docx";
 
 export const RemoveTableBorder = {
-  top: { style: BorderStyle.NONE },
-  bottom: { style: BorderStyle.NONE },
-  left: { style: BorderStyle.NONE },
-  right: { style: BorderStyle.NONE },
-  insideHorizontal: { style: BorderStyle.NONE },
-  insideVertical: { style: BorderStyle.NONE },
-};
+  top: { style: BorderStyle.SINGLE, size: 1, color: "#FFFFFF" },
+  bottom: { style: BorderStyle.SINGLE, size: 1, color: "#FFFFFF" },
+  left: { style: BorderStyle.SINGLE, size: 1, color: "#FFFFFF" },
+  right: { style: BorderStyle.SINGLE, size: 1, color: "#FFFFFF" },
+  insideHorizontal: { style: BorderStyle.SINGLE, size: 1, color: "#FFFFFF" },
+  insideVertical: { style: BorderStyle.SINGLE, size: 1, color: "#FFFFFF" },
+}
 // Common underline types
 export const DOCXunderlineTypes = {
   SINGLE: UnderlineType.SINGLE,

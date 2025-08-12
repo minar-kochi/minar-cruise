@@ -1,4 +1,5 @@
 import {
+  AlignmentType,
   BorderStyle,
   Header,
   Paragraph,
@@ -7,6 +8,7 @@ import {
   TableCell,
   TableRow,
   TabStopPosition,
+  TabStopType,
   TextRun,
   VerticalAlign,
   WidthType,
@@ -29,13 +31,65 @@ import {
 } from "./doc-utils";
 
 export const HeaderSection = async () => {
-  const CreateQrCodeImageRun = await CreateQrCode();
   const CreateMinarImageRun = await CreateMinarImage();
-  return {
-    default: new Header({
-      children: [CreateMinarHeading, CreateQrCodeImageRun, CreateMinarImageRun],
-    }),
-  };
+  const CreateQrCodeImageRun = await CreateQrCode();
+  return new Header({
+    children: [
+      new Table({
+        width: {
+          size: 100,
+          type: "pct",
+        },layout: "fixed",
+        borders: RemoveTableBorder,
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                children: [CreateMinarImageRun],
+                width: {
+                  size: 15,
+                  type: "pct",
+                },
+              }),
+
+              new TableCell({
+                verticalAlign: "center",
+                children: [
+                  new Paragraph({
+                    alignment: "center",
+                    wordWrap: false,
+                    children: [
+                      new TextRun({
+                        text: "Minar Cruise E-Ticket",
+                        size: 30,
+                        bold: true,
+                        allCaps: true,
+                        font: "Times New Roman",
+                      }),
+                    ],
+                  }),
+                ],
+                width: {
+                  size: 70,
+                  type: "pct",
+                },
+              }),
+
+              new TableCell({
+                children: [CreateQrCodeImageRun],
+                width: {
+                  size: 15,
+                  type: "pct",
+                },
+              }),
+            ],
+          }),
+        ],
+      }),
+
+     
+    ],
+  });
 };
 
 export const BookingInformation = new Table({
@@ -290,15 +344,24 @@ export const BillingDetails = new Table({
 });
 
 export const PassengerDetails = new Table({
+  width: {
+    size: 100,
+    type: "pct",
+  },
   rows: [
     createTableRow({
       items: [
-        { color: DOCXcolors.gray,bold: true, size: 16, content: "Sr.No" },
-        { color: DOCXcolors.gray,bold: true, size: 16, content: "First Name" },
-        { color: DOCXcolors.gray,bold: true, size: 16, content: "Last Name" },
-        { color: DOCXcolors.gray,bold: true, size: 16, content: "Age / Gender" },
-        { color: DOCXcolors.gray,bold: true, size: 16, content: "Seat No." },
-        { color: DOCXcolors.gray,bold: true, size: 16, content: "Status" },
+        { color: DOCXcolors.gray, bold: true, size: 16, content: "Sr.No" },
+        { color: DOCXcolors.gray, bold: true, size: 16, content: "First Name" },
+        { color: DOCXcolors.gray, bold: true, size: 16, content: "Last Name" },
+        {
+          color: DOCXcolors.gray,
+          bold: true,
+          size: 16,
+          content: "Age / Gender",
+        },
+        { color: DOCXcolors.gray, bold: true, size: 16, content: "Seat No." },
+        { color: DOCXcolors.gray, bold: true, size: 16, content: "Status" },
       ],
     }),
     createTableRow({
