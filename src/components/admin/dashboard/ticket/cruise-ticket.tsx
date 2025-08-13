@@ -1,6 +1,7 @@
 import type React from "react";
 import { TermsAndConditions } from "./doc-helper";
 import Image from "next/image";
+import { format } from "date-fns";
 
 export interface PassengerDetails {
   srNo: number;
@@ -49,9 +50,27 @@ const minarLogo = `/assets/whatsapplogo.png`;
 const boatLogo = `/logo-small.png`;
 
 const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
-  if(!data) return
+  if (!data) return;
+
+  const {
+    boardingTime,
+    bookingDate,
+    departureDate,
+    departureTime,
+    reportingTime,
+    charges: {
+      totalFare,
+      passengerCharges: { children, adult: adultCharges },
+    },
+    passengers: { adult, child },
+  } = data;
+
+  const FormattedBookingDate = format(bookingDate, "dd/MM/yyyy");
+  const FormattedDepartureDate = format(departureDate, "dd/MM/yyyy");
+  const charge = (adultCharges/100).toFixed(2)
+  console.log(charge);
   return (
-    <div className="max-w-4xl mx-auto bg-white px-14 py-10 font-sans text-sm border border-gray-300 text-black">
+    <div className="max-w-4xl md:mx-auto bg-white px-14 py-10 font-sans text-sm border border-gray-300 text-black my-4 md:my-8 mx-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center">
@@ -107,14 +126,14 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
           <div className="flex">
             <span className="font-semibold w-32">Booking Date</span>
             <span className="mr-4">:</span>
-            <span>{data.bookingDate}</span>
+            <span>{FormattedBookingDate}</span>
           </div>
         </div>
       </div>
 
       {/* Booking Package and Boarding Time */}
-      <div className="flex items-center justify-between mb-8 py-4">
-        <div className="text-center">
+      <div className="flex items-center justify-around mb-8 py-4">
+        <div className="text-center ">
           <h3 className="font-bold text-lg mb-2">Booking Package</h3>
           <p className="text-base">{data.bookingPackage}</p>
         </div>
@@ -131,7 +150,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
         </div>
         <div className="text-center">
           <h3 className="font-bold text-lg mb-2">Boarding Time</h3>
-          <p className="text-xl font-semibold">{data.boardingTime}</p>
+          <p className="text-xl ">{data.boardingTime}</p>
         </div>
       </div>
 
@@ -144,7 +163,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
           <div className="flex ">
             <span className="font-semibold w-40">Departure Date</span>
             <span className="mr-4">:</span>
-            <span>{data.departureDate}</span>
+            <span>{FormattedDepartureDate}</span>
           </div>
           <div className="flex">
             <span className="font-semibold w-40">Reporting Time</span>
@@ -155,6 +174,16 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
             <span className="font-semibold w-40">Departure Time</span>
             <span className="mr-4">:</span>
             <span>{data.departureTime}</span>
+          </div>
+          <div className="flex">
+            <span className="font-semibold w-40">Adult Charges</span>
+            <span className="mr-4">:</span>
+            <span>{(data.charges.passengerCharges.adult/100).toFixed(2)}</span>
+          </div>
+          <div className="flex">
+            <span className="font-semibold w-40">Child Charges</span>
+            <span className="mr-4">:</span>
+            <span>{(data.charges.passengerCharges.children/100).toFixed(2)}</span>
           </div>
           <div className="flex">
             <span className="font-semibold w-40">Passengers</span>
@@ -186,7 +215,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
                 Passenger Charges in INR
               </td>
               <td className="border border-black p-2 text-right">
-                {data.charges.passengerCharges.adult}
+                {(data.charges.passengerCharges.adult/100).toFixed(2)}
               </td>
               <td className="border border-black p-2 font-semibold">
                 Vehicle Charges in INR
@@ -218,31 +247,37 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
         <table className="w-full border border-black">
           <thead>
             <tr className="bg-gray-400">
-              <th className="border border-black p-2 text-left">Sr.No</th>
-              <th className="border border-black p-2 text-left">First Name</th>
-              <th className="border border-black p-2 text-left">Last Name</th>
+              <th className="border border-black p-2 text-center">Sr.No</th>
+              <th className="border border-black p-2 text-cneter">
+                First Name
+              </th>
+              {/* <th className="border border-black p-2 text-left">Last Name</th>
               <th className="border border-black p-2 text-left">
                 Age / Gender
               </th>
-              <th className="border border-black p-2 text-left">Seat No.</th>
-              <th className="border border-black p-2 text-left">Status</th>
+              <th className="border border-black p-2 text-left">Seat No.</th> */}
+              <th className="border border-black p-2 text-center">Status</th>
             </tr>
           </thead>
           <tbody>
             {data.passengerDetails.map((passenger, index) => (
               <tr key={index}>
-                <td className="border border-black p-2">{passenger.srNo}</td>
-                <td className="border border-black p-2">
+                <td className="border border-black p-2 text-center">
+                  {passenger.srNo}
+                </td>
+                <td className="border border-black p-2 text-center">
                   {passenger.firstName}
                 </td>
-                <td className="border border-black p-2">
+                {/* <td className="border border-black p-2">
                   {passenger.lastName}
                 </td>
                 <td className="border border-black p-2">
                   {passenger.age}
                 </td>
-                <td className="border border-black p-2">{passenger.seatNo}</td>
-                <td className="border border-black p-2">{passenger.status}</td>
+                <td className="border border-black p-2">{passenger.seatNo}</td> */}
+                <td className="border border-black p-2 text-center">
+                  {passenger.status}
+                </td>
               </tr>
             ))}
           </tbody>
