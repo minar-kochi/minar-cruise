@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { ChangeType } from "@/db/types/TBookingSchedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { duration } from "moment";
 
 export async function getAllBookingDataFromToday() {
   try {
@@ -167,6 +168,32 @@ export async function getUserBookingDetails(BookingId: string) {
   return await db.booking.findUnique({
     where: {
       id: BookingId,
+    },
+    select: {
+      user: true,
+      payment: true,
+      schedule: {
+        select: {
+          day: true,
+          Package: {
+            select: {
+              adultPrice: true,
+              childPrice: true,
+              duration: true,
+              fromTime: true,
+              toTime: true,
+              packageCategory: true,
+              packageType: true,
+            },
+          },
+        },
+      },
+      id: true,
+      numOfAdults: true,
+      numOfBaby: true,
+      numOfChildren: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
 }

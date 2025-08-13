@@ -1,9 +1,14 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
+import CruiseTicket, { TicketData } from "@/components/admin/dashboard/ticket/cruise-ticket";
 import BoxReveal from "@/components/magicui/box-reveal";
 import GradualSpacing from "@/components/magicui/gradual-spacing";
 import RetroGrid from "@/components/magicui/RetroGrid";
+import {
+  TGetUserBookingDetailsExcludedNull,
+  TRawGetUserBookingDetails,
+} from "@/db/data/dto/booking";
 import Link from "next/link";
 
 interface ISearchParams {
@@ -24,7 +29,6 @@ export default function SuccessPage(params: ISearchParams) {
     },
     {
       refetchInterval({ state }) {
-        //do your logic
         let retryLoop = 0;
         if (retryLoop > 10) {
           return false;
@@ -37,13 +41,66 @@ export default function SuccessPage(params: ISearchParams) {
       },
     },
   );
+
+  type GetUserTrpcType = typeof data
+  function createBookingData({ data }: { data: GetUserTrpcType }) {
+    const details: TicketData = {
+      bookingId: data?.id ?? "",
+      bookingDate: data?.createdAt.toString() ?? "",
+      bookingMode: data?.payment.modeOfPayment ?? "",
+      bookingPackage: data?.schedule.Package?.packageType ?? "",
+      charges: {
+        additionalCharges: 0,
+        passengerCharges: {
+          adult: data?.schedule.Package?.adultPrice ?? 720,
+          children: data?.schedule.Package?.childPrice ?? 480,
+          infant: 0,
+        },
+        totalFare: data?.payment.totalAmount ?? 0,
+        vehicleCharges: 0,
+      },
+      contactNum: data?.user.contact ?? "",
+      boardingTime: data?.schedule.Package?.fromTime ?? "",
+      reportingTime: data?.schedule.Package?.fromTime ?? "",
+      departureDate: data?.schedule.day.toString() ?? "",
+      departureTime: data?.schedule.Package?.fromTime ?? "",
+      emailId: data?.user.email ?? "",
+      passengerDetails: [
+        {
+          firstName: data?.user.name ?? "",
+          age: "",
+          lastName: "",
+          seatNo: "",
+          srNo: 1,
+          status: "",
+        },
+      ],
+      passengers: {
+        adult: data?.numOfAdults ?? 0,
+        child: data?.numOfChildren ?? 0,
+        infant: data?.numOfChildren ?? 0,
+      },
+    };
+
+    return details;
+  }
+
+  let cruiseData: TicketData | null = null
+  if (data) {
+    cruiseData = createBookingData({ data: data });
+  }
   return (
     <div className="relative min-h-screen flex flex-col justify-around items-center">
+      {isLoading
+        ? "loading..."
+        : data
+          ? `data received ${JSON.stringify(data)}`
+          : "no data received"}
+      {!isLoading && data ? <CruiseTicket data={cruiseData}/> : null}
       <div
         className="rounded-xl bg-slate-100 z-0  max-w-[400px] sm:max-w-[700px] w-full bg-transparent
          border-slate-200 shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]"
       >
-        {isLoading ? "loading..." : data ? `data received ${JSON.stringify(data)}` : "no data received"}
         {/* shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] */}
         {/* md:max-w-2xl md:z-10 md:shadow-lg md:absolute md:top-0 md:mt-48 lg:w-3/5 lg:left-0 lg:mt-20 lg:ml-20 xl:mt-24 xl:ml-12 */}
         <div className="flex flex-col p-12 md:px-16">

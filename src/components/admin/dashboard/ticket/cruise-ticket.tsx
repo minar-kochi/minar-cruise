@@ -2,16 +2,16 @@ import type React from "react";
 import { TermsAndConditions } from "./doc-helper";
 import Image from "next/image";
 
-interface PassengerDetails {
+export interface PassengerDetails {
   srNo: number;
   firstName: string;
   lastName: string;
-  ageGender: string;
+  age: string;
   seatNo: string;
   status: string;
 }
 
-interface TicketData {
+export interface TicketData {
   bookingId: string;
   contactNum: string;
   emailId: string;
@@ -28,7 +28,11 @@ interface TicketData {
     infant: number;
   };
   charges: {
-    passengerCharges: number;
+    passengerCharges: {
+      adult: number;
+      children: number;
+      infant: number;
+    };
     additionalCharges: number;
     vehicleCharges: number;
     totalFare: number;
@@ -37,7 +41,7 @@ interface TicketData {
 }
 
 interface CruiseTicketProps {
-  data: TicketData;
+  data: TicketData | null;
 }
 
 const qrImageUrl = `/assets/documents/QR.png`;
@@ -45,6 +49,7 @@ const minarLogo = `/assets/whatsapplogo.png`;
 const boatLogo = `/logo-small.png`;
 
 const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
+  if(!data) return
   return (
     <div className="max-w-4xl mx-auto bg-white px-14 py-10 font-sans text-sm border border-gray-300 text-black">
       {/* Header */}
@@ -115,7 +120,13 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
         </div>
         <div className="text-center">
           <div className="text-4xl mb-2">
-            <Image src={boatLogo} alt="boat logo" width={720} height={480} className="w-28 h-16"/>
+            <Image
+              src={boatLogo}
+              alt="boat logo"
+              width={720}
+              height={480}
+              className="w-28 h-16"
+            />
           </div>
         </div>
         <div className="text-center">
@@ -175,7 +186,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
                 Passenger Charges in INR
               </td>
               <td className="border border-black p-2 text-right">
-                {data.charges.passengerCharges.toFixed(2)}
+                {data.charges.passengerCharges.adult}
               </td>
               <td className="border border-black p-2 font-semibold">
                 Vehicle Charges in INR
@@ -228,7 +239,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
                   {passenger.lastName}
                 </td>
                 <td className="border border-black p-2">
-                  {passenger.ageGender}
+                  {passenger.age}
                 </td>
                 <td className="border border-black p-2">{passenger.seatNo}</td>
                 <td className="border border-black p-2">{passenger.status}</td>
