@@ -294,23 +294,11 @@ export const AddSpacing = (spacing?: number) => {
 };
 
 export const TermsAndConditions: string[] = [
-  "Outside food not allowed",
-  "Boarding / Check In closes 30 minutes before Ferry Departure. No show of passengers / Vehicle for boarding will be treated as automatic cancellation and no refund shall be issued. Tickets of Passengers / vehicles reporting after check in time closes, shall be automatically cancelled and no refund shall be issued.z",
-  "Current Booking closes 45 minutes before ferry departure.",
-  "Passengers are requested to wear the wrist bands issued from ticket counters throughout the journey. Absence of wrist band shall attract a penalty of Rs. 500/-.",
-  "Priority will be given to emergency services during Check in & Check Out.",
-  "Truck Drivers are requested to ensure that they have valid driving license and that the truck is in good physical condition with valid registration, insurance and fitness certificate. Truck drivers are requested to produce Bilti / LR & Challan at Ticket counter. Boarding the ferry can be denied in the absence of any of the above documents.",
-  "Smoking / Spitting / Chewing Tobacco on the Ferry and within Terminal premises is prohibited and punishable by law. Penalty Rs. 2,500/- shall be charged from defaulters.",
-  "Carrying and Consumption of alcohol on the Ferry and within Terminal premises is strictly prohibited and is a punishable offence.",
-  "All passengers are requested to cooperate for luggage / vehicle scanning.",
-  "Misconduct with Security staff, Terminal Staff, Ferry Crew and Fellow passengers is punishable by law.",
-  "Damage to the Ferry / Terminal property is punishable by law.",
-  "Booking Cancellations are permitted up to one day (24 hours) prior to the scheduled departure date and time of travel.",
-  "The Ferry Operator is indemnified from any loss to Owners belongings.",
-  "Parking & Boarding/Deboarding at Owners risk.",
-  "Carrying and consumption of banned substances is strictly prohibited on board the ferry for which you would be arrested and severely prosecute by police. Ferry Operators Indigo Seaways Private Limited sternly warn against carrying of such substances.",
-  "Passengers are requested to carry a valid photo ID proof at the time of reporting to the terminal. Free tickets shall be applicable for children below 2 (two) years of age, subject to the presentation of valid age proof. If valid age proof is not presented, the full ticket fare shall be applicable.",
-  "Right of Admission Reserved.",
+  "Cancellation and refunds are not available.",
+  "All sea cruise trips are subject to weather conditions.",
+  "Proof of age is required for children aged 3 to 10 years.",
+  "Late arrivals are not the responsibility of the management, so please arrive 30 minutes before departure.",
+  "Timings are clearly mentioned in the receipt."
 ];
 
 export const ImportantNotes = [

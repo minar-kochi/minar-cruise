@@ -22,9 +22,15 @@ export const moveAllBookingsSchema = z
 
 export type TMoveAllBookingsSchema = z.infer<typeof moveAllBookingsSchema>;
 
+export type TBookingCuidValidator = z.infer<typeof BookingCuidValidator>
 export const BookingCuidValidator = z.object({
   bookingId: z
-    .string()
-    // .regex(cuidRegex, "Invalid Booking Id")
-    // .length(25, "Invalid Booking Id"),
+  .string()
+  .min(
+    25,
+    "Booking ID length is too short, please provide a valid booking Id",
+  )
+  .cuid({
+    message: "Id validation failed,please provide a valid booking Id",
+  }),
 })
