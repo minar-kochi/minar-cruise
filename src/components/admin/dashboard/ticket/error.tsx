@@ -2,20 +2,23 @@ import Image from "next/image";
 import Qrcode from "qrcode";
 import { useEffect, useState } from "react";
 
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 export default function BookingError({ BookingId }: { BookingId?: string }) {
   const [QrUrl, setQrUrl] = useState<string>();
   useEffect(() => {
     async function handleQr() {
       // Qrcode.toDataURL()
-      const qrCodeDataURL = await Qrcode.toDataURL(`${DOMAIN}/success/bookings?b_id=${BookingId}`, {
-        width: 256,
-        margin: 2,
-        color: {
-          dark: "#000000",
-          light: "#FFFFFF",
+      const qrCodeDataURL = await Qrcode.toDataURL(
+        `${DOMAIN}/success/bookings?b_id=${BookingId}`,
+        {
+          width: 256,
+          margin: 2,
+          color: {
+            dark: "#000000",
+            light: "#FFFFFF",
+          },
         },
-      });
+      );
       setQrUrl(qrCodeDataURL);
     }
     handleQr();
@@ -43,7 +46,7 @@ export default function BookingError({ BookingId }: { BookingId?: string }) {
         </div>
       </div>
 
-      <div className="text-center z-10 max-w-md mx-auto">
+      <div className="text-center z-10 max-w-md mx-auto py-14 rounded-lg bg-gray-200">
         {/* Astronaut illustration */}
         <div className="mb-8 flex justify-center">
           <div className="relative">
@@ -136,8 +139,7 @@ export default function BookingError({ BookingId }: { BookingId?: string }) {
               later
             </p>
             <p className="p-1 border w-fit mx-auto px-2 shadow-xl rounded-sm my-2 bg-primary text-secondary font-bold text-lg">
-              Booking ID :
-              {BookingId}
+              Booking ID :{BookingId}
             </p>
           </div>
         ) : null}
