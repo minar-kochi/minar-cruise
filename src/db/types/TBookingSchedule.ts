@@ -46,6 +46,20 @@ export type TScheduleBooking = {
  *
  *
  */
+
+
 export type ChangeType<T, K extends keyof T, NewType> = Omit<T, K> & {
   [P in K]: NewType;
 };
+
+export type DeepReplaceType<T, TargetType, NewType> = T extends TargetType
+  ? NewType
+  : T extends (infer U)[]
+  ? DeepReplaceType<U, TargetType, NewType>[]
+  : T extends readonly (infer U)[]
+  ? readonly DeepReplaceType<U, TargetType, NewType>[]
+  : T extends object
+  ? {
+      [K in keyof T]: DeepReplaceType<T[K], TargetType, NewType>;
+    }
+  : T;
