@@ -117,3 +117,16 @@
 .cb {
   @apply border-green-500 border-2
 }
+
+@keyframes electricShineFullscreen {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.electric-shine-fullscreen {
+  animation: electricShineFullscreen 2s infinite linear;
+}
