@@ -169,7 +169,7 @@ export default function BookingFormCalender({
             }
             mode="single"
             components={{
-              DayContent: (props) =>
+              DayContent: (props) => 
                 ClientCalenderScheduleDay({
                   AvailableDate: availableDateArray,
                   props,

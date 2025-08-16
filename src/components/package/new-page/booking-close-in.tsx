@@ -156,7 +156,7 @@ export const BookingCloseIn = ({
       )}
     >
       <p className="">
-        Booking Status: <span className="mr-1 text-md">🕗</span>
+        Time left: <span className="mr-1 text-md">🕗</span>
         {getCompactTimeText()}
       </p>
     </div>
