@@ -68,7 +68,7 @@ export const BookingCloseIn = ({
         packageTime?.packageCategory,
       )
     : null;
-  
+
   const isAvailableForNewBooking =
     date && scheduleTimeForPackage
       ? checkBookingTimeConstraint({
@@ -143,7 +143,7 @@ export const BookingCloseIn = ({
   return (
     <div
       className={cn(
-        `inline-flex items-center px-2 py-1 rounded-full my-2 font-medium border bg-green-100 text-green-700 border-green-200`,
+        `px-2 py-1  rounded-md my-2 border bg-green-100 text-green-700 border-green-200 text-sm font-semibold`,
         {
           "bg-red-100 text-red-700 border-red-200":
             timeLeft.isExpired ||
@@ -155,8 +155,10 @@ export const BookingCloseIn = ({
         },
       )}
     >
-      <span className="mr-1 text-md">🕗</span>
-      <p className="text-sm font-semibold">{getCompactTimeText()}</p>
+      <p className="">
+        Booking Status: <span className="mr-1 text-md">🕗</span>
+        {getCompactTimeText()}
+      </p>
     </div>
   );
 };

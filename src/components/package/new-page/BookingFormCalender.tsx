@@ -244,6 +244,7 @@ export default function BookingFormCalender({
         </div>
       )}
       <div className="my-2">
+        <p className="pb-5 font-semibold text-sm"><sup>*</sup>Boarding Time: 30 mins before schedule time</p>
         <p className="text-xs pb-2 font-semibold text-center">
           All Date are in IST
           <br />
