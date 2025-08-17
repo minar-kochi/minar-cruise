@@ -15,11 +15,18 @@ export async function POST() {
       customerName: "Customer",
       BookingId: "#12as2d158ssads",
       packageTitle: "Sunset Cruise",
-      totalCount: MIN_NEW_BOOKING_COUNT,
-      duration: "5:30 - 6:30",
-      totalAmount: 5000,
+      // totalCount: MIN_NEW_BOOKING_COUNT,
+      // duration: "5:30 - 6:30",
+      // totalAmount: 5000,
       status: "Confirmed",
       date: "18/08/24",
+      boardingTime:"",
+      bookingDate:"",
+      contact:"",
+      totalAmount: 1000,
+      child:2,
+      adult:2,
+      infant:2,
     });
     // /admin/booking/gadafjgdfgsdfg
     // /admin/booking === /admin/booking/gadafjgdfgsdfg

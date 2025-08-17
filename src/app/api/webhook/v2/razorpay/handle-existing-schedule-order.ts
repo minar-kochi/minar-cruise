@@ -6,7 +6,9 @@ import { db } from "@/db";
 import { getDescription } from "@/lib/helpers/razorpay/utils";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
-import EmailSendBookingConfirmation from "@/components/services/EmailService";
+import EmailSendBookingConfirmation, {
+  BookingConfirmationEmailForUser,
+} from "@/components/services/EmailService";
 import { format } from "date-fns";
 import { sendAdminBookingUpdateNotification } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 import { SendMessageViaWhatsapp } from "@/lib/helpers/whatsapp";
@@ -132,15 +134,19 @@ export async function handleExistingScheduleOrder({
           recipientEmail: email,
           fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
           emailSubject: "Minar: Your Booking has Confirmed",
-          emailComponent: EmailSendBookingConfirmation({
-            duration,
+          emailComponent: BookingConfirmationEmailForUser({
+            adult: adultCount,
+            child: childCount,
+            infant: babyCount,
             packageTitle: `${packageDetail?.title ?? "--"} `,
             status: "Confirmed",
             totalAmount: order.amount_paid / 100,
-            totalCount: adultCount + babyCount + childCount,
             BookingId: booking.id,
             customerName: name,
             date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
+            boardingTime:packageDetail?.fromTime ?? "",
+            bookingDate: booking.createdAt.toString(),
+            contact: notes.email,
           }),
         }),
 

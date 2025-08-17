@@ -1,5 +1,7 @@
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
-import EmailSendBookingConfirmation from "@/components/services/EmailService";
+import EmailSendBookingConfirmation, {
+  BookingConfirmationEmailForUser,
+} from "@/components/services/EmailService";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
@@ -679,6 +681,7 @@ export const booking = router({
               select: {
                 title: true,
                 duration: true,
+                fromTime: true,
               },
             },
           },
@@ -746,18 +749,21 @@ export const booking = router({
       fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
       recipientEmail: [booking.user.email, process.env.ADMIN_EMAIL!],
       emailSubject: "Minar: Your Booking has Confirmed",
-      emailComponent: EmailSendBookingConfirmation({
-        duration,
+      emailComponent: BookingConfirmationEmailForUser({
+        adult: booking.numOfAdults,
+        child: booking.numOfChildren,
+        infant: booking.numOfBaby,
         packageTitle: `${bookedPackage?.title ?? "--"} `,
         status: "Confirmed",
         totalAmount: payment.totalAmount,
-        totalCount:
-          booking.numOfAdults + booking.numOfBaby + booking.numOfChildren,
         BookingId: booking.id,
         customerName: booking.user.name,
         date: booking.schedule?.day
           ? format(booking.schedule.day, "dd-MM-yyyy")
           : "--",
+        boardingTime: booking.schedule.Package?.fromTime ?? "",
+        bookingDate: booking.createdAt.toString(),
+        contact: booking.user.email,
       }),
     });
 

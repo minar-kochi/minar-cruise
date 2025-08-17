@@ -8,7 +8,9 @@ import { getInvalidScheduleTemplateWhatsApp } from "@/lib/helpers/retrieveWhatsA
 import { db } from "@/db";
 import { getDescription } from "@/lib/helpers/razorpay/utils";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
-import EmailSendBookingConfirmation from "@/components/services/EmailService";
+import EmailSendBookingConfirmation, {
+  BookingConfirmationEmailForUser,
+} from "@/components/services/EmailService";
 import { format } from "date-fns";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
@@ -41,7 +43,7 @@ export async function handleCreateScheduleOrder({
     Mode,
     date,
     userId,
-    bookingId
+    bookingId,
   } = notes;
 
   const scheduleTimeForPackage =
@@ -92,7 +94,7 @@ export async function handleCreateScheduleOrder({
 
             const booking = await tx.booking.create({
               data: {
-                id:bookingId,
+                id: bookingId,
                 numOfAdults: adultCount,
                 numOfBaby: babyCount,
                 schedule: {
@@ -186,15 +188,19 @@ export async function handleCreateScheduleOrder({
           recipientEmail: email,
           fromEmail: process.env.NEXT_PUBLIC_BOOKING_EMAIL!,
           emailSubject: "Minar: Your Booking has Confirmed",
-          emailComponent: EmailSendBookingConfirmation({
-            duration,
+          emailComponent: BookingConfirmationEmailForUser({
             packageTitle: `${packageDetail?.title ?? "-"} `,
             status: "Confirmed",
             totalAmount: order.amount_paid / 100,
-            totalCount: adultCount + babyCount + childCount,
+            adult: adultCount,
+            child: childCount,
+            infant: babyCount,
             BookingId: booking.id,
             customerName: name,
             date: format(date, "dd-MM-yyyy"),
+            boardingTime: packageDetail?.fromTime ?? "",
+            bookingDate: booking.createdAt.toString(),
+            contact: notes.email,
           }),
         }),
       ]);
