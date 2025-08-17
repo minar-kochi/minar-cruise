@@ -17,208 +17,475 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface EmailSendBookingConfirmationProps {
+interface BookingConfirmationEmailForUserProps {
   customerName?: string;
-  date?: string;
   packageTitle: string;
+  contact: string;
+  adult: number;
+  child: number;
+  infant: number;
+  date?: string;
+  bookingDate: string;
+  boardingTime: string;
   BookingId?: string;
-  totalCount: number;
-  duration: string;
-  totalAmount: number;
   status: string;
+  totalAmount: number;
 }
 
-export const EmailSendBookingConfirmation = ({
+export const BookingConfirmationEmailForUser = ({
   customerName,
   date,
   packageTitle,
   BookingId,
-  totalCount,
-  duration,
   totalAmount,
   status,
-}: EmailSendBookingConfirmationProps) => {
-  const Subject = `Booking Confirmation - ${BookingId}`;
-  const isConfirmed = status?.toLowerCase() === "confirmed";
-  const isPending = status?.toLowerCase() === "pending";
+  adult,
+  boardingTime,
+  bookingDate,
+  child,
+  contact,
+  infant,
+}: BookingConfirmationEmailForUserProps) => {
+  // const Subject = `Booking Confirmation - ${BookingId}`;
+  // const isConfirmed = status?.toLowerCase() === "confirmed";
+  // const isPending = status?.toLowerCase() === "pending";
+
+  const totalPassengers = adult + child + infant;
 
   return (
     <Html>
       <Head />
-      <Preview>{Subject}</Preview>
-      <Tailwind>
-        <Body className="bg-gray-50 font-sans">
-          <Container className="px-2 mx-auto my-8 bg-white rounded-xl shadow-lg overflow-hidden">
-            {/* Header Section */}
-            <Section className="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-12 text-center">
-              <Img
-                src={`https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q`}
-                width="200"
-                height="60"
-                alt="Minar Cruise Logo"
-                className="mx-auto mb-4 object-contain filter brightness-0 invert"
-              />
-              <Heading className="text-gray-800 text-2xl font-bold m-0 mb-2">
-                Booking Confirmation
-              </Heading>
-              <Text className="text-gray-800 text-base m-0">
-                Your cruise adventure awaits!
-              </Text>
-            </Section>
+      <Body
+        style={{
+          backgroundColor: "#ffffff",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+        }}
+      >
+        <Container
+          style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}
+        >
+          {/* Header Section */}
+          <Section style={{ marginBottom: "32px" }}>
+            <Row>
+              <Column>
+                <Img
+                  src={`https://utfs.io/f/Lnh9TIEe6BHcwNVwPbOvUADJTVQk9uEoMClNfbOpWawhBy5q`}
+                  width="200"
+                  height="60"
+                  alt="Minar Cruise Logo"
+                  style={{
+                    width: "180px",
+                    height: "40px",
+                  }}
+                />
+                <Text
+                  style={{
+                    fontSize: "14px",
+                    color: "#6b7280",
+                    margin: "0",
+                    fontWeight: 500,
+                  }}
+                >
+                  Your journey begins with us!
+                </Text>
+              </Column>
+              <Column align="right">
+                <Text
+                  style={{
+                    fontSize: "14px",
+                    color: "#6b7280",
+                    margin: "0 0 4px 0",
+                  }}
+                >
+                  📞 +91 8089021666
+                </Text>
+                <Text
+                  style={{ fontSize: "14px", color: "#6b7280", margin: "0" }}
+                >
+                  ✉️ info@cochincruiseline.com
+                </Text>
+              </Column>
+            </Row>
+          </Section>
 
-            {/* Status Badge */}
-            <Section className="px-8 py-6 text-center">
-              <div
-                className={`inline-flex  items-center px-4 py-2 rounded-full text-sm font-semibold ${
-                  isConfirmed
-                    ? "bg-green-100 text-green-800 border border-green-200"
-                    : isPending
-                      ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-                      : "bg-gray-100 text-gray-800 border border-gray-200"
-                }`}
-              >
-                {status}
-              </div>
-            </Section>
+          {/* Confirmation Header */}
+          <Section style={{ textAlign: "center", marginBottom: "32px" }}>
+            <Heading
+              style={{
+                fontSize: "32px",
+                fontWeight: "bold",
+                color: "green",
+                margin: "0 0 8px 0",
+              }}
+            >
+              Booking {status}!
+            </Heading>
+            <Text style={{ fontSize: "16px", color: "#6b7280", margin: "0" }}>
+              Thank you for choosing us for your travel adventure
+            </Text>
+          </Section>
 
-            {/* Main Content */}
-            <Section className="px-8 pb-4">
-              <Text className="text-gray-800 text-base leading-relaxed mb-6">
-                Dear <strong>{customerName || "Valued Guest"}</strong>,
-              </Text>
+          {/* Customer Information Section */}
+          <Section
+            style={{
+              backgroundColor: "#f1f5f9",
+              padding: "20px",
+              borderRadius: "8px",
+              marginBottom: "24px",
+            }}
+          >
+            <Heading
+              style={{
+                fontSize: "18px",
+                color: "#059669",
+                margin: "0 0 16px 0",
+              }}
+            >
+              Customer Information
+            </Heading>
 
-              <Text className="text-gray-700 text-base leading-relaxed mb-6">
-                Thank you for choosing <strong>Minar Cruise</strong>! We&apos;re
-                delighted to confirm your booking and look forward to providing
-                you with an unforgettable experience on the water.
-              </Text>
-            </Section>
+            <Row style={{ marginBottom: "12px" }}>
+              <Column>
+                <Text style={{ color: "#6b7280", margin: "0" }}>
+                  Customer Name:
+                </Text>
+              </Column>
+              <Column align="right">
+                <Text
+                  style={{ fontWeight: "600", color: "#1f2937", margin: "0" }}
+                >
+                  {customerName}
+                </Text>
+              </Column>
+            </Row>
 
-            {/* Booking Details Card */}
-            <Section className="px-8 pb-4">
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <Heading className="text-gray-900 text-lg font-bold mb-4 m-0">
-                  Cruise Details
-                </Heading>
+            <Row style={{ marginBottom: "12px" }}>
+              <Column>
+                <Text style={{ color: "#6b7280", margin: "0" }}>Contact:</Text>
+              </Column>
+              <Column align="right">
+                <Text
+                  style={{ fontWeight: "600", color: "#1f2937", margin: "0" }}
+                >
+                  {contact}
+                </Text>
+              </Column>
+            </Row>
 
-                <Row className="mb-4">
-                  <Column className="w-1/2 pr-2">
-                    <div className="bg-white rounded-lg p-4 border border-gray-100">
-                      <Text className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1 m-0">
-                        Booking ID
-                      </Text>
-                      <Text className="text-gray-900 text-sm font-mono font-bold m-0">
-                        {BookingId || "N/A"}
-                      </Text>
-                    </div>
-                  </Column>
-                  <Column className="w-1/2 pl-2">
-                    <div className="bg-white rounded-lg p-4 border border-gray-100">
-                      <Text className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1 m-0">
-                        Journey Date
-                      </Text>
-                      <Text className="text-gray-900 text-sm font-bold m-0">
-                        {date || "TBD"}
-                      </Text>
-                    </div>
-                  </Column>
-                </Row>
+            <Row>
+              <Column>
+                <Text style={{ color: "#6b7280", margin: "0" }}>
+                  Booking Date:
+                </Text>
+              </Column>
+              <Column align="right">
+                <Text
+                  style={{ fontWeight: "600", color: "#1f2937", margin: "0" }}
+                >
+                  {bookingDate}
+                </Text>
+              </Column>
+            </Row>
+            {BookingId ? (
+              <Row>
+                <Column>
+                  <Text style={{ color: "#6b7280", margin: "0" }}>
+                    Booking Reference:
+                  </Text>
+                </Column>
+                <Column align="right">
+                  <Text>
+                    <span
+                      style={{
+                        backgroundColor: "#10b981",
+                        color: "white",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                        fontFamily: "monospace",
+                      }}
+                    >
+                      {BookingId}
+                    </span>
+                  </Text>
+                </Column>
+              </Row>
+            ) : null}
+          </Section>
 
-                <Row className="mb-4">
-                  <Column>
-                    <div className="bg-white rounded-lg p-4 border border-gray-100">
-                      <Text className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1 m-0">
-                        Package
-                      </Text>
-                      <Text className="text-gray-900 text-sm font-bold m-0">
-                        {packageTitle}
-                      </Text>
-                    </div>
-                  </Column>
-                </Row>
+          {/* Trip Details Section */}
+          <Section
+            style={{
+              backgroundColor: "#f1f5f9",
+              padding: "20px",
+              borderRadius: "8px",
+              marginBottom: "24px",
+            }}
+          >
+            <Heading
+              style={{
+                fontSize: "20px",
+                color: "#059669",
+                margin: "0 0 16px 0",
+              }}
+            >
+              Trip Details
+            </Heading>
 
-                <Row className="mb-4">
-                  <Column className="w-1/2 pr-2">
-                    <div className="bg-white rounded-lg p-4 border border-gray-100">
-                      <Text className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1 m-0">
-                        Guests
-                      </Text>
-                      <Text className="text-gray-900 text-sm font-bold m-0">
-                        {totalCount} {totalCount === 1 ? "Guest" : "Guests"}
-                      </Text>
-                    </div>
-                  </Column>
-                  <Column className="w-1/2 pl-2">
-                    <div className="bg-white rounded-lg p-4 border border-gray-100">
-                      <Text className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1 m-0">
-                        Duration
-                      </Text>
-                      <Text className="text-gray-900 text-sm font-bold m-0">
-                        {duration}
-                      </Text>
-                    </div>
-                  </Column>
-                </Row>
+            <Heading
+              style={{
+                fontSize: "16px",
+                fontWeight: "bold",
+                color: "#10b981",
+                margin: "0 0 16px 0",
+              }}
+            >
+              {packageTitle}
+            </Heading>
 
-                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <Row>
-                    <Column className="w-1/2">
-                      <Text className="text-blue-700 text-sm font-semibold m-0">
-                        Total Amount
-                      </Text>
-                    </Column>
-                    <Column className="w-1/2 text-right">
-                      <Text className="text-blue-900 text-xl font-bold m-0">
-                        ₹{totalAmount}/-
-                      </Text>
-                    </Column>
-                  </Row>
+            <Hr
+              style={{
+                border: "none",
+                borderTop: "1px solid #e2e8f0",
+                margin: "16px 0",
+              }}
+            />
+
+            <Row style={{ marginBottom: "16px" }}>
+              <Column>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                >
+                  {/* <span style={{ fontSize: "20px" }}></span> */}
+                  <div>
+                    <Text
+                      style={{
+                        fontSize: "14px",
+                        color: "#6b7280",
+                        margin: "0 0 4px 0",
+                      }}
+                    >
+                      <span>📅 </span>Journey Date
+                    </Text>
+                    <Text
+                      style={{
+                        fontWeight: "600",
+                        color: "#1f2937",
+                        margin: "0",
+                      }}
+                    >
+                      {date}
+                    </Text>
+                  </div>
                 </div>
-              </div>
-            </Section>
+              </Column>
+              <Column>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                >
+                  {/* <span style={{ fontSize: "20px" }}>🕐</span> */}
+                  <div>
+                    <Text
+                      style={{
+                        fontSize: "14px",
+                        color: "#6b7280",
+                        margin: "0 0 4px 0",
+                      }}
+                    >
+                      <span>🕐 </span>Boarding Time
+                    </Text>
+                    <Text
+                      style={{
+                        fontWeight: "600",
+                        color: "#1f2937",
+                        margin: "0",
+                      }}
+                    >
+                      {boardingTime}
+                    </Text>
+                  </div>
+                </div>
+              </Column>
+            </Row>
 
-            {/* Important Information */}
-            <Section className="px-8 pb-6">
-              <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                <Heading className="text-amber-800 text-sm font-bold mb-2 m-0 flex items-center">
-                  <span className="text-amber-600 mr-2">⚠️</span>
-                  Important Information
-                </Heading>
-                <Text className="text-amber-700 text-sm leading-relaxed m-0">
-                  Please bring your booking confirmation and valid ID to the
-                  departure port. Boarding begins 15 minutes before departure.
-                  We recommend arriving 30 minutes early.
+            <Hr
+              style={{
+                border: "none",
+                borderTop: "1px solid #e2e8f0",
+                margin: "16px 0",
+              }}
+            />
+
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span style={{ fontSize: "20px" }}>👥</span>
+              <div style={{ flex: "1" }}>
+                <Text
+                  style={{
+                    fontSize: "14px",
+                    color: "#6b7280",
+                    margin: "0 0 8px 0",
+                  }}
+                >
+                  Passenger Details
+                </Text>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    flexWrap: "wrap",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {/* {adult > 0 && ( */}
+                  <span
+                    style={{
+                      border: "1px solid #d1d5db",
+                      padding: "4px 12px",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    {adult} Adult
+                    {adult > 1 ? "s" : ""}
+                  </span>
+                  {/* )} */}
+                  {/* {child > 0 && ( */}
+                  <span
+                    style={{
+                      border: "1px solid #d1d5db",
+                      padding: "4px 12px",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    {child} Child
+                    {child > 1 ? "ren" : ""}
+                  </span>
+                  {/* )} */}
+                  {/* {infant > 0 && ( */}
+                  <span
+                    style={{
+                      border: "1px solid #d1d5db",
+                      padding: "4px 12px",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    {infant} Infant
+                    {infant > 1 ? "s" : ""}
+                  </span>
+                  {/* )} */}
+                </div>
+                <Text
+                  style={{ fontSize: "14px", color: "#6b7280", margin: "0" }}
+                >
+                  Total Passengers:{" "}
+                  <span style={{ fontWeight: "600", color: "#1f2937" }}>
+                    {totalPassengers}
+                  </span>
                 </Text>
               </div>
-            </Section>
+            </div>
+          </Section>
 
-            {/* Action Button */}
-            <Section className="px-8 pb-8 text-center">
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-3 px-6 rounded-lg no-underline inline-block transition-colors duration-200"
-                href={`tel:${process.env.NEXT_PUBLIC_ENQUIRE_CONTACT}`}
-              >
-                Contact Us for Enquiries
-              </Button>
-            </Section>
+          {/* Payment Summary Section */}
+          <Section
+            style={{
+              backgroundColor: "#f1f5f9",
+              padding: "20px",
+              borderRadius: "8px",
+              marginBottom: "32px",
+            }}
+          >
+            <Heading
+              style={{
+                fontSize: "18px",
+                color: "#059669",
+                margin: "0 0 16px 0",
+              }}
+            >
+              Payment Summary
+            </Heading>
 
-            <Hr className="border-gray-200 mx-8 my-6" />
+            <Row style={{ marginBottom: "12px" }}>
+              <Column>
+                <Text style={{ color: "#6b7280", margin: "0" }}>
+                  Package Cost:
+                </Text>
+              </Column>
+              <Column align="right">
+                <Text style={{ color: "#1f2937", margin: "0" }}>
+                  ${totalAmount.toFixed(2)}
+                </Text>
+              </Column>
+            </Row>
 
-            {/* Footer */}
-            <Section className="px-8 pb-8">
-              <Text className="text-gray-600 text-sm leading-relaxed mb-4">
-                Thank you for choosing <strong>Minar Cruise</strong>. We&apos;re
-                committed to making your experience memorable and enjoyable. For
-                any questions or assistance, please don&apos;t hesitate to{" "}
-                <Link
-                  href={`${process.env.NEXT_PUBLIC_DOMAIN}/contact`}
-                  className="text-blue-600 underline"
+            <Hr
+              style={{
+                border: "none",
+                borderTop: "1px solid #e2e8f0",
+                margin: "12px 0",
+              }}
+            />
+
+            <Row>
+              <Column>
+                <Text
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color: "#1f2937",
+                    margin: "0",
+                  }}
                 >
-                  contact our team
-                </Link>
-                .
-              </Text>
+                  Total Amount:
+                </Text>
+              </Column>
+              <Column align="right">
+                <Text
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color: "#10b981",
+                    margin: "0",
+                  }}
+                >
+                  ${totalAmount.toFixed(2)}
+                </Text>
+              </Column>
+            </Row>
+          </Section>
 
+          {/* Footer Section */}
+          <Section
+            style={{
+              borderTop: "1px solid #e2e8f0",
+              paddingTop: "24px",
+              textAlign: "center",
+            }}
+          >
+            <Tailwind>
+              <Section className="px-8 pb-8">
+                <Text className="text-gray-600 text-sm leading-relaxed mb-4">
+                  Thank you for choosing <strong>Minar Cruise</strong>.
+                  We&apos;re committed to making your experience memorable and
+                  enjoyable. For any questions or assistance, please don&apos;t
+                  hesitate to{" "}
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_DOMAIN}/contact`}
+                    className="text-blue-600 underline"
+                  >
+                    contact our team
+                  </Link>
+                  .
+                </Text>
+              </Section>
+            </Tailwind>
+
+            <Tailwind>
               <Text className="text-gray-500 text-xs leading-relaxed">
                 This message was sent by <strong>Minar Cruise Services</strong>,
                 Inc.
@@ -240,12 +507,12 @@ export const EmailSendBookingConfirmation = ({
                   Privacy Policy
                 </Link>
               </Text>
-            </Section>
-          </Container>
-        </Body>
-      </Tailwind>
+            </Tailwind>
+          </Section>
+        </Container>
+      </Body>
     </Html>
   );
 };
 
-export default EmailSendBookingConfirmation;
+export default BookingConfirmationEmailForUser;
