@@ -10,7 +10,7 @@ import { getDescription } from "@/lib/helpers/razorpay/utils";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
-} from "@/components/services/EmailService";
+} from "@/components/services/email/EmailService";
 import { format } from "date-fns";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
@@ -199,7 +199,7 @@ export async function handleCreateScheduleOrder({
             customerName: name,
             date: format(date, "dd-MM-yyyy"),
             boardingTime: packageDetail?.fromTime ?? "",
-            bookingDate: booking.createdAt.toString(),
+            bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
             contact: notes.email,
           }),
         }),

@@ -8,7 +8,7 @@ import { executeTransactionWithRetry } from "./retry-utility";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
-} from "@/components/services/EmailService";
+} from "@/components/services/email/EmailService";
 import { format } from "date-fns";
 import { sendAdminBookingUpdateNotification } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 import { SendMessageViaWhatsapp } from "@/lib/helpers/whatsapp";
@@ -145,7 +145,7 @@ export async function handleExistingScheduleOrder({
             customerName: name,
             date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
             boardingTime:packageDetail?.fromTime ?? "",
-            bookingDate: booking.createdAt.toString(),
+            bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
             contact: notes.email,
           }),
         }),

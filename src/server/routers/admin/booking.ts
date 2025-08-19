@@ -1,7 +1,7 @@
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
-} from "@/components/services/EmailService";
+} from "@/components/services/email/EmailService";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
@@ -762,7 +762,7 @@ export const booking = router({
           ? format(booking.schedule.day, "dd-MM-yyyy")
           : "--",
         boardingTime: booking.schedule.Package?.fromTime ?? "",
-        bookingDate: booking.createdAt.toString(),
+        bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
         contact: booking.user.email,
       }),
     });

@@ -1,5 +1,5 @@
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
-import VercelInviteUserEmail from "@/components/services/EmailService";
+import VercelInviteUserEmail from "@/components/services/email/EmailService";
 import NewScheduleCreatedAlertEmail from "@/components/services/NewScheduleCreatedAlertEmail";
 import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
