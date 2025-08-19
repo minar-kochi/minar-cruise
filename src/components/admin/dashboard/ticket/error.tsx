@@ -1,4 +1,6 @@
+import { ArrowRightSquareIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import Qrcode from "qrcode";
 import { useEffect, useState } from "react";
 
@@ -22,7 +24,7 @@ export default function BookingError({ BookingId }: { BookingId?: string }) {
       setQrUrl(qrCodeDataURL);
     }
     handleQr();
-  }, []);
+  }, [BookingId]);
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden">
@@ -138,9 +140,11 @@ export default function BookingError({ BookingId }: { BookingId?: string }) {
               Kindly use the given Booking Id for checking the booking status
               later
             </p>
-            <p className="p-1 border w-fit mx-auto px-2 shadow-xl rounded-sm my-2 bg-primary text-secondary font-bold text-lg">
-              Booking ID :{BookingId}
-            </p>
+            <Link href={`${DOMAIN}/success/bookings?b_id=${BookingId ?? ""}`}>
+              <p className="p-1 w-fit mx-auto px-2 rounded-sm my-2 font-bold text-lg flex items-center">
+                Booking ID :{BookingId} <ArrowRightSquareIcon className="w-8 h-8 mx-2"/>
+              </p>
+            </Link>
           </div>
         ) : null}
         <div className="my-8">
