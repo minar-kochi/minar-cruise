@@ -1,12 +1,11 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import CruiseTicket, {
-  TicketData,
-} from "@/components/admin/dashboard/ticket/cruise-ticket";
+import CruiseTicket from "@/components/admin/dashboard/ticket/cruise-ticket";
 import CruiseTicketLoadingSkelton from "@/components/admin/dashboard/ticket/cruise-ticket-loading-skelton";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import BookingError from "@/components/admin/dashboard/ticket/error";
+import { X } from "lucide-react";
 
 interface ISearchParams {
   searchParams: {
@@ -18,35 +17,49 @@ interface ISearchParams {
 }
 
 export default function SuccessPage(params: ISearchParams) {
-  // const [loadingState, setLoadingState] = useState<boolean>(true);
   const retryRef = useRef(0);
 
-  const { data, isLoading } = trpc.user.getUserBookingDetails.useQuery(
+  const { data, isLoading, isError } = trpc.user.getUserBookingDetails.useQuery(
     {
       bookingId: params.searchParams.b_id ?? "",
     },
     {
       refetchInterval({ state }) {
-        if (retryRef.current > 10) {
+        if (retryRef.current > 1) {
           return false;
         }
         if (!state.data) {
           retryRef.current++;
           return 1000;
         }
-
         return false;
       },
     },
   );
 
-  return (
-    <div className="min-h-screen">
-      {!isLoading && data ? <CruiseTicket data={data} /> : null}
-      {isLoading ? <CruiseTicketLoadingSkelton /> : null}
-      {!isLoading && !data ? (
-        <BookingError BookingId={params.searchParams.b_id} />
-      ) : null}
-    </div>
-  );
+  if (isLoading) {
+    return <CruiseTicketLoadingSkelton />;
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen">
+        <div className="py-10 border w-fit mx-auto px-10 mt-4 rounded-md bg-primary/20">
+          <h1 className="text-destructive text-xl font-bold w-fit mx-auto flex">
+            <X className="w-8 h-8 rounded-full border-2 mx-2" />
+            No booking record was found matching the specified booking ID
+          </h1>
+          <p className="text-destructive text-sm font-bold w-fit mx-auto">
+            Make sure you have entered correct booking ID
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (data) {
+    return <CruiseTicket data={data} />;
+  }
+
+  return <BookingError BookingId={params.searchParams.b_id} />;
 }
