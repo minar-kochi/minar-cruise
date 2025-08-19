@@ -546,6 +546,6 @@ export const user = router({
   getUserBookingDetails: publicProcedure
     .input(BookingCuidValidator)
     .query(async ({ input: { bookingId } }) => {
-      return await getUserBookingDetails(bookingId.toString());
+      return await getUserBookingDetails(bookingId);
     }),
 });

@@ -24,13 +24,20 @@ export type TMoveAllBookingsSchema = z.infer<typeof moveAllBookingsSchema>;
 
 export type TBookingCuidValidator = z.infer<typeof BookingCuidValidator>
 export const BookingCuidValidator = z.object({
-  bookingId: z
-  .string()
-  .min(
-    25,
-    "Booking ID length is too short, please provide a valid booking Id",
-  )
-  .cuid({
-    message: "Id validation failed,please provide a valid booking Id",
-  }),
-})
+  bookingId: z.string()
+    .min(24, "Booking ID too short")
+    .max(25, "Booking ID too long")
+    .refine((val) => {
+      // Check if it's a legacy CUID (25 chars, starts with 'c')
+      if (val.length === 25 && val.startsWith('c')) {
+        return /^c[a-z0-9]{24}$/.test(val);
+      }
+      // Check if it's a CUID2 (24 chars, no 'c' prefix)
+      if (val.length === 24) {
+        return /^[a-z0-9]{24}$/.test(val);
+      }
+      return false;
+    }, {
+      message: "Invalid booking ID format."
+    })
+});
