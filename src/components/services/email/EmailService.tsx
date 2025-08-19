@@ -1,18 +1,8 @@
 import {
   Body,
-  Button,
   Container,
-  Column,
   Head,
-  Heading,
-  Hr,
   Html,
-  Img,
-  Link,
-  Preview,
-  Row,
-  Section,
-  Text,
   Tailwind,
 } from "@react-email/components";
 import * as React from "react";
@@ -21,9 +11,8 @@ import ConfirmationHeader from "./user-email-components/ConfirmationHeader";
 import CustomerInformation from "./user-email-components/CustomerInformation";
 import TripDetails from "./user-email-components/TripDetails";
 import PaymentSummary from "./user-email-components/PaymentSummary";
-import { ThemeConfig } from "./user-email-components/ThemeConfig";
-import { TermsAndConditions } from "@/components/admin/dashboard/ticket/doc-helper";
 import FooterSection from "./user-email-components/FooterSection";
+import TermsAndConditions from "./user-email-components/TermsAndConditions";
 
 interface BookingConfirmationEmailForUserProps {
   customerName?: string;
@@ -54,11 +43,6 @@ export const BookingConfirmationEmailForUser = ({
   contact,
   infant,
 }: BookingConfirmationEmailForUserProps) => {
-  // const Subject = `Booking Confirmation - ${BookingId}`;
-  // const isConfirmed = status?.toLowerCase() === "confirmed";
-  // const isPending = status?.toLowerCase() === "pending";
-
-  // const totalPassengers = adult + child + infant;
 
   return (
     <Html>
@@ -102,36 +86,9 @@ export const BookingConfirmationEmailForUser = ({
             {/* Payment Summary Section */}
             <PaymentSummary totalAmount={totalAmount} />
 
-            <Text
-              style={{
-                fontSize: "14px",
-                fontWeight: 600,
-                color: ThemeConfig.textForeground,
-                textDecoration: "underline",
-                textAlign: "center",
-              }}
-            >
-              Terms and conditions
-            </Text>
-            <Text
-              style={{
-                color: "red",
-                fontWeight: 600,
-                textAlign: "center",
-                fontSize: "12px",
-                maxWidth: "340px",
-                width: "100%",
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
-              {TermsAndConditions.map((item) => (
-                <>
-                  {item}
-                  <br />
-                </>
-              ))}
-            </Text>
+            {/* Terms and conditions */}
+            <TermsAndConditions/>
+            
             {/* Footer Section */}
             <FooterSection />
           </Container>
