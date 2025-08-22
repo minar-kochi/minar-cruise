@@ -1,56 +1,42 @@
 import CruiseTicket from "@/components/admin/dashboard/ticket/cruise-ticket";
 import DocumentHandler from "@/components/admin/dashboard/ticket/DocumentHandler";
+import { TGetUserBookingDetails } from "@/db/data/dto/booking";
 
-const sampleTicketData = {
-  bookingId: "12312323",
-  contactNum: "9565412022",
-  emailId: "example@gmail.com",
-  bookingMode: "Online",
-  bookingDate: "04/07/25",
-  bookingPackage: "Sunset cruise",
-  boardingTime: "12:50",
-  departureDate: "Monday 24/05/25",
-  reportingTime: "11:00",
-  departureTime: "11:30",
-  passengers: {
-    adult: 2,
-    child: 1,
-    infant: 0,
+const sampleTicketData: TGetUserBookingDetails = {
+  createdAt: "12/04/25",
+  id: "21323332154",
+  numOfAdults: 2,
+  numOfBaby: 2,
+  numOfChildren: 1,
+  payment: {
+    id: "556846846",
+    advancePaid: 5200,
+    createdAt: "12/04/25",
+    discount: 0,
+    modeOfPayment: "GPAY",
+    totalAmount: 5200,
+    updatedAt: "12/04/25",
   },
-  charges: {
-    passengerCharges: 400.0,
-    additionalCharges: 0.0,
-    vehicleCharges: 0.0,
-    totalFare: 400.0,
+  schedule: {
+    day: "12/04/25",
+    Package: {
+      adultPrice: 720,
+      childPrice: 480,
+      duration: 2,
+      fromTime: "",
+      packageCategory: "BREAKFAST",
+      packageType: "Breakfast",
+      toTime: "",
+    },
   },
-  passengerDetails: [
-    {
-      srNo: 1,
-      firstName: "Muhammed Aslam",
-      lastName: "CK",
-      ageGender: "27 / Male",
-      seatNo: "EB103",
-      status: "Confirmed",
-    },
-    {
-      srNo: 2,
-      firstName: "Muhammed Aslam",
-      lastName: "CK",
-      ageGender: "27 / Male",
-      seatNo: "EB103",
-      status: "Confirmed",
-    },
-    {
-      srNo: 3,
-      firstName: "Muhammed Aslam",
-      lastName: "CK",
-      ageGender: "27 / Male",
-      seatNo: "EB103",
-      status: "Confirmed",
-    },
-  ],
-}
-
+  updatedAt: "12/04/25",
+  user: {
+    contact: "98532646423",
+    email: "aslu@gmail.com",
+    id: "121321412",
+    name: "Aslu",
+  },
+};
 export default function page() {
   return (
     <div className="h-full">
@@ -59,7 +45,7 @@ export default function page() {
       </h1>
       <div className="">
         {/* <DocumentHandler /> */}
-        <CruiseTicket data={sampleTicketData}/>
+        <CruiseTicket data={sampleTicketData} />
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ export default function PaymentSummary({
         padding: "20px",
         borderRadius: "8px",
         marginBottom: "32px",
+        boxShadow: ThemeConfig.boxShadow,
       }}
     >
       <Heading

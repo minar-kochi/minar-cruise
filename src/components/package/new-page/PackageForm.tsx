@@ -280,12 +280,6 @@ export default function PackageFormN({
                 title="Blocked / Full"
               />
             </div>
-            <div>
-              <ColorRepresentationInfo
-                className="bg-blue-400"
-                title="Selected"
-              />
-            </div>
           </div>
           <div
             className={cn({
