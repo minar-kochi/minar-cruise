@@ -30,6 +30,7 @@ import {
 } from "@/lib/validators/Package";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import {
+  getAvailableSchedules,
   getBlockedScheduleDays,
   getScheduleCount,
   getSchedulesByDateRange,
@@ -469,18 +470,42 @@ export const schedule = router({
     const ToDate = new Date(toDate);
 
     try {
-      const days = await getBlockedScheduleDays({
-        fromDate: FromDate,
-        toDate: ToDate,
-      });
+      // DATA FETCHING
+      const [availableScheduleDetails, blockedSchedulesDetails] =
+        await Promise.all([
+          getAvailableSchedules({
+            fromDate: FromDate,
+            toDate: ToDate,
+          }),
+          await getBlockedScheduleDays({
+            fromDate: FromDate,
+            toDate: ToDate,
+          }),
+        ]);
 
-      const dayArr = days.map((item) => RemoveTimeStampFromDate(item.day));
-
-      const FilteredDays = dayArr.filter(
-        (date, index, self) => self.indexOf(date) === index,
+      // DATE FORMATTING
+      const blockedDayArr = blockedSchedulesDetails.map((item) =>
+        RemoveTimeStampFromDate(item.day),
       );
 
-      return { days: FilteredDays };
+      const availableDayArr = availableScheduleDetails.map((item) =>
+        RemoveTimeStampFromDate(item.day),
+      );
+
+      return {
+        blockedDates: blockedDayArr,
+        availableDates: availableDayArr,
+      };
+
+      // DATE FILTRATION
+
+      // const FilteredBlockedDates =
+      //   filterDatesArrayToFormattedDateString(blockedDayArr);
+
+      // const FilteredAvailableDates =
+      //   filterDatesArrayToFormattedDateString(availableDayArr);
+
+      // RETURNING FILTERED DATES
     } catch (error) {
       if (error instanceof TRPCError) {
         throw new TRPCError({ code: error.code, message: error.message });
@@ -490,6 +515,104 @@ export const schedule = router({
         message: "Something unexpected happened, Please try again.",
       });
     }
+  }),
+  unBlockScheduleByDateRange: AdminProcedure.input(
+    z.object({
+      fromDate: z.string(),
+      toDate: z.string(),
+    }),
+  ).mutation(async ({ input: { fromDate, toDate } }) => {
+    const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
+    const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
+
+    if (!fromDateParser || !toDateParser) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Date Format is not valid YYYY-MM-DD",
+      });
+    }
+
+    const validatedFromDate = isDateValid(fromDateParser);
+    const validatedToDate = isDateValid(toDateParser);
+
+    if (!validatedToDate || !validatedFromDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates is invalid",
+      });
+    }
+
+    const FromDate = new Date(fromDate);
+    const ToDate = new Date(toDate);
+
+    const schedulePackage: $Enums.SCHEDULED_TIME[] = [
+      "BREAKFAST",
+      "LUNCH",
+      "SUNSET",
+      "DINNER",
+      "CUSTOM",
+    ];
+
+    const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
+
+    // Check if any dates contains at at least one available schedule,
+    // if available return early
+
+    const availableCount = await db.schedule.count({
+      where: {
+        day: {
+          in: dates,
+        },
+        scheduleStatus: "AVAILABLE",
+      },
+    });
+
+    if (availableCount) {
+      // console.log("check 1 : FAILED");
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates contains ongoing schedule package",
+      });
+    }
+    // console.log("check 1 : SUCCEEDED");
+
+    // check if all dates selected are having 5 schedules blocked
+    // if all the selected dates are completely blocked, move to next
+    // step for unblocking schedule
+
+    const expectedBlockedCount = dates.length * schedulePackage.length; // total dates × 5 packages
+    const actualBlockedCount = await db.schedule.count({
+      where: {
+        day: {
+          in: dates,
+        },
+        scheduleStatus: "BLOCKED",
+      },
+    });
+
+    if (expectedBlockedCount !== actualBlockedCount) {
+      // console.log("check 2 : FAILED");
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested date does not contain completely blocked schedules",
+      });
+    }
+
+    // console.log("check 2 : SUCCEEDED");
+
+    // actual mutation query for unblocking
+    const removed = await db.$transaction((tx) =>
+      tx.schedule.deleteMany({
+        where: {
+          day: {
+            in: dates,
+          },
+        },
+      }),
+    );
+
+    // console.log("removed dates:", removed);
+    return null;
   }),
   blockScheduleByDateRange: AdminProcedure.input(
     z.object({
