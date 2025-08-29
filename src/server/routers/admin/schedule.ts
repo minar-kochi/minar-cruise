@@ -35,10 +35,15 @@ import {
   getScheduleCount,
   getSchedulesByDateRange,
   getSchedulesByDateRangeWithBookingCount,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { isSameDay, toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
 import { $Enums } from "@prisma/client";
+import {
+  DeleteBlockedDays,
+  getAvailableScheduleCountForGivenDateArray,
+  getBlockedScheduleCountForGivenDateArray,
+} from "@/db/data/dto/schedule/block";
 
 export const schedule = router({
   getSchedulesByDateRange: AdminProcedure.input(
@@ -555,64 +560,50 @@ export const schedule = router({
 
     const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
 
-    // Check if any dates contains at at least one available schedule,
-    // if available return early
+    // CHECK 1 - Making sure if all dates, does not contain existing schedule
 
-    const availableCount = await db.schedule.count({
-      where: {
-        day: {
-          in: dates,
-        },
-        scheduleStatus: "AVAILABLE",
-      },
-    });
+    const availableCount =
+      await getAvailableScheduleCountForGivenDateArray(dates);
+
+    // If any date found with available schedule, return early
 
     if (availableCount) {
-      // console.log("check 1 : FAILED");
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Requested dates contains ongoing schedule package",
       });
     }
-    // console.log("check 1 : SUCCEEDED");
 
-    // check if all dates selected are having 5 schedules blocked
-    // if all the selected dates are completely blocked, move to next
-    // step for unblocking schedule
+    // CHECK 2 - MAking sure if all packages of each date are currently blocked
 
-    const expectedBlockedCount = dates.length * schedulePackage.length; // total dates × 5 packages
-    const actualBlockedCount = await db.schedule.count({
-      where: {
-        day: {
-          in: dates,
-        },
-        scheduleStatus: "BLOCKED",
-      },
-    });
+    const expectedBlockedCount = dates.length * schedulePackage.length;
+
+    const actualBlockedCount =
+      await getBlockedScheduleCountForGivenDateArray(dates);
+
+    // If fetched blocked dates and calculated blocked dates does not match return early
 
     if (expectedBlockedCount !== actualBlockedCount) {
-      // console.log("check 2 : FAILED");
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Requested date does not contain completely blocked schedules",
       });
     }
 
-    // console.log("check 2 : SUCCEEDED");
-
     // actual mutation query for unblocking
-    const removed = await db.$transaction((tx) =>
-      tx.schedule.deleteMany({
-        where: {
-          day: {
-            in: dates,
-          },
-        },
-      }),
-    );
 
-    // console.log("removed dates:", removed);
-    return null;
+    try {
+      const removed = DeleteBlockedDays(dates);
+      return removed;
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something unexpected happened, Please try again.",
+      });
+    }
   }),
   blockScheduleByDateRange: AdminProcedure.input(
     z.object({
@@ -701,8 +692,6 @@ export const schedule = router({
         message: "Something unexpected happened, Please try again.",
       });
     }
-
-    return;
   }),
   blockScheduleByDateAndStatus: AdminProcedure.input(
     z.object({
