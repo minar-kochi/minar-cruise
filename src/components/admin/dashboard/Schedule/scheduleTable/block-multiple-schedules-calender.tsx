@@ -4,19 +4,17 @@ import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { cn, RemoveTimeStampFromDate } from "@/lib/utils";
-import { Item } from "@radix-ui/react-select";
 import {
   addDays,
   addMonths,
   endOfMonth,
-  format,
   isSameDay,
   startOfMonth,
 } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { MonthChangeEventHandler } from "react-day-picker";
 import toast from "react-hot-toast";
+import InfoRepresentationContainer from "../block-schedule/InfoRepresentationContainer";
 
 export default function BlockMultipleSchedulesCalender() {
   const [date, setDate] = useState<{
@@ -41,7 +39,7 @@ export default function BlockMultipleSchedulesCalender() {
   const { fetch, refetch } =
     trpc.useUtils().admin.schedule.getBlockedSchedulesByDateRangeQuery;
 
-  const { data: blockedScheduleDays, isLoading } =
+  const { data: ScheduleDays, isLoading } =
     trpc.admin.schedule.getBlockedSchedulesByDateRangeQuery.useQuery({
       fromDate: visibleMonths.startMonth,
       toDate: visibleMonths.endMonth,
@@ -60,6 +58,24 @@ export default function BlockMultipleSchedulesCalender() {
     });
   }
 
+  const { mutate: unBlock } =
+    trpc.admin.schedule.unBlockScheduleByDateRange.useMutation({
+      onMutate() {
+        toast.loading("unBlocking...");
+      },
+      onSuccess() {
+        refetch({
+          fromDate: visibleMonths.startMonth,
+          toDate: visibleMonths.endMonth,
+        });
+        toast.dismiss();
+        toast.success("Successfully unblocked schedules!");
+      },
+      onError(error) {
+        toast.dismiss();
+        toast.error(error.message);
+      },
+    });
   // trpc Mutation
   const { mutate } = trpc.admin.schedule.blockScheduleByDateRange.useMutation({
     onMutate() {
@@ -124,16 +140,30 @@ export default function BlockMultipleSchedulesCalender() {
         }}
         numberOfMonths={2}
         onMonthChange={handleMonthChange}
+        disabled={(date) => {
+          let currDate = new Date();
+          let isPastDate = date < currDate;
+          let isDisabledDate = ScheduleDays
+            ? ScheduleDays?.availableDates.includes(
+                RemoveTimeStampFromDate(date),
+              )
+            : false;
+          return isPastDate || isDisabledDate;
+        }}
         components={{
           DayContent(props) {
-            const isBlocked = blockedScheduleDays?.days.some((day) =>
+            const isBlocked = ScheduleDays?.blockedDates.some((day: string) =>
               isSameDay(RemoveTimeStampFromDate(props.date), new Date(day)),
             );
-
+            const isAvailable = ScheduleDays?.availableDates.some(
+              (day: string) =>
+                isSameDay(RemoveTimeStampFromDate(props.date), new Date(day)),
+            );
             return (
               <span
                 className={cn("relative", {
                   "text-red-600 line-through": isBlocked,
+                  "text-green-600 line-through": isAvailable,
                 })}
               >
                 {isLoading ? (
@@ -145,9 +175,50 @@ export default function BlockMultipleSchedulesCalender() {
           },
         }}
       />
-      <Button className="w-full" onClick={handleMutation}>
-        Block Dates
-      </Button>
+      <div className="flex">
+        <InfoRepresentationContainer
+          colorRepresentation={{
+            colorRepresentationContentClassName:
+              "line-through text-green-600 w-fit  rounded-lg",
+            colorRepresentationContent: "12",
+          }}
+          previewMessage={{
+            previewMessageContent: ": Contains at least one ongoing schedule",
+          }}
+          enableTooltip
+          toolTip={{
+            toolTipContent:
+              "The date cannot be blocked until the admin removes the schedule",
+            toolTipContentClassName: "",
+          }}
+        />
+        <InfoRepresentationContainer
+          colorRepresentation={{
+            colorRepresentationContentClassName:
+              "line-through text-red-600 w-fit rounded-lg",
+            colorRepresentationContent: "22",
+          }}
+          previewMessage={{
+            previewMessageContent: "Contains completely blocked schedule",
+          }}
+          enableTooltip
+          toolTip={{
+            toolTipContent: "Represents the date which are completely blocked",
+            toolTipContentClassName: "",
+          }}
+        />
+      </div>
+      <div className="flex gap-2">
+        <Button className="w-full" onClick={handleMutation}>
+          Block Dates
+        </Button>
+        <Button
+          className="w-full"
+          onClick={() => unBlock({ fromDate: date.from, toDate: date.to })}
+        >
+          Unblock Dates
+        </Button>
+      </div>
     </div>
   );
 }
