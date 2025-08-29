@@ -14,7 +14,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import InfoRepresentationContainer from "../block-schedule/InfoRepresentationContainer";
+import InfoColorRepresentationContainer from "../block-schedule/InfoColorRepresentationContainer";
 
 export default function BlockMultipleSchedulesCalender() {
   const [date, setDate] = useState<{
@@ -176,7 +176,7 @@ export default function BlockMultipleSchedulesCalender() {
         }}
       />
       <div className="flex">
-        <InfoRepresentationContainer
+        <InfoColorRepresentationContainer
           colorRepresentation={{
             colorRepresentationContentClassName:
               "line-through text-green-600 w-fit  rounded-lg",
@@ -192,7 +192,7 @@ export default function BlockMultipleSchedulesCalender() {
             toolTipContentClassName: "",
           }}
         />
-        <InfoRepresentationContainer
+        <InfoColorRepresentationContainer
           colorRepresentation={{
             colorRepresentationContentClassName:
               "line-through text-red-600 w-fit rounded-lg",

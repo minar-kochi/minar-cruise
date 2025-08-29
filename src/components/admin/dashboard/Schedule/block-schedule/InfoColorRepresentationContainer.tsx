@@ -39,7 +39,7 @@ type ConditionalTooltips =
     };
 
 type TInfoRepresentationContainer = BaseProps & ConditionalTooltips;
-export default function InfoRepresentationContainer({
+export default function InfoColorRepresentationContainer({
   enableTooltip = false,
   toolTipIcon,
   toolTip,
@@ -59,7 +59,7 @@ export default function InfoRepresentationContainer({
       >
         {colorRepresentationContent}
       </p>{" "}
-      <p
+      <div
         className={cn(
           "text-sm text-muted-foreground flex",
           previewMessageContentClassName,
@@ -80,7 +80,7 @@ export default function InfoRepresentationContainer({
             </Tooltip>
           </TooltipProvider>
         ) : null}
-      </p>
+      </div>
     </div>
   );
 }
