@@ -1,4 +1,4 @@
-import { TGetSchedulesByDateRangeExcludingNull } from "@/db/data/dto/schedule";
+import { TGetSchedulesByDateRangeExcludingNull } from "@/db/data/dto/schedule/schedule";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { format } from "date-fns";
 import ExcelJS from "exceljs";

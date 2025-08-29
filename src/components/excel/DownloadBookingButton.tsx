@@ -33,7 +33,7 @@ import {
   Users,
 } from "lucide-react";
 import ExcelJS from "exceljs";
-import { TGetBookingsByScheduleId } from "@/db/data/dto/schedule";
+import { TGetBookingsByScheduleId } from "@/db/data/dto/schedule/schedule";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 

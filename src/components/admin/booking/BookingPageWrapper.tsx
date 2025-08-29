@@ -1,7 +1,7 @@
 import {
   getBookingsByScheduleId,
   TGetBookingsByScheduleId,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { ChevronLeft } from "lucide-react";
 import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
 import CustomLinkButton from "@/components/custom/CustomLinkButton";

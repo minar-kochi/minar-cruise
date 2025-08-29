@@ -1,5 +1,5 @@
 import OfflineBookingForm from "@/components/admin/booking/OfflineBookingForm";
-import { findScheduleById } from "@/db/data/dto/schedule";
+import { findScheduleById } from "@/db/data/dto/schedule/schedule";
 import { redirect } from "next/navigation";
 import React from "react";
 interface IBookOfflineScheduleProps {

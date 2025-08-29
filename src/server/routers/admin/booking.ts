@@ -15,7 +15,7 @@ import {
   findScheduleToAndFrom,
   getRecentBookings,
   getScheduleWithBookingCount,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import {
   combineDateWithSplitedTime,

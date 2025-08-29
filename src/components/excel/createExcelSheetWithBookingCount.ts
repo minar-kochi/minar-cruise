@@ -2,7 +2,7 @@ import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import {
   TGetSchedulesByDateRangeExcludingNull,
   TGetSchedulesByDateRangeWithBookingCount,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { $Enums } from "@prisma/client";
 import { format } from "date-fns";

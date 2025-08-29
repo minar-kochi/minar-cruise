@@ -60,6 +60,7 @@ export async function getScheduleWithBookingCount({
 
   return data;
 }
+
 interface ICheckScheduleStatusForTheSelectedDate {
   date: string;
   packageTime: $Enums.SCHEDULED_TIME;

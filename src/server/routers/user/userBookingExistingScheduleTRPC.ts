@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { CreateUser } from "@/db/data/creator/user";
 import { totalBookedSeats } from "@/db/data/dto/booking";
 import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
-import { findScheduleById } from "@/db/data/dto/schedule";
+import { findScheduleById } from "@/db/data/dto/schedule/schedule";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";

@@ -2,7 +2,7 @@ import { PackageSelect } from "@/db/data/dto/package";
 import { TScheduleDataDayReplaceString } from "../type";
 import { Dispatch, SetStateAction } from "react";
 import { $Enums } from "@prisma/client";
-import { getupComingScheduleDates } from "@/db/data/dto/schedule";
+import { getupComingScheduleDates } from "@/db/data/dto/schedule/schedule";
 
 export type TSelectedPackageIdsAndScheduleEnum = {
   breakfast?: {
