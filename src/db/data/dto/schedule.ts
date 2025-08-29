@@ -144,6 +144,32 @@ export async function getSchedulesByDateRange(FromDate: Date, ToDate: Date) {
   }
 }
 
+export type TGetBlockedAndAvailableSchedules = Awaited<
+  ReturnType<typeof getAvailableSchedules>
+>;
+
+export async function getAvailableSchedules({
+  fromDate,
+  toDate,
+}: {
+  fromDate: Date;
+  toDate: Date;
+}) {
+  return db.schedule.groupBy({
+    by: ["day"],
+    where: {
+      scheduleStatus: "AVAILABLE",
+      day: {
+        gte: fromDate,
+        lte: toDate,
+      },
+    },
+    _count: {
+      schedulePackage: true,
+    },
+  });
+}
+
 export type TGetBlockedScheduleDays = Awaited<
   ReturnType<typeof getSchedulesByDateRangeWithBookingCount>
 >;
