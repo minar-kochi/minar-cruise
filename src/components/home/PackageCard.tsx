@@ -46,7 +46,6 @@ export default function PackageCard({
         <div className="w-full ">
           <div className="bg-background/0 backdrop-blur-sm  overflow-hidden">
             <BookNowBtn
-              
               className="h-12  px-4 w-full flex items-center justify-between text-black  font-medium rounded-none  py-2 shadow-md transition-colors"
               adultPrice={adultPrice}
               duration={duration}

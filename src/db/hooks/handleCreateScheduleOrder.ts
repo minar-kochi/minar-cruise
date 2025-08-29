@@ -186,7 +186,6 @@
 
 //       let duration = `${packageDetails?.duration ? packageDetails.duration / 60 : "--"} Hr`
 
-
 //       await Promise.all([
 //         // send Email to Client about new booking.
 //         sendConfirmationEmail({

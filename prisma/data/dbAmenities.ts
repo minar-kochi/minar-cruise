@@ -1,4 +1,4 @@
-  import { amenitiesPartialId } from "../data";
+import { amenitiesPartialId } from "../data";
 
 export const amenities: amenitiesPartialId = [
   {

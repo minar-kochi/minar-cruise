@@ -1,4 +1,3 @@
 export default function ModalDefault() {
-    return null;
-  }
-  
+  return null;
+}

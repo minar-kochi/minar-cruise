@@ -43,12 +43,8 @@ export default async function CruisePackage() {
               <TableHead className="max-sm:text-[9px]">
                 Package Category
               </TableHead>
-              <TableHead className="max-sm:text-[9px]">
-                Package Type
-              </TableHead>
-              <TableHead className="max-sm:text-[9px]">
-                Change Images
-              </TableHead>
+              <TableHead className="max-sm:text-[9px]">Package Type</TableHead>
+              <TableHead className="max-sm:text-[9px]">Change Images</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

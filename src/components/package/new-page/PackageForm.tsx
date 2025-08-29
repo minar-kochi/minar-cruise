@@ -107,7 +107,7 @@ export default function PackageFormN({
           amount: res?.order?.amount,
           order_id: res?.order.id,
           callback_url: absoluteUrl(
-            `/success?email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate") ?? ""), "iii dd-MM-yyyy") ?? ""}`,
+            `/success?b_id=${res.bookingId}&email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate") ?? ""), "iii dd-MM-yyyy") ?? ""}`,
           ),
           prefill: {
             name: notes.name ?? undefined,
@@ -210,9 +210,9 @@ export default function PackageFormN({
   const selectedDate = combineDateAndTime(unformattedDate, fromTime);
 
   return (
-    <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full ">
+    <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full">
       <p
-        className={cn("font-semibold text-lg py-1", {
+        className={cn("font-bold text-xl py-1", {
           "pb-5 font-bold text-xl": type === "modal",
         })}
       >
@@ -225,7 +225,7 @@ export default function PackageFormN({
       >
         <div
           className={cn(
-            " font-semibold text-lg bg-white border rounded-full text-black px-4 mt-4 ",
+            " font-semibold text-xl rounded-md py-2 text-black px-6 mt-4 bg-secondary mb-2",
             {
               hidden: type,
             },

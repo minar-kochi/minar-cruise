@@ -5,7 +5,7 @@ import {
   getSchedulesByDateOrNow,
   getupComingScheduleDates,
   TgetupComingScheduleDates,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 import { getUTCDate, RemoveTimeStampFromDate, sleep } from "@/lib/utils";
 import StoreProvider from "@/providers/adminStore/StoreProvider";

@@ -7,10 +7,10 @@ const SearchBar = () => {
   return (
     <div className=" flex items-center justify-center w-full">
       <div className="w-full mx-3 shadow-xl rounded-full bg-white max-w-[550px] flex md:h-16  ">
-        <ChoosePackage />
-        <ChooseDates />
-        <SearchMobileBar className="md:hidden"/>
-        <SearchButton />
+        <ChoosePackage className=" basis-[38%] hidden md:flex" />
+        <ChooseDates className="basis-[28%] hidden md:flex" />
+        <SearchMobileBar className="md:hidden" />
+        <SearchButton className="md:basis-1/3" />
       </div>
     </div>
   );

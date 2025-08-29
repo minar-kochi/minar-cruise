@@ -41,7 +41,12 @@ const packageClientSlice = createSlice({
       state,
       action: PayloadAction<TGetPackageSearchItems>,
     ) {
-      state.selectedPackages = action.payload;
+      const filterdPackage = action.payload.filter(
+        (item) =>
+          item.packageCategory !== "EXCLUSIVE" &&
+          item.packageCategory !== "CUSTOM",
+      );
+      state.selectedPackages = filterdPackage;
     },
     setSearchPackages(
       state,

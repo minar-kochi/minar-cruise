@@ -9,10 +9,7 @@ const CompanyInfoCard = ({ className }: { className: string }) => {
         <Link href="/about" className="max-sm:mx-auto font-medium text-white">
           About Us
         </Link>
-        <Link
-          href="/search"
-          className="max-sm:mx-auto font-medium text-white"
-        >
+        <Link href="/search" className="max-sm:mx-auto font-medium text-white">
           Packages
         </Link>
         <Link

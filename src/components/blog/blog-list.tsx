@@ -1,4 +1,3 @@
-
 import BlogCard from "@/components/blog/BlogCard";
 import { TGetBlogWithPagination } from "@/db/data/dto/blog";
 import BlogPagination from "./blog-pagination";
@@ -8,7 +7,6 @@ interface IBlogListProps {
   data: TGetBlogWithPagination;
 }
 export default function BlogList({ data }: IBlogListProps) {
-
   return (
     <div className="">
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 w-full pt-10 pb-10 gap-4">
@@ -26,7 +24,7 @@ export default function BlogList({ data }: IBlogListProps) {
       </div>
       <BlogPagination
         totalNumberOfPages={data.meta.totalPages}
-        currentPageNumber={data.meta.currentPage }
+        currentPageNumber={data.meta.currentPage}
       />
     </div>
   );

@@ -18,7 +18,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 1,
       };
     });
-
   } catch (error) {}
 
   return [

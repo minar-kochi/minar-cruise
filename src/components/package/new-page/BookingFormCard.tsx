@@ -33,7 +33,6 @@ export default function BookingFormCard({
   adultPrice,
   childPrice,
 }: TBookingFormCard) {
-  
   return (
     <div
       className={cn(
@@ -264,7 +263,7 @@ export default function BookingFormCard({
             Yes, I agree with the privacy policy and terms and conditions.
           </Label>
         </div>
-        <MonsoonCheckBox/>
+        <MonsoonCheckBox />
       </div>
     </div>
   );

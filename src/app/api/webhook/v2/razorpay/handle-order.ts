@@ -147,7 +147,7 @@ export async function handleOrderPaid({ event, payload }: THandleOrderPaid) {
     }
 
     default: {
-      console.log('DEFAULT_CASE_RAN!')
+      console.log("DEFAULT_CASE_RAN!");
       throw new OrderPaidEventError({
         code: "UNKNOWN_NOTES_EVENT",
         fatality: {

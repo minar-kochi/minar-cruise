@@ -26,7 +26,7 @@ export const EmblaCarouselProvider = ({
       dragFree: true,
       startIndex: 1,
     },
-    [Autoplay({ playOnInit: true, delay: 6000,jump: false, })],
+    [Autoplay({ playOnInit: true, delay: 6000, jump: false })],
   );
 
   useEffect(() => {

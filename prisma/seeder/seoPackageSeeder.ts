@@ -51,7 +51,7 @@ async function updateSeoOgImageUrl() {
   await db.$connect();
   await db.seo.updateMany({
     data: {
-      ogImage: CONSTANTS.DEFAULT.IMAGE_URL
-    }
-  })
+      ogImage: CONSTANTS.DEFAULT.IMAGE_URL,
+    },
+  });
 }

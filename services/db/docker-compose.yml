@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -27,7 +27,7 @@ services:
       - LISTEN_PORT=6432
       - AUTH_TYPE=plain
     ports:
-      - "6432:6432"
+      - "6428:6432"
     depends_on:
       - postgres
 

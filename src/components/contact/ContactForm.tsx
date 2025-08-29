@@ -28,8 +28,7 @@ const ContactForm = () => {
 
   const handleFormSubmit = async (data: TContactValidators) => {
     try {
-      const token =
-        executeRecaptcha && (await executeRecaptcha("contactForm"));
+      const token = executeRecaptcha && (await executeRecaptcha("contactForm"));
       if (!token) {
         toast.error("Recaptcha has not loaded Yet");
         return;

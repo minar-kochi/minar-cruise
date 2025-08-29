@@ -69,9 +69,7 @@ export default function ExclusivePackage() {
               <h3 className="text-2xl lg:text-3xl font-semibold text-white">
                 Exclusive Package
               </h3>
-              <div className="">
-               
-              </div>
+              <div className=""></div>
             </div>
             <div>
               {/* <BookNowBtn /> */}

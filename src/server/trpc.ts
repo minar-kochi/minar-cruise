@@ -26,9 +26,7 @@ export const preventDevWriteMiddleware = middleware(async (opts) => {
   }
   return opts.next();
 });
-export const publicProcedure = t.procedure.use(preventDevWriteMiddleware)
-
-
+export const publicProcedure = t.procedure.use(preventDevWriteMiddleware);
 
 /**
  * @TODO - AMJAD
@@ -49,6 +47,6 @@ export const isAdmin = middleware(async (opts) => {
   });
 });
 
-export const AdminProcedure = t.procedure.use(preventDevWriteMiddleware).use(isAdmin)
-
-
+export const AdminProcedure = t.procedure
+  .use(preventDevWriteMiddleware)
+  .use(isAdmin);

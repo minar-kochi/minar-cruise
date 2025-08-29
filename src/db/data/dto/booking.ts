@@ -1,5 +1,7 @@
 import { db } from "@/db";
+import { ChangeType, DeepReplaceType } from "@/db/types/TBookingSchedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
+import { duration } from "moment";
 
 export async function getAllBookingDataFromToday() {
   try {
@@ -145,4 +147,55 @@ export async function BookingTotalCount(bookingid: string) {
   } catch (error) {
     return null;
   }
+}
+
+export type TGetUserBookingDetailsExcludedNull = Exclude<
+  TRawGetUserBookingDetails,
+  null
+>;
+
+export type TGetUserBookingDetails = DeepReplaceType<
+  TGetUserBookingDetailsExcludedNull,
+  Date,
+  string
+> | null;
+
+export type TRawGetUserBookingDetails = Awaited<
+  ReturnType<typeof getUserBookingDetails>
+>;
+
+export async function getUserBookingDetails(BookingId: string) {
+  return await db.booking.findUnique({
+    where: {
+      id: BookingId,
+    },
+    select: {
+      // relations
+      user: true,
+      payment: true,
+      schedule: {
+        select: {
+          day: true,
+          Package: {
+            select: {
+              adultPrice: true,
+              childPrice: true,
+              duration: true,
+              fromTime: true,
+              toTime: true,
+              packageCategory: true,
+              packageType: true,
+            },
+          },
+        },
+      },
+      // direct children
+      id: true,
+      numOfAdults: true,
+      numOfBaby: true,
+      numOfChildren: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
 }

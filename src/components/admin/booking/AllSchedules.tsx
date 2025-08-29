@@ -12,7 +12,7 @@ import Link from "next/link";
 import {
   getManySchedulesAndTotalBookingCount,
   getSchedulesAndBookingByDate,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import CustomBookingBadge from "@/components/custom/CustomBookingBadge";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";

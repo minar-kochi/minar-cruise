@@ -4,6 +4,7 @@ import ExclusivePackage from "@/components/home/ExclusivePackage";
 import Facilities from "@/components/home/Facilities";
 import GalleryCarousel from "@/components/home/GalleryCarousel";
 import HomeVideo from "@/components/home/HomeVideo";
+import MinarLocationMap from "@/components/home/MinarLocationMap";
 import MinarSec from "@/components/home/MinarSec";
 import PackagesBento from "@/components/home/PackagesBento";
 import Services from "@/components/home/Services";
@@ -29,7 +30,7 @@ export default function page() {
         <PackageCarousalWrapper />
       </Bounded>
       <GalleryCarousel />
-
+      <MinarLocationMap />
       <SearchBarWrapper className="fixed bottom-0 w-full z-30" />
     </main>
   );

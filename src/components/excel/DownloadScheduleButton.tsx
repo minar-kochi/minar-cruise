@@ -36,7 +36,7 @@ import ExcelJS, { Workbook } from "exceljs";
 import {
   TGetBookingsByScheduleId,
   TGetSchedulesByDateRange,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { TDateRange } from "../admin/dashboard/Schedule/scheduleTable/ScheduleDownloadButton";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";

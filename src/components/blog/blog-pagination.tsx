@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Pagination,
@@ -24,7 +24,7 @@ export default function BlogPagination({
             <PaginationItem
               key={index}
               className={cn("", {
-                "bg-muted rounded-md": index + 1  === Number(currentPageNumber),
+                "bg-muted rounded-md": index + 1 === Number(currentPageNumber),
               })}
             >
               <PaginationLink

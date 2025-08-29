@@ -101,8 +101,8 @@ export default function ChangeBooking({
                   {options.map((item, i) => {
                     return (
                       <SelectItem
-                      key={`${item.label}-${item.value}-${ i}-change-booking`}
-                      value={item.value}
+                        key={`${item.label}-${item.value}-${i}-change-booking`}
+                        value={item.value}
                         disabled={item.value === scheduleId}
                       >
                         {item.label}

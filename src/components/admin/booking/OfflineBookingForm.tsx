@@ -116,7 +116,7 @@ export default function OfflineBookingForm({
     register,
     formState: { errors, isSubmitting, isDirty },
     reset,
-    setValue
+    setValue,
   } = useForm<TOfflineBookingFormSchema>({
     resolver: zodResolver(offlineBookingFormSchema),
     defaultValues: {
@@ -139,13 +139,15 @@ export default function OfflineBookingForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-        <h1 className="text-5xl font-extrabold">
-          {type === "ADD" ? "Add Booking" : "Update Booking"}
-        </h1>
+      <h1 className="text-5xl font-extrabold">
+        {type === "ADD" ? "Add Booking" : "Update Booking"}
+      </h1>
       <div className="flex justify-between items-center">
         <p className="">Offline Booking Form</p>
-        {(type==='ADD' && !isProd) ? <PrefillButton setValue={setValue} />: null}
-      </div>  
+        {type === "ADD" && !isProd ? (
+          <PrefillButton setValue={setValue} />
+        ) : null}
+      </div>
       <div className="w-full border-b border-gray-200 my-5"></div>
       <div className="grid grid-cols-3 max-md:flex max-md:flex-col gap-3 ">
         <div className="col-span-2 flex flex-col justify-between ">

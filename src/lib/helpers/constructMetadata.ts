@@ -52,9 +52,9 @@ export function constructMetadata({
       description,
       images: [Ogimage],
       creator: "muadpn434",
-      creatorId: "@muadpn434",      
+      creatorId: "@muadpn434",
     },
-    
+
     icons,
     creator: "muadpn | muadpn.globexhost.com",
     metadataBase: new URL(`${process.env.NEXT_PUBLIC_DOMAIN}`),
