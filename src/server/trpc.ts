@@ -5,7 +5,6 @@ import { initTRPC, TRPCError } from "@trpc/server";
 // since it's not very descriptive.
 // For instance, the use of a t variable
 // is common in i18n libraries.
-import superjson from "superjson";
 
 const t = initTRPC.create({
   // transformer: superjson,
@@ -47,6 +46,4 @@ export const isAdmin = middleware(async (opts) => {
   });
 });
 
-export const AdminProcedure = t.procedure
-  .use(preventDevWriteMiddleware)
-  .use(isAdmin);
+export const AdminProcedure = t.procedure.use(isAdmin);
