@@ -170,7 +170,7 @@ model Events {
   description           String?
   FailedCount           Int
   status                PROCESSING_STATUS
-  lastProcessingAttempt DateTime
+  lastProcessingAttempt DateTime          @default(now())
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt @default(now())
   payload               Json?
