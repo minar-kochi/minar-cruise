@@ -30,7 +30,9 @@ const ErrorPage = () => {
         />
       </div>
       <div className="flex flex-col items-center justify-center top-0  left-0 right-0 absolute lg:top-[15%] lg:left-[50%]">
-        <p className="text-4xl sm:text-6xl md:text-[100px] font-semibold my-2">Oops!</p>
+        <p className="text-4xl sm:text-6xl md:text-[100px] font-semibold my-2">
+          Oops!
+        </p>
         <p className="text-lg font-semibold">
           The page you&apos;re looking for
         </p>

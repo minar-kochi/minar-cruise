@@ -357,7 +357,7 @@ export const {
   setSyncDatabaseDeleteSchedule,
   setSyncDatabaseUpdatesScheduleDeletion,
   setAllScheduleByDate,
-  setScheduleForBooking
+  setScheduleForBooking,
 } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;

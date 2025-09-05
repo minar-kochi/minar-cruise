@@ -6,10 +6,9 @@ export default function SearchBarWrapper({
 }: {
   className?: string;
 }) {
-
   return (
     <div className={cn("", className)}>
-      <SearchBar  />;
+      <SearchBar />;
     </div>
   );
 }

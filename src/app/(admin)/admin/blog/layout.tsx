@@ -2,9 +2,9 @@ export default function layout({
   children,
   modal,
 }: {
-    children: string;
-    modal: string;
-  }) {
+  children: string;
+  modal: string;
+}) {
   return (
     <div>
       {children}

@@ -24,7 +24,7 @@ export async function generateStaticParams() {
     },
     select: { blogSlug: true },
   });
-  return data.map(({blogSlug}) => ({ blogSlug }));
+  return data.map(({ blogSlug }) => ({ blogSlug }));
 }
 
 export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {

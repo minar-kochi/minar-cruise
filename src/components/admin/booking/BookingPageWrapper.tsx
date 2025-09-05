@@ -1,7 +1,7 @@
 import {
   getBookingsByScheduleId,
   TGetBookingsByScheduleId,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { ChevronLeft } from "lucide-react";
 import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
 import CustomLinkButton from "@/components/custom/CustomLinkButton";
@@ -52,7 +52,7 @@ export default async function BookingPageWrapper({
         </div>
       </div>
       <div className="rounded-md p-2 border m-2 bg-sidebar">
-        <BookingTable scheduleId={scheduleId} bookings={bookings}/>
+        <BookingTable scheduleId={scheduleId} bookings={bookings} />
       </div>
       <div className="py-5 font-bold">
         {!bookings?.length ? (

@@ -2,7 +2,7 @@ import { PackageSelect } from "@/db/data/dto/package";
 import { TScheduleDataDayReplaceString } from "../type";
 import { Dispatch, SetStateAction } from "react";
 import { $Enums } from "@prisma/client";
-import { getupComingScheduleDates } from "@/db/data/dto/schedule";
+import { getupComingScheduleDates } from "@/db/data/dto/schedule/schedule";
 
 export type TSelectedPackageIdsAndScheduleEnum = {
   breakfast?: {
@@ -162,27 +162,26 @@ export type InfinitySchedulePackageData = {
   nextCursor?: string | undefined;
 };
 
-
 export type GroupedScheduleWithBookingCount = {
-  [key: string]: TScheduleWithBookingCount[]
-}   
+  [key: string]: TScheduleWithBookingCount[];
+};
 
 export type InfinitySchedulesWithBookingCount = {
   response: TScheduleWithBookingCount[];
   nextCursor?: string | undefined;
-}
+};
 
 export type TScheduleWithBookingCount = {
-  id:string,
-  day:string,
-  fromTime:string | null,
-  toTime:string | null,
-  schedulePackage:$Enums.SCHEDULED_TIME,
-  scheduleStatus:$Enums.SCHEDULE_STATUS,
-  Booking:number
-  Package: { 
-    title:string,
-    fromTime:string,
-    toTime:string
-  } | null,
-}
+  id: string;
+  day: string;
+  fromTime: string | null;
+  toTime: string | null;
+  schedulePackage: $Enums.SCHEDULED_TIME;
+  scheduleStatus: $Enums.SCHEDULE_STATUS;
+  Booking: number;
+  Package: {
+    title: string;
+    fromTime: string;
+    toTime: string;
+  } | null;
+};

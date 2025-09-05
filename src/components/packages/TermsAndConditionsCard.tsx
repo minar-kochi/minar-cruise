@@ -5,8 +5,8 @@ import TermsandConditions from "@/data/mdx/bookingpageT&C.mdx";
 const TermsAndConditionsCard = () => {
   return (
     <Bounded className="prose my-12">
-    <TermsandConditions />
-  </Bounded>
+      <TermsandConditions />
+    </Bounded>
   );
 };
 

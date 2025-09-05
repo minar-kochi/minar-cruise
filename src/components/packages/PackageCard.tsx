@@ -36,7 +36,6 @@ const PackageCard = ({
   packageCategory,
   fromTime,
 }: IPackageCard) => {
-
   return (
     <Card
       className={cn(
@@ -81,7 +80,9 @@ const PackageCard = ({
             </div>
           ))}
           <Link href={`/package/${slug}`}>
-            <p className="text-sm font-medium text-muted-foreground ml-5">more info</p>
+            <p className="text-sm font-medium text-muted-foreground ml-5">
+              more info
+            </p>
           </Link>
         </div>
       </CardContent>

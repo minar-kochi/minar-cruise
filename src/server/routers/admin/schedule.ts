@@ -30,14 +30,20 @@ import {
 } from "@/lib/validators/Package";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import {
+  getAvailableSchedules,
   getBlockedScheduleDays,
   getScheduleCount,
   getSchedulesByDateRange,
   getSchedulesByDateRangeWithBookingCount,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { isSameDay, toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
 import { $Enums } from "@prisma/client";
+import {
+  DeleteBlockedDays,
+  getAvailableScheduleCountForGivenDateArray,
+  getBlockedScheduleCountForGivenDateArray,
+} from "@/db/data/dto/schedule/block";
 
 export const schedule = router({
   getSchedulesByDateRange: AdminProcedure.input(
@@ -469,18 +475,126 @@ export const schedule = router({
     const ToDate = new Date(toDate);
 
     try {
-      const days = await getBlockedScheduleDays({
-        fromDate: FromDate,
-        toDate: ToDate,
-      });
+      // DATA FETCHING
+      const [availableScheduleDetails, blockedSchedulesDetails] =
+        await Promise.all([
+          getAvailableSchedules({
+            fromDate: FromDate,
+            toDate: ToDate,
+          }),
+          await getBlockedScheduleDays({
+            fromDate: FromDate,
+            toDate: ToDate,
+          }),
+        ]);
 
-      const dayArr = days.map((item) => RemoveTimeStampFromDate(item.day));
-
-      const FilteredDays = dayArr.filter(
-        (date, index, self) => self.indexOf(date) === index,
+      // DATE FORMATTING
+      const blockedDayArr = blockedSchedulesDetails.map((item) =>
+        RemoveTimeStampFromDate(item.day),
       );
 
-      return { days: FilteredDays };
+      const availableDayArr = availableScheduleDetails.map((item) =>
+        RemoveTimeStampFromDate(item.day),
+      );
+
+      return {
+        blockedDates: blockedDayArr,
+        availableDates: availableDayArr,
+      };
+
+      // DATE FILTRATION
+
+      // const FilteredBlockedDates =
+      //   filterDatesArrayToFormattedDateString(blockedDayArr);
+
+      // const FilteredAvailableDates =
+      //   filterDatesArrayToFormattedDateString(availableDayArr);
+
+      // RETURNING FILTERED DATES
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something unexpected happened, Please try again.",
+      });
+    }
+  }),
+  unBlockScheduleByDateRange: AdminProcedure.input(
+    z.object({
+      fromDate: z.string(),
+      toDate: z.string(),
+    }),
+  ).mutation(async ({ input: { fromDate, toDate } }) => {
+    const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
+    const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
+
+    if (!fromDateParser || !toDateParser) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Date Format is not valid YYYY-MM-DD",
+      });
+    }
+
+    const validatedFromDate = isDateValid(fromDateParser);
+    const validatedToDate = isDateValid(toDateParser);
+
+    if (!validatedToDate || !validatedFromDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates is invalid",
+      });
+    }
+
+    const FromDate = new Date(fromDate);
+    const ToDate = new Date(toDate);
+
+    const schedulePackage: $Enums.SCHEDULED_TIME[] = [
+      "BREAKFAST",
+      "LUNCH",
+      "SUNSET",
+      "DINNER",
+      "CUSTOM",
+    ];
+
+    const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
+
+    // CHECK 1 - Making sure if all dates, does not contain existing schedule
+
+    const availableCount =
+      await getAvailableScheduleCountForGivenDateArray(dates);
+
+    // If any date found with available schedule, return early
+
+    if (availableCount) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates contains ongoing schedule package",
+      });
+    }
+
+    // CHECK 2 - MAking sure if all packages of each date are currently blocked
+
+    const expectedBlockedCount = dates.length * schedulePackage.length;
+
+    const actualBlockedCount =
+      await getBlockedScheduleCountForGivenDateArray(dates);
+
+    // If fetched blocked dates and calculated blocked dates does not match return early
+
+    if (expectedBlockedCount !== actualBlockedCount) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested date does not contain completely blocked schedules",
+      });
+    }
+
+    // actual mutation query for unblocking
+
+    try {
+      const removed = DeleteBlockedDays(dates);
+      return removed;
     } catch (error) {
       if (error instanceof TRPCError) {
         throw new TRPCError({ code: error.code, message: error.message });
@@ -578,8 +692,6 @@ export const schedule = router({
         message: "Something unexpected happened, Please try again.",
       });
     }
-
-    return;
   }),
   blockScheduleByDateAndStatus: AdminProcedure.input(
     z.object({

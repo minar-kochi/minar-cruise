@@ -23,6 +23,9 @@ import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
+import { getUserBookingDetails } from "@/db/data/dto/booking";
+import { cuidRegex } from "@/lib/helpers/regex";
+import { BookingCuidValidator } from "@/lib/validators/Booking";
 
 export type QueryObj = [
   { id: string | undefined },
@@ -539,4 +542,10 @@ export const user = router({
         };
       },
     ),
+    
+  getUserBookingDetails: publicProcedure
+    .input(BookingCuidValidator)
+    .query(async ({ input: { bookingId } }) => {
+      return await getUserBookingDetails(bookingId);
+    }),
 });
