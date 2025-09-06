@@ -23,6 +23,7 @@ interface ISearchParams {
 
 export default function Bookings({ searchParams: { b_id } }: ISearchParams) {
   const [userBookingId, setUserBookingId] = useState(b_id);
+  // console.log(userBookingId)
   const { data, status, isLoading } = trpc.user.getUserBookingDetails.useQuery(
     {
       bookingId: userBookingId ?? "",
