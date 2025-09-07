@@ -10,6 +10,7 @@ import {
   isEqual,
   isSameMonth,
   startOfDay,
+  isSameDay as isSameDayFromDateFns,
 } from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
@@ -268,7 +269,13 @@ export function getISTDateAndTimeFromZ(date: Date) {
 export function filterDateFromCalender({
   dateArray,
   date,
+  packageCategory,
+  startFrom,
+  AvailableDate,
 }: {
+  AvailableDate?: string[];
+  packageCategory: $Enums.SCHEDULED_TIME;
+  startFrom: string;
   date: Date;
   dateArray:
     | {
@@ -288,7 +295,6 @@ export function filterDateFromCalender({
   if (fi !== -1) {
     return true;
   }
-
   // Get current date in Indian Standard Time (date only, no time)
   let currDate = new Date(
     new Date().toLocaleString("en-US", {
@@ -311,6 +317,30 @@ export function filterDateFromCalender({
   if (dateInIST < currDate) {
     return true;
   }
+
+  // Is current date passed package from time
+  const idxOfAvailableDate = AvailableDate
+    ? AvailableDate.findIndex((item) =>
+        isSameDayFromDateFns(
+          RemoveTimeStampFromDate(new Date(item)),
+          RemoveTimeStampFromDate(date),
+        ),
+      )
+    : -1;
+
+  const isAvailableDateFound = idxOfAvailableDate !== -1;
+
+  const isAvailableForNewBooking = checkBookingTimeConstraint({
+    scheduleTime: packageCategory as $Enums.SCHEDULED_TIME,
+    selectedDate: RemoveTimeStampFromDate(date),
+    startFrom: startFrom,
+  });
+
+  const isAvailableShown =
+    isAvailableDateFound && AvailableDate && AvailableDate[idxOfAvailableDate];
+
+  if (!isAvailableShown && !isAvailableForNewBooking) return true;
+
 
   return false;
 }

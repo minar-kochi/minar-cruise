@@ -78,9 +78,15 @@ export default function BookingFormCalender({
             <Calendar
               className=""
               sizeMode={"lg"}
-              disabled={(date) =>
-                filterDateFromCalender({ date, dateArray: disabledDays })
-              }
+              disabled={(date) => {
+                return filterDateFromCalender({
+                  date,
+                  dateArray: disabledDays,
+                  packageCategory: packageCategory as $Enums.SCHEDULED_TIME,
+                  startFrom: packageData.fromTime,
+                  AvailableDate: availableDateArray,
+                });
+              }}
               mode="single"
               classNames={{
                 button: "[&>button]:aria-selected:bg-black",
@@ -165,11 +171,17 @@ export default function BookingFormCalender({
             className="p-0 py-3 px-2  "
             sizeMode={"lg"}
             disabled={(date) =>
-              filterDateFromCalender({ date, dateArray: disabledDays })
+              filterDateFromCalender({
+                date,
+                dateArray: disabledDays,
+                packageCategory: packageCategory as $Enums.SCHEDULED_TIME,
+                startFrom: packageData.fromTime,
+                AvailableDate: availableDateArray,
+              })
             }
             mode="single"
             components={{
-              DayContent: (props) => 
+              DayContent: (props) =>
                 ClientCalenderScheduleDay({
                   AvailableDate: availableDateArray,
                   props,
@@ -244,7 +256,9 @@ export default function BookingFormCalender({
         </div>
       )}
       <div className="my-2">
-        <p className="pb-5 font-semibold text-sm"><sup>*</sup>Boarding Time: 30 mins before schedule time</p>
+        <p className="pb-5 font-semibold text-sm">
+          <sup>*</sup>Boarding Time: 30 mins before schedule time
+        </p>
         <p className="text-xs pb-2 font-semibold text-center">
           All Date are in IST
           <br />

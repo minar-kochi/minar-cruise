@@ -107,7 +107,7 @@ export default function ClientCalenderScheduleDay({
           [`${sunSetAvailable}`]: isPackageSunset && isAvailableForNewBooking,
           [`${blocked}`]: isBlocked !== -1,
           [`${not_available_booking}`]:
-            !isAvailableShown && !isAvailableForNewBooking,
+            !isAvailableShown && !isAvailableForNewBooking && !activeModifiers.disabled,
           [`${loading_color}`]: isLoading,
         },
       )}
