@@ -161,8 +161,8 @@ export function getDateRangeArray({
   const dates = [];
 
   // Ensure we're working with the start of each day
-  const startDate = startOfDay(fromDate);
-  const endDate = startOfDay(toDate);
+  const startDate = (fromDate);
+  const endDate = (toDate);
 
   // Initialize current date as the start date
   let currentDate = startDate;
