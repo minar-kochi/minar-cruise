@@ -630,9 +630,12 @@ export const schedule = router({
         message: "Requested dates is invalid",
       });
     }
+    console.log("BEFORE new Date parse: ", { from: fromDate, to: toDate });
 
     const FromDate = new Date(fromDate);
     const ToDate = new Date(toDate);
+
+    console.log("AFTER new Date parse: ", { from: FromDate, to: ToDate });
 
     // check if any schedules are active in the received date range - if yes return, else continue
     const scheduleCount = await getScheduleCount({ FromDate, ToDate });
@@ -647,7 +650,8 @@ export const schedule = router({
 
     // creating date array using received dates
     const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
-    console.log("server from and to date: ", {
+
+    console.log("FINAL from and to date from server: ", {
       "from": dates[0],
       "to": dates[dates.length - 1],
     });
