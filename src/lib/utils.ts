@@ -161,8 +161,8 @@ export function getDateRangeArray({
   const dates = [];
 
   // Ensure we're working with the start of each day
-  const startDate = (fromDate);
-  const endDate = (toDate);
+  const startDate = fromDate;
+  const endDate = toDate;
 
   // Initialize current date as the start date
   let currentDate = startDate;
@@ -340,7 +340,6 @@ export function filterDateFromCalender({
     isAvailableDateFound && AvailableDate && AvailableDate[idxOfAvailableDate];
 
   if (!isAvailableShown && !isAvailableForNewBooking) return true;
-
 
   return false;
 }

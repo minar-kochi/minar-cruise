@@ -97,7 +97,7 @@ export default function BlockMultipleSchedulesCalender() {
 
   // Mutation handler
   function handleMutation() {
-    console.log("client from and to date: ", { from: date.from, to: date.to });
+    // console.log("client from and to date: ", { from: date.from, to: date.to });
     mutate({ fromDate: date.from, toDate: date.to });
   }
   return (
