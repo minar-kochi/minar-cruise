@@ -318,28 +318,13 @@ export function filterDateFromCalender({
     return true;
   }
 
-  // Is current date passed package from time
-  const idxOfAvailableDate = AvailableDate
-    ? AvailableDate.findIndex((item) =>
-        isSameDayFromDateFns(
-          RemoveTimeStampFromDate(new Date(item)),
-          RemoveTimeStampFromDate(date),
-        ),
-      )
-    : -1;
-
-  const isAvailableDateFound = idxOfAvailableDate !== -1;
-
   const isAvailableForNewBooking = checkBookingTimeConstraint({
     scheduleTime: packageCategory as $Enums.SCHEDULED_TIME,
     selectedDate: RemoveTimeStampFromDate(date),
     startFrom: startFrom,
   });
 
-  const isAvailableShown =
-    isAvailableDateFound && AvailableDate && AvailableDate[idxOfAvailableDate];
-
-  if (!isAvailableShown && !isAvailableForNewBooking) return true;
+  if (!isAvailableForNewBooking) return true;
 
   return false;
 }
