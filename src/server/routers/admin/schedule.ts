@@ -647,6 +647,10 @@ export const schedule = router({
 
     // creating date array using received dates
     const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
+    console.log("server from and to date: ", {
+      "from": dates[0],
+      "to": dates[dates.length - 1],
+    });
 
     const blockScheduleData: {
       id?: string;
