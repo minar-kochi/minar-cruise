@@ -94,7 +94,9 @@ const NavigationContents = async ({
             size: "sm",
           })}
         >
-          Find your Cruise
+          Check cruise availability
+          {/* Cruise Availability */}
+          {/* Check Availability */}
         </Link>
       </div>
     </div>

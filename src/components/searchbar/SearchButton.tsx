@@ -22,7 +22,7 @@ export default function SearchButton({ className }: { className?: string }) {
           {/* <div className=""> */}
           {/* {isPackageSelected.selectedPackages.length ? ( */}
           <p className="">
-            Find your cruise
+            Check Availability
             {/* {isPackageSelected.selectedPackages.length} */}
           </p>
           {/* ) : ( */}
