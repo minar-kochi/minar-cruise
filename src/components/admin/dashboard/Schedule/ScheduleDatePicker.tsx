@@ -21,6 +21,7 @@ export default function ScheduleDatePicker({
   const dispatch = useAppDispatch();
 
   const { fetch } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
+
   return (
     <PopOverDatePicker
       date={date}

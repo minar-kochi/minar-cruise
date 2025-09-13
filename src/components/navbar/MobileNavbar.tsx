@@ -109,7 +109,7 @@ export default function MobileNavbar({ packages }: Props) {
                 )}
               >
                 <Search className="text-white" size={18} />
-                Find Your Cruise
+                Check Availability
               </Link>
             </DrawerClose>
             {

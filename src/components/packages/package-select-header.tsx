@@ -50,7 +50,7 @@ const CruisePackageHeader: React.FC = () => {
         {/* Main heading */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
           Find Your Perfect
-          <br/>
+          <br />
           <span className=" bg-gradient-to-r from-red-400/80 to-red-600 bg-clip-text text-transparent">
             Adventure Package
           </span>
@@ -59,7 +59,8 @@ const CruisePackageHeader: React.FC = () => {
         {/* Subheading */}
         <p className="text-lg md:text-xl text-black mb-8 max-w-2xl mx-auto leading-relaxed">
           Compare our carefully curated cruise packages and discover the journey
-          that matches your dreams. From luxury Breakfast cruise to family adventures.
+          that matches your dreams. From luxury Breakfast cruise to family
+          adventures.
         </p>
 
         {/* Feature highlights */}

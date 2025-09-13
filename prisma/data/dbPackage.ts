@@ -16,6 +16,7 @@ export const packages: packagesPartialId = [
     fromTime: "09:00:AM",
     toTime: "11:00:AM",
     packageCategory: "BREAKFAST",
+    updatedAt: new Date(Date.now()),
   },
   {
     id: "clqqx9xhp000108l5frrkhu8h",
@@ -31,6 +32,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clk3m9p2q0000472xzt81h294",
     fromTime: "12:00:PM",
     toTime: "02:00:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "LUNCH",
   },
   {
@@ -47,6 +49,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clr5t6w8x0000639yvn47j516",
     fromTime: "05:30:PM",
     toTime: "07:30:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "SUNSET",
   },
   {
@@ -63,6 +66,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clz7f2h4j0000815uqb93k728",
     fromTime: "08:00:PM",
     toTime: "10:00:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "DINNER",
   },
   {
@@ -79,6 +83,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "cly9g5k7m0000192wpd25l940",
     fromTime: "05:30:PM",
     toTime: "08:30:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "DINNER",
   },
   {
@@ -95,6 +100,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clx1h8n9p0000374vsc47m162",
     fromTime: "11:00:AM",
     toTime: "03:00:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "LUNCH",
   },
   {
@@ -111,6 +117,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clw3j1q2s0000558trf69n384",
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "DINNER",
   },
   {
@@ -127,6 +134,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clu5k4t6v0000736sqh81p506",
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "EXCLUSIVE",
   },
   {
@@ -143,6 +151,7 @@ export const packages: packagesPartialId = [
     amenitiesId: "clu5k4t6v0000736sqh81p506",
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
+    updatedAt: new Date(Date.now()),
     packageCategory: "CUSTOM",
   },
 ];

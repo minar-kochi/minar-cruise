@@ -31,8 +31,13 @@ export const Galleries = [
 
 export type TGalleries = (typeof Galleries)[number];
 
-export type TScheduleDataDayReplaceString = Omit<Schedule, "day"> & {
+export type TScheduleDataDayReplaceString = Omit<
+  Schedule,
+  "day" | "createdAt" | "updatedAt"
+> & {
   day: string;
+  createdAt: String;
+  updatedAt: string;
 };
 
 export type TScheduleSelector = {
@@ -45,6 +50,3 @@ export type TTimeCycle = {
   Cycle: TMeridianCycle;
 };
 export type TkeyDbTime = "fromTime" | "toTime";
-
-
-

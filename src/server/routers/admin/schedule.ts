@@ -30,14 +30,20 @@ import {
 } from "@/lib/validators/Package";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import {
+  getAvailableSchedules,
   getBlockedScheduleDays,
   getScheduleCount,
   getSchedulesByDateRange,
   getSchedulesByDateRangeWithBookingCount,
-} from "@/db/data/dto/schedule";
+} from "@/db/data/dto/schedule/schedule";
 import { isSameDay, toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
 import { $Enums } from "@prisma/client";
+import {
+  DeleteBlockedDays,
+  getAvailableScheduleCountForGivenDateArray,
+  getBlockedScheduleCountForGivenDateArray,
+} from "@/db/data/dto/schedule/block";
 
 export const schedule = router({
   getSchedulesByDateRange: AdminProcedure.input(
@@ -232,6 +238,7 @@ export const schedule = router({
 
         const isPackageFound =
           await getPackageByIdWithStatusAndCount(packageId);
+
         if (!isPackageFound) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -240,8 +247,9 @@ export const schedule = router({
         }
 
         //________________Validate Input ends _____________
-        // Testout the date that is recieved (UTC format.)
+        // Test out the date that is received (UTC format.)
         let SafelyParsedDate = new Date(ScheduleDate);
+
         let fromTimeObj =
           mergeTimeCycle(ScheduleDateTime?.fromTime ?? defaultEmptyTrigger) ??
           null;
@@ -249,14 +257,17 @@ export const schedule = router({
         let toTimeObjParsed =
           mergeTimeCycle(ScheduleDateTime?.toTime ?? defaultEmptyTrigger) ??
           null;
+
         let toTime = isValidMergeTimeCycle(toTimeObjParsed ?? "");
         let fromTime = isValidMergeTimeCycle(fromTimeObj ?? "");
+
         if (isStatusCustom(ScheduleTime) && (!toTime || !fromTime)) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: `Time is Required for ${ScheduleTime} Packages.`,
           });
         }
+
         if (
           (isPackageStatusExclusive(isPackageFound.packageCategory) ||
             isPackageStatusCustom(isPackageFound.packageCategory)) &&
@@ -464,17 +475,126 @@ export const schedule = router({
     const ToDate = new Date(toDate);
 
     try {
-      const days = await getBlockedScheduleDays({
-        fromDate: FromDate,
-        toDate: ToDate,
-      });
+      // DATA FETCHING
+      const [availableScheduleDetails, blockedSchedulesDetails] =
+        await Promise.all([
+          getAvailableSchedules({
+            fromDate: FromDate,
+            toDate: ToDate,
+          }),
+          await getBlockedScheduleDays({
+            fromDate: FromDate,
+            toDate: ToDate,
+          }),
+        ]);
 
-      const dayArr = days.map((item) => RemoveTimeStampFromDate(item.day));
-      const FilteredDays = dayArr.filter(
-        (date, index, self) => self.indexOf(date) === index,
+      // DATE FORMATTING
+      const blockedDayArr = blockedSchedulesDetails.map((item) =>
+        RemoveTimeStampFromDate(item.day),
       );
 
-      return { days: FilteredDays };
+      const availableDayArr = availableScheduleDetails.map((item) =>
+        RemoveTimeStampFromDate(item.day),
+      );
+
+      return {
+        blockedDates: blockedDayArr,
+        availableDates: availableDayArr,
+      };
+
+      // DATE FILTRATION
+
+      // const FilteredBlockedDates =
+      //   filterDatesArrayToFormattedDateString(blockedDayArr);
+
+      // const FilteredAvailableDates =
+      //   filterDatesArrayToFormattedDateString(availableDayArr);
+
+      // RETURNING FILTERED DATES
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({ code: error.code, message: error.message });
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something unexpected happened, Please try again.",
+      });
+    }
+  }),
+  unBlockScheduleByDateRange: AdminProcedure.input(
+    z.object({
+      fromDate: z.string(),
+      toDate: z.string(),
+    }),
+  ).mutation(async ({ input: { fromDate, toDate } }) => {
+    const fromDateParser = parseDateFormatYYYMMDDToNumber(fromDate);
+    const toDateParser = parseDateFormatYYYMMDDToNumber(toDate);
+
+    if (!fromDateParser || !toDateParser) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Date Format is not valid YYYY-MM-DD",
+      });
+    }
+
+    const validatedFromDate = isDateValid(fromDateParser);
+    const validatedToDate = isDateValid(toDateParser);
+
+    if (!validatedToDate || !validatedFromDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates is invalid",
+      });
+    }
+
+    const FromDate = new Date(fromDate);
+    const ToDate = new Date(toDate);
+
+    const schedulePackage: $Enums.SCHEDULED_TIME[] = [
+      "BREAKFAST",
+      "LUNCH",
+      "SUNSET",
+      "DINNER",
+      "CUSTOM",
+    ];
+
+    const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
+
+    // CHECK 1 - Making sure if all dates, does not contain existing schedule
+
+    const availableCount =
+      await getAvailableScheduleCountForGivenDateArray(dates);
+
+    // If any date found with available schedule, return early
+
+    if (availableCount) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested dates contains ongoing schedule package",
+      });
+    }
+
+    // CHECK 2 - MAking sure if all packages of each date are currently blocked
+
+    const expectedBlockedCount = dates.length * schedulePackage.length;
+
+    const actualBlockedCount =
+      await getBlockedScheduleCountForGivenDateArray(dates);
+
+    // If fetched blocked dates and calculated blocked dates does not match return early
+
+    if (expectedBlockedCount !== actualBlockedCount) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Requested date does not contain completely blocked schedules",
+      });
+    }
+
+    // actual mutation query for unblocking
+
+    try {
+      const removed = DeleteBlockedDays(dates);
+      return removed;
     } catch (error) {
       if (error instanceof TRPCError) {
         throw new TRPCError({ code: error.code, message: error.message });
@@ -510,12 +630,14 @@ export const schedule = router({
         message: "Requested dates is invalid",
       });
     }
+    // console.log("BEFORE new Date parse: ", { from: fromDate, to: toDate });
 
     const FromDate = new Date(fromDate);
     const ToDate = new Date(toDate);
 
-    // check if any schedules are active in the received date range - if yes return, else continue
+    // console.log("AFTER new Date parse: ", { from: FromDate, to: ToDate });
 
+    // check if any schedules are active in the received date range - if yes return, else continue
     const scheduleCount = await getScheduleCount({ FromDate, ToDate });
 
     if (scheduleCount > 0) {
@@ -529,7 +651,13 @@ export const schedule = router({
     // creating date array using received dates
     const dates = getDateRangeArray({ fromDate: FromDate, toDate: ToDate });
 
+    // console.log("FINAL from and to date from server: ", {
+    //   "from": dates[0],
+    //   "to": dates[dates.length - 1],
+    // });
+
     const blockScheduleData: {
+      id?: string;
       day: Date;
       schedulePackage: $Enums.SCHEDULED_TIME;
       scheduleStatus: $Enums.SCHEDULE_STATUS;
@@ -545,13 +673,13 @@ export const schedule = router({
 
     // creating date for bulk update
     dates.forEach((date) =>
-      schedulePackage.forEach((scheduleTime) =>
+      schedulePackage.forEach((scheduleTime) => {
         blockScheduleData.push({
           day: new Date(date),
           schedulePackage: scheduleTime,
           scheduleStatus: "BLOCKED",
-        }),
-      ),
+        });
+      }),
     );
 
     // block schedule for the given date range
@@ -572,8 +700,6 @@ export const schedule = router({
         message: "Something unexpected happened, Please try again.",
       });
     }
-
-    return;
   }),
   blockScheduleByDateAndStatus: AdminProcedure.input(
     z.object({
@@ -633,7 +759,7 @@ export const schedule = router({
       }
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Something unexpected happpened, Please try again.",
+        message: "Something unexpected happened, Please try again.",
       });
     }
   }),

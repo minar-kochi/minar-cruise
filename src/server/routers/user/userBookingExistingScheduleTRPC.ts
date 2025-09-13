@@ -1,14 +1,16 @@
+import { createId } from "@paralleldrive/cuid2";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
 import { CreateUser } from "@/db/data/creator/user";
 import { totalBookedSeats } from "@/db/data/dto/booking";
 import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
-import { findScheduleById } from "@/db/data/dto/schedule";
+import { findScheduleById } from "@/db/data/dto/schedule/schedule";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { Schedule } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { format } from "date-fns";
 
 export async function CreateBookingForExistingSchedule({
   input: { email, name, numOfAdults, numOfBaby, numOfChildren, phone },
@@ -86,11 +88,16 @@ export async function CreateBookingForExistingSchedule({
     babyCount: numOfBaby,
     userId: user.id,
   };
+  const bookingId = createId()
+  console.log("id",bookingId)
+
   const notes = getNotes({
     eventType: "schedule.existing",
     packageId: packageIdExists.id,
     scheduleId: schedule.id,
-    ...booking,
+    packageTitle: packageIdExists.title,
+    scheduledDate: format(schedule.day, "dd-MM-yyyy"),
+    bookingId,    ...booking,
   });
 
   const payment_capture = 1;
@@ -109,7 +116,7 @@ export async function CreateBookingForExistingSchedule({
       message: "success",
       order,
       phone: user.contact,
-      email: user.email,
+      email: user.email,bookingId
     };
 
     return data;

@@ -1,9 +1,9 @@
-import {
-  TOrderEvent,
-  TRazorPayEventsCreateSchedule,
-} from "@/Types/razorpay/type";
+// import {
+//   TOrderEvent,
+//   TRazorPayEventsCreateSchedule,
+// } from "@/Types/razorpay/type";
 
-export async function handleCreateScheduleOrder({
-  events,
-  orderBody,
-}: TOrderEvent<any>) {}
+// export async function handleCreateScheduleOrder({
+//   events,
+//   orderBody,
+// }: TOrderEvent<any>) {}

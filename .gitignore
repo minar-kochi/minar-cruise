@@ -29,6 +29,8 @@ yarn-error.log*
 # local env files
 .env*.local
 .env.dev
+.env.prod
+.env.preprod
 .env
 .env.dev
 # vercel
@@ -42,5 +44,5 @@ next-env.d.ts
 #code-editor
 .zed
 
-#log-files
+#logs
 logs

@@ -23,6 +23,9 @@ import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
+import { getUserBookingDetails } from "@/db/data/dto/booking";
+import { cuidRegex } from "@/lib/helpers/regex";
+import { BookingCuidValidator } from "@/lib/validators/Booking";
 
 export type QueryObj = [
   { id: string | undefined },
@@ -130,7 +133,7 @@ export const user = router({
           });
         }
         const date = parseDateFormatYYYMMDDToNumber(clientDate);
-        
+
         if (!date) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -269,7 +272,7 @@ export const user = router({
           findCorrespondingScheduleTimeFromPackageCategory(
             packageIdExists.packageCategory,
           );
-          
+
         if (!scheduleTimeForPackage) {
           throw new TRPCError({
             code: "UNPROCESSABLE_CONTENT",
@@ -301,6 +304,8 @@ export const user = router({
             day: true,
             fromTime: true,
             scheduleStatus: true,
+            createdAt: true,
+            updatedAt: true,
             toTime: true,
             Package: {
               select: {
@@ -316,7 +321,6 @@ export const user = router({
 
         // If the schedule is set to blocked then throw that time is already booked or blocked.
         if (
-          //
           schedule?.scheduleStatus === "BLOCKED" ||
           schedule?.scheduleStatus === "EXCLUSIVE"
         ) {
@@ -529,13 +533,19 @@ export const user = router({
           nextCursor = nextItem ? nextItem.id : undefined;
         }
 
-         // Safe way to access the extra item
+        // Safe way to access the extra item
 
         return {
           schedules: schedules.slice(0, limit),
           nextCursor,
-          hasNextPage: !!nextCursor 
+          hasNextPage: !!nextCursor,
         };
       },
     ),
+    
+  getUserBookingDetails: publicProcedure
+    .input(BookingCuidValidator)
+    .query(async ({ input: { bookingId } }) => {
+      return await getUserBookingDetails(bookingId);
+    }),
 });

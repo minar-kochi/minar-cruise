@@ -55,7 +55,9 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
           </div>
         </div>
         <div className="w-5 h-5 border flex border-primary items-center justify-center rounded-md">
-          {selected.selected ? <Check className="w-4 h-4 text-primary " /> : null}
+          {selected.selected ? (
+            <Check className="w-4 h-4 text-primary " />
+          ) : null}
         </div>
         {/* <Checkbox type="" id={`${selected.index}`} checked={selected.selected} /> */}
       </div>

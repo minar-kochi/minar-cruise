@@ -2,7 +2,16 @@
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { $Enums } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
-import { addDays, formatISO, isBefore, isEqual, isSameMonth, startOfDay } from "date-fns";
+import {
+  addDays,
+  differenceInMinutes,
+  formatISO,
+  isBefore,
+  isEqual,
+  isSameMonth,
+  startOfDay,
+  isSameDay as isSameDayFromDateFns,
+} from "date-fns";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { DateTime } from "luxon";
@@ -26,7 +35,6 @@ export function cn(...inputs: ClassValue[]) {
 export const isProd = process.env.NODE_ENV !== "development";
 export const isProduction = isProd ? "production" : "development";
 /**
- * @description sajdhasjdfjk hjsdb hjavdjhv asjhdv asfnhasvfhgv asfvshag v
  * @example absoluteUrl('/api/get')
  *
  * @param path String thats Rest needed to combine with the Domain URL
@@ -36,6 +44,7 @@ export const isProduction = isProd ? "production" : "development";
  */
 export function absoluteUrl(path: string): string {
   if (typeof window !== "undefined") return path;
+
   if (process.env.NODE_ENV === "production") {
     return `${process.env.NEXT_PUBLIC_DOMAIN as string}${path}`;
   } else {
@@ -91,6 +100,7 @@ export function parseDateFormatYYYMMDDToNumber(
 ): TSplitedFormatedDate | null {
   const splitValue = date.split("-");
   if (!splitValue || splitValue.length !== 3) return null;
+
   let validatedDate = {
     year: ParseStringToNumber(splitValue[0]),
     month: ParseStringToNumber(splitValue[1]),
@@ -149,20 +159,20 @@ export function getDateRangeArray({
   toDate: Date;
 }) {
   const dates = [];
-  
+
   // Ensure we're working with the start of each day
-  const startDate = startOfDay(addDays(fromDate,1));
-  const endDate = startOfDay(addDays(toDate,1));
-  
+  const startDate = fromDate;
+  const endDate = toDate;
+
   // Initialize current date as the start date
   let currentDate = startDate;
-  
+
   // Keep adding dates until we reach or pass the end date
   while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
     dates.push(new Date(currentDate));
     currentDate = addDays(currentDate, 1);
   }
-  
+
   return dates;
 }
 
@@ -259,7 +269,13 @@ export function getISTDateAndTimeFromZ(date: Date) {
 export function filterDateFromCalender({
   dateArray,
   date,
+  packageCategory,
+  startFrom,
+  AvailableDate,
 }: {
+  AvailableDate?: string[];
+  packageCategory: $Enums.SCHEDULED_TIME;
+  startFrom: string;
   date: Date;
   dateArray:
     | {
@@ -267,11 +283,11 @@ export function filterDateFromCalender({
       }[]
     | undefined;
 }) {
-  let currDate = getPrevTimeStamp(Date.now());
-
   if (!dateArray) {
     return false;
   }
+
+  // Check if the date exists in the dateArray
   let fi = dateArray.findIndex(
     (fv) => RemoveTimeStampFromDate(fv.day) === RemoveTimeStampFromDate(date),
   );
@@ -279,9 +295,37 @@ export function filterDateFromCalender({
   if (fi !== -1) {
     return true;
   }
-  if (date < new Date(currDate)) {
+  // Get current date in Indian Standard Time (date only, no time)
+  let currDate = new Date(
+    new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    }),
+  );
+  // Reset to start of day to avoid time comparison issues
+  currDate.setHours(0, 0, 0, 0);
+
+  // Convert the input date to IST for comparison (date only, no time)
+  let dateInIST = new Date(
+    date.toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    }),
+  );
+  // Reset to start of day to avoid time comparison issues
+  dateInIST.setHours(0, 0, 0, 0);
+
+  // Only disable if the date is strictly before today
+  if (dateInIST < currDate) {
     return true;
   }
+
+  const isAvailableForNewBooking = checkBookingTimeConstraint({
+    scheduleTime: packageCategory as $Enums.SCHEDULED_TIME,
+    selectedDate: RemoveTimeStampFromDate(date),
+    startFrom: startFrom,
+  });
+
+  if (!isAvailableForNewBooking) return true;
+
   return false;
 }
 
@@ -301,7 +345,6 @@ export function checkBookingTimeConstraint({
   );
 
   if (!UTCISTDATE) {
-    console.log("FALSE BAD STATE");
     return false;
   }
   const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
@@ -344,6 +387,7 @@ export function convertYYYMMDDStringAndTimeStringToUTCDate(
 ) {
   try {
     const DateCycle = parseDateFormatYYYMMDDToNumber(dates);
+
     const timeCycle = splitTimeColon(time);
     if (!timeCycle || !DateCycle) {
       return null;
@@ -435,4 +479,29 @@ export function truncateText(text: string, maxLength: number): string {
     return text.substring(0, maxLength) + "...";
   }
   return text;
+}
+
+/**
+ * Checks if the given date is older than the specified number of minutes.
+ * @param dateString - ISO 8601 date string
+ * @param minutesAgo - Threshold in minutes
+ * @returns boolean
+ */
+export function isOlderThan(
+  dateString: string | Date,
+  minutesAgo: number,
+): boolean {
+  const date = new Date(dateString);
+  return differenceInMinutes(new Date(), date) > minutesAgo;
+}
+
+export function combineDateAndTime(dateStr: string, timeStr: string): Date {
+  const dt = DateTime.fromFormat(
+    `${dateStr} ${timeStr}`,
+    "yyyy-MM-dd hh:mm:a",
+    {
+      zone: "Asia/Kolkata",
+    },
+  );
+  return dt.toJSDate(); // Convert Luxon DateTime to JS Date
 }

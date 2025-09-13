@@ -29,6 +29,8 @@ export const BlogFormValidators = z.object({
 export type TBlogFormValidators = z.infer<typeof BlogFormValidators>;
 export type TBlogFormUpdateValidator = z.infer<typeof BlogFormUpdateValidator>;
 
-export const BlogFormUpdateValidator = z.object({
-  id: z.string().nonempty()
-}).merge(BlogFormValidators)
+export const BlogFormUpdateValidator = z
+  .object({
+    id: z.string().nonempty(),
+  })
+  .merge(BlogFormValidators);

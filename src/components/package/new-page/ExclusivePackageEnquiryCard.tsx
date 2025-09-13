@@ -7,7 +7,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import {
   cn,
-  filterDateFromCalender,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import {

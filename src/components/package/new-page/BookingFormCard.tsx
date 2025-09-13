@@ -33,7 +33,6 @@ export default function BookingFormCard({
   adultPrice,
   childPrice,
 }: TBookingFormCard) {
-  
   return (
     <div
       className={cn(

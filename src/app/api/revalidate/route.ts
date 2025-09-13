@@ -27,17 +27,20 @@ export async function POST(request: NextRequest) {
 
     let isVerified = authentication === process.env.REVALIDATION_SECRET;
     if (!isVerified) {
-      return NextResponse.json({ message: "Invalid Revalidation Key" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Invalid Revalidation Key" },
+        { status: 401 },
+      );
     }
-    
+
     let body = await request.json();
     const data = revalidateRequestSchema.parse(body);
-    
+
     if (data.type == "path") {
       const { nextPath, webPath } = data.path;
       revalidatePath(webPath, nextPath);
     }
-    
+
     if (data.type == "tag") {
       data.tags.map((item) => revalidateTag(item));
     }

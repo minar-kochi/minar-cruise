@@ -6,16 +6,33 @@ import {
 import { isSunset } from "@/lib/validators/Package";
 import { $Enums } from "@prisma/client";
 import { isSameDay } from "date-fns";
-import { DayProps } from "react-day-picker";
+import { DayContentProps, DayProps } from "react-day-picker";
 
 interface IClientCalenderScheduleDay {
-  props: DayProps;
+  props: DayContentProps;
   AvailableDate?: string[];
   blockedDate?: string[];
   packageCategory: $Enums.PACKAGE_CATEGORY;
   startFrom: string;
   isLoading: boolean;
 }
+
+const CalendarThemeConfig = {
+  selected:
+    "outline-blue-400 border-blue-400 border-2 outline-2 bg-blue-400   font-medium group-aria-selected:font-extrabold  text-white  group-aria-selected:blue-400",
+  sunset:
+    "hover:bg-[#3ab567] bg-[#25b058]   font-medium group-aria-selected:font-extrabold  text-white border-green-600 group-aria-selected:bg-[#088a38]",
+  available:
+    "bg-[#25b058]  hover:bg-[#3ab567] font-medium group-aria-selected:font-extrabold  text-white border-green-600 group-aria-selected:bg-[#088a38]",
+  disabled:
+    "group-disabled:bg-gray-200 group-disabled:border-none group-disabled:hover:bg-gray-300 group-disabled:text-gray-500",
+  loading:
+    "group-disabled:bg-gray-200 bg-gray-200 hover:bg-gray-200 group-disabled:hover:bg-gray-300 group-disabled:text-gray-500",
+  blocked:
+    "group-disabled:bg-red-500 group-disabled:text-white group-disabled:hover:bg-red-600 text-white font-bold",
+  not_available:
+    "text-white disabled bg-red-500 border-none hover:bg-red-700 text-white font-bold group-aria-selected:bg-red-600 group-aria-selected:hover:bg-red-700",
+};
 
 export default function ClientCalenderScheduleDay({
   AvailableDate,
@@ -25,7 +42,7 @@ export default function ClientCalenderScheduleDay({
   startFrom,
   isLoading,
 }: IClientCalenderScheduleDay) {
-  const { date } = props;
+  const { date, activeModifiers } = props;
 
   const idxOfAvailableDate = AvailableDate
     ? AvailableDate.findIndex((item) =>
@@ -46,7 +63,6 @@ export default function ClientCalenderScheduleDay({
     startFrom: startFrom,
   });
 
-  
   let isBlocked = blockedDate
     ? blockedDate.findIndex((item) =>
         isSameDay(
@@ -56,21 +72,16 @@ export default function ClientCalenderScheduleDay({
       )
     : -1;
   // rounded-md hover:bg-blue-400  relative z-0 w-full h-full flex items-center justify-center group-disabled:text-muted group-disabled:font-bold group-disabled:bg-transparent  bg-yellow-200
-  const disabled =
-    "group-disabled:bg-gray-200 group-disabled:border-none group-disabled:hover:bg-gray-300 group-disabled:text-gray-500";
-
-  const loading_color =
-    "group-disabled:bg-gray-200 bg-gray-200 hover:bg-gray-200 group-disabled:hover:bg-gray-300 group-disabled:text-gray-500";
-
-  const blocked =
-    "group-disabled:bg-red-500 group-disabled:text-white group-disabled:hover:bg-red-600 text-white font-bold";
-  const not_available_booking =
-    "text-white disabled bg-red-500 border-none hover:bg-red-700 text-white font-bold group-aria-selected:bg-red-600 group-aria-selected:hover:bg-red-700";
-
-  const available =
-    "bg-[#25b058]  hover:bg-[#3ab567] font-medium group-aria-selected:font-extrabold  text-white border-green-600 group-aria-selected:bg-[#088a38]";
-  const sunSetAvailable =
-    "hover:bg-[#3ab567] bg-[#25b058]   font-medium group-aria-selected:font-extrabold  text-white border-green-600 group-aria-selected:bg-[#088a38]";
+  const disabled = CalendarThemeConfig.disabled;
+  const loading_color = CalendarThemeConfig.loading;
+  const blocked = CalendarThemeConfig.blocked;
+  const not_available_booking = CalendarThemeConfig.not_available;
+  const available = activeModifiers.selected
+    ? CalendarThemeConfig.selected
+    : CalendarThemeConfig.available;
+  const sunSetAvailable = activeModifiers.selected
+    ? CalendarThemeConfig.selected
+    : CalendarThemeConfig.sunset;
 
   // let isSunsetBookable = false;
 
@@ -96,7 +107,7 @@ export default function ClientCalenderScheduleDay({
           [`${sunSetAvailable}`]: isPackageSunset && isAvailableForNewBooking,
           [`${blocked}`]: isBlocked !== -1,
           [`${not_available_booking}`]:
-            !isAvailableShown && !isAvailableForNewBooking,
+            !isAvailableShown && !isAvailableForNewBooking && !activeModifiers.disabled,
           [`${loading_color}`]: isLoading,
         },
       )}

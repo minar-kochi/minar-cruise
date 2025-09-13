@@ -33,10 +33,7 @@ export const getPackageById = createSelector(
   },
 );
 
-export const getSunsetPackage = createSelector(
-  [packages],
-  (packages) => {
-    let sunset = packages?.find((item) => isStatusSunset(item.packageCategory));
-    return sunset;
-  },
-);
+export const getSunsetPackage = createSelector([packages], (packages) => {
+  let sunset = packages?.find((item) => isStatusSunset(item.packageCategory));
+  return sunset;
+});

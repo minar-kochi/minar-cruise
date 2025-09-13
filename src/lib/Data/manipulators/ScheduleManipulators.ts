@@ -14,6 +14,7 @@ export function findCorrespondingScheduleTimeFromPackageCategory(
   if (!ShouldPackageBeAvailableForPublicToSchedule(packageCategory)) {
     return null;
   }
+
   if (isBreakFast(packageCategory)) {
     return "BREAKFAST";
   }

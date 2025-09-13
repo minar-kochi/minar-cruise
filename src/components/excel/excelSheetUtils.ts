@@ -22,7 +22,7 @@ export const A4ExcelPageSetup: Partial<ExcelJS.AddWorksheetOptions> = {
       top: 1.5,
     },
   },
-//   views: [{ state: "frozen", ySplit: 2 }],
+  //   views: [{ state: "frozen", ySplit: 2 }],
 };
 
 export const HeaderRowCellFill: ExcelJS.Fill = {

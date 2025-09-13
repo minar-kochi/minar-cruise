@@ -1,14 +1,5 @@
 import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
-const transporter = nodemailer.createTransport({
-  host: "smtp.hostinger.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
 
 type TSendConfirmationEmail = {
   fromEmail?: string;
@@ -23,11 +14,11 @@ export async function sendConfirmationEmail({
   emailComponent,
   fromEmail,
 }: TSendConfirmationEmail) {
-  const { BUSINESS_EMAIL } = process.env;
-  if (!BUSINESS_EMAIL) {
-    return { error: "Business email not found" };
-  }
   try {
+    const { BUSINESS_EMAIL } = process.env;
+    if (!BUSINESS_EMAIL) {
+      return { error: "Business email not found" };
+    }
     const renderedHtml = await render(emailComponent);
     const data = await sendNodeMailerEmail({
       subject: emailSubject,
@@ -43,58 +34,53 @@ export async function sendConfirmationEmail({
 
 type TSendEmail = {
   subject: string;
-  fromEmail?: string 
+  fromEmail?: string;
   toEmail: string | string[];
   reactEmailComponent: JSX.Element | string;
 };
 
-// export async function sendEmail({
-//   fromEmail,
-//   reactEmailComponent,
-//   subject,
-//   toEmail,
-// }: TSendEmail) {
-//   const { BUSINESS_EMAIL } = process.env;
-//   if (!BUSINESS_EMAIL) {
-//     return { error: "Business email not found" };
-//   }
-
-//   try {
-//     const { data, error } = await resend.emails.send({
-//       from: fromEmail ?? BUSINESS_EMAIL,
-//       to: [toEmail],
-//       subject,
-//       react: reactEmailComponent,
-//     });
-
-//     if (error) {
-//       return { error };
-//     }
-
-//     return data;
-//   } catch (error) {
-//     return { error };
-//   }
-// }
+const transporter = nodemailer.createTransport({
+  host: "smtp.hostinger.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 export async function sendNodeMailerEmail({
   reactEmailComponent,
   subject,
   toEmail,
   fromEmail,
-}: TSendEmail) {
-  // const data = await render(BookingConfirmationEmailForAdmin({}));
+  maxRetries = 2,
+  baseDelay = 1000,
+}: TSendEmail & { maxRetries?: number; baseDelay?: number }) {
   if (typeof reactEmailComponent !== "string") return null;
-  try {
-    const data = await transporter.sendMail({
-      from: fromEmail,
-      to: toEmail,
-      subject: subject,
-      html: reactEmailComponent,
-    });
-    return data;
-  } catch (error) {
-    console.log(error);
-    return null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const data = await transporter.sendMail({
+        from: fromEmail,
+        to: toEmail,
+        subject: subject,
+        html: reactEmailComponent,
+      });
+      return data;
+    } catch (error) {
+      console.log(`Attempt ${attempt + 1} failed:`, error);
+
+      // If this was the last attempt, return null
+      if (attempt === maxRetries) {
+        console.log(`All ${maxRetries + 1} attempts failed`);
+        return null;
+      }
+
+      // Wait before retrying (exponential backoff)
+      const delay = baseDelay * Math.pow(2, attempt);
+      console.log(`Retrying in ${delay}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
   }
 }
