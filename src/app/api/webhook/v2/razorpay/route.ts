@@ -34,10 +34,10 @@ export async function POST(request: NextRequest, res: NextResponse) {
     const generatedSignature = generateSignature(body);
 
     // check whether the generated and incomming are same, if so use the body and the body is securely send from razor-pay
-    // if (generatedSignature !== IncommingSignature) {
-    //   console.log("invalid signature");
-    //   return NextResponse.json({ success: false }, { status: 200 });
-    // }
+    if (generatedSignature !== IncommingSignature) {
+      console.log("invalid signature");
+      return NextResponse.json({ success: false }, { status: 200 });
+    }
 
     const existingEvent = await getEventById(eventId);
 
