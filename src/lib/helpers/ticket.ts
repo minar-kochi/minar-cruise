@@ -29,7 +29,6 @@ export function createBookingData({ data }: { data: TGetUserBookingDetails }) {
         age: "",
         lastName: "",
         seatNo: "",
-        srNo: 1,
         status: "Confirmed",
       },
     ],

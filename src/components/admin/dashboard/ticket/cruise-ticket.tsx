@@ -10,7 +10,6 @@ import { usePDF } from "react-to-pdf";
 import { DownloadIcon } from "lucide-react";
 
 export interface PassengerDetails {
-  srNo: number;
   firstName: string;
   lastName: string;
   age: string;
@@ -117,49 +116,58 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
           </div>
 
           {/* Booking Details */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mb-6 md:mb-8">
-            <div className="space-y-2">
-              <div className="flex flex-wrap">
-                <span className="font-semibold w-28 sm:w-32 flex-shrink-0">
-                  Booking Id
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 md:mb-8">
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <span className="font-semibold w-32 flex-shrink-0 text-gray-700">
+                  Name
                 </span>
-                <span className="mr-2 md:mr-4">:</span>
+                <span className="mx-2">:</span>
+                <span className="break-all">
+                  {data?.user?.name || "Guest"}
+                </span>
+              </div>
+              <div className="flex items-start">
+                <span className="font-semibold w-32 flex-shrink-0 text-gray-700">
+                  Booking ID
+                </span>
+                <span className="mx-2">:</span>
                 <span className="break-all">
                   {FormattedBookingData.bookingId}
                 </span>
               </div>
-              <div className="flex flex-wrap">
-                <span className="font-semibold w-28 sm:w-32 flex-shrink-0">
-                  Contact Num
+              <div className="flex items-start">
+                <span className="font-semibold w-32 flex-shrink-0 text-gray-700">
+                  Contact Number
                 </span>
-                <span className="mr-2 md:mr-4">:</span>
+                <span className="mx-2">:</span>
                 <span className="break-all">
                   {FormattedBookingData.contactNum}
                 </span>
               </div>
-              <div className="flex flex-wrap">
-                <span className="font-semibold w-28 sm:w-32 flex-shrink-0">
-                  Email Id
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <span className="font-semibold w-32 flex-shrink-0 text-gray-700">
+                  Email ID
                 </span>
-                <span className="mr-2 md:mr-4">:</span>
+                <span className="mx-2">:</span>
                 <span className="break-all">
                   {FormattedBookingData.emailId}
                 </span>
               </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex flex-wrap">
-                <span className="font-semibold w-28 sm:w-32 flex-shrink-0">
+              <div className="flex items-start">
+                <span className="font-semibold w-32 flex-shrink-0 text-gray-700">
                   Booking Mode
                 </span>
-                <span className="mr-2 md:mr-4">:</span>
+                <span className="mx-2">:</span>
                 <span>{FormattedBookingData.bookingMode}</span>
               </div>
-              <div className="flex flex-wrap">
-                <span className="font-semibold w-28 sm:w-32 flex-shrink-0">
+              <div className="flex items-start">
+                <span className="font-semibold w-32 flex-shrink-0 text-gray-700">
                   Booking Date
                 </span>
-                <span className="mr-2 md:mr-4">:</span>
+                <span className="mx-2">:</span>
                 <span>{FormattedBookingDate}</span>
               </div>
             </div>
@@ -250,111 +258,33 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
                   Passengers
                 </span>
                 <span className="mr-2 md:mr-4">:</span>
-                <div className="space-y-1">
-                  <div className="flex w-20 justify-between">
-                    <span className="">Adult </span>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="w-12">Adult</span>
                     <span>:</span>
                     <span>{FormattedBookingData.passengers.adult}</span>
                   </div>
-                  <div className="flex w-20 justify-between">
-                    <span className="">Child</span>
+                  <div className="flex items-center gap-3">
+                    <span className="w-12">Child</span>
                     <span>:</span>
                     <span>{FormattedBookingData.passengers.child}</span>
+                    <span className="">
+                      ( 3-10 yrs )
+                    </span>
                   </div>
-                  <div className="flex w-20 justify-between">
-                    <span className="">Infant</span>
+                  <div className="flex items-center gap-3">
+                    <span className="w-12">Baby</span>
                     <span>:</span>
                     <span>{FormattedBookingData.passengers.infant}</span>
+                    <span className="">
+                      ( below 3 yrs )
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Charges Table */}
-          <div className="mb-6 md:mb-8">
-            {/* Mobile view - single column */}
-            <div className="block md:hidden space-y-2">
-              <div className="border border-black">
-                <div className="border-b border-black p-2 font-semibold text-sm bg-gray-50">
-                  Passenger Charges in INR
-                </div>
-                <div className="p-2 text-left text-sm">
-                  {(
-                    FormattedBookingData.charges.passengerCharges.adult / 100
-                  ).toFixed(2)}
-                </div>
-              </div>
-
-              <div className="border border-black">
-                <div className="border-b border-black p-2 font-semibold text-sm bg-gray-50">
-                  Vehicle Charges in INR
-                </div>
-                <div className="p-2 text-left text-sm">
-                  {FormattedBookingData.charges.vehicleCharges.toFixed(2)}
-                </div>
-              </div>
-
-              <div className="border border-black">
-                <div className="border-b border-black p-2 font-semibold text-sm bg-gray-50">
-                  Additional Charges in INR
-                </div>
-                <div className="p-2 text-left text-sm">
-                  {FormattedBookingData.charges.additionalCharges.toFixed(2)}
-                </div>
-              </div>
-
-              <div className="border border-black">
-                <div className="border-b border-black p-2 font-semibold text-sm bg-gray-100">
-                  Total Fare in INR
-                </div>
-                <div className="p-2 text-left font-semibold text-sm">
-                  {FormattedBookingData.charges.totalFare.toFixed(2)}
-                </div>
-              </div>
-            </div>
-
-            {/* Desktop view - original table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full min-w-[500px] border border-black">
-                <tbody>
-                  <tr>
-                    <td className="border border-black p-2 font-semibold text-sm">
-                      Passenger Charges in INR
-                    </td>
-                    <td className="border border-black p-2 text-right text-sm">
-                      {(
-                        FormattedBookingData.charges.passengerCharges.adult /
-                        100
-                      ).toFixed(2)}
-                    </td>
-                    <td className="border border-black p-2 font-semibold text-sm">
-                      Vehicle Charges in INR
-                    </td>
-                    <td className="border border-black p-2 text-right text-sm">
-                      {FormattedBookingData.charges.vehicleCharges.toFixed(2)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black p-2 font-semibold text-sm">
-                      Additional Charges in INR
-                    </td>
-                    <td className="border border-black p-2 text-right text-sm">
-                      {FormattedBookingData.charges.additionalCharges.toFixed(
-                        2,
-                      )}
-                    </td>
-                    <td className="border border-black p-2 font-semibold text-sm">
-                      Total Fare in INR
-                    </td>
-                    <td className="border border-black p-2 text-right font-semibold text-sm">
-                      {FormattedBookingData.charges.totalFare.toFixed(2)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
 
           {/* Passenger Details Table */}
           <div className="mb-4 md:mb-6 overflow-x-auto">
@@ -377,7 +307,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
                   (passenger, index) => (
                     <tr key={index}>
                       <td className="border border-black p-1 sm:p-2 text-center text-xs sm:text-sm">
-                        {passenger.srNo}
+                        {index+1}
                       </td>
                       <td className="border border-black p-1 sm:p-2 text-center text-xs sm:text-sm">
                         {passenger.firstName}
