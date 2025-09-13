@@ -46,7 +46,7 @@ export default function PaymentSummary({
             Package Cost:
           </Text>
         </Column>
-        
+
         <Column align="right">
           <Text
             style={{
@@ -55,7 +55,7 @@ export default function PaymentSummary({
               margin: "0",
             }}
           >
-            ${totalAmount.toFixed(2)}
+            ₹{totalAmount.toFixed(2)}
           </Text>
         </Column>
       </Row>
@@ -90,7 +90,7 @@ export default function PaymentSummary({
               margin: "0",
             }}
           >
-            ${totalAmount}
+            ₹{totalAmount}
           </Text>
         </Column>
       </Row>

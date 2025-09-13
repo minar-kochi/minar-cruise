@@ -80,7 +80,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
 
   return (
     <Bounded className="md:px-4 px-[2px]">
-      <div className="w-fit mx-auto my-4 md:my-8 px-2 sm:mx-4">
+      <div className="w-fit mx-auto my-4 md:my-8 px-2">
         <div className="flex justify-end">
           <Button className="" onClick={() => toPDF()} variant={"link"}>
             <DownloadIcon className="size-6 mr-2" />
