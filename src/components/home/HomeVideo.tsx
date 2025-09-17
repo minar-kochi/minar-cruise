@@ -1,14 +1,17 @@
 // import SearchBarWrapper from "../searchbar/SearchBarWrapper";
 
 import { landingData } from "@/constants/home/landingData";
-import SearchBarWrapper from "../searchbar/SearchBarWrapper";
+import { cn } from "@/lib/utils";
 
-const HomeVideo = async () => {
+const HomeVideo = ({ className }: { className?: string }) => {
   const { video } = landingData;
   return (
-    <div className="relative ">
+    <div className="relative">
       <video
-        className="pointer-events-none object-contain lg:object-cover lg:h-[calc(100vh-65px)] w-full "
+        className={cn(
+          "pointer-events-none object-contain lg:object-cover lg:h-[calc(100vh-65px)] w-full ",
+          className,
+        )}
         playsInline
         preload="none"
         muted
