@@ -71,7 +71,7 @@ export default function ClientCalenderScheduleDay({
         ),
       )
     : -1;
-  // rounded-md hover:bg-blue-400  relative z-0 w-full h-full flex items-center justify-center group-disabled:text-muted group-disabled:font-bold group-disabled:bg-transparent  bg-yellow-200
+    
   const disabled = CalendarThemeConfig.disabled;
   const loading_color = CalendarThemeConfig.loading;
   const blocked = CalendarThemeConfig.blocked;
