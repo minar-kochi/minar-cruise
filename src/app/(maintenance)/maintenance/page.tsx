@@ -20,7 +20,7 @@ export default function Page({}: TPage) {
                 Under Maintenance
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed px-2 sm:px-0">
-                We're currently updating our cruise booking platform to serve
+                We&apos;re currently updating our cruise booking platform to serve
                 you better. Our system will be back online soon!
               </p>
             </div>
