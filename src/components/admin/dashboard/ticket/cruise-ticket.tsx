@@ -1,4 +1,5 @@
-import type React from "react";
+"use client";
+import React from "react";
 import { TermsAndConditions } from "./doc-helper";
 import { format } from "date-fns";
 import { createBookingData } from "@/lib/helpers/ticket";
@@ -61,8 +62,8 @@ const qrImageUrl = `/assets/documents/QR.png`;
 const minarLogo = `/assets/whatsapplogo.png`;
 const boatLogo = `/logo-small.png`;
 
-const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
-  const { targetRef, toPDF } = usePDF({ filename: `Minar-Boarding-Pass` });
+const CruiseTicket = ({ data }: CruiseTicketProps) => {
+  const { targetRef, toPDF, } = usePDF({ filename: `Minar-Boarding-Pass` });
 
   if (!data) return;
 
@@ -97,10 +98,7 @@ const CruiseTicket: React.FC<CruiseTicketProps> = ({ data }) => {
           ref={targetRef}
           className="max-w-4xl md:mx-auto bg-white px-6 sm:px-10 md:px-16 py-8 md:py-12 font-sans text-sm border-2 border-gray-200 shadow-lg text-black mt-4 rounded-lg"
         >
-          <TicketHeader
-            minarLogoUrl={minarLogo}
-            qrCodeUrl={qrImageUrl}
-          />
+          <TicketHeader minarLogoUrl={minarLogo} qrCodeUrl={qrImageUrl} />
 
           <BookingDetailsSection
             customerName={data?.user?.name || "Guest"}

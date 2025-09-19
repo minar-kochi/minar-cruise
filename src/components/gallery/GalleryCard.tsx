@@ -39,8 +39,8 @@ const GalleryCard = ({ slug }: { slug: TGalleries }) => {
                 <Image
                   src={url}
                   alt="gallery image"
-                  width={1000}
-                  height={400}
+                  width={420}
+                  height={720}
                   priority
                   className="object-contain w-full h-full rounded-xl transition-transform duration-500 group-hover:scale-150"
                 />
