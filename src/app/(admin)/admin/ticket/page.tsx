@@ -1,5 +1,4 @@
 import CruiseTicket from "@/components/admin/dashboard/ticket/cruise-ticket";
-import DocumentHandler from "@/components/admin/dashboard/ticket/DocumentHandler";
 import { TGetUserBookingDetails } from "@/db/data/dto/booking";
 
 const sampleTicketData: TGetUserBookingDetails = {
