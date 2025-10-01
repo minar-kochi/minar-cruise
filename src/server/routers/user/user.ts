@@ -23,9 +23,10 @@ import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
-import { getUserBookingDetails } from "@/db/data/dto/booking";
+import { getUserBookingDetails, totalBookedSeats } from "@/db/data/dto/booking";
 import { cuidRegex } from "@/lib/helpers/regex";
 import { BookingCuidValidator } from "@/lib/validators/Booking";
+import { MAX_BOAT_SEAT } from "@/constants/config/business";
 
 export type QueryObj = [
   { id: string | undefined },
@@ -192,18 +193,41 @@ export const user = router({
             id: true,
             scheduleStatus: true,
             schedulePackage: true,
+            Booking: {
+              select: {
+                totalBooking: true,
+              },
+            },
           },
           orderBy: {
             day: "asc",
           },
         });
+
         const schedules = data.filter((fv) => fv.packageId === packageId);
+
+        // Calculate total booked seats for each schedule and filter blocked dates
         const blockedScheduleDateArray = data
-          .filter(
-            (fv) =>
-              fv.scheduleStatus === "BLOCKED" ||
-              fv.scheduleStatus === "EXCLUSIVE",
-          )
+          .filter((schedule) => {
+            // Check if explicitly blocked or exclusive
+            if (
+              schedule.scheduleStatus === "BLOCKED" ||
+              schedule.scheduleStatus === "EXCLUSIVE"
+            ) {
+              return true;
+            }
+
+            // Check if schedule belongs to the requested package and is at max capacity
+            if (schedule.packageId === packageId) {
+              const totalBookedSeats = schedule.Booking.reduce(
+                (sum, booking) => sum + booking.totalBooking,
+                0
+              );
+              return totalBookedSeats >= MAX_BOAT_SEAT;
+            }
+
+            return false;
+          })
           .map((item) => ({ day: item.day }));
 
         return { schedules, blockedScheduleDateArray };
@@ -542,7 +566,6 @@ export const user = router({
         };
       },
     ),
-    
   getUserBookingDetails: publicProcedure
     .input(BookingCuidValidator)
     .query(async ({ input: { bookingId } }) => {
