@@ -7,6 +7,7 @@ import {
   isPackageStatusBreakfast,
   isPackageStatusCustom,
   isPackageStatusDinner,
+  isPackageStatusEvening,
   isPackageStatusExclusive,
   isPackageStatusLunch,
   isPackageStatusSunSet,
@@ -238,16 +239,18 @@ export const getOrganizedPackages = unstable_cache(
           duration: true,
         },
       });
+
       if (!data.length) {
         return null;
       }
 
-      let lunch: PackageSelect[] = [];
-      let dinner: PackageSelect[] = [];
       let breakfast: PackageSelect[] = [];
+      let lunch: PackageSelect[] = [];
+      let evening: PackageSelect[] = [];
       let sunset: PackageSelect[] = [];
+      let dinner: PackageSelect[] = [];
       let custom: PackageSelect[] = [];
-
+      console.log("HELLO::::");
       for (const PackageData of data) {
         if (
           isPackageStatusLunch({
@@ -257,6 +260,16 @@ export const getOrganizedPackages = unstable_cache(
         ) {
           lunch.push(PackageData);
         }
+
+        if (
+          isPackageStatusEvening({
+            packageStatus: PackageData.packageCategory,
+            exclusive: true,
+          })
+        ) {
+          evening.push(PackageData);
+        }
+
         if (
           isPackageStatusSunSet({
             packageStatus: PackageData.packageCategory,
@@ -265,6 +278,7 @@ export const getOrganizedPackages = unstable_cache(
         ) {
           sunset.push(PackageData);
         }
+
         if (
           isPackageStatusBreakfast({
             packageStatus: PackageData.packageCategory,
@@ -273,6 +287,7 @@ export const getOrganizedPackages = unstable_cache(
         ) {
           breakfast.push(PackageData);
         }
+
         if (
           isPackageStatusDinner({
             packageStatus: PackageData.packageCategory,
@@ -281,20 +296,28 @@ export const getOrganizedPackages = unstable_cache(
         ) {
           dinner.push(PackageData);
         }
+
         if (isPackageStatusCustom(PackageData.packageCategory)) {
           custom.push(PackageData);
         }
       }
-
-      if (lunch?.length < 0 || dinner?.length < 0 || breakfast?.length < 0) {
+      if (
+        lunch.length === 0 ||
+        dinner.length === 0 ||
+        breakfast.length === 0 ||
+        evening.length === 0 ||
+        sunset.length === 0 ||
+        custom.length === 0
+      ) {
         return null;
       }
 
       return {
-        lunch,
-        dinner,
-        sunset,
         breakfast,
+        lunch,
+        evening,
+        sunset,
+        dinner,
         custom,
       };
     } catch (error) {

@@ -1,10 +1,8 @@
 "use client";
-import React, { useContext } from "react";
-import ScheduleBar from "./ScheduleContainer";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setIsModalOpen } from "@/lib/features/modal/modalSlice";
-import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
+import ScheduleBar from "./ScheduleContainer";
 
 export default function ScheduleBarWrapper() {
   const dispatch = useAppDispatch();

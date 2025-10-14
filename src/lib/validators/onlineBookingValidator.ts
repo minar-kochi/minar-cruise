@@ -13,6 +13,7 @@ const packageCategory = [
   "BREAKFAST",
   "CUSTOM",
   "DINNER",
+  "EVENING",
   "EXCLUSIVE",
   "LUNCH",
   "SUNSET",

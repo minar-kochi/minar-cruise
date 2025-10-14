@@ -18,7 +18,7 @@ export default function ScheduleSelector({
       </label>
       <div className="flex gap-2">
         <ScheduleSelect
-          key={`ScheduleSelect-select-box-type-${type}-`}
+          key={`ScheduleSelect-select-box-type-${type}`}
           type={type}
         />
       </div>

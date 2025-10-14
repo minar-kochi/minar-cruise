@@ -50,7 +50,7 @@ export default function BookingFormCalender({
       packageId: packageId,
       date: month,
     });
-
+  console.log("DATA:::",data);
   const availableDateArray = data?.schedules.map((item) => {
     return item.day;
   });
@@ -58,6 +58,7 @@ export default function BookingFormCalender({
   const disabledDays = data?.blockedScheduleDateArray.map((item) => ({
     day: new Date(item.day),
   }));
+  
   if (!packageData) return;
   // console.log("hello", disabledDays);
   return (

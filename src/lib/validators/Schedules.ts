@@ -4,6 +4,9 @@ export function isStatusBreakfast(SchedulePackage: string) {
   return SchedulePackage === $Enums.SCHEDULED_TIME.BREAKFAST;
 }
 
+export function isStatusEvening(SchedulePackage: string) {
+  return SchedulePackage === $Enums.SCHEDULED_TIME.EVENING;
+}
 export function isStatusSunset(SchedulePackage: string) {
   return SchedulePackage === $Enums.SCHEDULED_TIME.SUNSET;
 }

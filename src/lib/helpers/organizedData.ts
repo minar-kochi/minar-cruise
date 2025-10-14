@@ -6,6 +6,7 @@ import { TScheduleDataDayReplaceString } from "@/Types/type";
 import {
   isStatusBreakfast,
   isStatusDinner,
+  isStatusEvening,
   isStatusLunch,
   isStatusSunset,
 } from "../validators/Schedules";
@@ -22,6 +23,7 @@ export function organizeScheduleData({
   let organizedData: TOrganizedScheduleData = {
     breakfast: null,
     lunch: null,
+    evening: null,
     sunset: null,
     dinner: null,
     custom: null,
@@ -32,6 +34,10 @@ export function organizeScheduleData({
 
     if (isStatusBreakfast(Schedules.schedulePackage)) {
       organizedData.breakfast = Schedules;
+      continue;
+    }
+    if (isStatusEvening(Schedules.schedulePackage)) {
+      organizedData.evening = Schedules;
       continue;
     }
     if (isStatusSunset(Schedules.schedulePackage)) {
@@ -67,6 +73,12 @@ export function placeOrganizedDataIntoPackageIdAndScheduleTime(
       fromTime: OrgData.custom?.fromTime,
       toTime: OrgData.custom?.toTime,
       scheduleTime: "CUSTOM",
+    },
+    evening: {
+      id: OrgData.evening?.packageId,
+      fromTime: OrgData.evening?.fromTime,
+      toTime: OrgData.evening?.toTime,
+      scheduleTime: "EVENING",
     },
     sunset: {
       id: OrgData.dinner?.packageId,

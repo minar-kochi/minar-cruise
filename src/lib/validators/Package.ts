@@ -32,6 +32,7 @@ export type IsPackageTypeOrExclusiveChecker = {
 export function isPackageStatusExclusive(packageStatus: string) {
   return packageStatus === $Enums.PACKAGE_CATEGORY.EXCLUSIVE;
 }
+
 export function isPackageStatusCustom(packageStatus: string) {
   return packageStatus === $Enums.PACKAGE_CATEGORY.CUSTOM;
 }
@@ -51,6 +52,15 @@ export function isPackageStatusLunch({
 }: IsPackageTypeOrExclusiveChecker) {
   return (
     packageStatus === $Enums.PACKAGE_CATEGORY.LUNCH ||
+    (exclusive && isPackageStatusExclusive(packageStatus))
+  );
+}
+export function isPackageStatusEvening({
+  packageStatus,
+  exclusive,
+}: IsPackageTypeOrExclusiveChecker) {
+  return (
+    packageStatus === $Enums.PACKAGE_CATEGORY.EVENING ||
     (exclusive && isPackageStatusExclusive(packageStatus))
   );
 }
@@ -77,6 +87,11 @@ export function isBreakFast(packageCategory: string) {
   if (packageCategory === $Enums.PACKAGE_CATEGORY.BREAKFAST) return true;
   return false;
 }
+export function isEvening(packageCategory: string) {
+  if (packageCategory === $Enums.PACKAGE_CATEGORY.EVENING) return true;
+  return false;
+}
+
 export function isSunset(packageCategory: string) {
   if (packageCategory === $Enums.PACKAGE_CATEGORY.SUNSET) return true;
   return false;

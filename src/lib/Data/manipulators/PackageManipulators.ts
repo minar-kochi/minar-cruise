@@ -24,7 +24,7 @@ export function getPackageTitleWithTimeIfNotExists(
 
   const prefix = NUMBER_MATCH.test(title)
     ? title
-    : `${title} ${durations / 60} hr`;
+    : `${title} (${durations / 60} hr)`;
   return prefix;
 }
 

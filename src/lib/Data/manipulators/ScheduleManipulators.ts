@@ -1,6 +1,7 @@
 import {
   isBreakFast,
   isDinner,
+  isEvening,
   isLunch,
   isPackageStatusBreakfast,
   isSunset,
@@ -17,6 +18,9 @@ export function findCorrespondingScheduleTimeFromPackageCategory(
 
   if (isBreakFast(packageCategory)) {
     return "BREAKFAST";
+  }
+  if (isEvening(packageCategory)) {
+    return "EVENING";
   }
   if (isLunch(packageCategory)) {
     return "LUNCH";

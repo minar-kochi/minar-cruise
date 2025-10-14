@@ -6,6 +6,7 @@ export const resetUpdates = {
   sunset: false,
   dinner: false,
   custom: false,
+  evening: false,
 };
 
 export const initialState: Required<TScheduleState> = {
@@ -15,6 +16,7 @@ export const initialState: Required<TScheduleState> = {
     breakfast: null,
     custom: null,
     sunset: null,
+    evening: null,
     dinner: null,
     lunch: null,
   },
@@ -26,6 +28,7 @@ export const initialState: Required<TScheduleState> = {
     breakfast: [],
     custom: [],
     sunset: [],
+    evening: [],
     dinner: [],
     lunch: [],
   },
@@ -41,6 +44,12 @@ export const initialState: Required<TScheduleState> = {
       fromTime: undefined,
       toTime: undefined,
       scheduleTime: "CUSTOM",
+    },
+    evening: {
+      packageId: undefined,
+      fromTime: undefined,
+      toTime: undefined,
+      scheduleTime: "EVENING",
     },
     sunset: {
       packageId: undefined,

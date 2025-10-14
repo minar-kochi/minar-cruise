@@ -5,6 +5,7 @@ import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
 import {
   isStatusBreakfast,
   isStatusDinner,
+  isStatusEvening,
   isStatusLunch,
   isStatusSunset,
 } from "@/lib/validators/Schedules";
@@ -372,6 +373,7 @@ export type TScheduleData = Schedule;
 export type TgetupComingScheduleDates = {
   breakfast: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   lunch: { date: string; status: $Enums.SCHEDULE_STATUS }[];
+  evening: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   sunset: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   dinner: { date: string; status: $Enums.SCHEDULE_STATUS }[];
   custom: { date: string; status: $Enums.SCHEDULE_STATUS }[];
@@ -440,6 +442,7 @@ export const getupComingScheduleDates = async () => {
     let scheduledDate: TgetupComingScheduleDates = {
       breakfast: [],
       dinner: [],
+      evening: [],
       sunset: [],
       lunch: [],
       custom: [],
@@ -452,6 +455,13 @@ export const getupComingScheduleDates = async () => {
     for (const item of data) {
       if (isStatusLunch(item.schedulePackage)) {
         scheduledDate.lunch.push({
+          date: RemoveTimeStampFromDate(item.day),
+          status: item.scheduleStatus,
+        });
+        continue;
+      }
+      if (isStatusEvening(item.schedulePackage)) {
+        scheduledDate.evening.push({
           date: RemoveTimeStampFromDate(item.day),
           status: item.scheduleStatus,
         });

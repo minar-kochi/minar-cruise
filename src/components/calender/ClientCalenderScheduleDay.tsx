@@ -71,7 +71,7 @@ export default function ClientCalenderScheduleDay({
         ),
       )
     : -1;
-    
+
   const disabled = CalendarThemeConfig.disabled;
   const loading_color = CalendarThemeConfig.loading;
   const blocked = CalendarThemeConfig.blocked;
@@ -83,14 +83,6 @@ export default function ClientCalenderScheduleDay({
     ? CalendarThemeConfig.selected
     : CalendarThemeConfig.sunset;
 
-  // let isSunsetBookable = false;
-
-  // if (packageCategory === "SUNSET") {
-  //   const isAvailable = AvailableDate && AvailableDate[idxOfAvailableDate];
-
-  //   isSunsetBookable =  isAvailableForNewBooking ?
-  //   console.log("SUNSET BOOKABLE ? ", startFrom);
-  // }
   const isAvailableShown =
     isAvailableDateFound && AvailableDate && AvailableDate[idxOfAvailableDate];
   return (
@@ -107,7 +99,9 @@ export default function ClientCalenderScheduleDay({
           [`${sunSetAvailable}`]: isPackageSunset && isAvailableForNewBooking,
           [`${blocked}`]: isBlocked !== -1,
           [`${not_available_booking}`]:
-            !isAvailableShown && !isAvailableForNewBooking && !activeModifiers.disabled,
+            !isAvailableShown &&
+            !isAvailableForNewBooking &&
+            !activeModifiers.disabled,
           [`${loading_color}`]: isLoading,
         },
       )}

@@ -45,6 +45,41 @@ export const seoSeedData = [
     metaRobots: "index, follow",
   },
   {
+    id: "cmgc8q67c000004lbg32lauq7",
+    title: "Evening Cruise in Cochin - Scenic Morning Voyage | Minar Cruise",
+    description:
+      "Start your day with our unforgettable Evening Cruise in Cochin. Enjoy stunning Arabian Sea views, delicious evening, and family-friendly entertainment. Perfect for tourists and locals seeking a unique morning experience.",
+    keywords: [
+      "evening cruise Cochin",
+      "morning cruise Kerala",
+      "Arabian Sea evening",
+      "family-friendly cruise",
+      "Minar Cruise Cochin",
+      "scenic voyage Kerala",
+      "Cochin tourism",
+    ],
+    canonicalUrl: `${process.env.NEXT_PUBLIC_DOMAIN}/package/evening-cruise`,
+    ogTitle: "Experience the Best Evening Cruise in Cochin | Minar Cruise",
+    ogDescription:
+      "Embark on a scenic morning voyage with our Evening Cruise in Cochin. Enjoy gourmet evening, breathtaking Arabian Sea views, and entertainment for all ages. Book now for an unforgettable start to your day!",
+    ogImage: CONSTANTS.DEFAULT.IMAGE_URL,
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "TouristAttraction",
+      name: "Minar Evening Cruise Cochin",
+      description:
+        "A scenic evening cruise in Cochin offering gourmet evening, stunning Arabian Sea views, and family entertainment.",
+      url: `${process.env.NEXT_PUBLIC_DOMAIN}/package/evening-cruise`,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: "9.9312",
+        longitude: "76.2673",
+      },
+      openingHours: "09:00-11:00",
+    },
+    metaRobots: "index, follow",
+  },
+  {
     id: "cm0mru9wf00010cih0tlc1ob6",
     title:
       "Luxury Lunch Cruise in Cochin - Gourmet Dining on the Arabian Sea | Minar Cruise",

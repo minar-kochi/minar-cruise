@@ -1,5 +1,7 @@
-import Bounded from "@/components/elements/Bounded";
-import React from "react";
+import BlockMultipleSchedulesButton from "@/components/admin/dashboard/Schedule/block-multiple-schedules-button";
+import ScheduleButtonInfo from "@/components/admin/dashboard/Schedule/ScheduleButtonInfo";
+import ScheduleDatePicker from "@/components/admin/dashboard/Schedule/ScheduleDatePicker";
+import ScheduleSelectors from "@/components/admin/dashboard/Schedule/ScheduleSelectors";
 import {
   Card,
   CardContent,
@@ -7,14 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ScheduleDatePicker from "@/components/admin/dashboard/Schedule/ScheduleDatePicker";
-import ScheduleSelectors from "@/components/admin/dashboard/Schedule/ScheduleSelectors";
-import ScheduleButtonInfo from "@/components/admin/dashboard/Schedule/ScheduleButtonInfo";
-import { Button, buttonVariants } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { trpc } from "@/app/_trpc/client";
-import Link from "next/link";
-import BlockMultipleSchedulesButton from "@/components/admin/dashboard/Schedule/block-multiple-schedules-button";
 
 export default function ScheduleBar() {
   return (

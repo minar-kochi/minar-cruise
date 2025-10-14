@@ -9,13 +9,13 @@ import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { getPackageTitleWithTimeIfNotExists } from "@/lib/Data/manipulators/PackageManipulators";
 import { setUpdatableScheduleDate } from "@/lib/features/schedule/ScheduleSlice";
 import {
-  DefaultMergedSchedule,
-  scheduleIdAndPackageTitleSelector,
+  DefaultMergedSchedule
 } from "@/lib/features/schedule/selector";
 import { cn } from "@/lib/utils";
 import { TScheduleSelector } from "@/Types/type";
 export default function ScheduleSelect({ type }: TScheduleSelector) {
   const { OrganizedPackage } = useAppSelector((state) => state.packages);
+  
   const { currentDateSchedule } = useAppSelector((state) => state.schedule);
   const defaultSelect = useAppSelector((state) =>
     DefaultMergedSchedule(state, type),

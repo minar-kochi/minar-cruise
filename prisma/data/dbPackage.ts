@@ -6,7 +6,7 @@ export const packages: packagesPartialId = [
     title: "Breakfast cruise",
     packageType: "normal",
     description:
-      "Breakfast Cruise – Start your day with a 2-hour journey from Kochi, enjoying a delicious breakfast and breathtaking views of the Arabian Sea. Reserve your spot today for a refreshing morning escape!",
+      "Breakfast Cruise - Start your day with a 2-hour journey from Kochi, enjoying a delicious breakfast and breathtaking views of the Arabian Sea. Reserve your spot today for a refreshing morning escape!",
     childPrice: 40000,
     adultPrice: 75000,
     duration: 120,
@@ -23,7 +23,7 @@ export const packages: packagesPartialId = [
     title: "Lunch cruise",
     packageType: "normal",
     description:
-      "Lunch Cruise – Escape the ordinary with a 2-hour cruise from Kochi, featurning a mouth-watering buffet lunch and stunning sea views. Book now for a perfect day on the water!",
+      "Lunch Cruise - Escape the ordinary with a 2-hour cruise from Kochi, featuring a mouth-watering buffet lunch and stunning sea views. Book now for a perfect day on the water!",
     childPrice: 50000,
     adultPrice: 100000,
     duration: 120,
@@ -36,11 +36,28 @@ export const packages: packagesPartialId = [
     packageCategory: "LUNCH",
   },
   {
+    id: "clyypf1qh0000w9d4h3r7c3u9",
+    title: "Evening Cruise",
+    packageType: "normal",
+    description:
+      "Evening Cruise - Escape the ordinary with a 2-hour cruise from Kochi, featuring a mouth-watering buffet lunch and stunning sea views. Book now for a perfect day on the water!",
+    childPrice: 50000,
+    adultPrice: 100000,
+    duration: 120,
+    slug: "evening-cruise",
+    foodMenuId: "clj9r7rku0000356cql29f674",
+    amenitiesId: "clk3m9p2q0000472xzt81h294",
+    fromTime: "03:00:PM",
+    toTime: "05:00:PM",
+    updatedAt: new Date(Date.now()),
+    packageCategory: "EVENING",
+  },
+  {
     id: "clqqxa3wq000208l5enk651jd",
     title: "Sunset cruise",
     packageType: "normal",
     description:
-      "Sunset Cruise – Witness the sunset while cruising the Arabian Sea from Kochi. Enjoy a 2-hour voyage with refreshing tea, coffee, and snacks as you enjoy the stunning evening views. Book your unforgettable sunset experience today!",
+      "Sunset Cruise - Witness the sunset while cruising the Arabian Sea from Kochi. Enjoy a 2-hour voyage with refreshing tea, coffee, and snacks as you enjoy the stunning evening views. Book your unforgettable sunset experience today!",
     childPrice: 40000,
     adultPrice: 75000,
     duration: 120,
@@ -57,7 +74,7 @@ export const packages: packagesPartialId = [
     title: "Dinner cruise",
     packageType: "normal",
     description:
-      "Dinner Cruise – Experience the magic of Kochi at night with our Dinner Cruise. Savour a delicious dinner while cruising the tranquil backwaters. Book your night escape now!",
+      "Dinner Cruise - Experience the magic of Kochi at night with our Dinner Cruise. Savour a delicious dinner while cruising the tranquil backwaters. Book your night escape now!",
     childPrice: 50000,
     adultPrice: 100000,
     duration: 120,
@@ -74,7 +91,7 @@ export const packages: packagesPartialId = [
     title: "Sunset with Dinner cruise",
     packageType: "special",
     description:
-      "Sunset with Dinner Cruise – Enjoy a 3-hour cruise from Kochi, where you can watch a stunning sunset over the Arabian Sea and savour a delicious dinner. Make your evening unforgettable—reserve your spot today!",
+      "Sunset with Dinner Cruise - Enjoy a 3-hour cruise from Kochi, where you can watch a stunning sunset over the Arabian Sea and savour a delicious dinner. Make your evening unforgettable—reserve your spot today!",
     childPrice: 75000,
     adultPrice: 150000,
     duration: 180,
@@ -91,7 +108,7 @@ export const packages: packagesPartialId = [
     title: "Special 4 Hours Lunch Cruise",
     packageType: "special",
     description:
-      "Special 4-Hour Lunch Cruise – Enjoy a leisurely 4-hour cruise from Kochi, featuring a special lunch as you take in the stunning views of the Arabian Sea. Make your day memorable—book your spot today!",
+      "Special 4-Hour Lunch Cruise - Enjoy a leisurely 4-hour cruise from Kochi, featuring a special lunch as you take in the stunning views of the Arabian Sea. Make your day memorable—book your spot today!",
     childPrice: 75000,
     adultPrice: 150000,
     duration: 240,
@@ -108,7 +125,7 @@ export const packages: packagesPartialId = [
     title: "Special 4 Hours Dinner Cruise",
     packageType: "special",
     description:
-      "Special 4-Hour Dinner Cruise – Enjoy a stunning 4-hour evening on the Arabian Sea from Kochi. Watch the sunset and savour a special dinner menu as you take in the serene beauty. Book your unforgettable experience now!",
+      "Special 4-Hour Dinner Cruise - Enjoy a stunning 4-hour evening on the Arabian Sea from Kochi. Watch the sunset and savour a special dinner menu as you take in the serene beauty. Book your unforgettable experience now!",
     childPrice: 100000,
     adultPrice: 200000,
     duration: 240,
@@ -122,7 +139,7 @@ export const packages: packagesPartialId = [
   },
   {
     id: "clqqxbb7r000708l58m9f3ry2",
-    title: "Exlusive Packages",
+    title: "Exclusive Packages",
     packageType: "premium",
     description:
       "Tired of ordinary gatherings in dull auditoriums and banquet halls? Elevate your next event with our Premium Cruise Package! Whether it's a corporate meeting, a get-together, a birthday celebration, a wedding, or any special function, our cruise offers an unparalleled setting. Enjoy stunning views of the Arabian Sea, top-notch service, and a tailored experience that makes every moment memorable. Make your next event extraordinary—book your premium cruise experience today!",

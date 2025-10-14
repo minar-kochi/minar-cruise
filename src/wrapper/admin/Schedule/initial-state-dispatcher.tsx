@@ -25,7 +25,6 @@ export default async function InitialStateDispatcher({
     getupComingScheduleDates(),
     getSchedulesByDateOrNow(date),
   ]);
-
   if (!packages) {
     return null;
   }
@@ -35,6 +34,7 @@ export default async function InitialStateDispatcher({
   let upComingSchedule: TgetupComingScheduleDates = data ?? {
     breakfast: [],
     custom: [],
+    evening: [],
     sunset: [],
     dinner: [],
     lunch: [],

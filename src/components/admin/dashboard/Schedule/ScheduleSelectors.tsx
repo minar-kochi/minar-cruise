@@ -19,7 +19,16 @@ export default function ScheduleSelectors() {
             label="Lunch"
             key={`ScheduleSelector-type-lunch`}
             type="lunch"
-          />{" "}
+          />
+        </div>
+      </div>
+      <div className="group-[.schedule-page]:border-2  group-[.schedule-sheet]:border-b  rounded-md  basis-full w-full group-[.schedule-page]:max-w-[365px] p-4   py-2">
+        <div className="">
+          <ScheduleSelector
+            label="Evening"
+            key={`ScheduleSelector-type-evening`}
+            type="evening"
+          />
         </div>
       </div>
       <div className="group-[.schedule-page]:border-2 group-[.schedule-sheet]:border-b rounded-md  basis-full w-full group-[.schedule-page]:max-w-[365px] p-4   py-2">

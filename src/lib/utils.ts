@@ -18,12 +18,14 @@ import { DateTime } from "luxon";
 import {
   isStatusBreakfast,
   isStatusDinner,
+  isStatusEvening,
   isStatusLunch,
   isStatusSunset,
 } from "./validators/Schedules";
 import {
   MIN_BREAKFAST_BOOKING_HOUR,
   MIN_DINNER_BOOKING_HOUR,
+  MIN_EVENING_BOOKING_HOUR,
   MIN_LUNCH_BOOKING_HOUR,
   MIN_SUNSET_BOOKING_HOUR,
 } from "@/constants/config/business";
@@ -354,6 +356,9 @@ export function checkBookingTimeConstraint({
   }
   if (isStatusLunch(scheduleTime)) {
     return timeGap > MIN_LUNCH_BOOKING_HOUR;
+  }
+  if (isStatusEvening(scheduleTime)) {
+    return timeGap > MIN_EVENING_BOOKING_HOUR;
   }
   if (isStatusSunset(scheduleTime)) {
     return timeGap > MIN_SUNSET_BOOKING_HOUR;

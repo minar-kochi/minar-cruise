@@ -2,6 +2,12 @@ import { PackageSeo } from "@prisma/client";
 type TPackageSeo = Omit<PackageSeo, "id">;
 export const dbPackageSeo: TPackageSeo[] = [
   {
+    seoId: "cmgc8q67c000004lbg32lauq7", //[done]
+    updatedAt: new Date(Date.now()),
+    createdAt: new Date(Date.now()),
+    packageId: "clyypf1qh0000w9d4h3r7c3u9",
+  },
+  {
     seoId: "cm0mrtk7i00000cihba8s9ie1", //[done]
     updatedAt: new Date(Date.now()),
     createdAt: new Date(Date.now()),
