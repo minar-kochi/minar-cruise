@@ -7,7 +7,7 @@ export default function WhatsappButton() {
     <div className="relative">
       <FloatingWhatsApp
         className="z-[60]"
-        phoneNumber="7034191993"
+        phoneNumber="8891301555"
         accountName="Minar Cruise Cochin"
         avatar="/assets/whatsapplogo.png"
         buttonClassName="absolute mb-14"
