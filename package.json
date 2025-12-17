@@ -15,7 +15,9 @@
     "start": "next start",
     "lint": "eslint . --ext ts --ext tsx",
     "type-check": "tsc --pretty --noEmit",
-    "format": "prettier --write \"**/*.{js,ts,tsx}\""
+    "format": "prettier --write \"**/*.{js,ts,tsx}\"",
+    "test": "exec playwright test",
+    "test-ui": "pnpm exec playwright test --ui"
   },
   "dependencies": {
     "@auth/core": "0.32.0",
@@ -127,6 +129,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@savvywombat/tailwindcss-grid-areas": "^4.0.0",
     "@types/file-saver": "^2.0.7",
     "@types/luxon": "^3.4.2",
