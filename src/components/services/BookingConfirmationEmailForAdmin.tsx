@@ -32,6 +32,7 @@ interface BookingConfirmationEmailForAdmin {
   childCount: number;
   babyCount: number;
   scheduleId: string;
+  gstAmount?: number;
 }
 
 const domain = process.env.NEXT_PUBLIC_DOMAIN;
@@ -49,6 +50,7 @@ export function BookingConfirmationEmailForAdmin({
   babyCount,
   childCount,
   scheduleId,
+  gstAmount,
 }: BookingConfirmationEmailForAdmin) {
   const Subject = `🎉 New Booking Alert: ${packageTitle} - ${scheduleDate}`;
   const totalGuests = adultCount + childCount + babyCount;
@@ -101,6 +103,11 @@ export function BookingConfirmationEmailForAdmin({
                     <Text className="text-blue-900 font-bold text-[24px] m-0">
                       ₹{totalAmount.toLocaleString()}
                     </Text>
+                    {gstAmount && gstAmount > 0 ? (
+                      <Text className="text-blue-500 text-[12px] m-0">
+                        (incl. GST ₹{gstAmount})
+                      </Text>
+                    ) : null}
                     <Text className="text-blue-600 text-[14px] m-0">
                       {totalGuests} Guest{totalGuests !== 1 ? "s" : ""}
                     </Text>

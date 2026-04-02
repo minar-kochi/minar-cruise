@@ -20,6 +20,9 @@ datasource db {
 model Payments {
   id            String    @id @default(cuid())
   totalAmount   Int
+  baseAmount    Int       @default(0)
+  gstRate       Float     @default(0)
+  gstAmount     Int       @default(0)
   advancePaid   Int
   discount      Int
   modeOfPayment String

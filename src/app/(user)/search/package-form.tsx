@@ -22,6 +22,7 @@ import {
   RemoveTimeStampFromDate,
   safeTotal,
 } from "@/lib/utils";
+import { calculateGST, GST_RATE } from "@/lib/helpers/gst";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
@@ -140,9 +141,11 @@ export default function QuickPackageForm({
   const numofAdults = watch("numOfAdults");
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
-  const total =
+  const baseFare =
     numofAdults * (item.adultPrice / 100) +
     numOfChild * (item.childPrice / 100);
+  const gstBreakdown = calculateGST(baseFare);
+  const total = gstBreakdown.totalAmount;
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   async function onSubmit(data: TOnlineBookingFormValidator) {
@@ -194,12 +197,22 @@ export default function QuickPackageForm({
             adultPrice={item.adultPrice / 100}
             childPrice={item.childPrice / 100}
           />
-          <div className={cn("flex w-full mt-3 justify-evenly items-center ")}>
-            <div>
-              <p className="text-xs">Total:</p>
-              <p className="text-2xl font-semibold ">₹{safeTotal(total)}</p>
+          <div className={cn("flex flex-col w-full mt-3 items-center gap-3")}>
+            <div className="w-full max-w-sm px-4 space-y-1">
+              <div className="flex justify-between text-xs text-gray-600">
+                <span>Base Fare</span>
+                <span>₹{safeTotal(baseFare)}</span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600">
+                <span>GST ({GST_RATE}%)</span>
+                <span>₹{safeTotal(gstBreakdown.gstAmount)}</span>
+              </div>
+              <div className="h-[1px] bg-gray-300 my-1" />
+              <div className="flex justify-between items-center">
+                <p className="text-sm font-medium">Total</p>
+                <p className="text-2xl font-semibold">₹{safeTotal(total)}</p>
+              </div>
             </div>
-            <div className="w-[2px] h-12 bg-black"></div>
             <div>
               <Button
                 type="submit"

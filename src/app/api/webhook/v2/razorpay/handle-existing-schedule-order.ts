@@ -4,6 +4,7 @@ import { $Enums, Events } from "@prisma/client";
 import { TGetPackageTimeAndDuration } from "@/db/data/dto/package";
 import { db } from "@/db";
 import { getDescription } from "@/lib/helpers/razorpay/utils";
+import { calculateGSTFromInclusive } from "@/lib/helpers/gst";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation, {
@@ -91,6 +92,14 @@ export async function handleExistingScheduleOrder({
                     discount: 0,
                     // Amount paid received paise: convert by 100 to make to rupee
                     totalAmount: order.amount_paid / 100,
+                    ...(() => {
+                      const gst = calculateGSTFromInclusive(order.amount_paid / 100);
+                      return {
+                        baseAmount: gst.baseAmount,
+                        gstRate: gst.gstRate,
+                        gstAmount: gst.gstAmount,
+                      };
+                    })(),
                     modeOfPayment: "ONLINE",
                   },
                 },
@@ -126,6 +135,9 @@ export async function handleExistingScheduleOrder({
     );
 
     let duration = `${packageDetail?.duration ? packageDetail.duration / 60 : "--"} Hr`;
+    const totalAmountRupees = order.amount_paid / 100;
+    const emailGst = calculateGSTFromInclusive(totalAmountRupees);
+
     try {
       await Promise.all([
         // send Whats app message to client if there is contact. (hoisted above.)
@@ -140,11 +152,14 @@ export async function handleExistingScheduleOrder({
             infant: babyCount,
             packageTitle: `${packageDetail?.title ?? "--"} `,
             status: "Confirmed",
-            totalAmount: order.amount_paid / 100,
+            totalAmount: totalAmountRupees,
+            baseAmount: emailGst.baseAmount,
+            gstRate: emailGst.gstRate,
+            gstAmount: emailGst.gstAmount,
             BookingId: booking.id,
             customerName: name,
             date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
-            boardingTime:packageDetail?.fromTime ?? "",
+            boardingTime: packageDetail?.fromTime ?? "",
             bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
             contact: notes.email,
           }),
@@ -172,7 +187,8 @@ export async function handleExistingScheduleOrder({
             scheduleDate: schedule?.day
               ? format(schedule.day, "dd-MM-yyyy")
               : "--",
-            totalAmount: order.amount_paid / 100,
+            totalAmount: totalAmountRupees,
+            gstAmount: emailGst.gstAmount,
           }),
         }),
       ]);

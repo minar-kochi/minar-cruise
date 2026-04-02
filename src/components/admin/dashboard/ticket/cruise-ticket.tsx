@@ -50,7 +50,12 @@ export interface TicketData {
     additionalCharges: number;
     vehicleCharges: number;
     totalFare: number;
+    baseAmount: number;
+    gstRate: number;
+    gstAmount: number;
   };
+  supplierGSTIN: string;
+  sacCode: string;
   passengerDetails: PassengerDetails[];
 }
 

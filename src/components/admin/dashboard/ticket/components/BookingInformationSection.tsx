@@ -33,6 +33,8 @@ const BookingInformationSection: React.FC<BookingInformationSectionProps> = ({
   bookingData,
   formattedDepartureDate,
 }) => {
+  const hasGST = bookingData.charges.gstAmount > 0;
+
   return (
     <div className="mb-8 md:mb-10">
       <SectionTitle title="Booking Information" />
@@ -63,6 +65,29 @@ const BookingInformationSection: React.FC<BookingInformationSectionProps> = ({
           value={`₹${(bookingData.charges.passengerCharges.children / 100).toFixed(2)}`}
           className="flex-wrap"
         />
+        {hasGST && (
+          <>
+            <DetailRow
+              label="Base Fare"
+              value={`₹${bookingData.charges.baseAmount.toFixed(2)}`}
+              className="flex-wrap"
+            />
+            <DetailRow
+              label={`GST (${bookingData.charges.gstRate}%)`}
+              value={`₹${bookingData.charges.gstAmount.toFixed(2)}`}
+              className="flex-wrap"
+            />
+            <DetailRow
+              label="Total (incl. GST)"
+              value={`₹${bookingData.charges.totalFare.toFixed(2)}`}
+              className="flex-wrap font-bold"
+            />
+            <div className="text-xs text-gray-500 pt-1">
+              <p>GSTIN: {bookingData.supplierGSTIN}</p>
+              <p>SAC: {bookingData.sacCode}</p>
+            </div>
+          </>
+        )}
         <div className="flex flex-wrap items-start">
           <span className="font-semibold w-36 sm:w-44 flex-shrink-0 text-gray-700">
             Passengers

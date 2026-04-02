@@ -3,6 +3,7 @@ import { OrderPaidEventPayload } from "./razer-pay-order-paid.types";
 import { TRazorPayEventsCreateSchedule } from "@/Types/razorpay/type";
 import { TGetPackageTimeAndDuration } from "@/db/data/dto/package";
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
+import { calculateGSTFromInclusive } from "@/lib/helpers/gst";
 import { OrderPaidEventError } from "@/class/razorpay/OrderPaidError";
 import { getInvalidScheduleTemplateWhatsApp } from "@/lib/helpers/retrieveWhatsAppMessage";
 import { db } from "@/db";
@@ -120,8 +121,17 @@ export async function handleCreateScheduleOrder({
                   create: {
                     advancePaid: 0,
                     discount: 0,
+                    
                     // Amount paid received paise: convert by 100 to make to rupee
                     totalAmount: order.amount_paid / 100,
+                    ...(() => {
+                      const gst = calculateGSTFromInclusive(order.amount_paid / 100);
+                      return {
+                        baseAmount: gst.baseAmount,
+                        gstRate: gst.gstRate,
+                        gstAmount: gst.gstAmount,
+                      };
+                    })(),
                     modeOfPayment: "ONLINE",
                   },
                 },
@@ -158,6 +168,9 @@ export async function handleCreateScheduleOrder({
 
     let duration = `${packageDetail?.duration ? packageDetail.duration / 60 : "--"} Hr`;
 
+    const totalAmountRupees = order.amount_paid / 100;
+    const emailGst = calculateGSTFromInclusive(totalAmountRupees);
+
     try {
       await Promise.all([
         // send Email to Client about new booking.
@@ -180,7 +193,8 @@ export async function handleCreateScheduleOrder({
             BookingId: booking.id,
             packageTitle: packageDetail?.title ?? "",
             scheduleDate: format(date, "dd-MM-yyyy"),
-            totalAmount: order.amount_paid / 100,
+            totalAmount: totalAmountRupees,
+            gstAmount: emailGst.gstAmount,
           }),
         }),
         // Send Email to Client
@@ -191,7 +205,10 @@ export async function handleCreateScheduleOrder({
           emailComponent: BookingConfirmationEmailForUser({
             packageTitle: `${packageDetail?.title ?? "-"} `,
             status: "Confirmed",
-            totalAmount: order.amount_paid / 100,
+            totalAmount: totalAmountRupees,
+            baseAmount: emailGst.baseAmount,
+            gstRate: emailGst.gstRate,
+            gstAmount: emailGst.gstAmount,
             adult: adultCount,
             child: childCount,
             infant: babyCount,

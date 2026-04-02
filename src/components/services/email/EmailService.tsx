@@ -27,6 +27,9 @@ interface BookingConfirmationEmailForUserProps {
   BookingId?: string;
   status: string;
   totalAmount: number;
+  baseAmount?: number;
+  gstRate?: number;
+  gstAmount?: number;
 }
 
 export const BookingConfirmationEmailForUser = ({
@@ -42,6 +45,9 @@ export const BookingConfirmationEmailForUser = ({
   child,
   contact,
   infant,
+  baseAmount,
+  gstRate,
+  gstAmount,
 }: BookingConfirmationEmailForUserProps) => {
 
   return (
@@ -84,7 +90,13 @@ export const BookingConfirmationEmailForUser = ({
             />
 
             {/* Payment Summary Section */}
-            <PaymentSummary totalAmount={totalAmount} />
+            <PaymentSummary
+              totalAmount={totalAmount}
+              baseAmount={baseAmount}
+              gstRate={gstRate}
+              gstAmount={gstAmount}
+
+            />
 
             {/* Terms and conditions */}
             <TermsAndConditions/>

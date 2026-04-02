@@ -5,6 +5,7 @@ import EmailSendBookingConfirmation, {
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
+import { calculateGST } from "@/lib/helpers/gst";
 import {
   BookingSchedulesTotalCounts,
   BookingTotalCount,
@@ -510,6 +511,14 @@ export const booking = router({
               discount,
               modeOfPayment: paymentMode,
               totalAmount: billAmount,
+              ...(() => {
+                const gst = calculateGST(billAmount);
+                return {
+                  baseAmount: gst.baseAmount,
+                  gstRate: gst.gstRate,
+                  gstAmount: gst.gstAmount,
+                };
+              })(),
             },
           },
           description,
@@ -622,6 +631,14 @@ export const booking = router({
                 discount: discount,
                 modeOfPayment: paymentMode,
                 totalAmount: billAmount,
+                ...(() => {
+                  const gst = calculateGST(billAmount);
+                  return {
+                    baseAmount: gst.baseAmount,
+                    gstRate: gst.gstRate,
+                    gstAmount: gst.gstAmount,
+                  };
+                })(),
               },
             },
           },
@@ -693,6 +710,9 @@ export const booking = router({
             id: true,
             modeOfPayment: true,
             totalAmount: true,
+            baseAmount: true,
+            gstRate: true,
+            gstAmount: true,
           },
         },
       },
@@ -735,6 +755,7 @@ export const booking = router({
           ? format(booking.schedule?.day, "dd-MM-yyyy")
           : "--",
         totalAmount: payment.totalAmount,
+        gstAmount: payment.gstAmount,
       }),
     });
 
@@ -756,6 +777,10 @@ export const booking = router({
         packageTitle: `${bookedPackage?.title ?? "--"} `,
         status: "Confirmed",
         totalAmount: payment.totalAmount,
+        baseAmount: payment.baseAmount,
+        gstRate: payment.gstRate,
+        gstAmount: payment.gstAmount,
+
         BookingId: booking.id,
         customerName: booking.user.name,
         date: booking.schedule?.day

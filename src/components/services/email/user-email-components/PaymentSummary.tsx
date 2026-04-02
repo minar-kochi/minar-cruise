@@ -11,9 +11,17 @@ import { ThemeConfig } from "./ThemeConfig";
 
 export default function PaymentSummary({
   totalAmount,
+  baseAmount,
+  gstRate,
+  gstAmount,
 }: {
   totalAmount: number;
+  baseAmount?: number;
+  gstRate?: number;
+  gstAmount?: number;
 }) {
+  const hasGST = gstAmount !== undefined && gstAmount > 0;
+
   return (
     <Section
       style={{
@@ -34,31 +42,84 @@ export default function PaymentSummary({
         Payment Summary
       </Heading>
 
-      <Row style={{ marginBottom: "12px" }}>
-        <Column>
-          <Text
-            style={{
-              color: ThemeConfig.textForeground,
-              margin: "0",
-              fontWeight: 450,
-            }}
-          >
-            Package Cost:
-          </Text>
-        </Column>
+      {hasGST ? (
+        <>
+          <Row style={{ marginBottom: "8px" }}>
+            <Column>
+              <Text
+                style={{
+                  color: ThemeConfig.textForeground,
+                  margin: "0",
+                  fontWeight: 450,
+                }}
+              >
+                Base Fare:
+              </Text>
+            </Column>
+            <Column align="right">
+              <Text
+                style={{
+                  fontWeight: 450,
+                  color: ThemeConfig.textForeground,
+                  margin: "0",
+                }}
+              >
+                ₹{(baseAmount ?? 0).toFixed(2)}
+              </Text>
+            </Column>
+          </Row>
 
-        <Column align="right">
-          <Text
-            style={{
-              fontWeight: 450,
-              color: ThemeConfig.textForeground,
-              margin: "0",
-            }}
-          >
-            ₹{totalAmount.toFixed(2)}
-          </Text>
-        </Column>
-      </Row>
+          <Row style={{ marginBottom: "8px" }}>
+            <Column>
+              <Text
+                style={{
+                  color: ThemeConfig.textForeground,
+                  margin: "0",
+                  fontWeight: 450,
+                }}
+              >
+                GST ({gstRate ?? 0}%):
+              </Text>
+            </Column>
+            <Column align="right">
+              <Text
+                style={{
+                  fontWeight: 450,
+                  color: ThemeConfig.textForeground,
+                  margin: "0",
+                }}
+              >
+                ₹{(gstAmount ?? 0).toFixed(2)}
+              </Text>
+            </Column>
+          </Row>
+        </>
+      ) : (
+        <Row style={{ marginBottom: "12px" }}>
+          <Column>
+            <Text
+              style={{
+                color: ThemeConfig.textForeground,
+                margin: "0",
+                fontWeight: 450,
+              }}
+            >
+              Package Cost:
+            </Text>
+          </Column>
+          <Column align="right">
+            <Text
+              style={{
+                fontWeight: 450,
+                color: ThemeConfig.textForeground,
+                margin: "0",
+              }}
+            >
+              ₹{totalAmount.toFixed(2)}
+            </Text>
+          </Column>
+        </Row>
+      )}
 
       <Hr
         style={{
@@ -78,7 +139,7 @@ export default function PaymentSummary({
               margin: "0",
             }}
           >
-            Total Amount:
+            Total Amount{hasGST ? " (incl. GST)" : ""}:
           </Text>
         </Column>
         <Column align="right">

@@ -2,6 +2,7 @@ import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 import { CreateUser } from "@/db/data/creator/user";
 import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
+import { calculateGSTPaise } from "@/lib/helpers/gst";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { checkBookingTimeConstraint } from "@/lib/utils";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
@@ -81,7 +82,9 @@ export async function CreateBookingForCreateSchedule({
   const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;
   const TotalChildPrice = packageIdExists.childPrice * numOfChildren;
 
-  const GrandTotal = TotalAdultPrice + TotalChildPrice;
+  const baseTotal = TotalAdultPrice + TotalChildPrice;
+  const gst = calculateGSTPaise(baseTotal);
+  const GrandTotal = gst.totalAmountPaise;
 
   if (GrandTotal <= 0) {
     throw new TRPCError({
