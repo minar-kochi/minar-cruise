@@ -14,6 +14,11 @@ const sampleTicketData: TGetUserBookingDetails = {
     discount: 0,
     modeOfPayment: "GPAY",
     totalAmount: 5200,
+    baseAmount: 4952,
+    gstRate: 5.0,
+    gstAmount: 248,
+    gstin: "32BSTPK7128K2Z8",
+    sacCode: "998555",
     updatedAt: "12/04/25",
   },
   schedule: {

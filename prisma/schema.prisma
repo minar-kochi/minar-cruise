@@ -15,11 +15,27 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// add description 
+// Singleton: holds the current GST/tax config editable from the admin dashboard.
+// The row is always upserted with id "singleton"; never create a second row.
+model TaxConfiguration {
+  id        String   @id @default("singleton")
+  gstRate   Float
+  sacCode   String
+  gstin     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+// add description
 //
 model Payments {
   id            String    @id @default(cuid())
   totalAmount   Int
+  baseAmount    Int       @default(0)
+  gstRate       Float     @default(0)
+  gstAmount     Int       @default(0)
+  gstin         String?
+  sacCode       String?
   advancePaid   Int
   discount      Int
   modeOfPayment String

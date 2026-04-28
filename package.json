@@ -80,6 +80,7 @@
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.5.4",
+    "html-to-image": "^1.11.13",
     "label": "^0.2.2",
     "lint-staged": "^15.2.7",
     "lucide-react": "^0.395.0",
