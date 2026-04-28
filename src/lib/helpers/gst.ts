@@ -1,9 +1,9 @@
 // GST Configuration for Minar Cruise
-// SAC Code: 996421 (Inland waterway passenger transport)
+// SAC Code: 998555
 // Rate: 5% GST
 
 export const GST_RATE = 5.0;
-export const GST_SAC_CODE = "996421";
+export const GST_SAC_CODE = "998555";
 export const MINAR_GSTIN = "32BSTPK7128K2Z8"; // TODO: Replace with actual GSTIN
 
 export interface GSTBreakdown {
