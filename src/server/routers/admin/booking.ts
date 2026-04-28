@@ -5,6 +5,8 @@ import EmailSendBookingConfirmation, {
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
+import { calculateGST } from "@/lib/helpers/gst";
+import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
 import {
   BookingSchedulesTotalCounts,
   BookingTotalCount,
@@ -492,6 +494,7 @@ export const booking = router({
       }
       //-------------checks if updated seats exceeds max capacity ENDS------------------------
 
+      const taxConfig = await getTaxConfig();
       const data = await db.booking.update({
         where: {
           id: bookingId,
@@ -510,6 +513,16 @@ export const booking = router({
               discount,
               modeOfPayment: paymentMode,
               totalAmount: billAmount,
+              ...(() => {
+                const gst = calculateGST(billAmount, taxConfig.gstRate);
+                return {
+                  baseAmount: gst.baseAmount,
+                  gstRate: gst.gstRate,
+                  gstAmount: gst.gstAmount,
+                };
+              })(),
+              gstin: taxConfig.gstin,
+              sacCode: taxConfig.sacCode,
             },
           },
           description,
@@ -598,6 +611,7 @@ export const booking = router({
             message: `Booking for total seat is filled. Extra :${sumBooking - MAX_BOAT_SEAT}`,
           });
         }
+        const taxConfig = await getTaxConfig();
         const data = await db.booking.create({
           data: {
             schedule: {
@@ -622,6 +636,16 @@ export const booking = router({
                 discount: discount,
                 modeOfPayment: paymentMode,
                 totalAmount: billAmount,
+                ...(() => {
+                  const gst = calculateGST(billAmount, taxConfig.gstRate);
+                  return {
+                    baseAmount: gst.baseAmount,
+                    gstRate: gst.gstRate,
+                    gstAmount: gst.gstAmount,
+                  };
+                })(),
+                gstin: taxConfig.gstin,
+                sacCode: taxConfig.sacCode,
               },
             },
           },
@@ -693,6 +717,9 @@ export const booking = router({
             id: true,
             modeOfPayment: true,
             totalAmount: true,
+            baseAmount: true,
+            gstRate: true,
+            gstAmount: true,
           },
         },
       },
@@ -735,6 +762,7 @@ export const booking = router({
           ? format(booking.schedule?.day, "dd-MM-yyyy")
           : "--",
         totalAmount: payment.totalAmount,
+        gstAmount: payment.gstAmount,
       }),
     });
 
@@ -756,6 +784,10 @@ export const booking = router({
         packageTitle: `${bookedPackage?.title ?? "--"} `,
         status: "Confirmed",
         totalAmount: payment.totalAmount,
+        baseAmount: payment.baseAmount,
+        gstRate: payment.gstRate,
+        gstAmount: payment.gstAmount,
+
         BookingId: booking.id,
         customerName: booking.user.name,
         date: booking.schedule?.day
