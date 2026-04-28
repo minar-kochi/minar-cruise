@@ -4,6 +4,7 @@ import { TRazorPayEventsCreateSchedule } from "@/Types/razorpay/type";
 import { TGetPackageTimeAndDuration } from "@/db/data/dto/package";
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { calculateGSTFromInclusive } from "@/lib/helpers/gst";
+import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
 import { OrderPaidEventError } from "@/class/razorpay/OrderPaidError";
 import { getInvalidScheduleTemplateWhatsApp } from "@/lib/helpers/retrieveWhatsAppMessage";
 import { db } from "@/db";
@@ -80,6 +81,7 @@ export async function handleCreateScheduleOrder({
   }
 
   try {
+    const taxConfig = await getTaxConfig();
     const { booking, schedule } = await executeTransactionWithRetry(
       async () => {
         return await db.$transaction(
@@ -121,17 +123,22 @@ export async function handleCreateScheduleOrder({
                   create: {
                     advancePaid: 0,
                     discount: 0,
-                    
+
                     // Amount paid received paise: convert by 100 to make to rupee
                     totalAmount: order.amount_paid / 100,
                     ...(() => {
-                      const gst = calculateGSTFromInclusive(order.amount_paid / 100);
+                      const gst = calculateGSTFromInclusive(
+                        order.amount_paid / 100,
+                        taxConfig.gstRate,
+                      );
                       return {
                         baseAmount: gst.baseAmount,
                         gstRate: gst.gstRate,
                         gstAmount: gst.gstAmount,
                       };
                     })(),
+                    gstin: taxConfig.gstin,
+                    sacCode: taxConfig.sacCode,
                     modeOfPayment: "ONLINE",
                   },
                 },

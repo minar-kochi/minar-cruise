@@ -1,12 +1,18 @@
 import { TicketData } from "@/components/admin/dashboard/ticket/cruise-ticket";
 import { TGetUserBookingDetails } from "@/db/data/dto/booking";
-import { calculateGSTFromInclusive, GST_SAC_CODE, MINAR_GSTIN } from "@/lib/helpers/gst";
+import { GST_SAC_CODE, MINAR_GSTIN } from "@/lib/helpers/gst";
 
-export function createBookingData({ data }: { data: TGetUserBookingDetails }) {
-  const totalFare = data?.payment.totalAmount ?? 0;
+export function createBookingData({
+  data,
+  gstin,
+  sacCode,
+}: {
+  data: TGetUserBookingDetails;
+  gstin?: string;
+  sacCode?: string;
+}) {
   const storedGstAmount = data?.payment.gstAmount ?? 0;
 
-  // Use stored GST data if available, otherwise back-calculate for new bookings
   const gst =
     storedGstAmount > 0
       ? {
@@ -28,14 +34,14 @@ export function createBookingData({ data }: { data: TGetUserBookingDetails }) {
         children: data?.schedule.Package?.childPrice ?? 480,
         infant: 0,
       },
-      totalFare,
+      totalFare: data?.payment.totalAmount ?? 0,
       vehicleCharges: 0,
       baseAmount: gst.baseAmount,
       gstRate: gst.gstRate,
       gstAmount: gst.gstAmount,
     },
-    supplierGSTIN: MINAR_GSTIN,
-    sacCode: GST_SAC_CODE,
+    supplierGSTIN: data?.payment.gstin ?? gstin ?? MINAR_GSTIN,
+    sacCode: data?.payment.sacCode ?? sacCode ?? GST_SAC_CODE,
     contactNum: data?.user.contact ?? "",
     boardingTime: data?.schedule.Package?.fromTime ?? "",
     reportingTime: data?.schedule.Package?.fromTime ?? "",

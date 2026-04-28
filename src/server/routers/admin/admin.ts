@@ -3,6 +3,7 @@ import { booking } from "./booking";
 import { schedule } from "./schedule";
 import { blog } from "./blog";
 import { packages } from "./packages";
+import { taxConfig } from "./taxConfig";
 
 export const admin = router({
   /**
@@ -15,6 +16,7 @@ export const admin = router({
   blog,
   schedule,
   packages,
+  taxConfig,
   isAdminTest: AdminProcedure.query(({ ctx: { AdminUser } }) => {
     return AdminUser;
   }),

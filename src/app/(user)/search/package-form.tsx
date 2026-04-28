@@ -141,10 +141,15 @@ export default function QuickPackageForm({
   const numofAdults = watch("numOfAdults");
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
+  const { data: taxConfig } =
+    trpc.admin.taxConfig.getPublicTaxConfig.useQuery(undefined, {
+      staleTime: 5 * 60 * 1000,
+    });
+  const gstRate = taxConfig?.gstRate ?? GST_RATE;
   const baseFare =
     numofAdults * (item.adultPrice / 100) +
     numOfChild * (item.childPrice / 100);
-  const gstBreakdown = calculateGST(baseFare);
+  const gstBreakdown = calculateGST(baseFare, gstRate);
   const total = gstBreakdown.totalAmount;
   const { executeRecaptcha } = useGoogleReCaptcha();
 
@@ -204,7 +209,7 @@ export default function QuickPackageForm({
                 <span>₹{safeTotal(baseFare)}</span>
               </div>
               <div className="flex justify-between text-xs text-gray-600">
-                <span>GST ({GST_RATE}%)</span>
+                <span>GST ({gstRate}%)</span>
                 <span>₹{safeTotal(gstBreakdown.gstAmount)}</span>
               </div>
               <div className="h-[1px] bg-gray-300 my-1" />

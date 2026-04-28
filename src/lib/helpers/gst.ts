@@ -1,10 +1,13 @@
-// GST Configuration for Minar Cruise
-// SAC Code: 998555
-// Rate: 5% GST
+// GST Configuration for Minar Cruise.
+// Source of truth is the TaxConfiguration row in the database — server code should
+// read it via `getTaxConfig()` from "@/lib/helpers/getTaxConfig", and client code
+// via the `admin.taxConfig.getPublicTaxConfig` tRPC query.
+// The constants below are fallback defaults used only when the DB row is missing
+// (e.g. fresh install before the first admin save).
 
 export const GST_RATE = 5.0;
 export const GST_SAC_CODE = "998555";
-export const MINAR_GSTIN = "32BSTPK7128K2Z8"; // TODO: Replace with actual GSTIN
+export const MINAR_GSTIN = "32BSTPK7128K2Z8";
 
 export interface GSTBreakdown {
   baseAmount: number;

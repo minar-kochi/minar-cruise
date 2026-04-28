@@ -7,6 +7,7 @@ import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/packa
 import { findScheduleById } from "@/db/data/dto/schedule/schedule";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { calculateGSTPaise } from "@/lib/helpers/gst";
+import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { Schedule } from "@prisma/client";
@@ -61,7 +62,8 @@ export async function CreateBookingForExistingSchedule({
   const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;
   const TotalChildPrice = packageIdExists.childPrice * numOfChildren;
   const baseTotal = TotalAdultPrice + TotalChildPrice;
-  const gst = calculateGSTPaise(baseTotal);
+  const taxConfig = await getTaxConfig();
+  const gst = calculateGSTPaise(baseTotal, taxConfig.gstRate);
   const GrandTotal = gst.totalAmountPaise;
 
   if (GrandTotal <= 0) {

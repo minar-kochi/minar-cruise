@@ -5,6 +5,7 @@ import { TGetPackageTimeAndDuration } from "@/db/data/dto/package";
 import { db } from "@/db";
 import { getDescription } from "@/lib/helpers/razorpay/utils";
 import { calculateGSTFromInclusive } from "@/lib/helpers/gst";
+import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation, {
@@ -58,6 +59,7 @@ export async function handleExistingScheduleOrder({
     });
     scheduleDate = schedule?.day ?? null;
     schedulePackage = schedule?.schedulePackage ?? null;
+    const taxConfig = await getTaxConfig();
     const { booking } = await executeTransactionWithRetry(
       async () => {
         return await db.$transaction(
@@ -93,13 +95,18 @@ export async function handleExistingScheduleOrder({
                     // Amount paid received paise: convert by 100 to make to rupee
                     totalAmount: order.amount_paid / 100,
                     ...(() => {
-                      const gst = calculateGSTFromInclusive(order.amount_paid / 100);
+                      const gst = calculateGSTFromInclusive(
+                        order.amount_paid / 100,
+                        taxConfig.gstRate,
+                      );
                       return {
                         baseAmount: gst.baseAmount,
                         gstRate: gst.gstRate,
                         gstAmount: gst.gstAmount,
                       };
                     })(),
+                    gstin: taxConfig.gstin,
+                    sacCode: taxConfig.sacCode,
                     modeOfPayment: "ONLINE",
                   },
                 },

@@ -7,6 +7,7 @@ import {
   LineChart,
   Package,
   PieChart,
+  Receipt,
   ShipIcon,
   ShoppingCart,
   SquarePen,
@@ -108,6 +109,18 @@ export const sideBarData = {
         {
           title: "View packages",
           url: "/admin/cruise-packages",
+        },
+      ],
+    },
+    {
+      title: "Tax Configuration",
+      url: "#",
+      routeName: "tax-configuration",
+      icon: Receipt,
+      items: [
+        {
+          title: "Manage GST settings",
+          url: "/admin/tax-configuration",
         },
       ],
     },
