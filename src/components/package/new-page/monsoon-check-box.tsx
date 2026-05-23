@@ -2,33 +2,24 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { getMonth } from "date-fns";
-import { useEffect, useState } from "react";
 
-export default function MonsoonCheckBox() {
-  // const [isVisible, setIsVisible] = useState(false);
+type TMonsoonCheckBox = {
+  date: Date | string | undefined;
+};
 
-  // useEffect(() => {
-  //   const currentTime = new Date(Date.now());
-  //   const currentMonth = getMonth(currentTime);
-  //   if (currentMonth >= 4 && currentMonth <= 6) {
-  //     setIsVisible(true);
-  //   }
-  // }, []);
-
-  // if (typeof window === "undefined") return;
+export default function MonsoonCheckBox({ date }: TMonsoonCheckBox) {
+  if (!date) return null;
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return null;
+  const month = getMonth(parsed);
+  if (month < 5 || month > 7) return null;
 
   return (
-    <div
-      className={cn(
-        "flex items-center pb-2",
-        // , { hidden: !isVisible }
-      )}
-    >
-      <Checkbox id="terms-and-privacy-condition" required aria-required />
+    <div className="flex items-center pb-2">
+      <Checkbox id="monsoon-restriction-ack" required aria-required />
       <Label
-        htmlFor="terms-and-privacy-condition"
+        htmlFor="monsoon-restriction-ack"
         className="ml-2 text-xs font-normal"
       >
         Due to monsoon restrictions, the sea cruise will not be available in

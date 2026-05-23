@@ -263,7 +263,7 @@ export default function BookingFormCard({
             Yes, I agree with the privacy policy and terms and conditions.
           </Label>
         </div>
-        {/* <MonsoonCheckBox/> */}
+        <MonsoonCheckBox date={watch("selectedScheduleDate")} />
       </div>
     </div>
   );
