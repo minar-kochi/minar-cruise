@@ -7,7 +7,10 @@ export default function WhatsappButton() {
     <div className="relative">
       <FloatingWhatsApp
         className="z-[60]"
-        phoneNumber={process.env.WHATSAPP_CUSTOMER_SUPPORT_NUMBER ?? "+918891301555"}
+        phoneNumber={
+          process.env.NEXT_PUBLIC_WHATSAPP_CUSTOMER_SUPPORT_NUMBER ??
+          "+918891301555"
+        }
         accountName="Minar Cruise Cochin"
         avatar="/assets/whatsapplogo.png"
         buttonClassName="absolute mb-14"

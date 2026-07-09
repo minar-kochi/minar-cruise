@@ -236,7 +236,7 @@ export const footer = {
     {
       name: "Minar Whatsapp Url",
       icon: "/assets/Social/whatsapp.svg",
-      url: `https://api.whatsapp.com/send?phone=91${process.env.WHATSAPP_CUSTOMER_SUPPORT_NUMBER}`,
+      url: `https://api.whatsapp.com/send?phone=91${process.env.NEXT_PUBLIC_WHATSAPP_CUSTOMER_SUPPORT_NUMBER}`,
     },
   ],
 };
