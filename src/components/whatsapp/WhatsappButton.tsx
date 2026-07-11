@@ -8,8 +8,9 @@ export default function WhatsappButton() {
       <FloatingWhatsApp
         className="z-[60]"
         phoneNumber={
-          process.env.NEXT_PUBLIC_WHATSAPP_CUSTOMER_SUPPORT_NUMBER ??
-          "+918891301555"
+          // process.env.NEXT_PUBLIC_WHATSAPP_CUSTOMER_SUPPORT_NUMBER ??
+          // "+918891301555"
+          "+917034191993"
         }
         accountName="Minar Cruise Cochin"
         avatar="/assets/whatsapplogo.png"
