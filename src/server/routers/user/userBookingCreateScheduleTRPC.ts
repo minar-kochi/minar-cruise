@@ -24,10 +24,23 @@ export async function CreateBookingForCreateSchedule({
   },
   scheduleTime,
   packageIdExists,
+  pricingOverride,
+  extraNotes,
+  skipMinimumCountCheck = false,
 }: {
   input: TOnlineBookingFormValidator;
   packageIdExists: TFindPackageByIdExcludingCustomAndExclusive;
   scheduleTime: $Enums.SCHEDULED_TIME;
+  /** Booking links carry their own snapshotted amount. */
+  pricingOverride?: { amountPaise: number };
+  extraNotes?: { bookingLinkId: string };
+  /**
+   * Booking links may go below MIN_NEW_BOOKING_COUNT: an admin issuing one has
+   * already authorised the sale over the phone, so the 30-guest floor for a
+   * brand-new schedule would only block a legitimate booking. The lead-time
+   * gate below still applies — the galley needs notice either way.
+   */
+  skipMinimumCountCheck?: boolean;
 }) {
   /**
    * To generate the event we need certain condition to be met.
@@ -53,7 +66,7 @@ export async function CreateBookingForCreateSchedule({
 
   const totalCount = numOfAdults + numOfChildren;
 
-  if (!isStatusSunset(scheduleTime)) {
+  if (!isStatusSunset(scheduleTime) && !skipMinimumCountCheck) {
     if (totalCount < MIN_NEW_BOOKING_COUNT) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -80,13 +93,18 @@ export async function CreateBookingForCreateSchedule({
         "Could not complete booking as it is too late for selected date, please select a different package or date",
     });
   }
-  const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;
-  const TotalChildPrice = packageIdExists.childPrice * numOfChildren;
+  let GrandTotal: number;
+  if (pricingOverride) {
+    GrandTotal = pricingOverride.amountPaise;
+  } else {
+    const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;
+    const TotalChildPrice = packageIdExists.childPrice * numOfChildren;
 
-  const baseTotal = TotalAdultPrice + TotalChildPrice;
-  const taxConfig = await getTaxConfig();
-  const gst = calculateGSTPaise(baseTotal, taxConfig.gstRate);
-  const GrandTotal = gst.totalAmountPaise;
+    const baseTotal = TotalAdultPrice + TotalChildPrice;
+    const taxConfig = await getTaxConfig();
+    const gst = calculateGSTPaise(baseTotal, taxConfig.gstRate);
+    GrandTotal = gst.totalAmountPaise;
+  }
 
   if (GrandTotal <= 0) {
     throw new TRPCError({
@@ -124,6 +142,7 @@ export async function CreateBookingForCreateSchedule({
     packageId: packageIdExists.id,
     bookingId,
     ...booking,
+    ...extraNotes,
   });
   const payment_capture = 1;
   const amount = GrandTotal;

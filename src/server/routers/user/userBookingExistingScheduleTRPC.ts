@@ -14,14 +14,27 @@ import { Schedule } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { format } from "date-fns";
 
+/**
+ * Supplied only by admin-generated booking links. When present, the fare comes
+ * from the link's price snapshot instead of the live package, and
+ * `amountPaise` is charged now (which is half the total for a 50% advance).
+ */
+export type TPricingOverride = {
+  amountPaise: number;
+};
+
 export async function CreateBookingForExistingSchedule({
   input: { email, name, numOfAdults, numOfBaby, numOfChildren, phone },
   packageIdExists,
   schedule,
+  pricingOverride,
+  extraNotes,
 }: {
   input: TOnlineBookingFormValidator;
   packageIdExists: TFindPackageByIdExcludingCustomAndExclusive;
   schedule: Schedule;
+  pricingOverride?: TPricingOverride;
+  extraNotes?: { bookingLinkId: string };
 }) {
   const CurrenttotalDbBookingCount = await totalBookedSeats(schedule.id);
 
@@ -59,12 +72,22 @@ export async function CreateBookingForExistingSchedule({
     });
   }
 
-  const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;
-  const TotalChildPrice = packageIdExists.childPrice * numOfChildren;
-  const baseTotal = TotalAdultPrice + TotalChildPrice;
-  const taxConfig = await getTaxConfig();
-  const gst = calculateGSTPaise(baseTotal, taxConfig.gstRate);
-  const GrandTotal = gst.totalAmountPaise;
+  /**
+   * Booking links carry their own already-computed amount (from the price
+   * snapshot taken when the admin generated the link), so the customer is
+   * never quoted a different figure to the one agreed on the phone.
+   */
+  let GrandTotal: number;
+  if (pricingOverride) {
+    GrandTotal = pricingOverride.amountPaise;
+  } else {
+    const TotalAdultPrice = packageIdExists.adultPrice * numOfAdults;
+    const TotalChildPrice = packageIdExists.childPrice * numOfChildren;
+    const baseTotal = TotalAdultPrice + TotalChildPrice;
+    const taxConfig = await getTaxConfig();
+    const gst = calculateGSTPaise(baseTotal, taxConfig.gstRate);
+    GrandTotal = gst.totalAmountPaise;
+  }
 
   if (GrandTotal <= 0) {
     throw new TRPCError({
@@ -102,7 +125,9 @@ export async function CreateBookingForExistingSchedule({
     scheduleId: schedule.id,
     packageTitle: packageIdExists.title,
     scheduledDate: format(schedule.day, "dd-MM-yyyy"),
-    bookingId,    ...booking,
+    bookingId,
+    ...booking,
+    ...extraNotes,
   });
 
   const payment_capture = 1;
