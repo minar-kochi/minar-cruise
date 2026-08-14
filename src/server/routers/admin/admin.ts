@@ -1,5 +1,6 @@
 import { AdminProcedure, router } from "@/server/trpc";
 import { booking } from "./booking";
+import { bookingLink } from "./bookingLink";
 import { schedule } from "./schedule";
 import { blog } from "./blog";
 import { packages } from "./packages";
@@ -13,6 +14,7 @@ export const admin = router({
    *
    */
   booking,
+  bookingLink,
   blog,
   schedule,
   packages,
