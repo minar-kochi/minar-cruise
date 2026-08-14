@@ -30,6 +30,10 @@ interface BookingConfirmationEmailForUserProps {
   baseAmount?: number;
   gstRate?: number;
   gstAmount?: number;
+  /** Collected now. Omit for fully-paid bookings. */
+  amountPaid?: number;
+  /** Outstanding, collected offline on the day. Omit or 0 hides the split. */
+  balanceDue?: number;
 }
 
 export const BookingConfirmationEmailForUser = ({
@@ -48,6 +52,8 @@ export const BookingConfirmationEmailForUser = ({
   baseAmount,
   gstRate,
   gstAmount,
+  amountPaid,
+  balanceDue,
 }: BookingConfirmationEmailForUserProps) => {
 
   return (
@@ -95,6 +101,8 @@ export const BookingConfirmationEmailForUser = ({
               baseAmount={baseAmount}
               gstRate={gstRate}
               gstAmount={gstAmount}
+              amountPaid={amountPaid}
+              balanceDue={balanceDue}
 
             />
 

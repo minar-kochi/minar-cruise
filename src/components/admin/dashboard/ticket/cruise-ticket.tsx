@@ -43,8 +43,13 @@ export interface TicketData {
       infant: number;
     };
     additionalCharges: number;
-    vehicleCharges: number;
+    /** Full value of the booking. */
     totalFare: number;
+    /** What has actually been collected. Equals totalFare unless part-paid. */
+    amountPaid: number;
+    /** totalFare - amountPaid. Zero for every fully-paid booking. */
+    balanceDue: number;
+    vehicleCharges: number;
     baseAmount: number;
     gstRate: number;
     gstAmount: number;
@@ -229,6 +234,8 @@ const CruiseTicket = ({ data }: CruiseTicketProps) => {
       departureTime={departureTime}
       hasGST={hasGST}
       totalFare={ticket.charges.totalFare}
+      amountPaid={ticket.charges.amountPaid}
+      balanceDue={ticket.charges.balanceDue}
       baseAmount={ticket.charges.baseAmount}
       gstAmount={ticket.charges.gstAmount}
       gstRate={ticket.charges.gstRate}
@@ -313,6 +320,8 @@ function TicketBody(props: {
   departureTime: string;
   hasGST: boolean;
   totalFare: number;
+  amountPaid: number;
+  balanceDue: number;
   baseAmount: number;
   gstAmount: number;
   gstRate: number;
@@ -329,6 +338,8 @@ function TicketBody(props: {
     departureTime,
     hasGST,
     totalFare,
+    amountPaid,
+    balanceDue,
     baseAmount,
     gstAmount,
     gstRate,
@@ -445,9 +456,36 @@ function TicketBody(props: {
               Amount Paid
             </p>
             <p className="text-[26px] font-bold leading-none text-slate-900 tabular-nums">
-              ₹{formatINR(totalFare)}
+              ₹{formatINR(amountPaid)}
             </p>
           </div>
+
+          {/*
+            Only part-paid bookings show a split. Fully-paid ones (every public
+            online booking, and any offline booking settled in full) render
+            exactly as before.
+          */}
+          {balanceDue > 0 && (
+            <div className="mt-3 space-y-1.5 border-t border-slate-300 pt-3 text-[12px] tabular-nums">
+              <div className="flex items-center justify-between text-slate-600">
+                <span>Total Amount</span>
+                <span className="font-medium text-slate-800">
+                  ₹{formatINR(totalFare)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-slate-900">
+                  Balance Due
+                  <span className="ml-1 font-normal text-slate-500">
+                    (payable at boarding)
+                  </span>
+                </span>
+                <span className="text-[15px] font-bold text-slate-900">
+                  ₹{formatINR(balanceDue)}
+                </span>
+              </div>
+            </div>
+          )}
 
           {hasGST && (
             <div className="mt-3 flex items-center justify-between gap-4 border-t border-slate-200 pt-2 text-[10px] text-slate-500">

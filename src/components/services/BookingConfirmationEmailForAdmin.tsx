@@ -33,6 +33,10 @@ interface BookingConfirmationEmailForAdmin {
   babyCount: number;
   scheduleId: string;
   gstAmount?: number;
+  /** Collected now. Omit for fully-paid bookings. */
+  amountPaid?: number;
+  /** Outstanding, to collect on the day. Omit or 0 hides the split. */
+  balanceDue?: number;
 }
 
 const domain = process.env.NEXT_PUBLIC_DOMAIN;
@@ -51,6 +55,8 @@ export function BookingConfirmationEmailForAdmin({
   childCount,
   scheduleId,
   gstAmount,
+  amountPaid,
+  balanceDue,
 }: BookingConfirmationEmailForAdmin) {
   const Subject = `🎉 New Booking Alert: ${packageTitle} - ${scheduleDate}`;
   const totalGuests = adultCount + childCount + babyCount;
@@ -106,6 +112,12 @@ export function BookingConfirmationEmailForAdmin({
                     {gstAmount && gstAmount > 0 ? (
                       <Text className="text-blue-500 text-[12px] m-0">
                         (incl. GST ₹{gstAmount})
+                      </Text>
+                    ) : null}
+                    {balanceDue && balanceDue > 0 ? (
+                      <Text className="text-blue-900 text-[13px] m-0 font-semibold">
+                        ₹{amountPaid?.toLocaleString()} collected · ₹
+                        {balanceDue.toLocaleString()} due at boarding
                       </Text>
                     ) : null}
                     <Text className="text-blue-600 text-[14px] m-0">

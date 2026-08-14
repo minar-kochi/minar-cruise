@@ -22,6 +22,19 @@ export function createBookingData({
         }
       : { baseAmount: 0, gstRate: 0, gstAmount: 0 };
 
+  /**
+   * `advancePaid` means "amount actually collected" — that is how the admin
+   * offline form fills it (booking.ts createNewOfflineBooking) and how the
+   * booking-link webhook path fills it. The public online flow leaves it at 0
+   * because the customer always pays in full, so a zero here reads as "nothing
+   * outstanding" and every pre-existing booking keeps rendering exactly as it
+   * did before this field existed.
+   */
+  const totalFare = data?.payment.totalAmount ?? 0;
+  const collected = data?.payment.advancePaid ?? 0;
+  const amountPaid = collected > 0 ? collected : totalFare;
+  const balanceDue = Math.max(0, totalFare - amountPaid);
+
   const details: TicketData = {
     bookingId: data?.id ?? "",
     bookingDate: data?.createdAt.toString() ?? "",
@@ -34,7 +47,9 @@ export function createBookingData({
         children: data?.schedule.Package?.childPrice ?? 480,
         infant: 0,
       },
-      totalFare: data?.payment.totalAmount ?? 0,
+      totalFare,
+      amountPaid,
+      balanceDue,
       vehicleCharges: 0,
       baseAmount: gst.baseAmount,
       gstRate: gst.gstRate,
