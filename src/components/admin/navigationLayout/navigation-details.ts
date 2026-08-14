@@ -5,6 +5,7 @@ import {
   Home,
   ImageUp,
   LineChart,
+  Link2,
   Package,
   PieChart,
   Receipt,
@@ -69,6 +70,22 @@ export const sideBarData = {
         {
           title: "Recent bookings",
           url: "/admin/booking/recent",
+        },
+      ],
+    },
+    {
+      title: "Booking Links",
+      url: "#",
+      routeName: "booking-links",
+      icon: Link2,
+      items: [
+        {
+          title: "Generate link",
+          url: "/admin/booking-links/new",
+        },
+        {
+          title: "View links",
+          url: "/admin/booking-links",
         },
       ],
     },
