@@ -1,9 +1,8 @@
 import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
 import { db } from "@/db";
-import { findPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
-import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { decideCreateOrExisting } from "@/lib/helpers/RequestToCreateSchedule";
+import { verifyRecaptcha } from "@/lib/helpers/recaptcha";
+import { resolveScheduleForPackageDate } from "@/lib/helpers/resolveScheduleForPackageDate";
 import { sendNodeMailerEmail } from "@/lib/helpers/resend";
 import {
   isCurrentMonthSameAsRequestedMonth,
@@ -14,24 +13,18 @@ import {
 import { exclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
 import { onlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { publicProcedure, router } from "@/server/trpc";
-import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import { $Enums, PrismaClient, SCHEDULED_TIME } from "@prisma/client";
 import { render } from "@react-email/components";
 import { TRPCError } from "@trpc/server";
-import axios from "axios";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
+import { bookingLink } from "./bookingLink";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
 import { getUserBookingDetails, totalBookedSeats } from "@/db/data/dto/booking";
 import { cuidRegex } from "@/lib/helpers/regex";
 import { BookingCuidValidator } from "@/lib/validators/Booking";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
-
-export type QueryObj = [
-  { id: string | undefined },
-  { day: Date; schedulePackage: SCHEDULED_TIME },
-];
 
 type TBlockedScheduleDateArray = {
   day: Date;
@@ -45,6 +38,7 @@ type TScheduleData = {
 }[];
 
 export const user = router({
+  bookingLink,
   createSubscription: publicProcedure
     .input(
       z.object({
@@ -56,33 +50,7 @@ export const user = router({
       }),
     )
     .mutation(async ({ input: { email, name, token } }) => {
-      try {
-        if (!token) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Please give access to Recaptcha",
-          });
-        }
-        const formData = `secret=${process.env.RECAPTCHA_SITE_SECRET}&response=${token}`;
-        const res = await axios.get(
-          `https://www.google.com/recaptcha/api/siteverify?${formData}`,
-        );
-        if (res && res.data?.success && res.data?.score < 0.5) {
-          throw new TRPCError({
-            code: "UNPROCESSABLE_CONTENT",
-            message: "Recaptcha Failed",
-          });
-        }
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw new TRPCError({ code: error.code, message: error.message });
-        }
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "Failed to validate Recaptcha Please try again, or contact admin",
-        });
-      }
+      await verifyRecaptcha(token);
 
       try {
         const data = await db.user.create({
@@ -251,113 +219,21 @@ export const user = router({
     .input(onlineBookingFormValidator)
     .mutation(async ({ ctx, input }) => {
       const { packageId, scheduleId, selectedScheduleDate } = input;
+      await verifyRecaptcha(input.token, {
+        missingTokenMessage: "Please give access to Recaptcha, or Contact Admins",
+        lowScoreMessage:
+          "Failed to validate Recaptcha Please try again, or contact admin",
+      });
       try {
-        if (!input.token) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Please give access to Recaptcha, or Contact Admins",
-          });
-        }
-        const formData = `secret=${process.env.RECAPTCHA_SITE_SECRET}&response=${input.token}`;
-        const res = await axios.get(
-          `https://www.google.com/recaptcha/api/siteverify?${formData}`,
-        );
-        if (res && res.data?.success && res.data?.score < 0.5) {
-          throw new TRPCError({
-            code: "UNPROCESSABLE_CONTENT",
-            message:
-              "Failed to validate Recaptcha Please try again, or contact admin",
-          });
-        }
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          throw new TRPCError({ code: error.code, message: error.message });
-        }
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "Failed to validate Recaptcha Please try again, or contact admin",
+        const resolved = await resolveScheduleForPackageDate({
+          packageId,
+          scheduleId,
+          selectedScheduleDate,
         });
-      }
-      try {
-        // Check if the package trying to book is either exist or it is available for public to book
-        const packageIdExists =
-          await findPackageByIdExcludingCustomAndExclusive(packageId);
+        const { packageIdExists, scheduleTime: scheduleTimeForPackage } =
+          resolved;
 
-        if (!packageIdExists) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Could not find given package",
-          });
-        }
-
-        // Mapping Package to specific schedule timing
-        const scheduleTimeForPackage =
-          findCorrespondingScheduleTimeFromPackageCategory(
-            packageIdExists.packageCategory,
-          );
-
-        if (!scheduleTimeForPackage) {
-          throw new TRPCError({
-            code: "UNPROCESSABLE_CONTENT",
-            message: "Couldn't find any package that are available to public",
-          });
-        }
-        /**
-         * check in query object to check whether the schedule already exists or to be created.
-         */
-        let queryObj: QueryObj = [
-          // This Could be Undefined
-          { id: scheduleId },
-          // This will be known, we know the date the user Whats to book, and the package they are preferred to book
-          {
-            day: new Date(selectedScheduleDate),
-            schedulePackage: scheduleTimeForPackage,
-          },
-        ];
-
-        /**
-         *  Random Id is passed then there wont be a schedule and it will go to schedule create event assuming there are no schedule.
-         *  if there are and if its set to blocked or exclusive should throw a error response
-         */
-        const schedule = await db.schedule.findFirst({
-          select: {
-            id: true,
-            schedulePackage: true,
-            packageId: true,
-            day: true,
-            fromTime: true,
-            scheduleStatus: true,
-            createdAt: true,
-            updatedAt: true,
-            toTime: true,
-            Package: {
-              select: {
-                title: true,
-                slug: true,
-              },
-            },
-          },
-          where: {
-            OR: queryObj,
-          },
-        });
-
-        // If the schedule is set to blocked then throw that time is already booked or blocked.
-        if (
-          schedule?.scheduleStatus === "BLOCKED" ||
-          schedule?.scheduleStatus === "EXCLUSIVE"
-        ) {
-          throw new TRPCError({
-            code: "UNPROCESSABLE_CONTENT",
-            message:
-              "Schedule for selected date is blocked, Please try different date.",
-          });
-        }
-        // If there is no schedule then event will try to generate a event.
-        const decider = decideCreateOrExisting(schedule?.id);
-
-        switch (decider) {
+        switch (resolved.decider) {
           // No schedule found.
           case "schedule.create": {
             // add schedule create event
@@ -369,29 +245,10 @@ export const user = router({
           }
           case "schedule.existing": {
             // add schedule Existing event here
-            if (!schedule || !schedule.id) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message:
-                  "Sorry, We didn't find the schedule appropriate to what you are looking for..",
-              });
-            }
-            if (schedule.packageId !== packageIdExists.id) {
-              let ScheduleConflictError: ScheduleConflictError = {
-                title: schedule.Package?.title ?? "",
-                slug: schedule.Package?.slug ?? "",
-                subCode: "SCHEDULE_CONFLICT_WITH_PACKAGE",
-                message: `There is Another Schedule at this Date and Time, Please Check ${schedule.Package?.title} to book for this date`,
-              };
-              throw new TRPCError({
-                code: "CONFLICT",
-                message: JSON.stringify(ScheduleConflictError),
-              });
-            }
             return await CreateBookingForExistingSchedule({
               input,
               packageIdExists,
-              schedule,
+              schedule: resolved.schedule,
             });
           }
           default: {
@@ -421,23 +278,8 @@ export const user = router({
       /**
        * if user exists dont create. or else create the user into the database.
        */
+      await verifyRecaptcha(token);
       try {
-        if (!token) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Please give access to Recaptcha",
-          });
-        }
-        const formData = `secret=${process.env.RECAPTCHA_SITE_SECRET}&response=${token}`;
-        const res = await axios.get(
-          `https://www.google.com/recaptcha/api/siteverify?${formData}`,
-        );
-        if (res && res.data?.success && res.data?.score < 0.5) {
-          throw new TRPCError({
-            code: "UNPROCESSABLE_CONTENT",
-            message: "Recaptcha Failed",
-          });
-        }
         const isUserExists = await db.user.findFirst({
           where: {
             email,
