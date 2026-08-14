@@ -20,7 +20,10 @@ export function getNotes(
       adultCount: data.adultCount,
       childCount: data.childCount,
       babyCount: data.babyCount,
-      bookingId: data.bookingId
+      bookingId: data.bookingId,
+      // Spread conditionally: an explicit `undefined` would still occupy one of
+      // Razorpay's 15 note slots, and the public flows must stay as they were.
+      ...(data.bookingLinkId ? { bookingLinkId: data.bookingLinkId } : {}),
     };
   }
 
@@ -37,6 +40,7 @@ export function getNotes(
     adultCount: data.adultCount,
     childCount: data.childCount,
     babyCount: data.babyCount,
-    bookingId: data.bookingId
+    bookingId: data.bookingId,
+    ...(data.bookingLinkId ? { bookingLinkId: data.bookingLinkId } : {}),
   };
 }

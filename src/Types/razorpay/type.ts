@@ -32,11 +32,24 @@ export type TRazorPayEventsCreateSchedule = {
   TMode;
 
 export type TOrderBooking = {
-  bookingId:string;
+  bookingId: string;
   userId: string;
   name: string;
   email: string;
   adultCount: number;
   childCount: number;
   babyCount: number;
+  /**
+   * Present only on admin-generated booking-link orders; the public /search and
+   * /package flows omit it entirely.
+   *
+   * Deliberately on the shared TOrderBooking rather than on each event type:
+   * handle-order.ts rewrites a `schedule.create` order into `schedule.existing`
+   * via `getNotes({ ..., ...rest })` when the schedule turns out to exist, and
+   * living here means the id survives that re-spread instead of being silently
+   * dropped.
+   *
+   * Razorpay caps notes at 15 key/value pairs; this is the 14th.
+   */
+  bookingLinkId?: string;
 };
