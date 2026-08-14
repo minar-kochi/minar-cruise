@@ -65,11 +65,90 @@ model Booking {
   schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   Events     Events[]
 
+  // Set when this booking originated from an admin-generated payment link.
+  BookingLink BookingLink?
+
   @@index([userId]) // For user's bookings queries
   @@index([scheduleId]) // For schedule-based queries
   @@index([paymentsId]) // For payment lookups
   @@index([createdAt]) // For date-based filtering
   @@index([userId, createdAt]) // Composite for user's recent bookings
+}
+
+enum BOOKING_LINK_STATUS {
+  ACTIVE
+  PAID
+  EXPIRED // advisory only — expiry is evaluated lazily against expiresAt
+  CANCELLED
+}
+
+enum BOOKING_LINK_PAYMENT_TYPE {
+  ADVANCE // advancePercent of the grand total, remainder collected offline
+  FULL
+}
+
+/// Admin-generated shareable booking/payment link (/book/<token>).
+/// Snapshots the package + pricing at generation time so the price quoted to the
+/// customer can never drift from what the admin promised on the phone.
+model BookingLink {
+  id     String              @id @default(cuid())
+  token  String              @unique
+  status BOOKING_LINK_STATUS @default(ACTIVE)
+
+  // ---- what is being sold ------------------------------------------------
+  packageId       String
+  Package         Package        @relation(fields: [packageId], references: [id], onDelete: Restrict)
+  scheduleDay     DateTime       @db.Date()
+  schedulePackage SCHEDULED_TIME
+  // Hint only. The schedule is re-resolved at pay time, since one may be
+  // created between generation and payment.
+  scheduleId      String?
+  schedule        Schedule?      @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+
+  // ---- pricing snapshot (PAISE, GST-exclusive — same unit as Package) -----
+  adultPricePaise Int
+  childPricePaise Int
+  gstRate         Float
+
+  paymentType    BOOKING_LINK_PAYMENT_TYPE
+  advancePercent Int                       @default(50)
+
+  // ---- optional admin prefill (the customer may edit all of these) --------
+  prefillName       String?
+  prefillEmail      String?
+  prefillPhone      String?
+  prefillAdultCount Int     @default(0)
+  prefillChildCount Int     @default(0)
+  prefillBabyCount  Int     @default(0)
+
+  // ---- written when the customer creates a Razorpay order ----------------
+  razorpayOrderId   String?
+  quotedTotalPaise  Int?
+  payableNowPaise   Int?
+  orderAdultCount   Int?
+  orderChildCount   Int?
+  orderBabyCount    Int?
+  orderName         String?
+  orderEmail        String?
+  orderPhone        String?
+  reservedBookingId String?
+
+  // ---- written by the order.paid webhook ---------------------------------
+  bookingId String?   @unique
+  booking   Booking?  @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  paidAt    DateTime?
+
+  expiresAt         DateTime
+  allowBelowMinimum Boolean  @default(true)
+  createdBy         String? // session.user.id — there is no Admin table, so no FK
+  adminNote         String?  @db.Text()
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt @default(now())
+
+  @@index([status])
+  @@index([packageId])
+  @@index([scheduleDay])
+  @@index([status, scheduleDay])
 }
 
 model User {
@@ -114,6 +193,7 @@ model Schedule {
   scheduleStatus  SCHEDULE_STATUS
   Package         Package?        @relation(fields: [packageId], references: [id])
   Booking         Booking[]
+  BookingLink     BookingLink[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt @default(now())
 
@@ -158,6 +238,7 @@ model Package {
   Schedule        Schedule[]
   packageImage    PackageImage[]
   PackageSeo      PackageSeo[]
+  BookingLink     BookingLink[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt @default(now())
 
