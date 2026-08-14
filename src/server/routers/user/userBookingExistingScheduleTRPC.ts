@@ -24,7 +24,15 @@ export type TPricingOverride = {
 };
 
 export async function CreateBookingForExistingSchedule({
-  input: { email, name, numOfAdults, numOfBaby, numOfChildren, phone },
+  input: {
+    email,
+    name,
+    numOfAdults,
+    numOfBaby,
+    numOfChildren,
+    phone,
+    selectedScheduleDate,
+  },
   packageIdExists,
   schedule,
   pricingOverride,
@@ -36,6 +44,31 @@ export async function CreateBookingForExistingSchedule({
   pricingOverride?: TPricingOverride;
   extraNotes?: { bookingLinkId: string };
 }) {
+  /**
+   * Last line of defence before money changes hands. `schedule.id` is what gets
+   * frozen into the Razorpay notes and what the webhook connects the Booking to,
+   * and nothing downstream ever re-checks the date — so if resolution ever drifts
+   * again, this is the only place left to catch it while the customer can still
+   * be told. Customers have previously been charged for a schedule days away from
+   * the one they picked; that must fail loudly rather than silently succeed.
+   *
+   * Compared in UTC on purpose: `Schedule.day` is `@db.Date` and hydrates as UTC
+   * midnight, and the resolver matched it against `new Date("YYYY-MM-DD")`, which
+   * is also UTC. Going through the local-time helpers here would make this assert
+   * depend on the server's timezone.
+   */
+  const resolvedDay = schedule.day.toISOString().split("T")[0];
+  if (resolvedDay !== selectedScheduleDate) {
+    console.error(
+      `[booking] schedule/date mismatch: schedule ${schedule.id} is ${resolvedDay}, customer selected ${selectedScheduleDate}`,
+    );
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message:
+        "We couldn't confirm the date you selected, Please pick your date again before paying.",
+    });
+  }
+
   const CurrenttotalDbBookingCount = await totalBookedSeats(schedule.id);
 
   if (CurrenttotalDbBookingCount === -1) {
