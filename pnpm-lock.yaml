@@ -143,6 +143,9 @@ importers:
       '@types/mdx':
         specifier: ^2.0.13
         version: 2.0.13
+      '@types/qrcode':
+        specifier: ^1.5.5
+        version: 1.5.5
       '@uploadthing/react':
         specifier: ^6.7.2
         version: 6.8.0(next@14.2.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(uploadthing@6.13.3(@effect/platform@0.72.0(effect@3.4.8))(next@14.2.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))))
@@ -236,6 +239,9 @@ importers:
       prisma:
         specifier: ^6.10.1
         version: 6.10.1(typescript@5.7.3)
+      qrcode:
+        specifier: ^1.5.4
+        version: 1.5.4
       razorpay:
         specifier: ^2.9.4
         version: 2.9.5
@@ -348,9 +354,6 @@ importers:
       '@types/nodemailer':
         specifier: ^6.4.15
         version: 6.4.17
-      '@types/qrcode':
-        specifier: ^1.5.5
-        version: 1.5.5
       '@types/react':
         specifier: ^18
         version: 18.3.18
@@ -378,9 +381,6 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.5
         version: 0.6.11(prettier@3.5.1)
-      qrcode:
-        specifier: ^1.5.4
-        version: 1.5.4
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))
