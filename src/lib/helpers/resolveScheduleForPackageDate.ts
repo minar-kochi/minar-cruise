@@ -17,9 +17,12 @@ import { TRPCError } from "@trpc/server";
  * slot, a slot already taken by a different package).
  *
  * Extracted from `user.createRazorPayIntent` so the public booking flow and
- * admin-generated booking links cannot drift apart on these rules. Behaviour is
- * unchanged from the original inline version, including the error messages,
- * which are surfaced to customers.
+ * admin-generated booking links cannot drift apart on these rules. The error
+ * messages are surfaced to customers.
+ *
+ * Invariant: the returned schedule is always on `selectedScheduleDate`. See the
+ * lookup below for why that has to be enforced here rather than trusted from the
+ * client.
  */
 
 const scheduleSelect = {
@@ -64,7 +67,11 @@ export async function resolveScheduleForPackageDate({
   selectedScheduleDate,
 }: {
   packageId: string;
-  /** Optional hint. A stale or bogus id simply falls through to the date match. */
+  /**
+   * Optional, advisory only. Never affects which schedule is returned — the
+   * resolution is driven entirely by `selectedScheduleDate`. Kept so a drifting
+   * client can be spotted in the logs.
+   */
   scheduleId?: string;
   selectedScheduleDate: string | Date;
 }): Promise<TResolveScheduleResult> {
@@ -92,21 +99,49 @@ export async function resolveScheduleForPackageDate({
   }
 
   /**
-   * Match on the id hint OR on (day, slot). A random/stale id yields no row, so
-   * the flow falls through to the create-schedule branch.
+   * The selected date decides which schedule a booking attaches to — never the
+   * client-supplied id.
+   *
+   * This used to be `OR: [{ id: scheduleId }, { day, slot }]`, which let a stale
+   * but still-valid id match its own row and win, silently attaching the booking
+   * to a different day. The calendar can produce such an id (it changes the date
+   * without clearing the id when its month query has no data), so customers were
+   * being booked days away from what they picked.
+   *
+   * `day` is now the only unconditional term, so whatever comes back is
+   * guaranteed to be on the requested date. The inner OR widens the match within
+   * that day: normally the slot identifies the schedule, but an admin may create
+   * a schedule whose `schedulePackage` differs from its package's category slot
+   * (the admin form takes the two independently), and the public calendar shows
+   * those as bookable because it filters by `packageId` alone. Matching on
+   * either keeps those bookable while still surfacing a slot held by a different
+   * package as the CONFLICT below.
+   *
+   * `orderBy` is required: nothing at the DB level prevents two rows sharing a
+   * (day, slot) — `handleCreateScheduleOrder` creates without a uniqueness check
+   * — and an unordered `findFirst` would pick between duplicates arbitrarily.
    */
   const schedule = await db.schedule.findFirst({
     select: scheduleSelect,
     where: {
-      OR: [
-        { id: scheduleId },
-        {
-          day: new Date(selectedScheduleDate),
-          schedulePackage: scheduleTime,
-        },
-      ],
+      day: new Date(selectedScheduleDate),
+      OR: [{ schedulePackage: scheduleTime }, { packageId: packageIdExists.id }],
     },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
   });
+
+  /**
+   * The id is now only a hint about what the customer's calendar believed. A
+   * mismatch is not fatal — the date already gave us the right row, and schedules
+   * are legitimately deleted and recreated by admins while a form sits open, so
+   * rejecting here would fail real bookings. Log it instead: a rising count means
+   * a client is drifting again.
+   */
+  if (scheduleId && scheduleId !== schedule?.id) {
+    console.warn(
+      `[resolveSchedule] ignoring stale scheduleId hint ${scheduleId} for ${selectedScheduleDate}/${scheduleTime}; resolved ${schedule?.id ?? "none"}`,
+    );
+  }
 
   if (
     schedule?.scheduleStatus === "BLOCKED" ||
