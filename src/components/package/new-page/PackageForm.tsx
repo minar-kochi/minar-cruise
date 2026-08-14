@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
 import { TRPCClientError } from "@trpc/client";
 import { format } from "date-fns";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -45,7 +45,6 @@ type TPackageForm = {
   childPrice: number;
   type?: "modal" | undefined;
   defaultDate?: string;
-  scheduleId?: string;
 };
 
 export default function PackageFormN({
@@ -91,6 +90,40 @@ export default function PackageFormN({
       packageCategory: packageCategory,
     },
   });
+
+  /**
+   * Stable identities on purpose: BookingFormCalender derives `scheduleId` in an
+   * effect keyed on these, so a fresh closure each render would loop forever.
+   * RHF's `setValue` is itself stable.
+   */
+  const setFormDateValue = useCallback(
+    (value: string) => setValue("selectedScheduleDate", value),
+    [setValue],
+  );
+
+  const setScheduleId = useCallback(
+    (value: string | undefined) => setValue("scheduleId", value),
+    [setValue],
+  );
+
+  /**
+   * The date the customer looks at comes from the store; the date that actually
+   * gets submitted lives in this form. The two were seeded independently —
+   * `defaultValues` falls back to today whenever no `defaultDate` prop is given —
+   * and only a calendar click ever reconciled them.
+   *
+   * That store is mounted on the (user) layout, so a date picked on one package
+   * page survives navigation to another (the navbar, the carousel and the
+   * conflict dialog all link without `?selectedDate=`). A fresh form would mount
+   * defaulted to today while the pill and the calendar still showed the carried
+   * date, and nothing prompted the customer to re-pick — so they paid for a date
+   * they were never shown. Mirroring the store here makes the displayed date the
+   * submitted date on every path; on the normal click path the two already agree,
+   * so this is a no-op.
+   */
+  useEffect(() => {
+    if (date) setFormDateValue(date);
+  }, [date, setFormDateValue]);
 
   const { mutate: CreateRazorPayIntent, isPending } =
     trpc.user.createRazorPayIntent.useMutation({
@@ -242,12 +275,8 @@ export default function PackageFormN({
           <div>{format(date ?? Date.now(), "iii dd/MM/yyyy")}</div>
         </div>
         <BookingFormCalender
-          setFormDateValue={(value: string) => {
-            setValue("selectedScheduleDate", value);
-          }}
-          setScheduleId={(value: string | undefined) => {
-            setValue("scheduleId", value);
-          }}
+          setFormDateValue={setFormDateValue}
+          setScheduleId={setScheduleId}
           packageId={packageId}
           packageCategory={packageCategory}
           {...(type === "modal" && { popoverCalender: true, className: "" })}
