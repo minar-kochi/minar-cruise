@@ -4,8 +4,8 @@ import { $Enums, Events } from "@prisma/client";
 import { TGetPackageTimeAndDuration } from "@/db/data/dto/package";
 import { db } from "@/db";
 import { getDescription } from "@/lib/helpers/razorpay/utils";
-import { calculateGSTFromInclusive } from "@/lib/helpers/gst";
-import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
+import { buildPaymentCreateInput } from "@/lib/helpers/razorpay/buildPaymentCreateInput";
+import { getBookingLinkForWebhook } from "@/db/data/dto/bookingLink";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation, {
@@ -42,6 +42,7 @@ export async function handleExistingScheduleOrder({
     userId,
     packageId,
     bookingId,
+    bookingLinkId,
   } = notes;
   let scheduleDate: Date | null = null;
   let schedulePackage: $Enums.SCHEDULED_TIME | null = null;
@@ -59,7 +60,20 @@ export async function handleExistingScheduleOrder({
     });
     scheduleDate = schedule?.day ?? null;
     schedulePackage = schedule?.schedulePackage ?? null;
-    const taxConfig = await getTaxConfig();
+    // Built before the transaction — it awaits getTaxConfig() and we keep async
+    // work out of the tx.
+    const linkPricing = bookingLinkId
+      ? await getBookingLinkForWebhook({
+          bookingLinkId,
+          razorpayOrderId: order.id,
+          adultCount,
+          childCount,
+        })
+      : null;
+    const paymentCreateInput = await buildPaymentCreateInput({
+      amountPaidPaise: payload.order.entity.amount_paid,
+      bookingLink: linkPricing,
+    });
     const { booking } = await executeTransactionWithRetry(
       async () => {
         return await db.$transaction(
@@ -89,26 +103,7 @@ export async function handleExistingScheduleOrder({
                   },
                 },
                 payment: {
-                  create: {
-                    advancePaid: 0,
-                    discount: 0,
-                    // Amount paid received paise: convert by 100 to make to rupee
-                    totalAmount: order.amount_paid / 100,
-                    ...(() => {
-                      const gst = calculateGSTFromInclusive(
-                        order.amount_paid / 100,
-                        taxConfig.gstRate,
-                      );
-                      return {
-                        baseAmount: gst.baseAmount,
-                        gstRate: gst.gstRate,
-                        gstAmount: gst.gstAmount,
-                      };
-                    })(),
-                    gstin: taxConfig.gstin,
-                    sacCode: taxConfig.sacCode,
-                    modeOfPayment: "ONLINE",
-                  },
+                  create: paymentCreateInput,
                 },
               },
             });
@@ -123,6 +118,19 @@ export async function handleExistingScheduleOrder({
                 metadata: booking,
               },
             });
+
+            // Consume the link in the same transaction, so a booking can never
+            // exist while its link is still payable.
+            if (bookingLinkId) {
+              await tx.bookingLink.update({
+                where: { id: bookingLinkId },
+                data: {
+                  status: "PAID",
+                  bookingId: booking.id,
+                  paidAt: new Date(),
+                },
+              });
+            }
 
             return { booking, updatedEvent };
           },
@@ -142,8 +150,24 @@ export async function handleExistingScheduleOrder({
     );
 
     let duration = `${packageDetail?.duration ? packageDetail.duration / 60 : "--"} Hr`;
-    const totalAmountRupees = order.amount_paid / 100;
-    const emailGst = calculateGSTFromInclusive(totalAmountRupees);
+    /**
+     * Reuse the figures we just persisted rather than recomputing from
+     * `order.amount_paid`. The old recompute passed no rate to
+     * calculateGSTFromInclusive, so it silently used the GST_RATE constant and
+     * ignored the admin's TaxConfiguration; it also inherited the fractional
+     * rupee problem. Reading them back keeps the email and the Payments row in
+     * agreement by construction.
+     */
+    const totalAmountRupees = paymentCreateInput.totalAmount as number;
+    const emailGst = {
+      baseAmount: (paymentCreateInput.baseAmount as number) ?? 0,
+      gstRate: (paymentCreateInput.gstRate as number) ?? 0,
+      gstAmount: (paymentCreateInput.gstAmount as number) ?? 0,
+    };
+    // Zero for every fully-paid booking, so the split stays hidden there.
+    const collected = (paymentCreateInput.advancePaid as number) ?? 0;
+    const emailAmountPaid = collected > 0 ? collected : totalAmountRupees;
+    const emailBalanceDue = Math.max(0, totalAmountRupees - emailAmountPaid);
 
     try {
       await Promise.all([
@@ -163,6 +187,8 @@ export async function handleExistingScheduleOrder({
             baseAmount: emailGst.baseAmount,
             gstRate: emailGst.gstRate,
             gstAmount: emailGst.gstAmount,
+            amountPaid: emailAmountPaid,
+            balanceDue: emailBalanceDue,
             BookingId: booking.id,
             customerName: name,
             date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
@@ -196,6 +222,8 @@ export async function handleExistingScheduleOrder({
               : "--",
             totalAmount: totalAmountRupees,
             gstAmount: emailGst.gstAmount,
+            amountPaid: emailAmountPaid,
+            balanceDue: emailBalanceDue,
           }),
         }),
       ]);

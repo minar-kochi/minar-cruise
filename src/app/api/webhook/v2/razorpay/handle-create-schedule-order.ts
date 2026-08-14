@@ -3,8 +3,8 @@ import { OrderPaidEventPayload } from "./razer-pay-order-paid.types";
 import { TRazorPayEventsCreateSchedule } from "@/Types/razorpay/type";
 import { TGetPackageTimeAndDuration } from "@/db/data/dto/package";
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
-import { calculateGSTFromInclusive } from "@/lib/helpers/gst";
-import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
+import { buildPaymentCreateInput } from "@/lib/helpers/razorpay/buildPaymentCreateInput";
+import { getBookingLinkForWebhook } from "@/db/data/dto/bookingLink";
 import { OrderPaidEventError } from "@/class/razorpay/OrderPaidError";
 import { getInvalidScheduleTemplateWhatsApp } from "@/lib/helpers/retrieveWhatsAppMessage";
 import { db } from "@/db";
@@ -46,6 +46,7 @@ export async function handleCreateScheduleOrder({
     date,
     userId,
     bookingId,
+    bookingLinkId,
   } = notes;
 
   const scheduleTimeForPackage =
@@ -81,7 +82,20 @@ export async function handleCreateScheduleOrder({
   }
 
   try {
-    const taxConfig = await getTaxConfig();
+    // Built before the transaction — it awaits getTaxConfig() and we keep async
+    // work out of the tx.
+    const linkPricing = bookingLinkId
+      ? await getBookingLinkForWebhook({
+          bookingLinkId,
+          razorpayOrderId: order.id,
+          adultCount,
+          childCount,
+        })
+      : null;
+    const paymentCreateInput = await buildPaymentCreateInput({
+      amountPaidPaise: order.amount_paid,
+      bookingLink: linkPricing,
+    });
     const { booking, schedule } = await executeTransactionWithRetry(
       async () => {
         return await db.$transaction(
@@ -120,27 +134,7 @@ export async function handleCreateScheduleOrder({
                   },
                 },
                 payment: {
-                  create: {
-                    advancePaid: 0,
-                    discount: 0,
-
-                    // Amount paid received paise: convert by 100 to make to rupee
-                    totalAmount: order.amount_paid / 100,
-                    ...(() => {
-                      const gst = calculateGSTFromInclusive(
-                        order.amount_paid / 100,
-                        taxConfig.gstRate,
-                      );
-                      return {
-                        baseAmount: gst.baseAmount,
-                        gstRate: gst.gstRate,
-                        gstAmount: gst.gstAmount,
-                      };
-                    })(),
-                    gstin: taxConfig.gstin,
-                    sacCode: taxConfig.sacCode,
-                    modeOfPayment: "ONLINE",
-                  },
+                  create: paymentCreateInput,
                 },
               },
             });
@@ -155,6 +149,20 @@ export async function handleCreateScheduleOrder({
                 metadata: booking,
               },
             });
+
+            // Consume the link in the same transaction, and re-point it at the
+            // schedule that was just created.
+            if (bookingLinkId) {
+              await tx.bookingLink.update({
+                where: { id: bookingLinkId },
+                data: {
+                  status: "PAID",
+                  bookingId: booking.id,
+                  scheduleId: schedule.id,
+                  paidAt: new Date(),
+                },
+              });
+            }
 
             return { booking, schedule, updatedEvent };
           },
@@ -175,8 +183,22 @@ export async function handleCreateScheduleOrder({
 
     let duration = `${packageDetail?.duration ? packageDetail.duration / 60 : "--"} Hr`;
 
-    const totalAmountRupees = order.amount_paid / 100;
-    const emailGst = calculateGSTFromInclusive(totalAmountRupees);
+    /**
+     * Reuse the persisted figures rather than recomputing from
+     * `order.amount_paid`. The old recompute passed no rate to
+     * calculateGSTFromInclusive (so it ignored the admin's TaxConfiguration and
+     * used the GST_RATE constant) and inherited the fractional rupee problem.
+     */
+    const totalAmountRupees = paymentCreateInput.totalAmount as number;
+    const emailGst = {
+      baseAmount: (paymentCreateInput.baseAmount as number) ?? 0,
+      gstRate: (paymentCreateInput.gstRate as number) ?? 0,
+      gstAmount: (paymentCreateInput.gstAmount as number) ?? 0,
+    };
+    // Zero for every fully-paid booking, so the split stays hidden there.
+    const collected = (paymentCreateInput.advancePaid as number) ?? 0;
+    const emailAmountPaid = collected > 0 ? collected : totalAmountRupees;
+    const emailBalanceDue = Math.max(0, totalAmountRupees - emailAmountPaid);
 
     try {
       await Promise.all([
@@ -202,6 +224,8 @@ export async function handleCreateScheduleOrder({
             scheduleDate: format(date, "dd-MM-yyyy"),
             totalAmount: totalAmountRupees,
             gstAmount: emailGst.gstAmount,
+            amountPaid: emailAmountPaid,
+            balanceDue: emailBalanceDue,
           }),
         }),
         // Send Email to Client
@@ -216,6 +240,8 @@ export async function handleCreateScheduleOrder({
             baseAmount: emailGst.baseAmount,
             gstRate: emailGst.gstRate,
             gstAmount: emailGst.gstAmount,
+            amountPaid: emailAmountPaid,
+            balanceDue: emailBalanceDue,
             adult: adultCount,
             child: childCount,
             infant: babyCount,
