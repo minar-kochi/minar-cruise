@@ -168,7 +168,10 @@ export default async function PackagePage({
           </div>
 
           <div className="2md:col-span-2 2md:row-start-2 2md:col-start-1">
-            <PackageAmmenties data={data} />
+            <PackageAmmenties
+              data={data}
+              defaultDate={parsedDate?.date ?? undefined}
+            />
           </div>
         </div>
         {isPackageStatusExclusive(data.packageCategory) && (

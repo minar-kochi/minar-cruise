@@ -16,7 +16,18 @@ import Image from "next/image";
 import ExclusivePackageEnquiryCard from "./ExclusivePackageEnquiryCard";
 import PackageFormN from "./PackageForm";
 
-export default function PackageAmmenties({ data }: { data: TGetPackageById }) {
+export default function PackageAmmenties({
+  data,
+  defaultDate,
+}: {
+  data: TGetPackageById;
+  /**
+   * Same `?selectedDate=` the sidebar form gets. This dialog renders a second
+   * PackageForm against the same shared store, so leaving it unseeded meant its
+   * calendar showed the URL's date while its form held today.
+   */
+  defaultDate?: string;
+}) {
   return (
     <div>
       <div className="rounded-2xl px-4 pt-16 pb-8 ">
@@ -66,6 +77,7 @@ export default function PackageAmmenties({ data }: { data: TGetPackageById }) {
                       childPrice={data.childPrice}
                       packageId={data.id}
                       packageCategory={data.packageCategory}
+                      defaultDate={defaultDate}
                       type="modal"
                     />
                   )}
