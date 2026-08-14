@@ -2,15 +2,16 @@
 import { trpc } from "@/app/_trpc/client";
 import ClientCalenderScheduleDay from "@/components/calender/ClientCalenderScheduleDay";
 import { Calendar } from "@/components/ui/calendar";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   cn,
   filterDateFromCalender,
+  parseDateFormatYYYMMDDToNumber,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
 import { Info, Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { SelectSingleEventHandler } from "react-day-picker";
 import CalendarPopover from "./CalendarPopover";
 import toast from "react-hot-toast";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
@@ -19,6 +20,8 @@ import { useAppDispatch } from "@/hooks/adminStore/reducer";
 import { setDate } from "@/lib/features/client/packageClientSlice";
 import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 import BookingCloseIn from "./booking-close-in";
+import { keepPreviousData } from "@tanstack/react-query";
+
 type TBookingFormCalender = {
   setFormDateValue: (value: string) => void;
   setScheduleId: (value: string | undefined) => void;
@@ -27,6 +30,22 @@ type TBookingFormCalender = {
   popoverCalender?: true | false;
   className?: string;
 };
+
+/**
+ * Parse a `YYYY-MM-DD` string back into a Date at LOCAL midnight.
+ *
+ * `new Date("2026-08-20")` parses as UTC midnight, which renders as the 19th for
+ * anyone west of UTC — so the day the calendar highlights, and the month it
+ * opens on, could disagree with the string the form is about to submit. These
+ * strings are produced by `RemoveTimeStampFromDate`, which formats in local time,
+ * so parsing them back in local time is what makes the round-trip exact.
+ */
+function parseLocalDate(value: string): Date | null {
+  const parsed = parseDateFormatYYYMMDDToNumber(value);
+  if (!parsed) return null;
+  return new Date(parsed.year, parsed.month - 1, parsed.day);
+}
+
 export default function BookingFormCalender({
   setFormDateValue,
   setScheduleId,
@@ -39,17 +58,33 @@ export default function BookingFormCalender({
     getPackageById(state, packageId),
   );
 
-  // const [date, setDate] = useState<Date | undefined>(undefined);
   const date = useClientSelector((state) => state.package.date);
   const dispatch = useAppDispatch();
+
+  /**
+   * Seed the visible month from the current selection rather than from today.
+   * The selected date lives in a store mounted on the (user) layout, so it
+   * survives navigation between package pages and can be months away from now.
+   * If its month is never fetched, the lookup below finds no schedule and an
+   * available date silently falls into the "needs 30 guests" path.
+   */
   const [month, setMonth] = useState<string>(
-    RemoveTimeStampFromDate(new Date(Date.now())),
+    () => date ?? RemoveTimeStampFromDate(new Date(Date.now())),
   );
-  const { refetch, isFetching, data, isPending } =
-    trpc.user.getSchedulesByPackageIdAndDate.useQuery({
-      packageId: packageId,
-      date: month,
-    });
+
+  const { data, isPending, isError } =
+    trpc.user.getSchedulesByPackageIdAndDate.useQuery(
+      {
+        packageId: packageId,
+        date: month,
+      },
+      /**
+       * Without this the query key changing (month paging) blanks `data` until
+       * the new fetch lands, leaving a window where the calendar is rendered
+       * with no schedules at all.
+       */
+      { placeholderData: keepPreviousData },
+    );
 
   const availableDateArray = data?.schedules.map((item) => {
     return item.day;
@@ -58,8 +93,146 @@ export default function BookingFormCalender({
   const disabledDays = data?.blockedScheduleDateArray.map((item) => ({
     day: new Date(item.day),
   }));
-  if (!packageData) return;
-  // console.log("hello", disabledDays);
+
+  /**
+   * The schedule for the selected day, DERIVED from (selection, fetched
+   * schedules) rather than assigned inside `onSelect`.
+   *
+   * It used to be a side effect of a click, which meant any path that moved the
+   * date without a successful click left the previous day's id behind: `onSelect`
+   * wrote the new date and then returned early when the month query had no data,
+   * and a date carried in from another package page was never accompanied by a
+   * click at all. The server then attached the booking to that stale id — days
+   * away from what the customer picked. As a derived value the pair cannot drift:
+   * whenever the date or the fetched schedules change, the id is recomputed or
+   * cleared.
+   */
+  const selectedSchedule = useMemo(() => {
+    if (!date || !data?.schedules) return undefined;
+    return data.schedules.find(
+      (fv) => RemoveTimeStampFromDate(new Date(fv.day)) === date,
+    );
+  }, [date, data]);
+
+  useEffect(() => {
+    setScheduleId(selectedSchedule?.id);
+  }, [selectedSchedule, setScheduleId]);
+
+  const monthDate = useMemo(
+    () => parseLocalDate(month) ?? new Date(Date.now()),
+    [month],
+  );
+
+  const selectedDate = useMemo(
+    () => (date ? parseLocalDate(date) : null) ?? new Date(Date.now()),
+    [date],
+  );
+
+  /**
+   * `isPending` alone is not enough: once react-query exhausts its retries the
+   * query settles into an error state, `isPending` goes false and the overlay
+   * would disappear while `data` is still undefined — leaving a fully clickable
+   * calendar with no schedules behind it.
+   */
+  const isCalendarBusy = isPending || isError || !data;
+
+  const handleSelect: SelectSingleEventHandler = (selected, _day, modifiers) => {
+    if (modifiers.disabled) {
+      toast.error("This date is disabled");
+      return;
+    }
+
+    if (!selected) return;
+
+    const nextDate = RemoveTimeStampFromDate(selected);
+    dispatch(setDate(nextDate));
+    setFormDateValue(nextDate);
+
+    // scheduleId is handled by the effect above; this only explains to the
+    // customer why a day with no schedule yet carries a minimum party size.
+    const hasSchedule = data?.schedules.some(
+      (fv) => RemoveTimeStampFromDate(new Date(fv.day)) === nextDate,
+    );
+
+    if (data && !hasSchedule && packageCategory !== "SUNSET") {
+      toast(
+        `This date requires at least ${MIN_NEW_BOOKING_COUNT} guests to set sail! 🌊✨`,
+        {
+          className:
+            "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
+          duration: 5000,
+          icon: <Info className="text-blue-600" />,
+          position: "top-center",
+          ariaProps: { "aria-live": "polite", role: "alert" },
+        },
+      );
+    }
+  };
+
+  if (!packageData) return null;
+
+  /**
+   * One definition shared by the popover and inline layouts. These were two
+   * byte-identical copies; the stale-id bug had to be fixed in both, and letting
+   * them drift again is how it comes back.
+   */
+  const calendar = (
+    <Calendar
+      className={cn({ "p-0 py-3 px-2": !popoverCalender })}
+      sizeMode={"lg"}
+      mode="single"
+      month={monthDate}
+      onMonthChange={(nextMonth) => {
+        setMonth(RemoveTimeStampFromDate(nextMonth));
+      }}
+      disabled={(day) =>
+        filterDateFromCalender({
+          date: day,
+          dateArray: disabledDays,
+          packageCategory: packageCategory as $Enums.SCHEDULED_TIME,
+          startFrom: packageData.fromTime,
+          AvailableDate: availableDateArray,
+        })
+      }
+      classNames={
+        popoverCalender
+          ? { button: "[&>button]:aria-selected:bg-black" }
+          : undefined
+      }
+      components={{
+        DayContent: (props) =>
+          ClientCalenderScheduleDay({
+            AvailableDate: availableDateArray,
+            props,
+            packageCategory,
+            blockedDate: data?.blockedScheduleDateArray.map((item) => item.day),
+            startFrom: packageData.fromTime,
+            isLoading: isCalendarBusy,
+          }),
+      }}
+      selected={selectedDate}
+      onSelect={handleSelect}
+    />
+  );
+
+  const loadingOverlay = (
+    <div
+      className={cn(
+        "absolute inset-0 bg-gray-200/70 z-20 animate-pulse",
+        {
+          hidden: !isCalendarBusy,
+        },
+      )}
+    >
+      <div className="flex items-center justify-center w-full h-full">
+        <div className="flex items-center justify-center gap-2 p-2 bg-white rounded-md">
+          <Loader2 className="animate-spin" />
+          <p>Loading Schedules...</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <BookingCloseIn
@@ -75,184 +248,14 @@ export default function BookingFormCalender({
               className,
             )}
           >
-            <Calendar
-              className=""
-              sizeMode={"lg"}
-              disabled={(date) => {
-                return filterDateFromCalender({
-                  date,
-                  dateArray: disabledDays,
-                  packageCategory: packageCategory as $Enums.SCHEDULED_TIME,
-                  startFrom: packageData.fromTime,
-                  AvailableDate: availableDateArray,
-                });
-              }}
-              mode="single"
-              classNames={{
-                button: "[&>button]:aria-selected:bg-black",
-              }}
-              components={{
-                DayContent: (props) =>
-                  ClientCalenderScheduleDay({
-                    AvailableDate: availableDateArray,
-                    props,
-                    packageCategory,
-                    blockedDate: data?.blockedScheduleDateArray.map(
-                      (item) => item.day,
-                    ),
-                    startFrom: packageData.fromTime,
-                    isLoading: isPending,
-                  }),
-              }}
-              selected={new Date(date ?? Date.now())}
-              onSelect={(date, dat, mod, e) => {
-                if (mod.disabled) {
-                  toast.error("This date is disabled");
-                  return;
-                }
-
-                if (!date) return;
-                dispatch(setDate(RemoveTimeStampFromDate(date)));
-                setFormDateValue(RemoveTimeStampFromDate(date));
-                if (!data || !data.schedules) return;
-
-                let scheduleIndex = data?.schedules.findIndex(
-                  (fv) =>
-                    RemoveTimeStampFromDate(new Date(fv.day)) ===
-                    RemoveTimeStampFromDate(date),
-                );
-
-                let schedule =
-                  scheduleIndex !== -1 ? data.schedules[scheduleIndex] : null;
-                if (!schedule) {
-                  setScheduleId(undefined);
-                  if (packageCategory !== "SUNSET") {
-                    toast(
-                      `This date requires at least ${MIN_NEW_BOOKING_COUNT} guests to set sail! 🌊✨`,
-                      {
-                        className:
-                          "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
-                        duration: 5000,
-                        icon: <Info className="text-blue-600" />,
-                        position: "top-center",
-                        ariaProps: { "aria-live": "polite", role: "alert" },
-                        // removeDelay: 300,
-                      },
-                    );
-                  }
-                  return;
-                }
-                setScheduleId(schedule.id);
-              }}
-              onMonthChange={(month) => {
-                setMonth(RemoveTimeStampFromDate(month));
-              }}
-            />
-            <div
-              className={cn(
-                "absolute top-16 w-full h-full bg-gray-200/70 z-20 animate-pulse",
-                {
-                  hidden: !isPending,
-                },
-              )}
-            >
-              <div className="flex items-center justify-center my-auto w-full h-full relative -top-12">
-                <div className="flex items-center justify-center gap-2 p-2 bg-white rounded-md">
-                  <Loader2 className="animate-spin" />
-                  <p>Loading Schedules...</p>
-                </div>
-              </div>
-            </div>
+            {calendar}
+            {loadingOverlay}
           </div>
         </CalendarPopover>
       ) : (
         <div className="  py-4 rounded-md overflow-hidden shadow-xl    bg-primary-foreground  border-black relative">
-          <Calendar
-            className="p-0 py-3 px-2  "
-            sizeMode={"lg"}
-            disabled={(date) =>
-              filterDateFromCalender({
-                date,
-                dateArray: disabledDays,
-                packageCategory: packageCategory as $Enums.SCHEDULED_TIME,
-                startFrom: packageData.fromTime,
-                AvailableDate: availableDateArray,
-              })
-            }
-            mode="single"
-            components={{
-              DayContent: (props) =>
-                ClientCalenderScheduleDay({
-                  AvailableDate: availableDateArray,
-                  props,
-                  packageCategory,
-                  blockedDate: data?.blockedScheduleDateArray.map(
-                    (item) => item.day,
-                  ),
-                  startFrom: packageData?.fromTime,
-                  isLoading: isPending,
-                }),
-            }}
-            selected={new Date(date ?? Date.now())}
-            onSelect={(date, dat, mod, e) => {
-              if (mod.disabled) {
-                toast.error("This date is disabled");
-                return;
-              }
-
-              if (!date) return;
-              dispatch(setDate(RemoveTimeStampFromDate(date)));
-              setFormDateValue(RemoveTimeStampFromDate(date));
-              if (!data || !data.schedules) return;
-
-              let scheduleIndex = data?.schedules.findIndex(
-                (fv) =>
-                  RemoveTimeStampFromDate(new Date(fv.day)) ===
-                  RemoveTimeStampFromDate(date),
-              );
-
-              let schedule =
-                scheduleIndex !== -1 ? data.schedules[scheduleIndex] : null;
-              if (!schedule) {
-                setScheduleId(undefined);
-                if (packageCategory !== "SUNSET") {
-                  toast(
-                    `This date requires at least ${MIN_NEW_BOOKING_COUNT} guests to set sail! 🌊✨`,
-                    {
-                      className:
-                        "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
-                      duration: 5000,
-                      icon: <Info className="text-blue-600" />,
-                      position: "top-center",
-                      ariaProps: { "aria-live": "polite", role: "alert" },
-                      // removeDelay: 300,
-                    },
-                  );
-                }
-
-                return;
-              }
-              setScheduleId(schedule.id);
-            }}
-            onMonthChange={(month) => {
-              setMonth(RemoveTimeStampFromDate(month));
-            }}
-          />
-          <div
-            className={cn(
-              "absolute top-16 w-full h-full bg-gray-200/70 z-20 animate-pulse",
-              {
-                hidden: !isPending,
-              },
-            )}
-          >
-            <div className="flex items-center justify-center my-auto w-full h-full relative -top-12">
-              <div className="flex items-center justify-center gap-2 p-2 bg-white rounded-md">
-                <Loader2 className="animate-spin" />
-                <p>Loading Schedules...</p>
-              </div>
-            </div>
-          </div>
+          {calendar}
+          {loadingOverlay}
         </div>
       )}
       <div className="my-2">
