@@ -5,6 +5,8 @@ import { schedule } from "./schedule";
 import { blog } from "./blog";
 import { packages } from "./packages";
 import { taxConfig } from "./taxConfig";
+import { bookingConfig } from "./bookingConfig";
+import { siteConfig } from "./siteConfig";
 
 export const admin = router({
   /**
@@ -19,6 +21,8 @@ export const admin = router({
   schedule,
   packages,
   taxConfig,
+  bookingConfig,
+  siteConfig,
   isAdminTest: AdminProcedure.query(({ ctx: { AdminUser } }) => {
     return AdminUser;
   }),

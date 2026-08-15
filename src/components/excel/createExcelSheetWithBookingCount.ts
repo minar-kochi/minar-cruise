@@ -1,4 +1,3 @@
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import {
   TGetSchedulesByDateRangeExcludingNull,
   TGetSchedulesByDateRangeWithBookingCount,
@@ -18,11 +17,14 @@ export type TScheduleWithBookingCount = (Omit<
 type TCreateExcelTable = {
   TableName: string;
   TableRowData: TScheduleWithBookingCount;
+  /** Boat capacity from the admin-editable booking config. */
+  maxBoatSeat: number;
 };
 
 export async function createExcelSheetWithBookingCount({
   TableName,
   TableRowData,
+  maxBoatSeat,
 }: TCreateExcelTable) {
   const workbook = new ExcelJS.Workbook();
 
@@ -180,7 +182,7 @@ export async function createExcelSheetWithBookingCount({
       duration: fromToTime,
       package: Package?.title,
       booked: Booking,
-      available: MAX_BOAT_SEAT - Booking,
+      available: maxBoatSeat - Booking,
     });
 
     // Styling the row

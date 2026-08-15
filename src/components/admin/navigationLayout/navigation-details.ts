@@ -9,6 +9,7 @@ import {
   Package,
   PieChart,
   Receipt,
+  Settings2,
   ShipIcon,
   ShoppingCart,
   SquarePen,
@@ -138,6 +139,26 @@ export const sideBarData = {
         {
           title: "Manage GST settings",
           url: "/admin/tax-configuration",
+        },
+      ],
+    },
+    {
+      title: "Settings",
+      url: "#",
+      routeName: "settings",
+      icon: Settings2,
+      items: [
+        {
+          title: "Booking rules",
+          url: "/admin/settings/booking",
+        },
+        {
+          title: "Site & SEO",
+          url: "/admin/settings/site",
+        },
+        {
+          title: "Show / hide sections",
+          url: "/admin/settings/visibility",
         },
       ],
     },

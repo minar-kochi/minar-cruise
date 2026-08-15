@@ -10,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { VIEW_BEFORE_PX } from "@/constants/config";
 import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import { VIEW_BEFORE_PX } from "@/constants/config";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setScheduleForBooking } from "@/lib/features/schedule/ScheduleSlice";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
@@ -25,6 +25,12 @@ export default function BookingSchedule() {
   const { SchedulesWithBookingData } = useAppSelector(
     (state) => state.schedule,
   );
+
+  // "Seats left" is capacity minus bookings, and capacity is admin-editable.
+  const { data: bookingConfig } =
+    trpc.admin.bookingConfig.getBookingConfig.useQuery();
+  // MAX_BOAT_SEAT only covers the first render, before the query resolves.
+  const maxBoatSeat = bookingConfig?.maxBoatSeat ?? MAX_BOAT_SEAT;
 
   const router = useRouter();
   const {
@@ -133,7 +139,7 @@ export default function BookingSchedule() {
                         {schedule.Booking}
                       </TableCell>
                       <TableCell className="max-sm:text-center ">
-                        {MAX_BOAT_SEAT - schedule.Booking}
+                        {maxBoatSeat - schedule.Booking}
                       </TableCell>
                       {/* <TableCell className=" max-sm:text-[8px] p-0 max-sm:hidden"></TableCell>{" "} */}
                     </TableRow>

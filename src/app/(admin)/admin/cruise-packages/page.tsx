@@ -11,6 +11,7 @@ import {
 import HeaderTitleDescription from "@/components/admin/elements/headerTitleDescription";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 export default async function CruisePackage() {
   const data = await db.package.findMany({
     select: {
@@ -20,6 +21,7 @@ export default async function CruisePackage() {
       duration: true,
       packageCategory: true,
       packageType: true,
+      isVisible: true,
     },
     orderBy: {
       packageCategory: "asc",
@@ -29,8 +31,8 @@ export default async function CruisePackage() {
     <main>
       <div>
         <HeaderTitleDescription
-          title="Package Page"
-          description="Manage and add schedules effortlessly. View existing schedules, create or update time slots, and select packages for various events like breakfast, lunch, and more."
+          title="Packages"
+          description="Edit a package's copy, prices, amenities and images, or hide it from the public site."
         />
       </div>
       <div className="border bg-sidebar m-2 p-2 rounded-md">
@@ -44,7 +46,8 @@ export default async function CruisePackage() {
                 Package Category
               </TableHead>
               <TableHead className="max-sm:text-[9px]">Package Type</TableHead>
-              <TableHead className="max-sm:text-[9px]">Change Images</TableHead>
+              <TableHead className="max-sm:text-[9px]">Visibility</TableHead>
+              <TableHead className="max-sm:text-[9px]">Edit</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -64,11 +67,16 @@ export default async function CruisePackage() {
                     {item.packageCategory.toLocaleLowerCase()}
                   </TableCell>
                   <TableCell className="max-sm:text-[9px] max-sm:text-pretty">
+                    <Badge variant={item.isVisible ? "default" : "secondary"}>
+                      {item.isVisible ? "Visible" : "Hidden"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="max-sm:text-[9px] max-sm:text-pretty">
                     <Link
                       className={buttonVariants({ variant: "outline" })}
                       href={`/admin/cruise-packages/${item.id}`}
                     >
-                      Update Image
+                      Edit package
                     </Link>
                   </TableCell>
                 </TableRow>

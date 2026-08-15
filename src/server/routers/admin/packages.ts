@@ -1,11 +1,35 @@
 import { db } from "@/db";
+import { getBookingConfigUncached } from "@/lib/helpers/config/getBookingConfig";
 import { getPackageAllImage } from "@/db/data/dto/package";
 import { AddPackageImageSchema } from "@/lib/validators/adminAddPackageImageValidator";
+import {
+  PackageDetailsValidator,
+  PackageSettingsValidator,
+  UpdateAmenityItemsValidator,
+} from "@/lib/validators/PackageContentValidator";
 import { revalidateAllPackageImageUse } from "@/revalidator/package";
+import { revalidatePackageContent } from "@/revalidator/site";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+
+const PackageSettingsProcedure = AdminProcedure.input(
+  PackageSettingsValidator,
+).mutation(async ({ input }) => {
+  const { id, ...settings } = input;
+  try {
+    await db.package.update({ where: { id }, data: settings });
+    await revalidatePackageContent();
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to update package settings",
+    });
+  }
+});
 
 export const packages = router({
   getPackageImage: AdminProcedure.input(
@@ -132,6 +156,159 @@ export const packages = router({
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Something went wrong",
+      });
+    }
+  }),
+
+  /** Everything the admin editor needs for one package, in one round trip. */
+  getPackageContent: AdminProcedure.input(z.object({ id: z.string() })).query(
+    async ({ input: { id } }) => {
+      const data = await db.package.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          packageType: true,
+          adultPrice: true,
+          childPrice: true,
+          duration: true,
+          fromTime: true,
+          toTime: true,
+          slug: true,
+          isVisible: true,
+          minLeadTimeHours: true,
+          minNewBookingCount: true,
+          isBookableOnline: true,
+          amenitiesId: true,
+          amenities: {
+            select: {
+              id: true,
+              items: {
+                orderBy: { order: "asc" },
+                select: { id: true, label: true, isVisible: true, order: true },
+              },
+            },
+          },
+        },
+      });
+      if (!data) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Package not found",
+        });
+      }
+      // The Settings tab shows "Use default (N)" inline, so it needs the numbers
+      // this package would inherit as well as its own overrides.
+      const defaults = await getBookingConfigUncached();
+      return { ...data, defaults };
+    },
+  ),
+
+  updatePackageSettings: PackageSettingsProcedure,
+
+  updatePackageDetails: AdminProcedure.input(PackageDetailsValidator).mutation(
+    async ({ input }) => {
+      const { id, adultPrice, childPrice, ...rest } = input;
+      try {
+        await db.package.update({
+          where: { id },
+          data: {
+            ...rest,
+            // The form works in rupees; the column is paise.
+            adultPrice: Math.round(adultPrice * 100),
+            childPrice: Math.round(childPrice * 100),
+          },
+        });
+
+        await revalidatePackageContent();
+        return { success: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update package details",
+        });
+      }
+    },
+  ),
+
+  /**
+   * Replaces a package's amenity list wholesale. The submitted array order is
+   * the display order.
+   *
+   * Rows absent from the payload are deleted, which is what makes "remove" work
+   * — but it also means a stale client could wipe items added elsewhere since
+   * it loaded. Acceptable here: this is a single-admin dashboard and the editor
+   * refetches after every save.
+   */
+  updateAmenityItems: AdminProcedure.input(
+    UpdateAmenityItemsValidator,
+  ).mutation(async ({ input: { packageId, items } }) => {
+    try {
+      const pkg = await db.package.findUnique({
+        where: { id: packageId },
+        select: { amenitiesId: true },
+      });
+      if (!pkg) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Package not found",
+        });
+      }
+
+      const keptIds = items
+        .map((item) => item.id)
+        .filter((id): id is string => Boolean(id));
+
+      await db.$transaction(async (tx) => {
+        await tx.amenityItem.deleteMany({
+          where: {
+            amenitiesId: pkg.amenitiesId,
+            ...(keptIds.length ? { id: { notIn: keptIds } } : {}),
+          },
+        });
+
+        // Indexed loop rather than .entries(): this tsconfig targets below
+        // ES2015, so iterating an ArrayIterator needs downlevelIteration.
+        for (let index = 0; index < items.length; index++) {
+          const item = items[index];
+          if (item.id) {
+            // `updateMany` scoped to this package's amenities, not `update` by
+            // id alone: `item.id` is client-supplied and validated only as a
+            // cuid, so an id belonging to another package's list would
+            // otherwise be rewritten here. Matches the `deleteMany` above. A
+            // stale id now matches nothing instead of hitting the wrong row.
+            await tx.amenityItem.updateMany({
+              where: { id: item.id, amenitiesId: pkg.amenitiesId },
+              data: {
+                label: item.label,
+                isVisible: item.isVisible,
+                order: index,
+              },
+            });
+          } else {
+            await tx.amenityItem.create({
+              data: {
+                amenitiesId: pkg.amenitiesId,
+                label: item.label,
+                isVisible: item.isVisible,
+                order: index,
+              },
+            });
+          }
+        }
+      });
+
+      await revalidatePackageContent();
+      return { success: true };
+    } catch (error) {
+      if (error instanceof TRPCError) throw error;
+      console.error(error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to update amenities",
       });
     }
   }),

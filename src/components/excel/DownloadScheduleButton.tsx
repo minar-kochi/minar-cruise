@@ -39,6 +39,7 @@ import {
 } from "@/db/data/dto/schedule/schedule";
 import { TDateRange } from "../admin/dashboard/Schedule/scheduleTable/ScheduleDownloadButton";
 import { trpc } from "@/app/_trpc/client";
+import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import toast from "react-hot-toast";
 import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import {
@@ -66,6 +67,11 @@ export default function DownloadScheduleTable({
    * */
 
   const { fetch } = trpc.useUtils().admin.schedule.getSchedulesByDateRange;
+  // The "available seats" column is capacity minus bookings, and capacity is
+  // admin-editable now.
+  const { data: bookingConfig } =
+    trpc.admin.bookingConfig.getBookingConfig.useQuery();
+
   async function handleDownload() {
     try {
       toast.loading("Fetching Schedule data");
@@ -89,6 +95,8 @@ export default function DownloadScheduleTable({
       await createExcelSheetWithBookingCount({
         TableName: "Schedules",
         TableRowData: scheduleData as TScheduleWithBookingCount,
+        // MAX_BOAT_SEAT only covers the case where the query has not resolved.
+        maxBoatSeat: bookingConfig?.maxBoatSeat ?? MAX_BOAT_SEAT,
       });
     } catch (error) {
       toast.dismiss();
