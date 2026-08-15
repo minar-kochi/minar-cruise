@@ -1,8 +1,8 @@
 import { db } from "@/db";
 import { getBookingLinkByToken } from "@/db/data/dto/bookingLink";
 import { totalBookedSeats } from "@/db/data/dto/booking";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { isBookingLinkExpired } from "@/lib/helpers/bookingLink/expiry";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
 import {
   computeBookingLinkQuote,
   MIN_ORDER_PAISE,
@@ -86,7 +86,9 @@ export const bookingLink = router({
         expiresAt: link.expiresAt,
         /** -1 means the count could not be read; treat as unknown, not full. */
         seatsLeft:
-          seatsBooked < 0 ? null : Math.max(0, MAX_BOAT_SEAT - seatsBooked),
+          seatsBooked < 0
+            ? null
+            : Math.max(0, (await getBookingConfig()).maxBoatSeat - seatsBooked),
         package: {
           title: link.Package.title,
           description: link.Package.description,
@@ -94,9 +96,11 @@ export const bookingLink = router({
           duration: link.Package.duration,
           fromTime: link.schedule?.fromTime ?? link.Package.fromTime,
           toTime: link.schedule?.toTime ?? link.Package.toTime,
-          amenities: link.Package.amenities?.description ?? [],
+          amenities:
+            link.Package.amenities?.items.map((item) => item.label) ?? [],
           imageUrl: link.Package.packageImage[0]?.image.url ?? null,
-          imageAlt: link.Package.packageImage[0]?.image.alt ?? link.Package.title,
+          imageAlt:
+            link.Package.packageImage[0]?.image.alt ?? link.Package.title,
         },
         prefill: {
           name: link.prefillName ?? "",
@@ -153,6 +157,10 @@ export const bookingLink = router({
         packageId: link.packageId,
         scheduleId: link.scheduleId ?? undefined,
         selectedScheduleDate: format(link.scheduleDay, "yyyy-MM-dd"),
+        // The sale was agreed when the link was issued. Hiding the package
+        // afterwards removes it from the public site; it must not strand a
+        // customer holding a link that has not expired yet.
+        allowHidden: true,
       });
 
       const sharedInput = {

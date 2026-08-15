@@ -1,5 +1,4 @@
 import { createId } from "@paralleldrive/cuid2";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { db } from "@/db";
 import { CreateUser } from "@/db/data/creator/user";
 import { totalBookedSeats } from "@/db/data/dto/booking";
@@ -8,6 +7,7 @@ import { findScheduleById } from "@/db/data/dto/schedule/schedule";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { calculateGSTPaise } from "@/lib/helpers/gst";
 import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { Schedule } from "@prisma/client";
@@ -88,7 +88,8 @@ export async function CreateBookingForExistingSchedule({
     });
   }
 
-  const remainingSeats = MAX_BOAT_SEAT - CurrenttotalDbBookingCount;
+  const { maxBoatSeat } = await getBookingConfig();
+  const remainingSeats = maxBoatSeat - CurrenttotalDbBookingCount;
 
   const totalSeatsSelected = numOfAdults + numOfChildren + numOfBaby;
   let exceededSeatCount = totalSeatsSelected - remainingSeats;
@@ -149,8 +150,8 @@ export async function CreateBookingForExistingSchedule({
     babyCount: numOfBaby,
     userId: user.id,
   };
-  const bookingId = createId()
-  console.log("id",bookingId)
+  const bookingId = createId();
+  console.log("id", bookingId);
 
   const notes = getNotes({
     eventType: "schedule.existing",
@@ -179,7 +180,8 @@ export async function CreateBookingForExistingSchedule({
       message: "success",
       order,
       phone: user.contact,
-      email: user.email,bookingId
+      email: user.email,
+      bookingId,
     };
 
     return data;

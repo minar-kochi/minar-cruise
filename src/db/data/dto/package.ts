@@ -1,4 +1,12 @@
 import { ORGANIZED_PACKAGE_KEY } from "@/constants/CacheKeys/package";
+import {
+  packageBookingRuleSelect,
+  publicAmenitiesSelect,
+  visibleAmenityItemsSelect,
+  withPackageAmenityDescriptions,
+  withPackageBookingRule,
+} from "./amenities";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
 import { db } from "@/db";
 import { TPackageNavigation } from "@/db/types/TPackage";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
@@ -31,6 +39,7 @@ export async function getPackageNavigation(): Promise<
         packageCategory: {
           notIn: ["CUSTOM"],
         },
+        isVisible: true,
       },
     });
     if (!data.length) {
@@ -90,15 +99,11 @@ export async function getPackageDetails(slug: string) {
         fromTime: true,
         toTime: true,
         childPrice: true,
-        amenities: {
-          select: {
-            description: true,
-          },
-        },
+        amenities: { select: visibleAmenityItemsSelect },
       },
     });
 
-    return data;
+    return data ? withPackageAmenityDescriptions(data) : data;
   } catch (error) {
     console.log(error);
     return null;
@@ -129,9 +134,11 @@ export async function getPackageById({ slug }: { slug: string }) {
         fromTime: true,
         toTime: true,
         childPrice: true,
-        amenities: true,
+        amenities: { select: publicAmenitiesSelect },
         food: true,
         slug: true,
+        isVisible: true,
+        ...packageBookingRuleSelect,
         packageImage: {
           select: {
             image: {
@@ -150,7 +157,11 @@ export async function getPackageById({ slug }: { slug: string }) {
       console.log("Failed to load package details");
       return null;
     }
-    return data;
+    const defaults = await getBookingConfig();
+    return withPackageBookingRule(
+      withPackageAmenityDescriptions(data),
+      defaults,
+    );
   } catch (error) {
     console.log(error);
     return null;
@@ -164,18 +175,27 @@ export type TGetPackageSearchItems = Exclude<
 export async function getPackageSearchItems() {
   try {
     const data = await db.package.findMany({
+      /**
+       * CUSTOM is excluded to match every other public read — the nav
+       * (`getPackageNavigation`), the package page (`getPackageById`) and its
+       * `generateStaticParams` all drop it. /search was the one surface that
+       * did not, so "Custom Packages" appeared as a bookable card whose "View
+       * package" link resolved to "Package not found!".
+       */
+      where: { isVisible: true, packageCategory: { not: "CUSTOM" } },
       select: {
         id: true,
         title: true,
         slug: true,
         adultPrice: true,
         childPrice: true,
-        amenities: true,
+        amenities: { select: publicAmenitiesSelect },
         description: true,
         duration: true,
         fromTime: true,
         toTime: true,
         packageCategory: true,
+        ...packageBookingRuleSelect,
         packageImage: {
           take: 2,
           where: {
@@ -203,7 +223,10 @@ export async function getPackageSearchItems() {
       }
       return null;
     }
-    return data;
+    const defaults = await getBookingConfig();
+    return data.map((item) =>
+      withPackageBookingRule(withPackageAmenityDescriptions(item), defaults),
+    );
   } catch (error) {
     return null;
   }
@@ -214,7 +237,10 @@ export const cachedSearchPackage = unstable_cache(
   undefined,
   {
     revalidate: 9600,
-    tags: ["ORGANIZED_PACKAGE_KEY"],
+    // Was the literal string "ORGANIZED_PACKAGE_KEY" while getOrganizedPackages
+    // below tags itself with the constant's *value* ("organized-package-schedule").
+    // They were two different tags, so busting one never cleared the other.
+    tags: ORGANIZED_PACKAGE_KEY,
   },
 );
 
@@ -230,6 +256,7 @@ export const getOrganizedPackages = unstable_cache(
   async () => {
     try {
       const data = await db.package.findMany({
+        where: { isVisible: true },
         select: {
           slug: true,
           title: true,
@@ -319,6 +346,7 @@ export async function getPackageCardDetails() {
     const data = await db.package.findMany({
       where: {
         packageType: "normal",
+        isVisible: true,
       },
       select: {
         id: true,
@@ -329,11 +357,7 @@ export async function getPackageCardDetails() {
         fromTime: true,
         toTime: true,
         slug: true,
-        amenities: {
-          select: {
-            description: true,
-          },
-        },
+        amenities: { select: visibleAmenityItemsSelect },
         packageImage: {
           take: 1,
           where: {
@@ -358,7 +382,7 @@ export async function getPackageCardDetails() {
       return null;
     }
 
-    return data;
+    return data.map(withPackageAmenityDescriptions);
   } catch (e) {
     console.error(e);
     return null;
@@ -375,6 +399,7 @@ export async function getNormalPackageCard() {
     const data = await db.package.findMany({
       where: {
         packageType: "normal",
+        isVisible: true,
       },
       select: {
         id: true,
@@ -423,6 +448,7 @@ export async function getSpecialPackageCard() {
     const data = await db.package.findMany({
       where: {
         packageType: "special",
+        isVisible: true,
       },
 
       select: {
@@ -462,8 +488,19 @@ export async function getSpecialPackageCard() {
   }
 }
 
+/**
+ * Resolves a package the public is allowed to pay for.
+ *
+ * `allowHidden` exists because "hidden" means two different things depending on
+ * who is asking. For a visitor it must mean unbookable, or hiding a package
+ * would drop it from every listing while its booking endpoint stayed open. For
+ * a booking link an admin already issued it must NOT — the sale was agreed
+ * before the package was hidden, and expiring those links silently would strand
+ * paying customers. Hence: closed by default, opened only by the link flow.
+ */
 export async function findPackageByIdExcludingCustomAndExclusive(
   packageId: string,
+  { allowHidden = false }: { allowHidden?: boolean } = {},
 ) {
   try {
     const packageFound = await db.package.findFirst({
@@ -472,6 +509,7 @@ export async function findPackageByIdExcludingCustomAndExclusive(
         packageCategory: {
           notIn: ["CUSTOM", "EXCLUSIVE"],
         },
+        ...(allowHidden ? {} : { isVisible: true }),
       },
     });
     return packageFound;
@@ -495,6 +533,7 @@ export async function getPackagesForBlog() {
         packageCategory: {
           notIn: ["CUSTOM", "EXCLUSIVE"],
         },
+        isVisible: true,
       },
       select: {
         id: true,

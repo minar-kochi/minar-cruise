@@ -65,6 +65,7 @@ export async function resolveScheduleForPackageDate({
   packageId,
   scheduleId,
   selectedScheduleDate,
+  allowHidden = false,
 }: {
   packageId: string;
   /**
@@ -74,10 +75,17 @@ export async function resolveScheduleForPackageDate({
    */
   scheduleId?: string;
   selectedScheduleDate: string | Date;
+  /**
+   * Set only by the booking-link flows. A link issued before the package was
+   * hidden has to keep resolving; the public booking form must not.
+   */
+  allowHidden?: boolean;
 }): Promise<TResolveScheduleResult> {
   // Check the package exists and is one the public may book at all.
-  const packageIdExists =
-    await findPackageByIdExcludingCustomAndExclusive(packageId);
+  const packageIdExists = await findPackageByIdExcludingCustomAndExclusive(
+    packageId,
+    { allowHidden },
+  );
 
   if (!packageIdExists) {
     throw new TRPCError({
@@ -125,7 +133,10 @@ export async function resolveScheduleForPackageDate({
     select: scheduleSelect,
     where: {
       day: new Date(selectedScheduleDate),
-      OR: [{ schedulePackage: scheduleTime }, { packageId: packageIdExists.id }],
+      OR: [
+        { schedulePackage: scheduleTime },
+        { packageId: packageIdExists.id },
+      ],
     },
     orderBy: [{ createdAt: "asc" }, { id: "asc" }],
   });

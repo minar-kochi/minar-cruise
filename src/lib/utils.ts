@@ -15,18 +15,7 @@ import {
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { DateTime } from "luxon";
-import {
-  isStatusBreakfast,
-  isStatusDinner,
-  isStatusLunch,
-  isStatusSunset,
-} from "./validators/Schedules";
-import {
-  MIN_BREAKFAST_BOOKING_HOUR,
-  MIN_DINNER_BOOKING_HOUR,
-  MIN_LUNCH_BOOKING_HOUR,
-  MIN_SUNSET_BOOKING_HOUR,
-} from "@/constants/config/business";
+import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -269,14 +258,14 @@ export function getISTDateAndTimeFromZ(date: Date) {
 export function filterDateFromCalender({
   dateArray,
   date,
-  packageCategory,
   startFrom,
   AvailableDate,
+  rule,
 }: {
   AvailableDate?: string[];
-  packageCategory: $Enums.SCHEDULED_TIME;
   startFrom: string;
   date: Date;
+  rule: TPackageBookingRule;
   dateArray:
     | {
         day: Date;
@@ -319,9 +308,9 @@ export function filterDateFromCalender({
   }
 
   const isAvailableForNewBooking = checkBookingTimeConstraint({
-    scheduleTime: packageCategory as $Enums.SCHEDULED_TIME,
     selectedDate: RemoveTimeStampFromDate(date),
     startFrom: startFrom,
+    rule,
   });
 
   if (!isAvailableForNewBooking) return true;
@@ -329,39 +318,88 @@ export function filterDateFromCalender({
   return false;
 }
 
-// return true if the schedule or bookings can be booked.
-export function checkBookingTimeConstraint({
-  scheduleTime,
-  startFrom,
+/**
+ * The two instants that bound a package's booking window for one date:
+ * when the ship leaves, and when we stop selling seats for it.
+ *
+ * This is THE definition of "departure − lead time". The badge, the calendar and
+ * the server all resolve through here, so they cannot drift apart —
+ * `checkBookingTimeConstraint` below is written in terms of it, and
+ * `calculateBookingLinkExpiry` clamps to the same `closesAt`.
+ *
+ * Parsing goes through `convertYYYMMDDStringAndTimeStringToUTCDate`, which
+ * splits on colons rather than matching a Luxon format string. That matters:
+ * `PackageContentValidator`'s `timeString` allows an unpadded hour (`0?[1-9]`),
+ * so `"4:30:PM"` is a legal stored value, and a format built on Luxon's strict
+ * two-digit `hh` token rejects it. Anything that reads `fromTime` must use this
+ * parser or it will silently produce an Invalid Date for half the packages.
+ *
+ * Returns both instants rather than just the cutoff so callers can tell
+ * "booking closed" from "already sailed" without parsing the time twice.
+ * Returns null when the date/time can't be parsed — callers must treat that as
+ * "no window", never as a number.
+ */
+export function getBookingWindow({
   selectedDate,
+  startFrom,
+  rule,
 }: {
-  scheduleTime: $Enums.SCHEDULED_TIME;
-  startFrom: string;
+  /** YYYY-MM-DD */
   selectedDate: string;
-}) {
-  const UTCISTDATE = convertYYYMMDDStringAndTimeStringToUTCDate(
+  /** `Package.fromTime`, e.g. "4:30:PM" or "04:30:PM" */
+  startFrom: string;
+  rule: Pick<TPackageBookingRule, "minLeadTimeHours">;
+}): { departureAt: Date; closesAt: Date } | null {
+  const departure = convertYYYMMDDStringAndTimeStringToUTCDate(
     selectedDate,
     startFrom,
   );
+  if (!departure || !departure.LuxObj.isValid) {
+    return null;
+  }
 
-  if (!UTCISTDATE) {
+  const departureAt = departure.parsedDate;
+  // Rounded because minLeadTimeHours is a Float: 0.5 and 1.25 are legal, and
+  // `0.1 * 3_600_000` is not an integer number of milliseconds.
+  const leadMs = Math.round(rule.minLeadTimeHours * 60 * 60 * 1000);
+
+  return {
+    departureAt,
+    closesAt: new Date(departureAt.getTime() - leadMs),
+  };
+}
+
+/**
+ * Returns true if the departure is still far enough away to accept a booking.
+ *
+ * Lead time ONLY. `rule.isBookableOnline` is deliberately not consulted here:
+ * that gate belongs to the public booking flow (`user.createRazorPayIntent`),
+ * and admin-issued booking links must keep working for a package that has been
+ * switched to enquiry-only — the admin has already agreed the sale by phone.
+ * Folding it in here would apply it to every caller indiscriminately.
+ *
+ * The rule is threaded in rather than read from module scope on purpose: this
+ * runs in client components (the calendar and the countdown badge), so reading
+ * constants here would bake the cutoffs into the client bundle at build time and
+ * an admin edit could never reach the browser without a redeploy. The rule is
+ * resolved per package on the server and rides along with the package data.
+ */
+export function checkBookingTimeConstraint({
+  startFrom,
+  selectedDate,
+  rule,
+}: {
+  startFrom: string;
+  selectedDate: string;
+  rule: TPackageBookingRule;
+}) {
+  const window = getBookingWindow({ selectedDate, startFrom, rule });
+
+  if (!window) {
     return false;
   }
-  const timeGap = UTCISTDATE.LuxObj.diffNow("hour").hours;
 
-  if (isStatusBreakfast(scheduleTime)) {
-    return timeGap > MIN_BREAKFAST_BOOKING_HOUR;
-  }
-  if (isStatusLunch(scheduleTime)) {
-    return timeGap > MIN_LUNCH_BOOKING_HOUR;
-  }
-  if (isStatusSunset(scheduleTime)) {
-    return timeGap > MIN_SUNSET_BOOKING_HOUR;
-  }
-  if (isStatusDinner(scheduleTime)) {
-    return timeGap > MIN_DINNER_BOOKING_HOUR;
-  }
-  return false;
+  return window.closesAt.getTime() > Date.now();
 }
 
 export function convert12HourTo24Hour({
@@ -495,13 +533,11 @@ export function isOlderThan(
   return differenceInMinutes(new Date(), date) > minutesAgo;
 }
 
-export function combineDateAndTime(dateStr: string, timeStr: string): Date {
-  const dt = DateTime.fromFormat(
-    `${dateStr} ${timeStr}`,
-    "yyyy-MM-dd hh:mm:a",
-    {
-      zone: "Asia/Kolkata",
-    },
-  );
-  return dt.toJSDate(); // Convert Luxon DateTime to JS Date
-}
+/**
+ * `combineDateAndTime` used to live here. It parsed `fromTime` with the Luxon
+ * format "yyyy-MM-dd hh:mm:a", whose `hh` token demands a zero-padded hour —
+ * so it returned an Invalid Date for the unpadded times the validator allows
+ * and the seed already contains ("4:30:PM"), while `getBookingWindow` parsed
+ * the very same string fine. Use `getBookingWindow` for anything that needs a
+ * departure instant.
+ */

@@ -1,13 +1,13 @@
-import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
 import { CreateUser } from "@/db/data/creator/user";
 import { TFindPackageByIdExcludingCustomAndExclusive } from "@/db/data/dto/package";
 import { $RazorPay } from "@/lib/helpers/RazorPay";
 import { calculateGSTPaise } from "@/lib/helpers/gst";
 import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
+import { resolvePackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { checkBookingTimeConstraint } from "@/lib/utils";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
-import { isStatusSunset } from "@/lib/validators/Schedules";
 import { createId } from "@paralleldrive/cuid2";
 import { $Enums } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -66,11 +66,22 @@ export async function CreateBookingForCreateSchedule({
 
   const totalCount = numOfAdults + numOfChildren;
 
-  if (!isStatusSunset(scheduleTime) && !skipMinimumCountCheck) {
-    if (totalCount < MIN_NEW_BOOKING_COUNT) {
+  // Rules are per package now, resolved against the site-wide defaults. A
+  // package resolving to `null` has no party-size floor; Sunset is seeded with
+  // `minNewBookingCount: 0` to get that, which is what the hardcoded
+  // `isStatusSunset` check used to encode. A package that leaves the column
+  // unset inherits the 30-guest default instead.
+  const bookingRule = resolvePackageBookingRule(
+    packageIdExists,
+    await getBookingConfig(),
+  );
+  const minNewBookingCount = bookingRule.minNewBookingCount;
+
+  if (minNewBookingCount !== null && !skipMinimumCountCheck) {
+    if (totalCount < minNewBookingCount) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: `Count Should of minimum ${MIN_NEW_BOOKING_COUNT}, for a new created schedule`,
+        message: `Count Should of minimum ${minNewBookingCount}, for a new created schedule`,
       });
     }
   }
@@ -80,10 +91,27 @@ export async function CreateBookingForCreateSchedule({
       message: "Count Should of minimum 1, for a Sunset Schedule",
     });
   }
+
+  /**
+   * The boat's capacity. This path creates the schedule, so there are no
+   * existing bookings to subtract — the party alone has to fit.
+   *
+   * `CreateBookingForExistingSchedule` has always checked this against the
+   * seats already sold; this path relied on the tRPC input schema's hardcoded
+   * `.max(150)` instead, which stopped being a real limit once `maxBoatSeat`
+   * became admin-editable and the schema was relaxed to a sanity ceiling.
+   */
+  const totalSeatsSelected = numOfAdults + numOfChildren + numOfBaby;
+  if (totalSeatsSelected > bookingRule.maxBoatSeat) {
+    throw new TRPCError({
+      code: "UNPROCESSABLE_CONTENT",
+      message: `We can only seat ${bookingRule.maxBoatSeat} guests, please reduce the number of seats`,
+    });
+  }
   const bookingRequestCameBeforeTimeConstraint = checkBookingTimeConstraint({
     selectedDate: selectedScheduleDate,
     startFrom: packageIdExists.fromTime,
-    scheduleTime,
+    rule: bookingRule,
   });
 
   if (!bookingRequestCameBeforeTimeConstraint) {
@@ -124,8 +152,8 @@ export async function CreateBookingForCreateSchedule({
       message: "Failed to add in user Details, Please try again",
     });
   }
-  const bookingId = createId()
-  console.log("id",bookingId)
+  const bookingId = createId();
+  console.log("id", bookingId);
   let booking = {
     name: name,
     email: email,
@@ -159,8 +187,8 @@ export async function CreateBookingForCreateSchedule({
     order,
     phone: user.contact,
     email: user.email,
-    bookingId
-  };  
+    bookingId,
+  };
 
   return data;
 }

@@ -7,6 +7,8 @@ import {
 import { resolveBookingLinkExpiry } from "@/lib/helpers/bookingLink/expiry";
 import { bookingLinkUrl } from "@/lib/helpers/bookingLink/url";
 import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
+import { resolvePackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { resolveScheduleForPackageDate } from "@/lib/helpers/resolveScheduleForPackageDate";
 import { generateBookingLinkSchema } from "@/lib/validators/bookingLink";
 import { AdminProcedure, router } from "@/server/trpc";
@@ -70,6 +72,11 @@ export const bookingLink = router({
         packageId: schedule.packageId,
         scheduleId: schedule.id,
         selectedScheduleDate: scheduleDate,
+        // An admin issuing a link for a hidden package is doing so
+        // deliberately — "hidden" means off the public site, not withdrawn
+        // from sale. This is an AdminProcedure; the visibility gate is there
+        // to close the public path, not this one.
+        allowHidden: true,
       });
 
       const { packageIdExists: pkg, scheduleTime } = resolved;
@@ -81,12 +88,16 @@ export const bookingLink = router({
        * phone; a later package edit or tax change must not silently move it.
        */
       const taxConfig = await getTaxConfig();
+      const bookingRule = resolvePackageBookingRule(
+        pkg,
+        await getBookingConfig(),
+      );
 
       const { expiresAt, clampedToDeparture } = resolveBookingLinkExpiry({
         scheduleDate,
         departureTime: pkg.fromTime,
-        scheduleTime,
         expiryHours: input.expiryHours,
+        rule: bookingRule,
       });
 
       if (expiresAt.getTime() <= Date.now()) {

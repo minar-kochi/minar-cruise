@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { error } from "console";
 import { setErrorMap, z } from "zod";
 import { isStatusSunset } from "./Schedules";
-import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
+import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 
 export type TOnlineBookingFormValidator = z.infer<
   typeof onlineBookingFormValidator
@@ -18,6 +18,24 @@ const packageCategory = [
   "SUNSET",
 ] as const;
 
+/**
+ * Sanity ceiling for the structural schema only — a guard against absurd input,
+ * not the boat's capacity. The real limit is `BookingConfig.maxBoatSeat`, which
+ * an admin can raise above the old hardcoded 150; enforcing 150 here would
+ * silently veto that.
+ */
+const ABSOLUTE_MAX_SEATS = 1000;
+
+/**
+ * Structural schema — also the tRPC input schema for `createRazorPayIntent`.
+ *
+ * Deliberately does NOT enforce the party-size minimum or the boat capacity:
+ * both are admin-editable now, and a static schema rejecting at the old numbers
+ * would block a legitimate booking before the config-aware check in
+ * `CreateBookingForCreateSchedule` ever ran. Client forms should build their
+ * resolver with `makeOnlineBookingFormValidator(config)` to get those errors
+ * inline; the server procedures remain the authority.
+ */
 export const onlineBookingFormValidator = z
   .object({
     name: z
@@ -36,20 +54,32 @@ export const onlineBookingFormValidator = z
         message: "Please Enter a valid Indian Mobile Number",
       })
       .optional(),
+    /**
+     * `.int().min(0)` on all three is load-bearing, not decoration. The totals
+     * below only check the sum, so without a floor `numOfAdults: -1` plus
+     * `numOfChildren: 2` reads as a party of one and prices as two child seats
+     * minus one adult — a paid booking for ₹50.
+     */
     numOfAdults: z
       .number({ message: "Please provide a valid number" })
-      .max(150, "Adult Count cannot exceed 150"),
+      .int("Adult Count must be a whole number")
+      .min(0, "Adult Count cannot be negative")
+      .max(ABSOLUTE_MAX_SEATS, "Adult Count is not valid"),
 
     numOfChildren: z
       .number({
         message: "Please Enter a valid number",
       })
-      .max(120, "Child Count cannot exceed 120"),
+      .int("Child Count must be a whole number")
+      .min(0, "Child Count cannot be negative")
+      .max(ABSOLUTE_MAX_SEATS, "Child Count is not valid"),
     numOfBaby: z
       .number({
         message: "Please Enter a valid number",
       })
-      .max(50, "Baby Count cannot exceed 50"),
+      .int("Baby Count must be a whole number")
+      .min(0, "Baby Count cannot be negative")
+      .max(ABSOLUTE_MAX_SEATS, "Baby Count is not valid"),
     packageId: z.string(),
     scheduleId: z.string().optional(),
     selectedScheduleDate: z.string(),
@@ -78,32 +108,54 @@ export const onlineBookingFormValidator = z
   )
   .refine(
     (data) => {
-      let totalCount = data.numOfAdults + data.numOfChildren;
-      if (
-        !data.scheduleId &&
-        totalCount < MIN_NEW_BOOKING_COUNT &&
-        !isStatusSunset(data.packageCategory)
-      ) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: `Should select at least a total of ${MIN_NEW_BOOKING_COUNT} seats (adult + child)`,
-      path: ["numOfAdults"],
-    },
-  )
-  .refine(
-    (data) => {
       let totalCount = data.numOfAdults + data.numOfChildren + data.numOfBaby;
-      if (totalCount > 150) return false;
+      if (totalCount > ABSOLUTE_MAX_SEATS) return false;
       return true;
     },
     {
-      message: "Max seats allowed 150",
+      message: "That is not a valid number of seats",
       path: ["numOfAdults"],
     },
   );
+
+/**
+ * The booking form schema with this package's rules applied, for use as a
+ * client-side `zodResolver`.
+ *
+ * A package whose rule resolves `minNewBookingCount` to null has no party-size
+ * floor at all — that is how Sunset ships, and it replaces the hardcoded
+ * `isStatusSunset` exemption this check used to carry.
+ *
+ * Both rules only bite when there is no existing schedule (`scheduleId`): joining
+ * a sailing that is already running has never required the new-schedule minimum.
+ */
+export function makeOnlineBookingFormValidator(rule: TPackageBookingRule) {
+  return onlineBookingFormValidator
+    .refine(
+      (data) => {
+        const totalCount = data.numOfAdults + data.numOfChildren;
+        if (data.scheduleId) return true;
+        if (rule.minNewBookingCount === null) return true;
+
+        return totalCount >= rule.minNewBookingCount;
+      },
+      {
+        message: `Should select at least a total of ${rule.minNewBookingCount} seats (adult + child)`,
+        path: ["numOfAdults"],
+      },
+    )
+    .refine(
+      (data) => {
+        const totalCount =
+          data.numOfAdults + data.numOfChildren + data.numOfBaby;
+        return totalCount <= rule.maxBoatSeat;
+      },
+      {
+        message: `Max seats allowed ${rule.maxBoatSeat}`,
+        path: ["numOfAdults"],
+      },
+    );
+}
 // export const ExtendedOnlineBookingFormWithRecaptcha = onlineBookingFormValidator.
 // .refine(
 //   (data) => {

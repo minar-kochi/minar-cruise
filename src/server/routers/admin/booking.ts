@@ -3,7 +3,7 @@ import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
 } from "@/components/services/email/EmailService";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
 import { db } from "@/db";
 import { calculateGST } from "@/lib/helpers/gst";
 import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
@@ -72,6 +72,7 @@ export const booking = router({
     }),
   ).mutation(async ({ input: { fromScheduleId, toScheduleId }, ctx }) => {
     try {
+      const { maxBoatSeat } = await getBookingConfig();
       /**
        * check if both scheduleId  exists in db, if not Throw trpc error
        * take the count of all seats of the from and to schedule id's
@@ -167,22 +168,22 @@ export const booking = router({
 
       //----------------------Comparing Seat count of both schedules STARTS----------------------
 
-      if (totalSeatsOfToSchedules === MAX_BOAT_SEAT) {
+      if (totalSeatsOfToSchedules === maxBoatSeat) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Max seats occupied, Cannot add new seats",
         });
       }
 
-      if (totalSeatsOfFromSchedules > MAX_BOAT_SEAT) {
+      if (totalSeatsOfFromSchedules > maxBoatSeat) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Cannot fill seats greater than max capacity",
         });
       }
-      if (totalSeatsOfFromSchedules + totalSeatsOfToSchedules > MAX_BOAT_SEAT) {
+      if (totalSeatsOfFromSchedules + totalSeatsOfToSchedules > maxBoatSeat) {
         let exceededCap =
-          totalSeatsOfFromSchedules + totalSeatsOfToSchedules - MAX_BOAT_SEAT;
+          totalSeatsOfFromSchedules + totalSeatsOfToSchedules - maxBoatSeat;
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: `Cannot move bookings, Total seat count may exceed maximum capacity by ${exceededCap}`,
@@ -230,6 +231,7 @@ export const booking = router({
   ).mutation(
     async ({ input: { idOfBookingToBeUpdated, toScheduleId }, ctx }) => {
       try {
+        const { maxBoatSeat } = await getBookingConfig();
         //-----------------Checks if given ID exists in db STARTS-----------------------------
         const fromScheduleIdExists = await findScheduleById(toScheduleId);
 
@@ -285,13 +287,13 @@ export const booking = router({
         //-----------------CHecking Count of the given scheduleID ENDS-----------------------------
 
         //-----------------CHecking if the seats does not surpass max capacity STARTS-----------------------------
-        if (totalSeatsOfBooking.totalBooking > MAX_BOAT_SEAT) {
+        if (totalSeatsOfBooking.totalBooking > maxBoatSeat) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Total passengers cannot surpass max capacity",
           });
         }
-        if (totalCountOfToScheduleId >= MAX_BOAT_SEAT) {
+        if (totalCountOfToScheduleId >= maxBoatSeat) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message:
@@ -301,7 +303,7 @@ export const booking = router({
 
         if (
           totalCountOfToScheduleId + totalSeatsOfBooking.totalBooking >
-          MAX_BOAT_SEAT
+          maxBoatSeat
         ) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -385,6 +387,7 @@ export const booking = router({
      */
     // @TODO @HOTFIX need to check the total count before updating booking
     try {
+      const { maxBoatSeat } = await getBookingConfig();
       //-------------checks if booking exists in DB STARTS------------------------
       const existingId = await db.booking.count({
         where: {
@@ -436,7 +439,7 @@ export const booking = router({
         });
       }
 
-      if (updatedSeatCountOfBooking > MAX_BOAT_SEAT) {
+      if (updatedSeatCountOfBooking > maxBoatSeat) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message:
@@ -473,7 +476,7 @@ export const booking = router({
       //   seatCountBeforeUpdate.totalBooking -
       //     updatedSeatCountOfBooking +
       //     formattedTotalCountOfSchedule >
-      //   MAX_BOAT_SEAT
+      //   maxBoatSeat
       // ) {
       //   throw new TRPCError({
       //     code: "BAD_REQUEST",
@@ -484,7 +487,7 @@ export const booking = router({
       if (
         updatedSeatCountOfBooking +
           (formattedTotalCountOfSchedule - seatCountBeforeUpdate.totalBooking) >
-        MAX_BOAT_SEAT
+        maxBoatSeat
       ) {
         throw new TRPCError({
           code: "BAD_GATEWAY",
@@ -574,6 +577,7 @@ export const booking = router({
        *
        */
       try {
+        const { maxBoatSeat } = await getBookingConfig();
         const schedule = await db.schedule.findUnique({
           where: {
             id: scheduleId,
@@ -605,10 +609,10 @@ export const booking = router({
 
         let sumBooking = CurrentBookingTotalSeats + aggregateBookingSum;
 
-        if (sumBooking > MAX_BOAT_SEAT) {
+        if (sumBooking > maxBoatSeat) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: `Booking for total seat is filled. Extra :${sumBooking - MAX_BOAT_SEAT}`,
+            message: `Booking for total seat is filled. Extra :${sumBooking - maxBoatSeat}`,
           });
         }
         const taxConfig = await getTaxConfig();

@@ -24,7 +24,7 @@ import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleT
 import { getUserBookingDetails, totalBookedSeats } from "@/db/data/dto/booking";
 import { cuidRegex } from "@/lib/helpers/regex";
 import { BookingCuidValidator } from "@/lib/validators/Booking";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
 
 type TBlockedScheduleDateArray = {
   day: Date;
@@ -172,6 +172,8 @@ export const user = router({
           },
         });
 
+        const { maxBoatSeat } = await getBookingConfig();
+
         const schedules = data.filter((fv) => fv.packageId === packageId);
 
         // Calculate total booked seats for each schedule and filter blocked dates
@@ -189,9 +191,9 @@ export const user = router({
             if (schedule.packageId === packageId) {
               const totalBookedSeats = schedule.Booking.reduce(
                 (sum, booking) => sum + booking.totalBooking,
-                0
+                0,
               );
-              return totalBookedSeats >= MAX_BOAT_SEAT;
+              return totalBookedSeats >= maxBoatSeat;
             }
 
             return false;
@@ -220,7 +222,8 @@ export const user = router({
     .mutation(async ({ ctx, input }) => {
       const { packageId, scheduleId, selectedScheduleDate } = input;
       await verifyRecaptcha(input.token, {
-        missingTokenMessage: "Please give access to Recaptcha, or Contact Admins",
+        missingTokenMessage:
+          "Please give access to Recaptcha, or Contact Admins",
         lowScoreMessage:
           "Failed to validate Recaptcha Please try again, or contact admin",
       });
@@ -232,6 +235,26 @@ export const user = router({
         });
         const { packageIdExists, scheduleTime: scheduleTimeForPackage } =
           resolved;
+
+        /**
+         * Enquiry-only packages take no money through the public form.
+         *
+         * Checked here rather than inside `resolveScheduleForPackageDate`,
+         * which is shared with admin booking-link generation and redemption —
+         * those must keep working after a package is switched to enquiry-only,
+         * since the admin has already agreed the sale. This procedure is the
+         * public path, and it is the only one that should be closed.
+         *
+         * Covers both deciders below, so it does not matter whether the date
+         * already has a schedule.
+         */
+        if (!packageIdExists.isBookableOnline) {
+          throw new TRPCError({
+            code: "UNPROCESSABLE_CONTENT",
+            message:
+              "This package is available by enquiry only, Please contact us to book it.",
+          });
+        }
 
         switch (resolved.decider) {
           // No schedule found.

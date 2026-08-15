@@ -2,7 +2,8 @@ import "server-only";
 import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { computeBookingLinkQuote } from "@/lib/helpers/bookingLink/quote";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
+import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
+import { publicAmenitiesSelect } from "./amenities";
 import { DeepReplaceType } from "@/db/types/TBookingSchedule";
 import { $Enums, Prisma } from "@prisma/client";
 
@@ -20,7 +21,7 @@ const linkPackageSelect = {
   fromTime: true,
   toTime: true,
   slug: true,
-  amenities: true,
+  amenities: { select: publicAmenitiesSelect },
   packageImage: {
     select: {
       image: {
@@ -186,12 +187,13 @@ export async function getSelectableSchedulesForLink({
   const hasMore = rows.length > take;
   const page = hasMore ? rows.slice(0, take) : rows;
 
+  const { maxBoatSeat } = await getBookingConfig();
   const schedules = page.map(({ Booking, ...schedule }) => {
     const seatsBooked = Booking.reduce((sum, b) => sum + b.totalBooking, 0);
     return {
       ...schedule,
       seatsBooked,
-      seatsLeft: Math.max(0, MAX_BOAT_SEAT - seatsBooked),
+      seatsLeft: Math.max(0, maxBoatSeat - seatsBooked),
     };
   });
 
