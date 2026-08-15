@@ -80,4 +80,20 @@ export const amenities: amenitiesPartialId = [
       "Pre wedding functions",
     ],
   },
+  /**
+   * Custom Packages. Used to share the Exclusive row above — harmless when
+   * amenities were a static `String[]`, but they are per-item editable rows
+   * now, so the two packages need separate lists or an admin editing one
+   * rewrites the other.
+   */
+  {
+    id: "clv2m8p4r0000847twe52k739",
+    description: [
+      "Fully tailored itinerary",
+      "Choice of cruise duration and route",
+      "Custom menu planning",
+      "Live music performances",
+      "Live DJ programs",
+    ],
+  },
 ];

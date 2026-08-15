@@ -57,7 +57,19 @@ async function main() {
 
       console.log("Inserting amenities...");
       await tx.amenities.createMany({
-        data: amenities,
+        data: amenities.map(({ id }) => ({ id })),
+      });
+      // The bullets are AmenityItem rows now, so each package's list can be
+      // reordered and hidden per item from the admin dashboard.
+      await tx.amenityItem.createMany({
+        data: amenities.flatMap((amenity) =>
+          amenity.description.map((label, index) => ({
+            amenitiesId: amenity.id!,
+            label,
+            order: index,
+            isVisible: true,
+          })),
+        ),
       });
       console.log("Completed amenities \n");
 

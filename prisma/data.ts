@@ -12,12 +12,31 @@ import {
 export type bookingPartialId = (Omit<Booking, "id" | "createdAt"> & {
   id?: string;
 })[];
-export type packagesPartialId = (Omit<Package, "createdAt"> & {
+export type packagesPartialId = (Omit<
+  Package,
+  | "createdAt"
+  | "isVisible"
+  | "minLeadTimeHours"
+  | "minNewBookingCount"
+  | "isBookableOnline"
+> & {
   id?: string;
+  /** All default in the database; seed rows need not spell them out. */
+  isVisible?: boolean;
+  /** null = follow the site-wide default. */
+  minLeadTimeHours?: number | null;
+  /** null = follow the default; 0 = no minimum. */
+  minNewBookingCount?: number | null;
+  isBookableOnline?: boolean;
 })[];
 export type foodMenuPartialId = (Omit<FoodMenu, "id"> & { id?: string })[];
 export type schedulePartialId = (Omit<Schedule, "id"> & { id?: string })[];
-export type amenitiesPartialId = (Omit<Amenities, "id"> & { id?: string })[];
+/**
+ * Seed shape only. `Amenities` no longer has a `description` column — the
+ * bullets live in `AmenityItem` rows now — so seed.ts expands these strings
+ * into items rather than passing them straight to `amenities.createMany`.
+ */
+export type amenitiesPartialId = { id?: string; description: string[] }[];
 export type userPartialId = (Omit<User, "id"> & { id?: string })[];
 export type imagesPartialId = (Omit<Image, "id"> & { id?: string })[];
 export type packageImagePartialId = (Omit<PackageImage, "id" | "ImageUse"> & {

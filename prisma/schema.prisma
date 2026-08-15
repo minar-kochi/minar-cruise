@@ -26,6 +26,44 @@ model TaxConfiguration {
   updatedAt DateTime @updatedAt @default(now())
 }
 
+// Singleton: site-wide branding, default SEO and contact details, editable from
+// the admin dashboard. Falls back to the literals in constructMetadata /
+// src/constants when the row is missing.
+model SiteConfig {
+  id              String   @id @default("singleton")
+  siteName        String
+  metaTitle       String
+  metaDescription String   @db.Text
+  keywords        String[]
+  ogImage         String
+  bookingNumbers  String[]
+  contactEmail    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt @default(now())
+}
+
+// One row per toggleable public page or nav entry. `key` is a stable slug the
+// code checks (e.g. "nav.gallery"); `label` only drives the admin list.
+model SiteSectionVisibility {
+  key       String   @id
+  label     String
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+// Singleton: boat-wide booking limits editable from the admin dashboard.
+// The row is always upserted with id "singleton"; never create a second row.
+// Falls back to src/constants/config/business.ts when the row is missing.
+model BookingConfig {
+  id                        String   @id @default("singleton")
+  maxBoatSeat               Int      @default(150)
+  defaultMinLeadTimeHours   Float    @default(2)
+  defaultMinNewBookingCount Int      @default(30)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt @default(now())
+}
+
 // add description
 //
 model Payments {
@@ -205,9 +243,25 @@ model Schedule {
 }
 
 model Amenities {
+  id      String        @id @default(cuid())
+  items   AmenityItem[]
+  Package Package[]
+}
+
+/// One bullet on a package's amenities list. Replaces the bare `String[]`,
+/// which had no per-item identity and so could not be reordered or hidden
+/// individually from the admin dashboard.
+model AmenityItem {
   id          String    @id @default(cuid())
-  description String[]
-  Package     Package[]
+  amenitiesId String
+  amenities   Amenities @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
+  label       String
+  order       Int       @default(0)
+  isVisible   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt @default(now())
+
+  @@index([amenitiesId, order])
 }
 
 enum PACKAGE_CATEGORY {
@@ -235,6 +289,28 @@ model Package {
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id], onDelete: Cascade)
   packageCategory PACKAGE_CATEGORY
+
+  /// Hides the package from public discovery — home carousel, /search and the
+  /// nav dropdown — and 404s its page. Deliberately NOT applied to booking-link
+  /// or admin lookups: links already issued and existing bookings must keep
+  /// resolving after a package is hidden.
+  isVisible Boolean @default(true)
+
+  /// Booking rules, per package. These used to live in a `BookingRule` table
+  /// keyed by SCHEDULED_TIME, which meant every DINNER package shared one
+  /// cutoff — a 4-hour dinner could not be given more notice than a 2-hour one.
+
+  /// Hours before departure after which bookings close.
+  /// null = follow BookingConfig.defaultMinLeadTimeHours.
+  minLeadTimeHours Float?
+
+  /// Minimum party size for opening a brand-new schedule.
+  /// null = follow the default; 0 = no minimum at all; n = exactly n.
+  minNewBookingCount Int?
+
+  /// When false the package is still listed but takes enquiries rather than
+  /// online bookings. Distinct from `isVisible`, which removes it entirely.
+  isBookableOnline Boolean @default(true)
   Schedule        Schedule[]
   packageImage    PackageImage[]
   PackageSeo      PackageSeo[]

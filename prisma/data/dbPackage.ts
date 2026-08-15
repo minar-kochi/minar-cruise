@@ -1,5 +1,15 @@
 import { packagesPartialId } from "../data";
 
+/**
+ * The booking rules below used to be per-category constants in
+ * `src/constants/config/business.ts`. They are per-package columns now, and the
+ * columns default to "follow the site-wide default" — so a package that does
+ * not spell out its override here silently inherits lunch/dinner's 2-hour
+ * cutoff and the 30-guest floor.
+ *
+ * Only the packages that differ from the default are annotated; the rest
+ * deliberately leave the fields unset.
+ */
 export const packages: packagesPartialId = [
   {
     id: "clj9r7rku0000356cql29f672",
@@ -16,6 +26,12 @@ export const packages: packagesPartialId = [
     fromTime: "09:00:AM",
     toTime: "11:00:AM",
     packageCategory: "BREAKFAST",
+    /**
+     * Was `MIN_BREAKFAST_BOOKING_HOUR`. The galley shops and preps the evening
+     * before, so a 09:00 sailing closes at 17:00 the previous day rather than
+     * at 07:00 the same morning.
+     */
+    minLeadTimeHours: 16,
     updatedAt: new Date(Date.now()),
   },
   {
@@ -51,6 +67,15 @@ export const packages: packagesPartialId = [
     toTime: "07:30:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "SUNSET",
+    /** Was `MIN_SUNSET_BOOKING_HOUR`. Tea and snacks only — an hour is enough. */
+    minLeadTimeHours: 1,
+    /**
+     * 0, not null: sunset opens a new sailing for a single guest. This is the
+     * `!isStatusSunset(scheduleTime)` exemption the booking flow used to carry.
+     * Leaving it null would inherit the 30-guest floor and block almost every
+     * sunset booking on an unscheduled date.
+     */
+    minNewBookingCount: 0,
   },
   {
     id: "clqqxac8q000308l55rjn5nv8",
@@ -136,6 +161,14 @@ export const packages: packagesPartialId = [
     toTime: "09:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "EXCLUSIVE",
+    /**
+     * Enquiry only. This is the `isPackageStatusExclusive` check the package
+     * page used to make on category — the column has to say so explicitly now,
+     * because it defaults to true. `findPackageByIdExcludingCustomAndExclusive`
+     * would reject the payment anyway, so leaving it on renders a form that
+     * cannot succeed.
+     */
+    isBookableOnline: false,
   },
   {
     id: "cm06nexn400000cl59cd4hz0m",
@@ -148,10 +181,18 @@ export const packages: packagesPartialId = [
     duration: 240,
     slug: "custom-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
-    amenitiesId: "clu5k4t6v0000736sqh81p506",
+    /**
+     * Its own row. This used to be the same id as Exclusive, which was
+     * invisible while amenities were a static `String[]` — but they are
+     * admin-editable rows now, so sharing meant editing either package's
+     * bullets silently rewrote the other's.
+     */
+    amenitiesId: "clv2m8p4r0000847twe52k739",
     fromTime: "05:00:PM",
     toTime: "09:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "CUSTOM",
+    /** Enquiry only — same reasoning as Exclusive above. */
+    isBookableOnline: false,
   },
 ];

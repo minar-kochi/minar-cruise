@@ -48,3 +48,7 @@ next-env.d.ts
 #logs
 logs
 /backup
+
+# Intermediate dump written by prisma/seeder/backfillPackageConfig.ts. Holds a
+# snapshot of live amenity copy between the `dump` and `apply` steps.
+prisma/seeder/.amenities-dump.json
