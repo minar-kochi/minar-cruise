@@ -24,7 +24,7 @@ import {
 } from "@/lib/utils";
 import { calculateGST, GST_RATE } from "@/lib/helpers/gst";
 import {
-  onlineBookingFormValidator,
+  makeOnlineBookingFormValidator,
   TOnlineBookingFormValidator,
 } from "@/lib/validators/onlineBookingValidator";
 import { TSchedulesData } from "@/Types/Schedule/ScheduleSelect";
@@ -53,7 +53,8 @@ export default function QuickPackageForm({
     getValues,
     setValue,
   } = useForm<TOnlineBookingFormValidator>({
-    resolver: zodResolver(onlineBookingFormValidator),
+    // The rule rides along with the package row from `getPackageSearchItems`.
+    resolver: zodResolver(makeOnlineBookingFormValidator(item.bookingRule)),
     defaultValues: {
       numOfAdults: 0,
       numOfChildren: 0,
@@ -141,10 +142,12 @@ export default function QuickPackageForm({
   const numofAdults = watch("numOfAdults");
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
-  const { data: taxConfig } =
-    trpc.admin.taxConfig.getPublicTaxConfig.useQuery(undefined, {
+  const { data: taxConfig } = trpc.admin.taxConfig.getPublicTaxConfig.useQuery(
+    undefined,
+    {
       staleTime: 5 * 60 * 1000,
-    });
+    },
+  );
   const gstRate = taxConfig?.gstRate ?? GST_RATE;
   const baseFare =
     numofAdults * (item.adultPrice / 100) +
@@ -201,6 +204,7 @@ export default function QuickPackageForm({
             errors={errors}
             adultPrice={item.adultPrice / 100}
             childPrice={item.childPrice / 100}
+            maxBoatSeat={item.bookingRule.maxBoatSeat}
           />
           <div className={cn("flex flex-col w-full mt-3 items-center gap-3")}>
             <div className="w-full max-w-sm px-4 space-y-1">

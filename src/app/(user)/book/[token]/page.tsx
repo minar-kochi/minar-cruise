@@ -1,14 +1,17 @@
 import BookingLinkFlow from "@/components/booking-link/BookingLinkFlow";
+import { Metadata } from "next";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = constructMetadata({
-  title: "Complete your booking | Minar Cruise",
-  description: "Confirm your seats and pay securely.",
-  // A private, single-use payment page should never be indexed.
-  noIndex: true,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return await constructMetadata({
+    title: "Complete your booking | Minar Cruise",
+    description: "Confirm your seats and pay securely.",
+    // A private, single-use payment page should never be indexed.
+    noIndex: true,
+  });
+}
 
 export default function BookingLinkPage({
   params,

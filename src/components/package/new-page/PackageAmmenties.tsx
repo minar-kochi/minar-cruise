@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { TGetPackageById } from "@/db/data/dto/package";
+import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { cn } from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { CheckCircle2 } from "lucide-react";
@@ -19,8 +20,11 @@ import PackageFormN from "./PackageForm";
 export default function PackageAmmenties({
   data,
   defaultDate,
+  bookingRule,
 }: {
   data: TGetPackageById;
+  /** Threaded through to the nested booking form in the dialog. */
+  bookingRule: TPackageBookingRule;
   /**
    * Same `?selectedDate=` the sidebar form gets. This dialog renders a second
    * PackageForm against the same shared store, so leaving it unseeded meant its
@@ -69,7 +73,7 @@ export default function PackageAmmenties({
                   Book your Seats Now
                 </DialogTrigger>
                 <DialogContent className="w-full mr-8 max-w-[380px] sm:max-w-[550px] ">
-                  {isPackageStatusExclusive(data.packageCategory) ? (
+                  {!data.bookingRule.isBookableOnline ? (
                     <ExclusivePackageEnquiryCard type="modal" />
                   ) : (
                     <PackageFormN
@@ -79,6 +83,7 @@ export default function PackageAmmenties({
                       packageCategory={data.packageCategory}
                       defaultDate={defaultDate}
                       type="modal"
+                      bookingRule={bookingRule}
                     />
                   )}
                 </DialogContent>

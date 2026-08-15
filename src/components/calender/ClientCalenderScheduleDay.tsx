@@ -3,6 +3,7 @@ import {
   cn,
   RemoveTimeStampFromDate,
 } from "@/lib/utils";
+import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { isSunset } from "@/lib/validators/Package";
 import { $Enums } from "@prisma/client";
 import { isSameDay } from "date-fns";
@@ -15,6 +16,8 @@ interface IClientCalenderScheduleDay {
   packageCategory: $Enums.PACKAGE_CATEGORY;
   startFrom: string;
   isLoading: boolean;
+  /** This package's resolved booking rule, threaded down from the server. */
+  bookingRule: TPackageBookingRule;
 }
 
 const CalendarThemeConfig = {
@@ -41,6 +44,7 @@ export default function ClientCalenderScheduleDay({
   packageCategory,
   startFrom,
   isLoading,
+  bookingRule,
 }: IClientCalenderScheduleDay) {
   const { date, activeModifiers } = props;
 
@@ -58,9 +62,9 @@ export default function ClientCalenderScheduleDay({
   const isPackageSunset = isSunset(packageCategory);
 
   const isAvailableForNewBooking = checkBookingTimeConstraint({
-    scheduleTime: packageCategory as $Enums.SCHEDULED_TIME,
     selectedDate: RemoveTimeStampFromDate(date),
     startFrom: startFrom,
+    rule: bookingRule,
   });
 
   let isBlocked = blockedDate
@@ -71,7 +75,7 @@ export default function ClientCalenderScheduleDay({
         ),
       )
     : -1;
-    
+
   const disabled = CalendarThemeConfig.disabled;
   const loading_color = CalendarThemeConfig.loading;
   const blocked = CalendarThemeConfig.blocked;
@@ -107,7 +111,9 @@ export default function ClientCalenderScheduleDay({
           [`${sunSetAvailable}`]: isPackageSunset && isAvailableForNewBooking,
           [`${blocked}`]: isBlocked !== -1,
           [`${not_available_booking}`]:
-            !isAvailableShown && !isAvailableForNewBooking && !activeModifiers.disabled,
+            !isAvailableShown &&
+            !isAvailableForNewBooking &&
+            !activeModifiers.disabled,
           [`${loading_color}`]: isLoading,
         },
       )}

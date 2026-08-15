@@ -13,15 +13,15 @@ import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import {
   absoluteUrl,
   cn,
-  combineDateAndTime,
   RemoveTimeStampFromDate,
   safeTotal,
 } from "@/lib/utils";
 import { calculateGST, GST_RATE } from "@/lib/helpers/gst";
 import {
-  onlineBookingFormValidator,
+  makeOnlineBookingFormValidator,
   TOnlineBookingFormValidator,
 } from "@/lib/validators/onlineBookingValidator";
+import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { isPackageStatusSunSet } from "@/lib/validators/Package";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,8 +35,6 @@ import toast from "react-hot-toast";
 import BookingFormCalender from "./BookingFormCalender";
 import BookingFormCard from "./BookingFormCard";
 import ColorRepresentationInfo from "./ColorRepresentationInfo";
-import { getPackageById } from "@/lib/features/client/packageClientSelectors";
-import BookingCloseIn from "./booking-close-in";
 
 type TPackageForm = {
   packageId: string;
@@ -45,6 +43,12 @@ type TPackageForm = {
   childPrice: number;
   type?: "modal" | undefined;
   defaultDate?: string;
+  /**
+   * This package's resolved booking rule, read on the server and threaded down.
+   * The form resolver is built from it so the party-size minimum and the boat
+   * capacity shown to the customer match what the server will enforce.
+   */
+  bookingRule: TPackageBookingRule;
 };
 
 export default function PackageFormN({
@@ -54,6 +58,7 @@ export default function PackageFormN({
   childPrice,
   type,
   defaultDate,
+  bookingRule,
 }: TPackageForm) {
   const store = useClientStore();
   const initialized = useRef(false);
@@ -69,6 +74,9 @@ export default function PackageFormN({
   const [ScheduleError, setScheduleError] =
     useState<ScheduleConflictError | null>(null);
 
+  /** null when this package sails with any party size. */
+  const minGuestsForNewSchedule = bookingRule.minNewBookingCount;
+
   const [isOpen, setIsOpen] = useState(false);
   const date = useClientSelector((state) => state.package.date);
   const {
@@ -79,7 +87,7 @@ export default function PackageFormN({
     getValues,
     setValue,
   } = useForm<TOnlineBookingFormValidator>({
-    resolver: zodResolver(onlineBookingFormValidator),
+    resolver: zodResolver(makeOnlineBookingFormValidator(bookingRule)),
     defaultValues: {
       numOfAdults: 0,
       numOfChildren: 0,
@@ -227,28 +235,17 @@ export default function PackageFormN({
   const numOfChild = watch("numOfChildren");
   const numOfInfant = watch("numOfBaby");
 
-  const { data: taxConfig } =
-    trpc.admin.taxConfig.getPublicTaxConfig.useQuery(undefined, {
+  const { data: taxConfig } = trpc.admin.taxConfig.getPublicTaxConfig.useQuery(
+    undefined,
+    {
       staleTime: 5 * 60 * 1000,
-    });
+    },
+  );
   const gstRate = taxConfig?.gstRate ?? GST_RATE;
   const baseFare =
     numofAdults * (adultPrice / 100) + numOfChild * (childPrice / 100);
   const gstBreakdown = calculateGST(baseFare, gstRate);
   const total = gstBreakdown.totalAmount;
-
-  const packageTime = useClientSelector((state) =>
-    getPackageById(state, packageId),
-  );
-
-  const fromTime = packageTime?.fromTime ?? "";
-
-  const unformattedDate =
-    typeof date !== "string"
-      ? RemoveTimeStampFromDate(new Date(date ?? Date.now()))
-      : date;
-
-  const selectedDate = combineDateAndTime(unformattedDate, fromTime);
 
   return (
     <article className="flex flex-col pt-3  items-center justify-center pb-5 w-full">
@@ -279,6 +276,7 @@ export default function PackageFormN({
           setScheduleId={setScheduleId}
           packageId={packageId}
           packageCategory={packageCategory}
+          bookingRule={bookingRule}
           {...(type === "modal" && { popoverCalender: true, className: "" })}
         />
         <div
@@ -318,21 +316,21 @@ export default function PackageFormN({
               />
             </div>
           </div>
-          <div
-            className={cn({
-              hidden: isPackageStatusSunSet({
-                packageStatus: packageCategory,
-              }),
-            })}
-          >
-            <ColorRepresentationInfo
-              containerClass="max-w-[200px] gap-1 text-blue-600"
-              className={cn(
-                "bg-white border mt-1 self-start  flex-shrink-0 border-black rounded-sm",
-              )}
-              title="Rest of the days requires 25 guests to book"
-            />
-          </div>
+          {/*
+           * Only shown when this cruise actually has a party-size floor. The
+           * copy used to be a hardcoded "25" while the enforced number was 30.
+           */}
+          {minGuestsForNewSchedule !== null ? (
+            <div>
+              <ColorRepresentationInfo
+                containerClass="max-w-[200px] gap-1 text-blue-600"
+                className={cn(
+                  "bg-white border mt-1 self-start  flex-shrink-0 border-black rounded-sm",
+                )}
+                title={`Rest of the days requires ${minGuestsForNewSchedule} guests to book`}
+              />
+            </div>
+          ) : null}
         </div>
         {type ? null : <div className="m-7 h-[1px] w-[100%] bg-gray-300" />}
 
@@ -344,6 +342,7 @@ export default function PackageFormN({
           errors={errors}
           adultPrice={adultPrice / 100}
           childPrice={childPrice / 100}
+          maxBoatSeat={bookingRule.maxBoatSeat}
           className={cn("", { "": type === "modal" })}
         />
         <div className={cn("flex flex-col w-full mt-3 items-center gap-3")}>

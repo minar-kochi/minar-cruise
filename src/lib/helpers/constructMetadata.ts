@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import { keywords } from "@/constants/seo/home";
 import { TemplateString } from "next/dist/lib/metadata/types/metadata-types";
+import { getSiteConfig } from "./config/getSiteConfig";
 /**
  * |- app
  * |  \- page.tsx localhost/
@@ -12,11 +12,20 @@ import { TemplateString } from "next/dist/lib/metadata/types/metadata-types";
  */
 
 // "Minar Cruise", Cochin cruise, Arabian Sea, luxury dining, sunset cruise, Kerala tourism, gourmet experience, sea adventure
-export function constructMetadata({
+/**
+ * Async because the site name, default title/description, keywords and OG image
+ * are admin-editable (`SiteConfig`) rather than compile-time literals. Callers
+ * must therefore use `export async function generateMetadata()` — a static
+ * `export const metadata` cannot await.
+ *
+ * Anything passed explicitly still wins; the config only supplies the defaults,
+ * and `getSiteConfig` itself falls back to the original hardcoded values.
+ */
+export async function constructMetadata({
   MetaHeadtitle,
-  title = "Minar Cruise Cochin | Luxury Arabian Sea Cruises & Dining Experiences",
-  description = "Experience luxury cruises on the Arabian Sea with Minar Cruise Cochin. Enjoy gourmet dining, stunning views, and entertainment. Book breakfast, lunch, sunset, and dinner cruises for unforgettable Kerala adventures.",
-  Ogimage = "/thumbnail.jpg",
+  title,
+  description,
+  Ogimage,
   keywords,
   icons = "/logo-small.png",
   noIndex = false,
@@ -30,7 +39,14 @@ export function constructMetadata({
   icons?: string;
   noIndex?: boolean;
   publishedTime?: Date;
-} & Partial<Metadata>): Metadata {
+} & Partial<Metadata>): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+
+  title = title ?? siteConfig.metaTitle;
+  description = description ?? siteConfig.metaDescription;
+  Ogimage = Ogimage ?? siteConfig.ogImage;
+  keywords = keywords ?? siteConfig.keywords;
+
   return {
     title: MetaHeadtitle ? MetaHeadtitle : title,
     description,

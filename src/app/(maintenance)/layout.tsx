@@ -10,7 +10,9 @@ const fontSans = FontSans({
   variable: "--font-sans",
 });
 
-export const metadata: Metadata = constructMetadata({});
+export async function generateMetadata(): Promise<Metadata> {
+  return await constructMetadata({});
+}
 
 export default function RootLayout({
   children,

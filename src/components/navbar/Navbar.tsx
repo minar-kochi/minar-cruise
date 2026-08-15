@@ -4,9 +4,11 @@ import Bounded from "../elements/Bounded";
 import NavigationContents from "./NavigationContents";
 import MobileNavbar from "./MobileNavbar";
 import { getPackageNavigation } from "@/db/data/dto/package";
+import { getSectionVisibility } from "@/lib/helpers/config/getSectionVisibility";
 
 const Navbar = async () => {
   const packages = await getPackageNavigation();
+  const visible = await getSectionVisibility();
 
   return (
     <div className="sticky top-0 w-full bg-white z-50 shadow-sm">
@@ -29,7 +31,7 @@ const Navbar = async () => {
           <NavigationContents packages={packages} />
         </div>
         <div className="md:hidden ">
-          <MobileNavbar packages={packages ?? []} />
+          <MobileNavbar packages={packages ?? []} visible={visible} />
         </div>
       </Bounded>
     </div>

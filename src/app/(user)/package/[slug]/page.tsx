@@ -20,6 +20,7 @@ import {
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { Baby, Clock, User } from "lucide-react";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import PackageHeader from "./package-header";
 import PackageCarousalWrapper from "@/components/packages/PackageCarousalWrapper";
@@ -106,6 +107,7 @@ export async function generateStaticParams() {
       packageCategory: {
         not: "CUSTOM",
       },
+      isVisible: true,
     },
     select: {
       slug: true,
@@ -125,6 +127,10 @@ export default async function PackagePage({
   );
 
   const data = await getPackageById({ slug });
+
+  // A hidden package must not be reachable by its URL either, or "hide" would
+  // only drop it from the listings while the page stayed live and linkable.
+  if (data && !data.isVisible) notFound();
 
   if (!data)
     return (
@@ -154,13 +160,21 @@ export default async function PackagePage({
               },
             )}
           >
-            {!isPackageStatusExclusive(data.packageCategory) ? (
+            {/*
+             * Driven by the package's own "Bookable online" setting rather than
+             * its category, so an operator can put any cruise on enquiry-only.
+             * The column defaults to true, so EXCLUSIVE/CUSTOM only match the
+             * old `isPackageStatusExclusive` behaviour because the seed sets it
+             * false for them explicitly — see prisma/data/dbPackage.ts.
+             */}
+            {data.bookingRule.isBookableOnline ? (
               <PackageForm
                 defaultDate={parsedDate?.date ?? undefined}
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
                 packageId={data.id}
                 packageCategory={data.packageCategory}
+                bookingRule={data.bookingRule}
               />
             ) : (
               <ExclusivePackageEnquiryCard />
@@ -171,6 +185,7 @@ export default async function PackagePage({
             <PackageAmmenties
               data={data}
               defaultDate={parsedDate?.date ?? undefined}
+              bookingRule={data.bookingRule}
             />
           </div>
         </div>

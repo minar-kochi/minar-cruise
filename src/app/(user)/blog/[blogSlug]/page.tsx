@@ -4,9 +4,11 @@ import Bounded from "@/components/elements/Bounded";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
 import { db } from "@/db";
 import { getBlogPostById } from "@/db/data/dto/blog";
+import { getSectionVisibility } from "@/lib/helpers/config/getSectionVisibility";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import React from "react";
 
 interface BlogPage {
@@ -28,6 +30,11 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPostPage({ params: { blogSlug } }: BlogPage) {
+  // Hiding blogs has to take the posts down too, not just the /blogs index —
+  // otherwise every post stays live and linkable with only its listing gone.
+  const visible = await getSectionVisibility();
+  if (!visible["page.blogs"]) notFound();
+
   const blogPost = await getBlogPostById({ id: blogSlug });
   if (!blogPost) {
     console.log("could not fetch data");

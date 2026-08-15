@@ -5,10 +5,7 @@ import ScheduleDatePicker from "@/components/admin/dashboard/Schedule/ScheduleDa
 import { InputLabel } from "@/components/cnWrapper/InputLabel";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import {
-  cn,
-  RemoveTimeStampFromDate,
-} from "@/lib/utils";
+import { cn, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   exclusivePackageValidator,
   TExclusivePackageValidator,
@@ -20,10 +17,6 @@ import { useForm } from "react-hook-form";
 import { date } from "zod";
 import {} from "embla-carousel";
 import { Button } from "@/components/ui/button";
-import {
-  MAX_BOAT_SEAT,
-  MIN_NEW_BOOKING_COUNT,
-} from "@/constants/config/business";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
 import CalendarPopover from "./CalendarPopover";

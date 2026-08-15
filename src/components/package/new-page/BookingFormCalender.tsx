@@ -18,7 +18,7 @@ import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
 import { useAppDispatch } from "@/hooks/adminStore/reducer";
 import { setDate } from "@/lib/features/client/packageClientSlice";
-import { MIN_NEW_BOOKING_COUNT } from "@/constants/config/business";
+import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 import BookingCloseIn from "./booking-close-in";
 import { keepPreviousData } from "@tanstack/react-query";
 
@@ -29,6 +29,12 @@ type TBookingFormCalender = {
   packageCategory: $Enums.PACKAGE_CATEGORY;
   popoverCalender?: true | false;
   className?: string;
+  /**
+   * This package's resolved booking rule, read on the server and passed down.
+   * Reading it from module constants here would bake the cutoff into the client
+   * bundle and an admin edit could never reach the browser without a redeploy.
+   */
+  bookingRule: TPackageBookingRule;
 };
 
 /**
@@ -53,6 +59,7 @@ export default function BookingFormCalender({
   packageCategory,
   popoverCalender,
   className,
+  bookingRule,
 }: TBookingFormCalender) {
   const packageData = useClientSelector((state) =>
     getPackageById(state, packageId),
@@ -136,7 +143,11 @@ export default function BookingFormCalender({
    */
   const isCalendarBusy = isPending || isError || !data;
 
-  const handleSelect: SelectSingleEventHandler = (selected, _day, modifiers) => {
+  const handleSelect: SelectSingleEventHandler = (
+    selected,
+    _day,
+    modifiers,
+  ) => {
     if (modifiers.disabled) {
       toast.error("This date is disabled");
       return;
@@ -154,9 +165,13 @@ export default function BookingFormCalender({
       (fv) => RemoveTimeStampFromDate(new Date(fv.day)) === nextDate,
     );
 
-    if (data && !hasSchedule && packageCategory !== "SUNSET") {
+    // A package whose rule sets no minimum (Sunset, by default) sails with any
+    // party size, so there is nothing to warn about.
+    const minGuests = bookingRule.minNewBookingCount;
+
+    if (data && !hasSchedule && minGuests !== null) {
       toast(
-        `This date requires at least ${MIN_NEW_BOOKING_COUNT} guests to set sail! 🌊✨`,
+        `This date requires at least ${minGuests} guests to set sail! 🌊✨`,
         {
           className:
             "rounded-full bg-blue-50 border h-20 text-xl border-blue-300 text-blue-900 shadow-md",
@@ -189,9 +204,9 @@ export default function BookingFormCalender({
         filterDateFromCalender({
           date: day,
           dateArray: disabledDays,
-          packageCategory: packageCategory as $Enums.SCHEDULED_TIME,
           startFrom: packageData.fromTime,
           AvailableDate: availableDateArray,
+          rule: bookingRule,
         })
       }
       classNames={
@@ -208,6 +223,7 @@ export default function BookingFormCalender({
             blockedDate: data?.blockedScheduleDateArray.map((item) => item.day),
             startFrom: packageData.fromTime,
             isLoading: isCalendarBusy,
+            bookingRule,
           }),
       }}
       selected={selectedDate}
@@ -217,12 +233,9 @@ export default function BookingFormCalender({
 
   const loadingOverlay = (
     <div
-      className={cn(
-        "absolute inset-0 bg-gray-200/70 z-20 animate-pulse",
-        {
-          hidden: !isCalendarBusy,
-        },
-      )}
+      className={cn("absolute inset-0 bg-gray-200/70 z-20 animate-pulse", {
+        hidden: !isCalendarBusy,
+      })}
     >
       <div className="flex items-center justify-center w-full h-full">
         <div className="flex items-center justify-center gap-2 p-2 bg-white rounded-md">
@@ -236,9 +249,9 @@ export default function BookingFormCalender({
   return (
     <>
       <BookingCloseIn
-        availableDates={availableDateArray}
         disabled={disabledDays}
         packageId={packageId}
+        bookingRule={bookingRule}
       />
       {popoverCalender ? (
         <CalendarPopover date={date}>

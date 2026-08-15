@@ -1,7 +1,6 @@
 import { InputLabel } from "@/components/cnWrapper/InputLabel";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { cn } from "@/lib/utils";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import React from "react";
@@ -22,6 +21,8 @@ type TBookingFormCard = {
   watch: UseFormWatch<TOnlineBookingFormValidator>;
   errors: FieldErrors<TOnlineBookingFormValidator>;
   className?: string;
+  /** Boat capacity, off the package's resolved booking rule. */
+  maxBoatSeat: number;
 };
 export default function BookingFormCard({
   register,
@@ -32,6 +33,7 @@ export default function BookingFormCard({
   className,
   adultPrice,
   childPrice,
+  maxBoatSeat,
 }: TBookingFormCard) {
   return (
     <div
@@ -127,7 +129,7 @@ export default function BookingFormCard({
                   type="button"
                   onClick={() => {
                     let currValue = getValues("numOfAdults") || 0;
-                    if (currValue >= MAX_BOAT_SEAT) {
+                    if (currValue >= maxBoatSeat) {
                       return;
                     }
                     setValues("numOfAdults", currValue + 1);
@@ -178,7 +180,7 @@ export default function BookingFormCard({
                   type="button"
                   onClick={() => {
                     let currValue = getValues("numOfBaby") || 0;
-                    if (currValue >= MAX_BOAT_SEAT) {
+                    if (currValue >= maxBoatSeat) {
                       return;
                     }
                     setValues("numOfBaby", currValue + 1);
@@ -232,7 +234,7 @@ export default function BookingFormCard({
                 type="button"
                 onClick={() => {
                   let currValue = getValues("numOfChildren") || 0;
-                  if (currValue >= MAX_BOAT_SEAT) {
+                  if (currValue >= maxBoatSeat) {
                     return;
                   }
                   setValues("numOfChildren", currValue + 1);

@@ -11,9 +11,12 @@ import Services from "@/components/home/Services";
 import CruisePackageHeader from "@/components/packages/package-select-header";
 import PackageCarousalWrapper from "@/components/packages/PackageCarousalWrapper";
 import SearchBarWrapper from "@/components/searchbar/SearchBarWrapper";
+import { Metadata } from "next";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
 
-export const metadata = constructMetadata({});
+export async function generateMetadata(): Promise<Metadata> {
+  return await constructMetadata({});
+}
 // console.log(metadata)
 export default function page() {
   return (

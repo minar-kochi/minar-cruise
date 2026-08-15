@@ -1,106 +1,137 @@
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
-import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
-import {
-  checkBookingTimeConstraint,
-  cn,
-  combineDateAndTime,
-  RemoveTimeStampFromDate,
-} from "@/lib/utils";
+import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
+import { cn, getBookingWindow, RemoveTimeStampFromDate } from "@/lib/utils";
 import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
   differenceInSeconds,
-  isPast,
 } from "date-fns";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type TBookingCloseIn = {
   packageId: string;
-  availableDates: string[] | undefined;
   disabled:
     | {
         day: Date;
       }[]
     | undefined;
+  /** This package's resolved booking rule, threaded down from the server. */
+  bookingRule: TPackageBookingRule;
 };
+
+/**
+ * `unknown` means the departure time could not be parsed — render a status, not
+ * a number. Before this existed the component fell through to the counting
+ * branch with NaN counters and printed "NaNs".
+ */
+type BookingPhase = "open" | "closed" | "departed" | "unknown";
 
 interface TimeLeft {
   days: number;
   hours: number;
   minutes: number;
   seconds: number;
-  isExpired: boolean;
+  /** Kept in state so the label and the colour band read one snapshot. */
+  totalMinutes: number;
+  phase: BookingPhase;
 }
+
+const ZERO_COUNTERS = {
+  days: 0,
+  hours: 0,
+  minutes: 0,
+  seconds: 0,
+  totalMinutes: 0,
+};
 
 export const BookingCloseIn = ({
   packageId,
   disabled,
-  availableDates,
+  bookingRule,
 }: TBookingCloseIn) => {
   const timerRef = useRef<NodeJS.Timeout>();
+  /**
+   * Zeroed on purpose: nothing in the render body reads the clock, so the server
+   * markup and the first client render agree. The first live value lands in the
+   * effect below, after hydration.
+   */
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isExpired: false,
+    ...ZERO_COUNTERS,
+    phase: "open",
   });
 
   const date = useClientSelector((state) => state.package.date);
 
-  const availableDateFound = availableDates?.findIndex((item) => item === date);
-  const isAvailable = availableDateFound !== -1;
-
-  const disabledDate = disabled?.findIndex(
-    (fv) => RemoveTimeStampFromDate(fv.day) === date,
-  );
-  const isDisabledDateFound = disabledDate !== -1;
+  /**
+   * `?? -1` matters: `disabled` is undefined while the month's schedule query is
+   * in flight, and `undefined !== -1` is true — which used to flash a red
+   * "Blocked" badge on every calendar load.
+   */
+  const isDisabledDateFound =
+    (disabled?.findIndex((fv) => RemoveTimeStampFromDate(fv.day) === date) ??
+      -1) !== -1;
 
   const packageTime = useClientSelector((state) =>
     getPackageById(state, packageId),
   );
 
   const fromTime = packageTime?.fromTime ?? "";
-  const scheduleTimeForPackage = packageTime?.packageCategory
-    ? findCorrespondingScheduleTimeFromPackageCategory(
-        packageTime?.packageCategory,
-      )
-    : null;
 
-  const isAvailableForNewBooking =
-    date && scheduleTimeForPackage
-      ? checkBookingTimeConstraint({
-          selectedDate: date,
-          startFrom: fromTime,
-          scheduleTime: scheduleTimeForPackage,
-        })
-      : false;
+  const minLeadTimeHours = bookingRule.minLeadTimeHours;
 
-  // Memoize the selectedDate to prevent unnecessary recalculations
-  const selectedDate = useMemo(() => {
+  /**
+   * The window this badge counts down to. Gated on the date alone — deliberately
+   * not on whether a schedule already exists for it, because
+   * `filterDateFromCalender` disables days on the lead time alone. Gating here
+   * on availability is what let the badge keep counting down on a date the
+   * calendar had already greyed out.
+   *
+   * Deps are primitives only. `bookingRule` is an object prop rebuilt upstream,
+   * so listing it would hand `calculateTimeLeft` a fresh identity on every
+   * parent render and tear the 1s interval down each time — the re-render
+   * regression fixed in 2af0c93.
+   */
+  const bookingWindow = useMemo(() => {
+    if (!fromTime) return null;
     const unformattedDate =
       typeof date !== "string"
         ? RemoveTimeStampFromDate(new Date(date ?? Date.now()))
         : date;
-    return combineDateAndTime(unformattedDate, fromTime);
-  }, [date, fromTime]);
+    return getBookingWindow({
+      selectedDate: unformattedDate,
+      startFrom: fromTime,
+      rule: { minLeadTimeHours },
+    });
+  }, [date, fromTime, minLeadTimeHours]);
 
   const calculateTimeLeft = useCallback((): TimeLeft => {
-    const now = new Date();
-
-    if (isPast(selectedDate)) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
+    if (!bookingWindow) {
+      return { ...ZERO_COUNTERS, phase: "unknown" };
     }
 
-    const days = differenceInDays(selectedDate, now);
-    const hours = differenceInHours(selectedDate, now) % 24;
-    const minutes = differenceInMinutes(selectedDate, now) % 60;
-    const seconds = differenceInSeconds(selectedDate, now) % 60;
+    const now = new Date();
+    const { closesAt, departureAt } = bookingWindow;
 
-    return { days, hours, minutes, seconds, isExpired: false };
-  }, [selectedDate]);
+    // Departure first: with minLeadTimeHours = 0 the two instants coincide, and
+    // "Ship Sailed" is the more informative of the two states.
+    if (now.getTime() >= departureAt.getTime()) {
+      return { ...ZERO_COUNTERS, phase: "departed" };
+    }
+    if (now.getTime() >= closesAt.getTime()) {
+      return { ...ZERO_COUNTERS, phase: "closed" };
+    }
+
+    return {
+      days: differenceInDays(closesAt, now),
+      hours: differenceInHours(closesAt, now) % 24,
+      minutes: differenceInMinutes(closesAt, now) % 60,
+      seconds: differenceInSeconds(closesAt, now) % 60,
+      totalMinutes: differenceInMinutes(closesAt, now),
+      phase: "open",
+    };
+  }, [bookingWindow]);
 
   useEffect(() => {
     // Clear any existing timer
@@ -122,13 +153,18 @@ export const BookingCloseIn = ({
         clearInterval(timerRef.current);
       }
     };
-  }, [calculateTimeLeft]); // Only depend on calculateTimeLeft, which is memoized with selectedDate
+  }, [calculateTimeLeft]); // Only depend on calculateTimeLeft, which is memoized with bookingWindow
+
+  const isCounting = !isDisabledDateFound && timeLeft.phase === "open";
+
+  const getStatusText = () => {
+    if (isDisabledDateFound) return "Blocked";
+    if (timeLeft.phase === "unknown") return "Unavailable";
+    if (timeLeft.phase === "departed") return "Ship Sailed";
+    return "Booking Closed";
+  };
 
   const getCompactTimeText = () => {
-    if (isDisabledDateFound) return "Blocked";
-    if (timeLeft.isExpired) return "Ship Sailed";
-    if (!isAvailable && !isAvailableForNewBooking) return "Too late";
-
     const { days, hours, minutes, seconds } = timeLeft;
 
     if (days > 0) return `${days}d ${hours}h`;
@@ -137,27 +173,35 @@ export const BookingCloseIn = ({
     return `${seconds}s`;
   };
 
-  const totalMinutes =
-    timeLeft.days * 24 * 60 + timeLeft.hours * 60 + timeLeft.minutes;
-
+  /**
+   * The two bands are mutually exclusive rather than layered. `cn` is
+   * twMerge(clsx(...)), which keeps the LAST conflicting utility, so an
+   * overlapping orange rule listed after red silently won at <= 30 minutes and
+   * on every non-counting badge.
+   */
   return (
     <div
       className={cn(
         `px-2 py-1  rounded-md my-2 border bg-green-100 text-green-700 border-green-200 text-sm font-semibold`,
         {
-          "bg-red-100 text-red-700 border-red-200":
-            timeLeft.isExpired ||
-            totalMinutes <= 30 ||
-            isDisabledDateFound ||
-            (!isAvailable && !isAvailableForNewBooking),
           "bg-orange-100 text-orange-700 border-orange-200":
-            totalMinutes <= 120,
+            isCounting &&
+            timeLeft.totalMinutes > 30 &&
+            timeLeft.totalMinutes <= 120,
+          "bg-red-100 text-red-700 border-red-200":
+            !isCounting || timeLeft.totalMinutes <= 30,
         },
       )}
     >
       <p className="">
-        Time left: <span className="mr-1 text-md">🕗</span>
-        {getCompactTimeText()}
+        {isCounting ? (
+          <>
+            Time left: <span className="mr-1 text-md">🕗</span>
+            {getCompactTimeText()}
+          </>
+        ) : (
+          getStatusText()
+        )}
       </p>
     </div>
   );

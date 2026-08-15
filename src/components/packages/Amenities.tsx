@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { visibleAmenityItemsSelect } from "@/db/data/dto/amenities";
 import { Check } from "lucide-react";
 
 interface TAmenities {
@@ -10,8 +11,9 @@ export const Amenities = async ({ amenitiesId }: TAmenities) => {
     where: {
       id: amenitiesId,
     },
+    select: visibleAmenityItemsSelect,
   });
-  // console.log(e);
+  const descriptions = amenitiesDetails?.items.map((item) => item.label) ?? [];
 
   return (
     <div className={"mt-4 space-y-3"}>
@@ -19,7 +21,7 @@ export const Amenities = async ({ amenitiesId }: TAmenities) => {
         Included
       </h3>
       <ul>
-        {amenitiesDetails?.description.map((item, i) => {
+        {descriptions.map((item, i) => {
           const key = item.replaceAll(" ", "-") + "-" + i;
           return (
             <>

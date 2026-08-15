@@ -20,12 +20,15 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { TPackageNavigation } from "@/db/types/TPackage";
+import type { SectionVisibility } from "@/lib/helpers/config/getSectionVisibility";
 
 // Define TypeScript interfaces for our data structures
 interface NavItem {
   title: string;
   href: string;
   children?: NavItem[];
+  /** Admin visibility key; omitted means always shown. */
+  sectionKey?: keyof SectionVisibility;
 }
 
 interface PackageItem {
@@ -36,6 +39,8 @@ interface PackageItem {
 
 interface Props {
   packages: TPackageNavigation[];
+  /** Resolved on the server so the mobile menu matches the desktop nav. */
+  visible: SectionVisibility;
 }
 
 const navigation: NavItem[] = [
@@ -46,6 +51,7 @@ const navigation: NavItem[] = [
   {
     title: "Gallery",
     href: "#",
+    sectionKey: "nav.gallery",
     children: [
       {
         title: "Family Gathering",
@@ -64,18 +70,25 @@ const navigation: NavItem[] = [
   {
     title: "Facilities",
     href: "/facilities",
+    sectionKey: "nav.facilities",
   },
   {
     title: "About",
     href: "/about",
+    sectionKey: "page.about",
   },
   {
     title: "Contact",
     href: "/contact",
+    sectionKey: "nav.contact",
   },
 ];
 
-export default function MobileNavbar({ packages }: Props) {
+export default function MobileNavbar({ packages, visible }: Props) {
+  const navItems = navigation.filter(
+    (item) => !item.sectionKey || visible[item.sectionKey],
+  );
+
   return (
     <div className="lg:hidden">
       <Drawer>
@@ -112,7 +125,7 @@ export default function MobileNavbar({ packages }: Props) {
                 Check Availability
               </Link>
             </DrawerClose>
-            {
+            {visible["nav.packages"] && (
               <div className="pt-4">
                 <Accordion type="single" collapsible>
                   <AccordionItem value="packages">
@@ -136,11 +149,11 @@ export default function MobileNavbar({ packages }: Props) {
                   </AccordionItem>
                 </Accordion>
               </div>
-            }
+            )}
             <hr />
             {/* Main Navigation */}
             <nav className="space-y-1">
-              {navigation.map((item) =>
+              {navItems.map((item) =>
                 item.children ? (
                   <Accordion
                     key={item.title}

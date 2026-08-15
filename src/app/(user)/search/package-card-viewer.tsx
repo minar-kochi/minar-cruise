@@ -75,7 +75,21 @@ export default function PackageCardViewer({
                   </span>
                 </p>
               </Button>
-              <QuickPackageForm item={item} schedules={schedules} />
+              {/*
+               * Same gate the package page applies. Without it an enquiry-only
+               * package still offers a working booking form here, and the
+               * server rejects only after the customer has filled it in.
+               */}
+              {item.bookingRule.isBookableOnline ? (
+                <QuickPackageForm item={item} schedules={schedules} />
+              ) : (
+                <Link
+                  href={`/package/${item.slug}`}
+                  className="flex w-full md:w-auto items-center justify-center rounded-md px-3 py-3 text-sm font-semibold hover:underline"
+                >
+                  Enquire now
+                </Link>
+              )}
             </div>
           </div>
         </div>

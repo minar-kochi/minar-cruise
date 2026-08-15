@@ -1,13 +1,16 @@
 import Bounded from "@/components/elements/Bounded";
 import FacilitiesImageCard from "@/components/facilities/FacilitiesImageCard";
 import PrivacyPolicyMdx from "@/data/mdx/privacy-policy.mdx";
+import { Metadata } from "next";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
 import React from "react";
 
-export const metadata = constructMetadata({
-  title: "Privacy Policy | Minar Cruise",
-  noIndex: true,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return await constructMetadata({
+    title: "Privacy Policy | Minar Cruise",
+    noIndex: true,
+  });
+}
 
 export default async function PrivacyPolicy() {
   return (
