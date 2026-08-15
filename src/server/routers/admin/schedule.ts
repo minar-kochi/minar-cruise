@@ -21,6 +21,7 @@ import {
 } from "@/lib/validators/ScheduleValidtor";
 import { isStatusCustom } from "@/lib/validators/Schedules";
 import { AdminProcedure, router } from "@/server/trpc";
+import { revalidateSchedules } from "@/revalidator/site";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
@@ -44,6 +45,22 @@ import {
   getAvailableScheduleCountForGivenDateArray,
   getBlockedScheduleCountForGivenDateArray,
 } from "@/db/data/dto/schedule/block";
+
+/**
+ * Admin procedure that refreshes the public pages after a successful write.
+ *
+ * Schedule changes decide what the booking calendar and package pages show, and
+ * this app has no time-based ISR anywhere — so before this, blocking a date in
+ * the dashboard never reached visitors. Applied as middleware rather than
+ * appended to each mutation body so the next mutation added cannot forget it.
+ */
+const ScheduleMutation = AdminProcedure.use(async (opts) => {
+  const result = await opts.next();
+  if (result.ok) {
+    await revalidateSchedules();
+  }
+  return result;
+});
 
 export const schedule = router({
   getSchedulesByDateRange: AdminProcedure.input(
@@ -198,7 +215,7 @@ export const schedule = router({
     }
   }),
   // getupComingScheduleDates: AdminProcedure.input().query()
-  createNewSchedule: AdminProcedure.input(
+  createNewSchedule: ScheduleMutation.input(
     ScheduleCreateSchema.required({
       packageId: true,
     }),
@@ -329,7 +346,7 @@ export const schedule = router({
       }
     },
   ),
-  updateSchedule: AdminProcedure.input(
+  updateSchedule: ScheduleMutation.input(
     UpdatedDateScheduleSchema.extend({
       date: z.string(),
     }),
@@ -521,7 +538,7 @@ export const schedule = router({
       });
     }
   }),
-  unBlockScheduleByDateRange: AdminProcedure.input(
+  unBlockScheduleByDateRange: ScheduleMutation.input(
     z.object({
       fromDate: z.string(),
       toDate: z.string(),
@@ -605,7 +622,7 @@ export const schedule = router({
       });
     }
   }),
-  blockScheduleByDateRange: AdminProcedure.input(
+  blockScheduleByDateRange: ScheduleMutation.input(
     z.object({
       fromDate: z.string(),
       toDate: z.string(),
@@ -701,7 +718,7 @@ export const schedule = router({
       });
     }
   }),
-  blockScheduleByDateAndStatus: AdminProcedure.input(
+  blockScheduleByDateAndStatus: ScheduleMutation.input(
     z.object({
       date: z.string(),
       ScheduleTime: EnumScheduleTime,
@@ -763,7 +780,7 @@ export const schedule = router({
       });
     }
   }),
-  unBlockScheduleById: AdminProcedure.input(
+  unBlockScheduleById: ScheduleMutation.input(
     z.object({
       scheduleId: z.string(),
     }),
@@ -798,7 +815,7 @@ export const schedule = router({
       });
     }
   }),
-  deleteScheduleById: AdminProcedure.input(
+  deleteScheduleById: ScheduleMutation.input(
     z.object({
       scheduleId: z.string(),
     }),
@@ -846,7 +863,7 @@ export const schedule = router({
       });
     }
   }),
-  clearSchedule: AdminProcedure.mutation(async () => {
+  clearSchedule: ScheduleMutation.mutation(async () => {
     try {
       if (isProd) {
         throw new TRPCError({
