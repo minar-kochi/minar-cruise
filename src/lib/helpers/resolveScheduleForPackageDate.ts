@@ -35,6 +35,13 @@ const scheduleSelect = {
   createdAt: true,
   updatedAt: true,
   toTime: true,
+  // The resolved schedule is the authority on when this sailing departs —
+  // booking-link generation snapshots these rather than re-deriving from the
+  // package, so an override set by an admin is respected.
+  startsAt: true,
+  endsAt: true,
+  isTimeOverridden: true,
+  needsTimeReview: true,
   Package: {
     select: {
       title: true,

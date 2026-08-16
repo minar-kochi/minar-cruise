@@ -63,6 +63,12 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
         packageCategory: true,
         fromTime: true,
         toTime: true,
+        // Needed by callers that resolve a schedule's startsAt/endsAt at write
+        // time (deriveScheduleInstants). Selecting them here rather than at each
+        // call site keeps the "what does a writer need to know about a package"
+        // answer in one place.
+        startMinutesIst: true,
+        duration: true,
       },
     });
     if (!data) return null;
@@ -619,6 +625,10 @@ export async function getPackageTimeAndDuration(id: string) {
         title: true,
         duration: true,
         fromTime: true,
+        // The order.paid webhook creates a Schedule and must resolve its
+        // startsAt/endsAt in the same transaction — a paid sailing with no
+        // departure instant would be invisible to every instant-based query.
+        startMinutesIst: true,
       },
     });
     return packageDetails;

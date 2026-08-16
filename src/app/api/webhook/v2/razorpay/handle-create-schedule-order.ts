@@ -15,6 +15,7 @@ import EmailSendBookingConfirmation, {
 } from "@/components/services/email/EmailService";
 import { format } from "date-fns";
 import { executeTransactionWithRetry } from "./retry-utility";
+import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import { MAX_EVENT_RETRY_WEBHOOK_COUNT } from "@/constants/config";
@@ -96,6 +97,14 @@ export async function handleCreateScheduleOrder({
       amountPaidPaise: order.amount_paid,
       bookingLink: linkPricing,
     });
+
+    // Derived outside the transaction: it is pure, and the tx is kept free of
+    // anything that could fail for a reason unrelated to the write.
+    const scheduleInstants = deriveScheduleInstants({
+      day: new Date(date),
+      packageStartMinutesIst: packageDetail?.startMinutesIst ?? null,
+      packageDurationMinutes: packageDetail?.duration ?? null,
+    });
     const { booking, schedule } = await executeTransactionWithRetry(
       async () => {
         return await db.$transaction(
@@ -106,6 +115,12 @@ export async function handleCreateScheduleOrder({
                 schedulePackage: scheduleTimeForPackage,
                 scheduleStatus: "AVAILABLE",
                 packageId,
+                // This schedule inherits the package's departure — there is no
+                // override on the payment path. Resolved here so a paid sailing
+                // is never left without an instant; a NULL startsAt would hide
+                // it from every instant-based query while the customer holds a
+                // ticket for it.
+                ...scheduleInstants,
               },
             });
 

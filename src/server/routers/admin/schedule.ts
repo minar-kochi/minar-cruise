@@ -2,6 +2,7 @@ import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { defaultEmptyTrigger } from "@/constants/data/timer";
 import { db } from "@/db";
 import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
+import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import {
   combineDateWithSplitedTime,
   getDateRangeArray,
@@ -319,12 +320,28 @@ export const schedule = router({
           scheduleTime: ScheduleTime,
         });
 
+        // Resolve the sailing to absolute instants once, here, rather than
+        // recombining (day + time string) at every read. Same helper the
+        // webhook and the migration backfill use, so a schedule created from
+        // the dashboard is indistinguishable from one created at payment time.
+        const instants = deriveScheduleInstants({
+          day: SafelyParsedDate,
+          packageStartMinutesIst: isPackageFound.startMinutesIst,
+          packageDurationMinutes: isPackageFound.duration,
+          overrideFrom: fromTime ? fromTimeObj : null,
+          overrideTo: toTime ? toTimeObjParsed : null,
+        });
+
         const createdSchedule = await db.schedule.create({
           data: {
             day: SafelyParsedDate,
             packageId,
             fromTime: fromTime ? fromTimeObj : null,
             toTime: toTime ? toTimeObjParsed : null,
+            startsAt: instants.startsAt,
+            endsAt: instants.endsAt,
+            isTimeOverridden: instants.isTimeOverridden,
+            needsTimeReview: instants.needsTimeReview,
             schedulePackage: ScheduleTime,
             scheduleStatus: scheduleStatus,
           },
@@ -437,6 +454,16 @@ export const schedule = router({
           scheduleTime,
         });
 
+        // Re-derive from the row's own day, not the input: an update may change
+        // the package or the override times, and the instants must follow both.
+        const instants = deriveScheduleInstants({
+          day: Schedule.day,
+          packageStartMinutesIst: isPackageFound.startMinutesIst,
+          packageDurationMinutes: isPackageFound.duration,
+          overrideFrom: fromTimeParsed ? fromTimeObj : null,
+          overrideTo: toTimeParsed ? toTimeObjParsed : null,
+        });
+
         const data = await db.schedule.update({
           where: {
             id: Schedule.id,
@@ -445,6 +472,10 @@ export const schedule = router({
             packageId: isPackageFound.id,
             fromTime: fromTimeParsed ? fromTimeObj : null,
             toTime: toTimeParsed ? toTimeObjParsed : null,
+            startsAt: instants.startsAt,
+            endsAt: instants.endsAt,
+            isTimeOverridden: instants.isTimeOverridden,
+            needsTimeReview: instants.needsTimeReview,
             scheduleStatus,
           },
         });

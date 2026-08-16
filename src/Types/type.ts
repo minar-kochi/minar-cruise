@@ -31,13 +31,27 @@ export const Galleries = [
 
 export type TGalleries = (typeof Galleries)[number];
 
+/**
+ * What a Schedule actually looks like once it has crossed the tRPC boundary.
+ *
+ * This type exists only because the superjson transformer is commented out in
+ * src/server/trpc.ts — without it every `Date` is serialised to an ISO string
+ * while the inferred type still claims `Date`. This is the hand-maintained
+ * correction for that lie, and every new Date column has to be added here or
+ * the types silently drift from reality again.
+ *
+ * DELETE THIS TYPE when superjson is enabled; the inferred types become correct
+ * on their own and `startsAt`/`endsAt` arrive as real Date objects.
+ */
 export type TScheduleDataDayReplaceString = Omit<
   Schedule,
-  "day" | "createdAt" | "updatedAt"
+  "day" | "createdAt" | "updatedAt" | "startsAt" | "endsAt"
 > & {
   day: string;
   createdAt: String;
   updatedAt: string;
+  startsAt: string | null;
+  endsAt: string | null;
 };
 
 export type TScheduleSelector = {

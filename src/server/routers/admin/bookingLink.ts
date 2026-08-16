@@ -5,6 +5,7 @@ import {
   listBookingLinks,
 } from "@/db/data/dto/bookingLink";
 import { resolveBookingLinkExpiry } from "@/lib/helpers/bookingLink/expiry";
+import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import { bookingLinkUrl } from "@/lib/helpers/bookingLink/url";
 import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
 import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
@@ -108,11 +109,35 @@ export const bookingLink = router({
         });
       }
 
+      /**
+       * Freeze the departure this link is being sold against, for the same
+       * reason the prices above are frozen: the admin has quoted a sailing time
+       * on the phone, and a later package edit must not silently move it.
+       *
+       * Prefer the resolved schedule's own instants — that row is the authority
+       * when it already exists, and it may carry an admin override that differs
+       * from the package default. Fall back to deriving from the package for a
+       * date that has no Schedule row yet.
+       */
+      const sailing =
+        resolved.decider === "schedule.existing" && resolved.schedule.startsAt
+          ? {
+              startsAt: resolved.schedule.startsAt,
+              endsAt: resolved.schedule.endsAt,
+            }
+          : deriveScheduleInstants({
+              day: schedule.day,
+              packageStartMinutesIst: pkg.startMinutesIst,
+              packageDurationMinutes: pkg.duration,
+            });
+
       const link = await createBookingLink({
         packageId: pkg.id,
         scheduleDay: new Date(scheduleDate),
         schedulePackage: scheduleTime,
         scheduleId: boundScheduleId,
+        scheduleStartsAt: sailing.startsAt,
+        scheduleEndsAt: sailing.endsAt,
 
         adultPricePaise: pkg.adultPrice,
         childPricePaise: pkg.childPrice,

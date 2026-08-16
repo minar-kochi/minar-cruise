@@ -1,4 +1,10 @@
 import { db } from "@/db";
+import {
+  dayKeyToDateColumn,
+  istToday,
+  parseLegacyMeridiemTime,
+} from "@/lib/datetime";
+import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import { getBookingConfigUncached } from "@/lib/helpers/config/getBookingConfig";
 import { getPackageAllImage } from "@/db/data/dto/package";
 import { AddPackageImageSchema } from "@/lib/validators/adminAddPackageImageValidator";
@@ -211,14 +217,62 @@ export const packages = router({
     async ({ input }) => {
       const { id, adultPrice, childPrice, ...rest } = input;
       try {
-        await db.package.update({
-          where: { id },
-          data: {
-            ...rest,
-            // The form works in rupees; the column is paise.
-            adultPrice: Math.round(adultPrice * 100),
-            childPrice: Math.round(childPrice * 100),
-          },
+        const startMinutesIst = parseLegacyMeridiemTime(rest.fromTime);
+        if (startMinutesIst === null) {
+          // The zod validator already enforces the format, so this is a
+          // programming error rather than user input — but a package whose
+          // departure cannot be parsed would produce schedules with no
+          // instants, so it must not reach the database.
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Departure time "${rest.fromTime}" could not be parsed.`,
+          });
+        }
+
+        await db.$transaction(async (tx) => {
+          await tx.package.update({
+            where: { id },
+            data: {
+              ...rest,
+              startMinutesIst,
+              // The form works in rupees; the column is paise.
+              adultPrice: Math.round(adultPrice * 100),
+              childPrice: Math.round(childPrice * 100),
+            },
+          });
+
+          // Schedules that inherit this package's times used to follow an edit
+          // automatically, because the departure was recomputed from the
+          // package at every read. Now that `startsAt` is stored, an edit would
+          // silently leave them on the old time — so propagate explicitly.
+          //
+          // FUTURE schedules only: a sailing that has already departed keeps
+          // the time it actually departed at. Overridden schedules are left
+          // alone by definition — the admin set those times deliberately.
+          const affected = await tx.schedule.findMany({
+            where: {
+              packageId: id,
+              isTimeOverridden: false,
+              day: { gte: dayKeyToDateColumn(istToday()) },
+            },
+            select: { id: true, day: true },
+          });
+
+          for (const s of affected) {
+            const instants = deriveScheduleInstants({
+              day: s.day,
+              packageStartMinutesIst: startMinutesIst,
+              packageDurationMinutes: rest.duration,
+            });
+            await tx.schedule.update({
+              where: { id: s.id },
+              data: {
+                startsAt: instants.startsAt,
+                endsAt: instants.endsAt,
+                needsTimeReview: instants.needsTimeReview,
+              },
+            });
+          }
         });
 
         await revalidatePackageContent();

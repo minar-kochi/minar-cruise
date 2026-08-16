@@ -30,7 +30,17 @@ export type packagesPartialId = (Omit<
   isBookableOnline?: boolean;
 })[];
 export type foodMenuPartialId = (Omit<FoodMenu, "id"> & { id?: string })[];
-export type schedulePartialId = (Omit<Schedule, "id"> & { id?: string })[];
+/**
+ * Seed shape. `startsAt`/`endsAt`/`isTimeOverridden`/`needsTimeReview` are
+ * deliberately not authorable here: they are DERIVED from (day + time) by
+ * `deriveScheduleInstants`, and a hand-written instant in seed data is exactly
+ * the kind of second source of truth this migration removed. A seeder that
+ * inserts these rows should compute them.
+ */
+export type schedulePartialId = (Omit<
+  Schedule,
+  "id" | "startsAt" | "endsAt" | "isTimeOverridden" | "needsTimeReview"
+> & { id?: string })[];
 /**
  * Seed shape only. `Amenities` no longer has a `description` column — the
  * bullets live in `AmenityItem` rows now — so seed.ts expands these strings

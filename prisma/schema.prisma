@@ -23,7 +23,7 @@ model TaxConfiguration {
   sacCode   String
   gstin     String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 // Singleton: site-wide branding, default SEO and contact details, editable from
@@ -39,7 +39,7 @@ model SiteConfig {
   bookingNumbers  String[]
   contactEmail    String?
   createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
 }
 
 // One row per toggleable public page or nav entry. `key` is a stable slug the
@@ -49,7 +49,7 @@ model SiteSectionVisibility {
   label     String
   isVisible Boolean  @default(true)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 // Singleton: boat-wide booking limits editable from the admin dashboard.
@@ -61,7 +61,7 @@ model BookingConfig {
   defaultMinLeadTimeHours   Float    @default(2)
   defaultMinNewBookingCount Int      @default(30)
   createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @updatedAt @default(now())
+  updatedAt                 DateTime @default(now()) @updatedAt
 }
 
 // add description
@@ -79,7 +79,7 @@ model Payments {
   modeOfPayment String
   Booking       Booking[]
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
 }
 
 model Booking {
@@ -97,7 +97,7 @@ model Booking {
   user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   scheduleId String
   schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
@@ -138,10 +138,25 @@ model BookingLink {
   Package         Package        @relation(fields: [packageId], references: [id], onDelete: Restrict)
   scheduleDay     DateTime       @db.Date()
   schedulePackage SCHEDULED_TIME
+
+  /// The departure this link was sold against, frozen at generation time — the
+  /// same principle as the price snapshot below.
+  ///
+  /// Without this the sailing time is re-derived from the LIVE package at pay
+  /// time, so an admin editing a package's departure silently moves every
+  /// outstanding link, including ones already sent to customers.
+  ///
+  /// Nullable only until the backfill runs; NOT NULL from 004_contract.sql.
+  /// Production has no BookingLink table yet, so there is nothing to migrate
+  /// there — but dev/staging carry test links (one of them PAID and attached to
+  /// a Booking), and those are worth backfilling rather than deleting.
+  scheduleStartsAt DateTime? @db.Timestamptz(3)
+  scheduleEndsAt   DateTime? @db.Timestamptz(3)
+
   // Hint only. The schedule is re-resolved at pay time, since one may be
   // created between generation and payment.
-  scheduleId      String?
-  schedule        Schedule?      @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  scheduleId String?
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
 
   // ---- pricing snapshot (PAISE, GST-exclusive — same unit as Package) -----
   adultPricePaise Int
@@ -181,7 +196,7 @@ model BookingLink {
   createdBy         String? // session.user.id — there is no Admin table, so no FK
   adminNote         String?  @db.Text()
   createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
 
   @@index([status])
   @@index([packageId])
@@ -222,10 +237,51 @@ enum SCHEDULE_STATUS {
 }
 
 model Schedule {
-  id              String          @id @default(cuid())
-  day             DateTime        @db.Date()
-  fromTime        String?
-  toTime          String?
+  id String @id @default(cuid())
+
+  /// The IST calendar day this sailing belongs to.
+  ///
+  /// KEPT alongside `startsAt` on purpose. It is what the customer actually
+  /// picked, the grouping key for every calendar screen, the term
+  /// `resolveScheduleForPackageDate` matches on to decide which schedule a
+  /// payment attaches to, and the only thing `groupBy(['day'])` can use.
+  /// Deriving it from `startsAt` would need `AT TIME ZONE` per row and lose the
+  /// index.
+  ///
+  /// INVARIANT: (startsAt AT TIME ZONE 'Asia/Kolkata')::date = day
+  /// Enforced as a CHECK constraint in 004_contract.sql, and asserted by
+  /// prisma/sql/2026-08-tz/002_verify.sql.
+  day DateTime @db.Date()
+
+  /// Departure and return as absolute instants, resolved ONCE at write time
+  /// from (day, IST time-of-day) via `resolveSailingInstants`.
+  ///
+  /// Everything downstream — the lead-time gate, link expiry, slot labels,
+  /// sorting — reads these and parses nothing. `endsAt` may land on the day
+  /// after `day` for a sailing that crosses midnight; that is why it is an
+  /// instant and not a second time-of-day column.
+  ///
+  /// NULL only for BLOCKED rows, which mark "this slot is closed on this day"
+  /// and have no sailing at all. 229 such rows in production, referenced by
+  /// zero bookings — which is what makes nullable safe here.
+  startsAt DateTime? @db.Timestamptz(3)
+  endsAt   DateTime? @db.Timestamptz(3)
+
+  /// True when this schedule's times differ from its package's defaults — the
+  /// old fromTime/toTime override. Informational, for the admin UI only.
+  isTimeOverridden Boolean @default(false)
+
+  /// Set by the backfill when the legacy time pair could not be interpreted.
+  /// A human resolves these before the contract phase; dropped there.
+  needsTimeReview Boolean @default(false)
+
+  /// @deprecated Legacy override strings ("4:30:PM"), null meaning "inherit the
+  /// package". Dual-written during the migration, dropped in 004_contract.sql.
+  /// Read `startsAt`/`endsAt` instead — the inherit-or-override question is now
+  /// resolved once at write time rather than at every read.
+  fromTime String?
+  toTime   String?
+
   packageId       String?
   schedulePackage SCHEDULED_TIME
   scheduleStatus  SCHEDULE_STATUS
@@ -233,13 +289,19 @@ model Schedule {
   Booking         Booking[]
   BookingLink     BookingLink[]
   createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
 
+  /// Nothing at the DB level previously stopped two rows sharing a (day, slot),
+  /// which is why resolveScheduleForPackageDate has to disambiguate at pay
+  /// time. Production is already clean, so this builds as-is.
+  @@unique([day, schedulePackage])
   @@index([day]) // Essential for date-based queries
   @@index([packageId]) // For package-schedule relationships
   @@index([scheduleStatus]) // For filtering by status
   @@index([day, scheduleStatus]) // Composite for available schedules on specific days
   @@index([packageId, day]) // For package availability queries
+  @@index([startsAt]) // "next sailing", lead-time sweeps
+  @@index([scheduleStatus, startsAt]) // replaces the lexicographic (day, fromTime) ordering
 }
 
 model Amenities {
@@ -259,7 +321,7 @@ model AmenityItem {
   order       Int       @default(0)
   isVisible   Boolean   @default(true)
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
 
   @@index([amenitiesId, order])
 }
@@ -274,16 +336,40 @@ enum PACKAGE_CATEGORY {
 }
 
 model Package {
-  id              String           @id @default(cuid())
-  title           String
-  packageType     String
-  description     String
-  childPrice      Int
-  adultPrice      Int
-  amenitiesId     String
-  duration        Int
-  slug            String           @unique
-  foodMenuId      String
+  id          String @id @default(cuid())
+  title       String
+  packageType String
+  description String
+  childPrice  Int
+  adultPrice  Int
+  amenitiesId String
+
+  /// Sailing length in MINUTES. With `startMinutesIst` this is the single
+  /// source of the return time: end = startMinutesIst + duration. Previously
+  /// this duplicated (toTime - fromTime) and the two could drift; they were
+  /// verified identical for all 9 production packages before the split was
+  /// removed.
+  duration   Int
+  slug       String @unique
+  foodMenuId String
+
+  /// Departure time of day, MINUTES FROM MIDNIGHT in Asia/Kolkata. 0..1439.
+  /// 540 = 09:00, 1050 = 17:30.
+  ///
+  /// Deliberately NOT an instant: a package departs at 09:00 IST on every date
+  /// it runs, so the wall-clock time is the stable fact and the instant is
+  /// derived per date (see `resolveSailingInstants` in src/lib/datetime.ts).
+  /// The instants themselves live on Schedule.startsAt/endsAt.
+  ///
+  /// Replaces `fromTime`/`toTime`, which stored "09:00:AM" — a bespoke
+  /// three-colon 12-hour format that had to be re-parsed at every read and had
+  /// no DB-level format guarantee.
+  ///
+  /// Nullable only until the backfill runs; NOT NULL from 004_contract.sql.
+  startMinutesIst Int?
+
+  /// @deprecated Legacy "09:00:AM" strings. Dual-written during the migration,
+  /// dropped in 004_contract.sql. Read `startMinutesIst` instead.
   fromTime        String
   toTime          String
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
@@ -310,13 +396,13 @@ model Package {
 
   /// When false the package is still listed but takes enquiries rather than
   /// online bookings. Distinct from `isVisible`, which removes it entirely.
-  isBookableOnline Boolean @default(true)
-  Schedule        Schedule[]
-  packageImage    PackageImage[]
-  PackageSeo      PackageSeo[]
-  BookingLink     BookingLink[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt @default(now())
+  isBookableOnline Boolean        @default(true)
+  Schedule         Schedule[]
+  packageImage     PackageImage[]
+  PackageSeo       PackageSeo[]
+  BookingLink      BookingLink[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @default(now()) @updatedAt
 
   @@index([slug, id])
   @@index([packageCategory]) // For filtering by category
@@ -345,7 +431,7 @@ model Events {
   status                PROCESSING_STATUS
   lastProcessingAttempt DateTime          @default(now())
   createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt @default(now())
+  updatedAt             DateTime          @default(now()) @updatedAt
   payload               Json?
   metadata              Json?
 
@@ -367,7 +453,7 @@ model Image {
   packageImage PackageImage[]
   Blog         Blog[]
   createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
 
   @@index([fileKey]) // For file-based lookups
   @@index([ImageUse]) // For filtering by usage type
@@ -391,7 +477,7 @@ model Blog {
   blogStatus BlogStatus
   BlogSeo    BlogSeo[]
   createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt @default(now())
+  updatedAt  DateTime   @default(now()) @updatedAt
 
   @@index([blogSlug])
   @@index([blogStatus])
@@ -427,7 +513,7 @@ model Seo {
   PackageSeo     PackageSeo[]
   BlogSeo        BlogSeo[]
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
 }
 
 model PackageSeo {
@@ -437,7 +523,7 @@ model PackageSeo {
   packageId String
   package   Package  @relation(fields: [packageId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model BlogSeo {
@@ -447,5 +533,5 @@ model BlogSeo {
   blogId    String
   blog      Blog     @relation(fields: [blogId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }

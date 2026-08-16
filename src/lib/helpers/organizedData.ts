@@ -97,5 +97,10 @@ export function convertScheduleDataDateToDateString(
     createdAt: RemoveTimeStampFromDate(Schedule.day),
     day: RemoveTimeStampFromDate(Schedule.day),
     updatedAt: RemoveTimeStampFromDate(Schedule.day),
+    // Instants become ISO strings, matching exactly what JSON.stringify would
+    // put on the wire — so a component cannot tell whether it received this
+    // object from the server or built it locally.
+    startsAt: Schedule.startsAt ? Schedule.startsAt.toISOString() : null,
+    endsAt: Schedule.endsAt ? Schedule.endsAt.toISOString() : null,
   };
 }
