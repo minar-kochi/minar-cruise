@@ -22,77 +22,162 @@
 -- lock is total, so still prefer a quiet moment.
 --
 -- One ALTER per table so each table is rewritten exactly once.
+--
+-- Each is guarded on the table existing. Production lags this branch and has no
+-- AmenityItem / BookingConfig / SiteConfig / SiteSectionVisibility / BookingLink
+-- yet; without the guard the first missing table aborts the whole transaction
+-- and nothing converts.
 
 SET TIME ZONE 'UTC';  -- belt and braces; the USING clauses make it redundant
 
 BEGIN;
 
-ALTER TABLE "AmenityItem"
+DO $$
+BEGIN
+  IF to_regclass('public."AmenityItem"') IS NOT NULL THEN
+    ALTER TABLE "AmenityItem"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Blog"
+DO $$
+BEGIN
+  IF to_regclass('public."Blog"') IS NOT NULL THEN
+    ALTER TABLE "Blog"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "BlogSeo"
+DO $$
+BEGIN
+  IF to_regclass('public."BlogSeo"') IS NOT NULL THEN
+    ALTER TABLE "BlogSeo"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Booking"
+DO $$
+BEGIN
+  IF to_regclass('public."Booking"') IS NOT NULL THEN
+    ALTER TABLE "Booking"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "BookingConfig"
+DO $$
+BEGIN
+  IF to_regclass('public."BookingConfig"') IS NOT NULL THEN
+    ALTER TABLE "BookingConfig"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "BookingLink"
+DO $$
+BEGIN
+  IF to_regclass('public."BookingLink"') IS NOT NULL THEN
+    ALTER TABLE "BookingLink"
   ALTER COLUMN "paidAt" TYPE timestamptz(3) USING "paidAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "expiresAt" TYPE timestamptz(3) USING "expiresAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Events"
+DO $$
+BEGIN
+  IF to_regclass('public."Events"') IS NOT NULL THEN
+    ALTER TABLE "Events"
   ALTER COLUMN "lastProcessingAttempt" TYPE timestamptz(3) USING "lastProcessingAttempt" AT TIME ZONE 'UTC',
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Image"
+DO $$
+BEGIN
+  IF to_regclass('public."Image"') IS NOT NULL THEN
+    ALTER TABLE "Image"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Package"
+DO $$
+BEGIN
+  IF to_regclass('public."Package"') IS NOT NULL THEN
+    ALTER TABLE "Package"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "PackageSeo"
+DO $$
+BEGIN
+  IF to_regclass('public."PackageSeo"') IS NOT NULL THEN
+    ALTER TABLE "PackageSeo"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Payments"
+DO $$
+BEGIN
+  IF to_regclass('public."Payments"') IS NOT NULL THEN
+    ALTER TABLE "Payments"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Schedule"
+DO $$
+BEGIN
+  IF to_regclass('public."Schedule"') IS NOT NULL THEN
+    ALTER TABLE "Schedule"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "Seo"
+DO $$
+BEGIN
+  IF to_regclass('public."Seo"') IS NOT NULL THEN
+    ALTER TABLE "Seo"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "SiteConfig"
+DO $$
+BEGIN
+  IF to_regclass('public."SiteConfig"') IS NOT NULL THEN
+    ALTER TABLE "SiteConfig"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "SiteSectionVisibility"
+DO $$
+BEGIN
+  IF to_regclass('public."SiteSectionVisibility"') IS NOT NULL THEN
+    ALTER TABLE "SiteSectionVisibility"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
-ALTER TABLE "TaxConfiguration"
+DO $$
+BEGIN
+  IF to_regclass('public."TaxConfiguration"') IS NOT NULL THEN
+    ALTER TABLE "TaxConfiguration"
   ALTER COLUMN "createdAt" TYPE timestamptz(3) USING "createdAt" AT TIME ZONE 'UTC',
   ALTER COLUMN "updatedAt" TYPE timestamptz(3) USING "updatedAt" AT TIME ZONE 'UTC';
+  END IF;
+END $$;
 
 COMMIT;
 

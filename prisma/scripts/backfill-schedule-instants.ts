@@ -253,7 +253,25 @@ async function main() {
   console.log(`\n  Wrote ${pkgStart.size} packages, ${resolutions.length} schedules.`);
 
   // --------------------------------------------------- BookingLink snapshot
-  // Absent in production; present in dev/staging with test links worth keeping.
+  //
+  // The table does not exist in production — it arrives with the
+  // feat/admin-controlled-packages branch — so this is guarded rather than
+  // assumed. Without the check the whole script throws 42P01 AFTER the schedule
+  // work has already committed, which looks like a failed migration when in
+  // fact the important half succeeded.
+  const [{ exists: hasLinkTable }] = await db.$queryRaw<{ exists: boolean }[]>`
+    SELECT to_regclass('public."BookingLink"') IS NOT NULL AS exists`;
+
+  if (!hasLinkTable) {
+    console.log(
+      `\n  BookingLink table absent — skipping link snapshots (expected on production).\n`,
+    );
+    console.log(
+      `Done. Now run prisma/sql/2026-08-tz/002_verify.sql — every count must be 0.\n`,
+    );
+    return;
+  }
+
   const links = await db.$queryRaw<
     { id: string; scheduleDay: Date; packageId: string }[]
   >`SELECT id, "scheduleDay", "packageId" FROM "BookingLink"`;

@@ -19,25 +19,29 @@ BEGIN;
 -- ---------------------------------------------------------------- Package
 ALTER TABLE "Package" ALTER COLUMN "startMinutesIst" SET NOT NULL;
 
+ALTER TABLE "Package" DROP CONSTRAINT IF EXISTS "Package_startMinutesIst_range";
 ALTER TABLE "Package" ADD CONSTRAINT "Package_startMinutesIst_range"
   CHECK ("startMinutesIst" >= 0 AND "startMinutesIst" < 1440);
 
 -- Duration is now the sole source of the return time, so it must be sane.
+ALTER TABLE "Package" DROP CONSTRAINT IF EXISTS "Package_duration_range";
 ALTER TABLE "Package" ADD CONSTRAINT "Package_duration_range"
   CHECK ("duration" > 0 AND "duration" <= 1440);
 
-ALTER TABLE "Package" DROP COLUMN "fromTime";
-ALTER TABLE "Package" DROP COLUMN "toTime";
+ALTER TABLE "Package" DROP COLUMN IF EXISTS "fromTime";
+ALTER TABLE "Package" DROP COLUMN IF EXISTS "toTime";
 
 -- --------------------------------------------------------------- Schedule
 -- A bookable sailing must know when it leaves and returns. A BLOCKED row is a
 -- slot marker with no sailing, so it legitimately has neither.
+ALTER TABLE "Schedule" DROP CONSTRAINT IF EXISTS "Schedule_instants_present";
 ALTER TABLE "Schedule" ADD CONSTRAINT "Schedule_instants_present"
   CHECK (
     "scheduleStatus" = 'BLOCKED'
     OR ("startsAt" IS NOT NULL AND "endsAt" IS NOT NULL)
   );
 
+ALTER TABLE "Schedule" DROP CONSTRAINT IF EXISTS "Schedule_instants_ordered";
 ALTER TABLE "Schedule" ADD CONSTRAINT "Schedule_instants_ordered"
   CHECK ("endsAt" IS NULL OR "startsAt" IS NULL OR "endsAt" > "startsAt");
 
@@ -53,17 +57,18 @@ ALTER TABLE "Schedule" ADD CONSTRAINT "Schedule_instants_ordered"
 -- (verified against pg_proc). If this ever has to run on a server where it is
 -- STABLE, drop this constraint and keep the same assertion as the standing
 -- audit query in 002_verify.sql.
+ALTER TABLE "Schedule" DROP CONSTRAINT IF EXISTS "Schedule_day_matches_startsAt";
 ALTER TABLE "Schedule" ADD CONSTRAINT "Schedule_day_matches_startsAt"
   CHECK (
     "startsAt" IS NULL
     OR ("startsAt" AT TIME ZONE 'Asia/Kolkata')::date = "day"
   );
 
-ALTER TABLE "Schedule" DROP COLUMN "fromTime";
-ALTER TABLE "Schedule" DROP COLUMN "toTime";
+ALTER TABLE "Schedule" DROP COLUMN IF EXISTS "fromTime";
+ALTER TABLE "Schedule" DROP COLUMN IF EXISTS "toTime";
 
 -- Migration triage only; every row has been resolved by now.
-ALTER TABLE "Schedule" DROP COLUMN "needsTimeReview";
+ALTER TABLE "Schedule" DROP COLUMN IF EXISTS "needsTimeReview";
 
 -- ------------------------------------------------------------ BookingLink
 -- Guarded: this table does not exist in production until the
@@ -73,6 +78,7 @@ BEGIN
   IF to_regclass('public."BookingLink"') IS NOT NULL THEN
     ALTER TABLE "BookingLink" ALTER COLUMN "scheduleStartsAt" SET NOT NULL;
     ALTER TABLE "BookingLink" ALTER COLUMN "scheduleEndsAt"   SET NOT NULL;
+    ALTER TABLE "BookingLink" DROP CONSTRAINT IF EXISTS "BookingLink_schedule_ordered";
     ALTER TABLE "BookingLink" ADD CONSTRAINT "BookingLink_schedule_ordered"
       CHECK ("scheduleEndsAt" > "scheduleStartsAt");
   END IF;
