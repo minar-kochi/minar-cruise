@@ -37,6 +37,7 @@ import {
   istInstant,
   istMinutesFromInput,
   istMinutesToInput,
+  InvalidDateError,
   istToday,
   isWithinBookingWindow,
   parseIstDayKey,
@@ -237,7 +238,29 @@ check("formatIstTime(null)", formatIstTime(null), "—");
 check("formatIstDate(undefined)", formatIstDate(undefined), "—");
 check("formatIstDateTime(bad Date)", formatIstDateTime(new Date("nope")), "—");
 check("formatIstRange(null,null)", formatIstRange(null, null), "—");
-check("dayKeyOfDateColumn(bad Date)", dayKeyOfDateColumn(new Date("nope")), null);
+// The day-key functions THROW on an invalid Date rather than returning null:
+// their inputs come from Prisma columns, a date picker or the clock, never from
+// user text, so an invalid one is a programming error. A nullable return would
+// have forced a `?? ""` at ~130 call sites, and the likely response to each
+// would have been to silence it. String input still goes through
+// `parseIstDayKey`, which returns null.
+function throws(label: string, fn: () => unknown) {
+  let threw = false;
+  try {
+    fn();
+  } catch (e) {
+    threw = e instanceof InvalidDateError;
+  }
+  check(label, threw, true);
+}
+
+throws("dayKeyOfDateColumn(bad Date) throws", () =>
+  dayKeyOfDateColumn(new Date("nope")),
+);
+throws("istDayKeyOf(bad Date) throws", () => istDayKeyOf(new Date("nope")));
+throws("calendarDateToDayKey(bad Date) throws", () =>
+  calendarDateToDayKey(new Date("nope")),
+);
 
 // ---------------------------------------------------------------------------
 console.log("\nformatIstRange — the (+1) that the old {fromTime}-{toTime} could not show");
