@@ -1,4 +1,5 @@
 "use client";
+import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 import { trpc } from "@/app/_trpc/client";
 import { Ban } from "lucide-react";
 import React, { useState } from "react";
@@ -15,7 +16,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
 import toast from "react-hot-toast";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { setSyncDatabaseDeleteSchedule } from "@/lib/features/schedule/ScheduleSlice";
 import { useRouter } from "next/navigation";
 
@@ -39,10 +39,9 @@ export default function ScheduleUnblockButton({
           await InvalidateScheduleInfinity(undefined, {
             type: "all",
           });
-          await invalidate({
-            ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
-          });
-          dispatch(setSyncDatabaseDeleteSchedule(data, type));
+          const keyed = convertScheduleDataDateToDateString(data);
+          await invalidate({ ScheduleDate: keyed.day });
+          dispatch(setSyncDatabaseDeleteSchedule(keyed, type));
           isOpen(false);
           router.refresh();
           toast.success("Schedule is blocked.");

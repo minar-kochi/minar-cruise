@@ -1,3 +1,4 @@
+import { istMinutesOfInstant } from "@/lib/datetime";
 import { RootState } from "@/lib/store/adminStore";
 import { splitTimeColon } from "@/lib/utils";
 import { TKeyOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
@@ -94,84 +95,48 @@ export const DefaultMergedSchedule = createSelector(
   },
 );
 
+/**
+ * The departure/return a CUSTOM or EXCLUSIVE schedule should show in the admin
+ * form, as minutes from IST midnight.
+ *
+ * Derived from the stored instants. This used to read two `"4:30:PM"` strings
+ * and re-split them into {hours, min, Cycle} to drive three dropdowns; the
+ * strings no longer exist, and a single time input needs only the minute count.
+ */
+export type TScheduleTimer = {
+  changed: boolean;
+  startMinutes: number | null;
+  endMinutes: number | null;
+} | null;
+
+function timerFromInstants(
+  startsAt: Date | null | undefined,
+  endsAt: Date | null | undefined,
+): TScheduleTimer {
+  if (!startsAt) return null;
+  return {
+    startMinutes: istMinutesOfInstant(startsAt),
+    endMinutes: endsAt ? istMinutesOfInstant(endsAt) : null,
+    changed: false,
+  };
+}
+
 export const currentScheduleTimer = createSelector(
   [CurrentSchedule, (_, type: TKeyOrganizedScheduleData) => type],
-  (
-    currentDateSchedule,
-    type,
-  ): {
-    changed: boolean;
-    value: {
-      fromTime: TTimeCycle;
-      toTime: TTimeCycle;
-    };
-  } | null => {
-    if (currentDateSchedule[type]) {
-      let fromTime = currentDateSchedule[type]?.fromTime;
-      let toTime = currentDateSchedule[type]?.toTime;
-      if (typeof toTime !== "string" || typeof fromTime !== "string")
-        return null;
-      const from = splitTimeColon(fromTime);
-      const to = splitTimeColon(toTime);
-      if (!from || !to) return null;
-      return {
-        value: {
-          fromTime: from,
-          toTime: to,
-        },
-        changed: false,
-      };
-    }
-    return null;
-  },
+  (currentDateSchedule, type): TScheduleTimer =>
+    timerFromInstants(
+      currentDateSchedule[type]?.startsAt,
+      currentDateSchedule[type]?.endsAt,
+    ),
 );
+
 export const DefaultMergedScheduleTimer = createSelector(
   [Schedule, (_, type: TKeyOrganizedScheduleData) => type],
-  (
-    { currentDateSchedule, updatedDateSchedule, date },
-    type,
-  ): {
-    changed: boolean;
-    value: {
-      fromTime: TTimeCycle;
-      toTime: TTimeCycle;
-    };
-  } | null => {
-    if (currentDateSchedule[type]) {
-      let fromTime = currentDateSchedule[type]?.fromTime;
-      let toTime = currentDateSchedule[type]?.toTime;
-      if (typeof toTime !== "string" || typeof fromTime !== "string")
-        return null;
-      const from = splitTimeColon(fromTime);
-      const to = splitTimeColon(toTime);
-      if (!from || !to) return null;
-      return {
-        value: {
-          fromTime: from,
-          toTime: to,
-        },
-        changed: false,
-      };
-    }
-    if (updatedDateSchedule[type].packageId) {
-      let fromTime = updatedDateSchedule[type]?.fromTime;
-      let toTime = updatedDateSchedule[type]?.toTime;
-      if (typeof toTime !== "string" || typeof fromTime !== "string")
-        return null;
-      const from = splitTimeColon(fromTime);
-      const to = splitTimeColon(toTime);
-      if (!from || !to) return null;
-      return {
-        value: {
-          fromTime: from,
-          toTime: to,
-        },
-        changed: false,
-      };
-    }
-
-    return null;
-  },
+  ({ currentDateSchedule }, type): TScheduleTimer =>
+    timerFromInstants(
+      currentDateSchedule[type]?.startsAt,
+      currentDateSchedule[type]?.endsAt,
+    ),
 );
 
 export type TIsScheduleInputsChanged = {
@@ -203,20 +168,18 @@ export const isScheduleInputsChanged = createSelector(
     ) {
       Changed.packageId = true;
     }
-    // if from time is changed
-    if (
-      updatedDateSchedule[type]?.fromTime &&
-      currentDateSchedule[type]?.fromTime !==
-        updatedDateSchedule[type]?.fromTime
-    ) {
+    // Dirty-check the sailing times by comparing the instants directly.
+    // This compared two "4:30:PM" strings before; instants compare by value
+    // with getTime() and cannot differ only by formatting.
+    const currentStart = currentDateSchedule[type]?.startsAt ?? null;
+    const updatedStart = updatedDateSchedule[type]?.startsAt ?? null;
+    const currentEnd = currentDateSchedule[type]?.endsAt ?? null;
+    const updatedEnd = updatedDateSchedule[type]?.endsAt ?? null;
+
+    if (currentStart?.getTime() !== updatedStart?.getTime()) {
       Changed.isTimeChanged = true;
     }
-    // if to time is changed
-    // console.log(currentDateSchedule[type]?.toTime,updatedDateSchedule[type]?.toTime)
-    if (
-      updatedDateSchedule[type]?.toTime &&
-      currentDateSchedule[type]?.toTime !== updatedDateSchedule[type]?.toTime
-    ) {
+    if (currentEnd?.getTime() !== updatedEnd?.getTime()) {
       Changed.isTimeChanged = true;
     }
 

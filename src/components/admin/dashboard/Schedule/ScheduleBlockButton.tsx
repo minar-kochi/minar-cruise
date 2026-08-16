@@ -1,4 +1,5 @@
 "use client";
+import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 import { trpc } from "@/app/_trpc/client";
 import { Ban } from "lucide-react";
 import React, { useState } from "react";
@@ -16,7 +17,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
 import toast from "react-hot-toast";
 import { selectedPackageIdsAndScheduleMapToEnum } from "@/Types/Schedule/ScheduleSelect";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
 
@@ -35,10 +35,9 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
         await InvalidateScheduleInfinity(undefined, {
           type: "all",
         });
-        await invalidate({
-          ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
-        });
-        dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
+        const keyed = convertScheduleDataDateToDateString(data);
+        await invalidate({ ScheduleDate: keyed.day });
+        dispatch(setSyncDatabaseUpdatesScheduleCreation(keyed, type));
 
         isOpen(false);
         router.refresh();

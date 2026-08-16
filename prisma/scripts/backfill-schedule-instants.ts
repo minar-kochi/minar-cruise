@@ -86,9 +86,14 @@ async function main() {
   }
 
   // -------------------------------------------------------------- Package
-  const packages = await db.package.findMany({
-    select: { id: true, title: true, fromTime: true, toTime: true, duration: true },
-  });
+  //
+  // Read through $queryRaw, not the Prisma model. This script runs BEFORE
+  // 004_contract.sql drops the legacy columns, so at that moment the database
+  // still has `fromTime`/`toTime` while the checked-in schema no longer
+  // declares them. Raw SQL is what lets one script span both shapes.
+  const packages = await db.$queryRaw<
+    { id: string; title: string; fromTime: string; toTime: string; duration: number }[]
+  >`SELECT id, title, "fromTime", "toTime", duration FROM "Package"`;
 
   const pkgStart = new Map<string, number>();
   let pkgFailures = 0;
@@ -126,17 +131,17 @@ async function main() {
   console.log(`\nPackages: ${packages.length} validated, all durations consistent.`);
 
   // ------------------------------------------------------------- Schedule
-  const schedules = await db.schedule.findMany({
-    select: {
-      id: true,
-      day: true,
-      fromTime: true,
-      toTime: true,
-      packageId: true,
-      scheduleStatus: true,
-    },
-    orderBy: { day: "asc" },
-  });
+  const schedules = await db.$queryRaw<
+    {
+      id: string;
+      day: Date;
+      fromTime: string | null;
+      toTime: string | null;
+      packageId: string | null;
+      scheduleStatus: string;
+    }[]
+  >`SELECT id, day, "fromTime", "toTime", "packageId", "scheduleStatus"
+      FROM "Schedule" ORDER BY day ASC`;
 
   const resolutions: Resolution[] = [];
 
@@ -232,22 +237,16 @@ async function main() {
   // ------------------------------------------------------------------ write
   await db.$transaction(async (tx) => {
     for (const [id, startMin] of Array.from(pkgStart)) {
-      await tx.package.update({
-        where: { id },
-        data: { startMinutesIst: startMin },
-      });
+      await tx.$executeRaw`UPDATE "Package" SET "startMinutesIst" = ${startMin} WHERE id = ${id}`;
     }
 
     for (const r of resolutions) {
-      await tx.schedule.update({
-        where: { id: r.id },
-        data: {
-          startsAt: r.startsAt,
-          endsAt: r.endsAt,
-          isTimeOverridden: r.isTimeOverridden,
-          needsTimeReview: r.needsTimeReview,
-        },
-      });
+      await tx.$executeRaw`
+        UPDATE "Schedule"
+        SET "startsAt" = ${r.startsAt}, "endsAt" = ${r.endsAt},
+            "isTimeOverridden" = ${r.isTimeOverridden},
+            "needsTimeReview" = ${r.needsTimeReview}
+        WHERE id = ${r.id}`;
     }
   });
 
@@ -255,22 +254,20 @@ async function main() {
 
   // --------------------------------------------------- BookingLink snapshot
   // Absent in production; present in dev/staging with test links worth keeping.
-  const links = await db.bookingLink.findMany({
-    select: { id: true, scheduleDay: true, packageId: true },
-  });
+  const links = await db.$queryRaw<
+    { id: string; scheduleDay: Date; packageId: string }[]
+  >`SELECT id, "scheduleDay", "packageId" FROM "BookingLink"`;
   let linkUpdates = 0;
   for (const l of links) {
     const dayKey = dayKeyOfDateColumn(l.scheduleDay);
     const start = pkgStart.get(l.packageId);
     const pkg = packages.find((p) => p.id === l.packageId);
     if (!dayKey || start === undefined || !pkg) continue;
-    await db.bookingLink.update({
-      where: { id: l.id },
-      data: {
-        scheduleStartsAt: istInstant(dayKey as never, start),
-        scheduleEndsAt: istInstant(dayKey as never, start + pkg.duration),
-      },
-    });
+    await db.$executeRaw`
+      UPDATE "BookingLink"
+      SET "scheduleStartsAt" = ${istInstant(dayKey, start)},
+          "scheduleEndsAt" = ${istInstant(dayKey, start + pkg.duration)}
+      WHERE id = ${l.id}`;
     linkUpdates++;
   }
   if (links.length) {

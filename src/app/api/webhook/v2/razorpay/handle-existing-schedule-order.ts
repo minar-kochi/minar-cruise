@@ -1,3 +1,4 @@
+import { formatIstTime, istDayKeyOf } from "@/lib/datetime";
 import { TRazorPayEventsExistingSchedule } from "@/Types/razorpay/type";
 import { OrderPaidEventPayload } from "./razer-pay-order-paid.types";
 import { $Enums, Events } from "@prisma/client";
@@ -15,7 +16,6 @@ import { format } from "date-fns";
 import { sendAdminBookingUpdateNotification } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 import { SendMessageViaWhatsapp } from "@/lib/helpers/whatsapp";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { OrderPaidEventError } from "@/class/razorpay/OrderPaidError";
 import { MAX_EVENT_RETRY_WEBHOOK_COUNT } from "@/constants/config";
 
@@ -56,6 +56,10 @@ export async function handleExistingScheduleOrder({
       select: {
         day: true,
         schedulePackage: true,
+        // The confirmation email quotes the boarding time; read it from the
+        // schedule the customer actually paid for rather than re-deriving it
+        // from the package, which may have been edited since.
+        startsAt: true,
       },
     });
     scheduleDate = schedule?.day ?? null;
@@ -192,7 +196,7 @@ export async function handleExistingScheduleOrder({
             BookingId: booking.id,
             customerName: name,
             date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
-            boardingTime: packageDetail?.fromTime ?? "",
+            boardingTime: formatIstTime(schedule?.startsAt ?? null),
             bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
             contact: notes.email,
           }),
@@ -209,7 +213,7 @@ export async function handleExistingScheduleOrder({
             adultCount: adultCount,
             babyCount: babyCount,
             BookingDate: format(
-              RemoveTimeStampFromDate(booking.createdAt),
+              istDayKeyOf(booking.createdAt),
               "dd-MM-yyyy",
             ),
             childCount,

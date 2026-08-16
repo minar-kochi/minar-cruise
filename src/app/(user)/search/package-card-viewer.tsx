@@ -1,6 +1,7 @@
+import { dayKeyOfDateColumn } from "@/lib/datetime";
 import { Button } from "@/components/ui/button";
 import { TGetPackageSearchItems } from "@/db/data/dto/package";
-import { formatPrice, RemoveTimeStampFromDate } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { Baby, CheckCircle2, User } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -20,7 +21,7 @@ export default function PackageCardViewer({
     <div className="my-1 relative">
       <div className="flex relative flex-col md:flex-row gap-2 md:gap-4 md:px-4 md:py-4  py-2 px-2 rounded-[25px] bg-white hover:bg-muted-foreground/5 border-muted-foreground/40   shadow-md">
         <Link
-          href={`/package/${item.slug}?selectedDate=${encodeURIComponent(RemoveTimeStampFromDate(new Date(schedules.day)))}`}
+          href={`/package/${item.slug}?selectedDate=${encodeURIComponent(dayKeyOfDateColumn(schedules.day))}`}
           className=""
         >
           <Image
@@ -37,7 +38,7 @@ export default function PackageCardViewer({
               {item.title}
             </h1>
             <Link
-              href={`/package/${item.slug}?selectedDate=${encodeURIComponent(RemoveTimeStampFromDate(new Date(schedules.day)))}`}
+              href={`/package/${item.slug}?selectedDate=${encodeURIComponent(dayKeyOfDateColumn(schedules.day))}`}
               className="hidden md:flex bg-none hover:bg-none md:pr-6 text-sm hover:underline"
             >
               View package

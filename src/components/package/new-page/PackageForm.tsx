@@ -1,4 +1,5 @@
 "use client";
+import { istToday } from "@/lib/datetime";
 
 import { trpc } from "@/app/_trpc/client";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
@@ -13,7 +14,6 @@ import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import {
   absoluteUrl,
   cn,
-  RemoveTimeStampFromDate,
   safeTotal,
 } from "@/lib/utils";
 import { calculateGST, GST_RATE } from "@/lib/helpers/gst";
@@ -94,7 +94,7 @@ export default function PackageFormN({
       numOfBaby: 0,
       packageId: packageId,
       selectedScheduleDate:
-        defaultDate ?? RemoveTimeStampFromDate(new Date(Date.now())),
+        defaultDate ?? istToday(),
       packageCategory: packageCategory,
     },
   });

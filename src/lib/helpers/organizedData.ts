@@ -12,7 +12,7 @@ import {
 import { randomUUID } from "crypto";
 import { Schedule } from "@prisma/client";
 import { TExcludedOrganizedPackageData } from "@/Types/packages/package";
-import { RemoveTimeStampFromDate } from "../utils";
+import { IstDayKey, dayKeyOfDateColumn } from "@/lib/datetime";
 
 export function organizeScheduleData({
   data,
@@ -58,49 +58,49 @@ export function placeOrganizedDataIntoPackageIdAndScheduleTime(
   return {
     breakfast: {
       id: OrgData.breakfast?.packageId,
-      fromTime: OrgData.breakfast?.fromTime,
-      toTime: OrgData.breakfast?.toTime,
       scheduleTime: "BREAKFAST",
     },
     custom: {
       id: OrgData.custom?.packageId,
-      fromTime: OrgData.custom?.fromTime,
-      toTime: OrgData.custom?.toTime,
       scheduleTime: "CUSTOM",
     },
     sunset: {
       id: OrgData.dinner?.packageId,
-      fromTime: OrgData.dinner?.fromTime,
-      toTime: OrgData.custom?.toTime,
       scheduleTime: "SUNSET",
     },
     dinner: {
       id: OrgData.dinner?.packageId,
-      fromTime: OrgData.dinner?.fromTime,
-      toTime: OrgData.custom?.toTime,
       scheduleTime: "DINNER",
     },
     lunch: {
       id: OrgData.lunch?.packageId,
-      fromTime: OrgData.breakfast?.fromTime,
-      toTime: OrgData.breakfast?.scheduleStatus,
       scheduleTime: "LUNCH",
     },
   };
 }
 
-export function convertScheduleDataDateToDateString(
-  Schedule: Schedule,
-): TScheduleDataDayReplaceString {
-  return {
-    ...Schedule,
-    createdAt: RemoveTimeStampFromDate(Schedule.day),
-    day: RemoveTimeStampFromDate(Schedule.day),
-    updatedAt: RemoveTimeStampFromDate(Schedule.day),
-    // Instants become ISO strings, matching exactly what JSON.stringify would
-    // put on the wire — so a component cannot tell whether it received this
-    // object from the server or built it locally.
-    startsAt: Schedule.startsAt ? Schedule.startsAt.toISOString() : null,
-    endsAt: Schedule.endsAt ? Schedule.endsAt.toISOString() : null,
-  };
+/**
+ * Re-keys a schedule row by its IST calendar day.
+ *
+ * Generic over the row shape on purpose: the callers are Prisma `select`s of
+ * varying width (the schedule table takes fewer columns than the booking view),
+ * and this function only cares about `day`. Typing it to the full `Schedule`
+ * model forced partial selects to be cast, which defeated the point.
+ */
+export function convertScheduleDataDateToDateString<T extends { day: Date }>(
+  Schedule: T,
+): Omit<T, "day"> & { day: IstDayKey } {
+  const day = dayKeyOfDateColumn(Schedule.day);
+  if (!day) {
+    throw new Error(
+      `Schedule has an unreadable day column — refusing to build a keyed schedule with a wrong date.`,
+    );
+  }
+  // Only `day` changes representation, to its IST calendar key. createdAt,
+  // updatedAt, startsAt and endsAt stay real Dates.
+  //
+  // This previously overwrote createdAt AND updatedAt with the *day* — so every
+  // admin screen reading a schedule's createdAt was reading its sailing date
+  // instead. Nothing depended on the wrong values, so restoring them is safe.
+  return { ...Schedule, day };
 }

@@ -1,7 +1,10 @@
 import {
-  checkBookingTimeConstraint,
-  cn,
-  RemoveTimeStampFromDate,
+  calendarDateToDayKey,
+  istInstant,
+  isWithinBookingWindow,
+} from "@/lib/datetime";
+import {
+    cn,
 } from "@/lib/utils";
 import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { isSunset } from "@/lib/validators/Package";
@@ -14,7 +17,8 @@ interface IClientCalenderScheduleDay {
   AvailableDate?: string[];
   blockedDate?: string[];
   packageCategory: $Enums.PACKAGE_CATEGORY;
-  startFrom: string;
+  /** The package's departure, minutes from IST midnight. */
+  startMinutesIst: number;
   isLoading: boolean;
   /** This package's resolved booking rule, threaded down from the server. */
   bookingRule: TPackageBookingRule;
@@ -42,7 +46,7 @@ export default function ClientCalenderScheduleDay({
   props,
   blockedDate,
   packageCategory,
-  startFrom,
+  startMinutesIst,
   isLoading,
   bookingRule,
 }: IClientCalenderScheduleDay) {
@@ -51,8 +55,8 @@ export default function ClientCalenderScheduleDay({
   const idxOfAvailableDate = AvailableDate
     ? AvailableDate.findIndex((item) =>
         isSameDay(
-          RemoveTimeStampFromDate(new Date(item)),
-          RemoveTimeStampFromDate(date),
+          calendarDateToDayKey(new Date(item)),
+          calendarDateToDayKey(date),
         ),
       )
     : -1;
@@ -61,17 +65,16 @@ export default function ClientCalenderScheduleDay({
 
   const isPackageSunset = isSunset(packageCategory);
 
-  const isAvailableForNewBooking = checkBookingTimeConstraint({
-    selectedDate: RemoveTimeStampFromDate(date),
-    startFrom: startFrom,
-    rule: bookingRule,
+  const isAvailableForNewBooking = isWithinBookingWindow({
+    departsAt: istInstant(calendarDateToDayKey(date), startMinutesIst),
+    minLeadTimeHours: bookingRule.minLeadTimeHours,
   });
 
   let isBlocked = blockedDate
     ? blockedDate.findIndex((item) =>
         isSameDay(
-          RemoveTimeStampFromDate(new Date(item)),
-          RemoveTimeStampFromDate(date),
+          calendarDateToDayKey(new Date(item)),
+          calendarDateToDayKey(date),
         ),
       )
     : -1;

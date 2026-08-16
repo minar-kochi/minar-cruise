@@ -3,8 +3,6 @@ import { $Enums } from "@prisma/client";
 export type TBookingSchedule = {
   scheduleId: string;
   date: string;
-  fromTime: string;
-  toTime: string;
   schedulePackage: $Enums.SCHEDULED_TIME;
   bookedSeats: number;
 };
@@ -12,8 +10,6 @@ export type TBookingSchedule = {
 export type TScheduleBooking = {
   id: string;
   day: Date;
-  fromTime: string | null;
-  toTime: string | null;
   schedulePackage: $Enums.SCHEDULED_TIME;
   scheduleStatus: $Enums.SCHEDULE_STATUS;
   Package: {

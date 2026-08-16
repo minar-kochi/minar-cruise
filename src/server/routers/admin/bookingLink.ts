@@ -94,21 +94,6 @@ export const bookingLink = router({
         await getBookingConfig(),
       );
 
-      const { expiresAt, clampedToDeparture } = resolveBookingLinkExpiry({
-        scheduleDate,
-        departureTime: pkg.fromTime,
-        expiryHours: input.expiryHours,
-        rule: bookingRule,
-      });
-
-      if (expiresAt.getTime() <= Date.now()) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "That cruise is too close to departure to issue a payment link for. Please pick a later date.",
-        });
-      }
-
       /**
        * Freeze the departure this link is being sold against, for the same
        * reason the prices above are frozen: the admin has quoted a sailing time
@@ -131,13 +116,35 @@ export const bookingLink = router({
               packageDurationMinutes: pkg.duration,
             });
 
+      if (!sailing.startsAt) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "That cruise has no departure time set. Please fix the package or schedule before issuing a link.",
+        });
+      }
+
+      const { expiresAt, clampedToDeparture } = resolveBookingLinkExpiry({
+        departsAt: sailing.startsAt,
+        expiryHours: input.expiryHours,
+        rule: bookingRule,
+      });
+
+      if (expiresAt.getTime() <= Date.now()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "That cruise is too close to departure to issue a payment link for. Please pick a later date.",
+        });
+      }
+
       const link = await createBookingLink({
         packageId: pkg.id,
         scheduleDay: new Date(scheduleDate),
         schedulePackage: scheduleTime,
         scheduleId: boundScheduleId,
-        scheduleStartsAt: sailing.startsAt,
-        scheduleEndsAt: sailing.endsAt,
+        scheduleStartsAt: sailing.startsAt!,
+        scheduleEndsAt: sailing.endsAt!,
 
         adultPricePaise: pkg.adultPrice,
         childPricePaise: pkg.childPrice,

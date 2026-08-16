@@ -1,3 +1,4 @@
+import { dayKeyOfDateColumn } from "@/lib/datetime";
 import { trpc } from "@/app/_trpc/client";
 import BookingFormCard from "@/components/package/new-page/BookingFormCard";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,6 @@ import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
 import {
   absoluteUrl,
   cn,
-  RemoveTimeStampFromDate,
   safeTotal,
 } from "@/lib/utils";
 import { calculateGST, GST_RATE } from "@/lib/helpers/gst";
@@ -60,7 +60,7 @@ export default function QuickPackageForm({
       numOfChildren: 0,
       numOfBaby: 0,
       packageId: item.id,
-      selectedScheduleDate: RemoveTimeStampFromDate(new Date(schedules.day)),
+      selectedScheduleDate: dayKeyOfDateColumn(schedules.day),
       packageCategory: item.packageCategory,
       scheduleId: schedules.id,
     },

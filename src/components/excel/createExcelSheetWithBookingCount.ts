@@ -1,18 +1,15 @@
+import { dayKeyOfDateColumn, formatDayKey, formatIstDate, formatIstRange } from "@/lib/datetime";
 import {
   TGetSchedulesByDateRangeExcludingNull,
   TGetSchedulesByDateRangeWithBookingCount,
 } from "@/db/data/dto/schedule/schedule";
-import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { $Enums } from "@prisma/client";
 import { format } from "date-fns";
 import ExcelJS from "exceljs";
 
-export type TScheduleWithBookingCount = (Omit<
-  TGetSchedulesByDateRangeWithBookingCount[number],
-  "day"
-> & {
-  day: string;
-})[];
+/** Exactly the query result — see the note in createExcelSheetWithoutBookingCount. */
+export type TScheduleWithBookingCount =
+  TGetSchedulesByDateRangeWithBookingCount;
 
 type TCreateExcelTable = {
   TableName: string;
@@ -159,21 +156,11 @@ export async function createExcelSheetWithBookingCount({
   let dateCount = 0;
   TableRowData.forEach((item, i) => {
     const rowIndex = i + 2;
-    const { Booking, Package, day, fromTime, toTime } = item;
-    const dateStr = format(day, "dd/ MM /yyyy");
-    const dayStr = format(day, "EEEE");
+    const { Booking, Package, day, startsAt, endsAt } = item;
+    const dateStr = formatIstDate(day, "dateSlash");
+    const dayStr = formatDayKey(dayKeyOfDateColumn(day), "dateFull").split(" ")[0];
 
-    const data = selectFromTimeAndToTimeFromScheduleOrPackages({
-      Packages: {
-        packageFromTime: Package?.fromTime ?? "",
-        packageToTime: Package?.toTime ?? "",
-      },
-      schedule: {
-        scheduleFromTime: fromTime,
-        scheduleToTime: toTime,
-      },
-    });
-    const fromToTime = data.fromTime + " - " + data.toTime;
+    const fromToTime = formatIstRange(startsAt, endsAt);
 
     table.addRow({
       num: i + 1,

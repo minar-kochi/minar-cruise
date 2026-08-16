@@ -1,3 +1,4 @@
+import { formatIstTime } from "@/lib/datetime";
 import { TicketData } from "@/components/admin/dashboard/ticket/cruise-ticket";
 import { TGetUserBookingDetails } from "@/db/data/dto/booking";
 import { GST_SAC_CODE, MINAR_GSTIN } from "@/lib/helpers/gst";
@@ -58,10 +59,10 @@ export function createBookingData({
     supplierGSTIN: data?.payment.gstin ?? gstin ?? MINAR_GSTIN,
     sacCode: data?.payment.sacCode ?? sacCode ?? GST_SAC_CODE,
     contactNum: data?.user.contact ?? "",
-    boardingTime: data?.schedule.Package?.fromTime ?? "",
-    reportingTime: data?.schedule.Package?.fromTime ?? "",
+    boardingTime: formatIstTime(data?.schedule.startsAt ?? null),
+    reportingTime: formatIstTime(data?.schedule.startsAt ?? null),
     departureDate: data?.schedule.day.toString() ?? "",
-    departureTime: data?.schedule.Package?.fromTime ?? "",
+    departureTime: formatIstTime(data?.schedule.startsAt ?? null),
     emailId: data?.user.email ?? "",
     passengerDetails: [
       {

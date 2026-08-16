@@ -1,4 +1,5 @@
 "use client";
+import { formatIstRange } from "@/lib/datetime";
 
 import { trpc } from "@/app/_trpc/client";
 import { GuestStepper, GuestStepperGroup } from "./GuestStepper";
@@ -181,7 +182,7 @@ export function BookingLinkCheckout({
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                {link.package.fromTime} &ndash; {link.package.toTime}
+                {formatIstRange(link.scheduleStartsAt, link.scheduleEndsAt)}
               </span>
             </div>
           </div>

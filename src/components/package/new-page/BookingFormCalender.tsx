@@ -6,8 +6,8 @@ import {
   cn,
   filterDateFromCalender,
   parseDateFormatYYYMMDDToNumber,
-  RemoveTimeStampFromDate,
 } from "@/lib/utils";
+import { IstDayKey, calendarDateToDayKey, dayKeyOfDateColumn, istToday } from "@/lib/datetime";
 import { $Enums } from "@prisma/client";
 import { Info, Loader2 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
@@ -76,7 +76,7 @@ export default function BookingFormCalender({
    * available date silently falls into the "needs 30 guests" path.
    */
   const [month, setMonth] = useState<string>(
-    () => date ?? RemoveTimeStampFromDate(new Date(Date.now())),
+    () => date ?? istToday(),
   );
 
   const { data, isPending, isError } =
@@ -93,12 +93,21 @@ export default function BookingFormCalender({
       { placeholderData: keepPreviousData },
     );
 
-  const availableDateArray = data?.schedules.map((item) => {
-    return item.day;
-  });
+  // These feed day-key comparisons downstream, so convert once here rather than
+  // letting raw Dates and day keys mix in the calendar predicates. `item.day` is
+  // a @db.Date column, so it is already a calendar day — reading its UTC fields
+  // is what preserves it; shifting it into IST would be treating it as an
+  // instant.
+  const availableDateArray = data?.schedules
+    .map((item) => dayKeyOfDateColumn(item.day))
+    .filter((d): d is IstDayKey => d !== null);
+
+  const blockedDateArray = data?.blockedScheduleDateArray
+    .map((item) => dayKeyOfDateColumn(item.day))
+    .filter((d): d is IstDayKey => d !== null);
 
   const disabledDays = data?.blockedScheduleDateArray.map((item) => ({
-    day: new Date(item.day),
+    day: item.day,
   }));
 
   /**
@@ -117,7 +126,7 @@ export default function BookingFormCalender({
   const selectedSchedule = useMemo(() => {
     if (!date || !data?.schedules) return undefined;
     return data.schedules.find(
-      (fv) => RemoveTimeStampFromDate(new Date(fv.day)) === date,
+      (fv) => dayKeyOfDateColumn(fv.day) === date,
     );
   }, [date, data]);
 
@@ -155,14 +164,14 @@ export default function BookingFormCalender({
 
     if (!selected) return;
 
-    const nextDate = RemoveTimeStampFromDate(selected);
+    const nextDate = calendarDateToDayKey(selected);
     dispatch(setDate(nextDate));
     setFormDateValue(nextDate);
 
     // scheduleId is handled by the effect above; this only explains to the
     // customer why a day with no schedule yet carries a minimum party size.
     const hasSchedule = data?.schedules.some(
-      (fv) => RemoveTimeStampFromDate(new Date(fv.day)) === nextDate,
+      (fv) => dayKeyOfDateColumn(fv.day) === nextDate,
     );
 
     // A package whose rule sets no minimum (Sunset, by default) sails with any
@@ -198,13 +207,13 @@ export default function BookingFormCalender({
       mode="single"
       month={monthDate}
       onMonthChange={(nextMonth) => {
-        setMonth(RemoveTimeStampFromDate(nextMonth));
+        setMonth(calendarDateToDayKey(nextMonth));
       }}
       disabled={(day) =>
         filterDateFromCalender({
           date: day,
           dateArray: disabledDays,
-          startFrom: packageData.fromTime,
+          startMinutesIst: packageData.startMinutesIst ?? 0,
           AvailableDate: availableDateArray,
           rule: bookingRule,
         })
@@ -220,8 +229,8 @@ export default function BookingFormCalender({
             AvailableDate: availableDateArray,
             props,
             packageCategory,
-            blockedDate: data?.blockedScheduleDateArray.map((item) => item.day),
-            startFrom: packageData.fromTime,
+            blockedDate: blockedDateArray,
+            startMinutesIst: packageData.startMinutesIst ?? 0,
             isLoading: isCalendarBusy,
             bookingRule,
           }),

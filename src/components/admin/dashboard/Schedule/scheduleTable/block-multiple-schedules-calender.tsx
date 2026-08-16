@@ -1,9 +1,10 @@
 "use client";
+import { calendarDateToDayKey, istToday } from "@/lib/datetime";
 
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { cn, RemoveTimeStampFromDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   addDays,
   addMonths,
@@ -21,16 +22,16 @@ export default function BlockMultipleSchedulesCalender() {
     from: string;
     to: string;
   }>({
-    from: RemoveTimeStampFromDate(new Date(Date.now())),
-    to: RemoveTimeStampFromDate(addDays(new Date(Date.now()), 10)),
+    from: istToday(),
+    to: calendarDateToDayKey(addDays(new Date(Date.now()), 10)),
   });
 
   const [visibleMonths, setVisibleMonths] = useState<{
     startMonth: string;
     endMonth: string;
   }>({
-    startMonth: RemoveTimeStampFromDate(startOfMonth(new Date(Date.now()))),
-    endMonth: RemoveTimeStampFromDate(
+    startMonth: calendarDateToDayKey(startOfMonth(new Date(Date.now()))),
+    endMonth: calendarDateToDayKey(
       endOfMonth(addMonths(new Date(Date.now()), 1)),
     ),
   });
@@ -48,8 +49,8 @@ export default function BlockMultipleSchedulesCalender() {
   // Month change handler
   async function handleMonthChange(month: Date) {
     setVisibleMonths({
-      startMonth: RemoveTimeStampFromDate(month),
-      endMonth: RemoveTimeStampFromDate(endOfMonth(addMonths(month, 1))),
+      startMonth: calendarDateToDayKey(month),
+      endMonth: calendarDateToDayKey(endOfMonth(addMonths(month, 1))),
     });
 
     fetch({
@@ -119,18 +120,18 @@ export default function BlockMultipleSchedulesCalender() {
           setDate((prev) => {
             let to =
               selectedDate?.to &&
-              prev.to === RemoveTimeStampFromDate(selectedDate?.to)
+              prev.to === calendarDateToDayKey(selectedDate?.to)
                 ? prev.to
                 : selectedDate?.to
-                  ? RemoveTimeStampFromDate(selectedDate?.to)
+                  ? calendarDateToDayKey(selectedDate?.to)
                   : prev.to;
 
             let from =
               selectedDate?.from &&
-              prev.from === RemoveTimeStampFromDate(selectedDate?.from)
+              prev.from === calendarDateToDayKey(selectedDate?.from)
                 ? prev.from
                 : selectedDate?.from
-                  ? RemoveTimeStampFromDate(selectedDate?.from)
+                  ? calendarDateToDayKey(selectedDate?.from)
                   : prev.from;
 
             return {
@@ -146,7 +147,7 @@ export default function BlockMultipleSchedulesCalender() {
           let isPastDate = date < currDate;
           let isDisabledDate = ScheduleDays
             ? ScheduleDays?.availableDates.includes(
-                RemoveTimeStampFromDate(date),
+                calendarDateToDayKey(date),
               )
             : false;
           return isPastDate || isDisabledDate;
@@ -154,11 +155,11 @@ export default function BlockMultipleSchedulesCalender() {
         components={{
           DayContent(props) {
             const isBlocked = ScheduleDays?.blockedDates.some((day: string) =>
-              isSameDay(RemoveTimeStampFromDate(props.date), new Date(day)),
+              isSameDay(calendarDateToDayKey(props.date), new Date(day)),
             );
             const isAvailable = ScheduleDays?.availableDates.some(
               (day: string) =>
-                isSameDay(RemoveTimeStampFromDate(props.date), new Date(day)),
+                isSameDay(calendarDateToDayKey(props.date), new Date(day)),
             );
             return (
               <span

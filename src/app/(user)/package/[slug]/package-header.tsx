@@ -1,3 +1,4 @@
+import { formatIstMinutes } from "@/lib/datetime";
 import React from "react";
 import { Clock, User, Baby, ShipIcon } from "lucide-react";
 import { TGetPackageById } from "@/db/data/dto/package";
@@ -70,7 +71,8 @@ const PackageHeader = ({ data }: { data: TGetPackageById }) => {
               <div className="text-gray-800">
                 <span className="text-xs block">Time</span>
                 <span className="font-bold">
-                  {data.fromTime} - {data.toTime}
+                  {formatIstMinutes(data.startMinutesIst)} -{" "}
+                  {formatIstMinutes(data.startMinutesIst + data.duration)}
                 </span>
               </div>
             </div>

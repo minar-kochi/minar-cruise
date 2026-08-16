@@ -1,54 +1,12 @@
-import { isValidMergeTimeCycle } from "../utils";
-export const selectFromTimeAndToTimeFromScheduleOrPackages = ({
-  Packages,
-  schedule,
-}: {
-  schedule: {
-    scheduleToTime: string | null;
-    scheduleFromTime: string | null;
-  };
-  Packages: {
-    packageToTime: string | null;
-    packageFromTime: string | null;
-  };
-}): {
-  fromTime: string;
-  toTime: string;
-} => {
-  const { scheduleFromTime, scheduleToTime } = schedule;
-  const { packageFromTime, packageToTime } = Packages;
-  const isScheduleToValid = isValidMergeTimeCycle(scheduleFromTime ?? "");
-  const isScheduleFromValid = isValidMergeTimeCycle(scheduleToTime ?? "");
-  if (
-    isScheduleToValid &&
-    isScheduleFromValid &&
-    scheduleFromTime &&
-    scheduleToTime
-  ) {
-    return {
-      fromTime: scheduleFromTime,
-      toTime: scheduleToTime,
-    };
-  }
-  const isPackageToValid = isValidMergeTimeCycle(packageFromTime ?? "");
-  const isPackageFromValid = isValidMergeTimeCycle(packageToTime ?? "");
-  if (
-    isPackageToValid &&
-    isPackageFromValid &&
-    packageFromTime &&
-    packageToTime
-  ) {
-    return {
-      fromTime: packageFromTime,
-      toTime: packageToTime,
-    };
-  }
-  return {
-    fromTime: "",
-    toTime: "",
-  };
-};
-
+/**
+ * Business helpers that are not date-related.
+ *
+ * `selectFromTimeAndToTimeFromScheduleOrPackages` used to live here — it
+ * resolved a schedule time by falling back through four nullable strings at
+ * every read, and rendered a bare " - " when none of them parsed. That question
+ * is answered once at write time now (see lib/helpers/scheduleInstants.ts), and
+ * display goes through `formatIstRange`.
+ */
 export const phoneNumberParser = (contact: string | undefined) => {
   if (!contact) {
     return null;

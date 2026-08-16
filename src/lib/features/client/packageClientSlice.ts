@@ -1,6 +1,5 @@
 // import { TgetPackageScheduleDatas } from "@/db/data/dto/package";
 import { TGetPackageSearchItems } from "@/db/data/dto/package";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { TExcludedOrganizedPackageData } from "@/Types/packages/package";
 import {
   ScheduleGrouped,

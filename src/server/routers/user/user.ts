@@ -1,3 +1,4 @@
+import { dayKeyToDateColumn, endOfMonthKey, istToday, parseIstDayKey, startOfMonthKey } from "@/lib/datetime";
 import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
 import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
@@ -8,7 +9,6 @@ import {
   isCurrentMonthSameAsRequestedMonth,
   isDateValid,
   parseDateFormatYYYMMDDToNumber,
-  RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import { exclusivePackageValidator } from "@/lib/validators/exclusivePackageContactValidator";
 import { onlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
@@ -121,27 +121,31 @@ export const user = router({
 
         const isSameMonth = isCurrentMonthSameAsRequestedMonth(clientDate);
 
-        const currentServerDate = RemoveTimeStampFromDate(new Date(Date.now()));
+        const currentServerDate = istToday();
 
-        const endOfTheMonthServerDate = RemoveTimeStampFromDate(
-          endOfMonth(currentServerDate),
-        );
+        // Month bounds computed on day keys, then converted to the UTC-midnight
+        // Dates a @db.Date column compares against. Previously each bound went
+        // day-key string -> date-fns (parsed UTC, shifted to host zone) -> local
+        // reformat -> `new Date(...)`, so the window silently moved with the
+        // server's timezone.
+        const clientDayKey = parseIstDayKey(clientDate);
+        if (!clientDayKey) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Date Format is not valid YYYY-MM-DD",
+          });
+        }
 
-        const startOfMonthClientDate = RemoveTimeStampFromDate(
-          startOfMonth(clientDate),
-        );
-
-        const endOfMonthClientDate = RemoveTimeStampFromDate(
-          endOfMonth(clientDate),
-        );
         const dateRange = isSameMonth
           ? {
-              gte: new Date(currentServerDate),
-              lte: new Date(endOfTheMonthServerDate),
+              // Same month as today: start from today, not the 1st — past days
+              // of the current month are not bookable.
+              gte: dayKeyToDateColumn(currentServerDate),
+              lte: dayKeyToDateColumn(endOfMonthKey(currentServerDate)),
             }
           : {
-              gte: new Date(startOfMonthClientDate),
-              lte: new Date(endOfMonthClientDate),
+              gte: dayKeyToDateColumn(startOfMonthKey(clientDayKey)),
+              lte: dayKeyToDateColumn(endOfMonthKey(clientDayKey)),
             };
 
         const data = await db.schedule.findMany({
@@ -158,6 +162,10 @@ export const user = router({
           select: {
             packageId: true,
             day: true,
+            // The customer-facing calendar renders the departure and gates on
+            // it, so it needs the instants, not just the day.
+            startsAt: true,
+            endsAt: true,
             id: true,
             scheduleStatus: true,
             schedulePackage: true,
@@ -168,7 +176,7 @@ export const user = router({
             },
           },
           orderBy: {
-            day: "asc",
+            startsAt: "asc",
           },
         });
 
@@ -362,31 +370,25 @@ export const user = router({
     )
     .query(
       async ({ ctx, input: { packageIds, clientDate, cursor, limit } }) => {
-        let reqData = clientDate ?? RemoveTimeStampFromDate(new Date());
+        let reqData = clientDate ?? istToday();
 
         const isSameMonth = isCurrentMonthSameAsRequestedMonth(reqData);
 
-        const currentServerDate = RemoveTimeStampFromDate(new Date(Date.now()));
+        const currentServerDate = istToday();
 
-        const endOfTheMonthServerDate = RemoveTimeStampFromDate(
-          endOfMonth(currentServerDate),
-        );
+        // Same treatment as getSchedulesByPackageIdAndDate above: month bounds
+        // on day keys, converted once to the UTC-midnight Dates a @db.Date
+        // column compares against.
+        const reqDayKey = parseIstDayKey(reqData) ?? currentServerDate;
 
-        const startOfMonthClientDate = RemoveTimeStampFromDate(
-          startOfMonth(reqData),
-        );
-
-        const endOfMonthClientDate = RemoveTimeStampFromDate(
-          endOfMonth(reqData),
-        );
         const dateRange = isSameMonth
           ? {
-              gte: new Date(currentServerDate),
-              lte: new Date(endOfTheMonthServerDate),
+              gte: dayKeyToDateColumn(currentServerDate),
+              lte: dayKeyToDateColumn(endOfMonthKey(currentServerDate)),
             }
           : {
-              gte: new Date(startOfMonthClientDate),
-              lte: new Date(endOfMonthClientDate),
+              gte: dayKeyToDateColumn(startOfMonthKey(reqDayKey)),
+              lte: dayKeyToDateColumn(endOfMonthKey(reqDayKey)),
             };
 
         const schedules = await db.schedule.findMany({
@@ -409,7 +411,6 @@ export const user = router({
               day: "asc",
             },
             {
-              fromTime: "asc",
             },
           ],
         });

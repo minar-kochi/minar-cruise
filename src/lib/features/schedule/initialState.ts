@@ -1,4 +1,4 @@
-import { RemoveTimeStampFromDate } from "@/lib/utils";
+import { istToday } from "@/lib/datetime";
 import { TScheduleState } from "./ScheduleSlice";
 export const resetUpdates = {
   breakfast: false,
@@ -19,7 +19,7 @@ export const initialState: Required<TScheduleState> = {
     lunch: null,
   },
   ScheduleDataRaw: [],
-  date: RemoveTimeStampFromDate(new Date(Date.now())),
+  date: istToday(),
   isPopOverDateOpened: false,
   isChangedUpdated: resetUpdates,
   upComingSchedules: {

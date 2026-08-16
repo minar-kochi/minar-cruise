@@ -1,3 +1,4 @@
+import { formatIstTime, istDayKeyOf } from "@/lib/datetime";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
@@ -21,7 +22,6 @@ import {
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import {
   combineDateWithSplitedTime,
-  RemoveTimeStampFromDate,
   sleep,
   splitTimeColon,
 } from "@/lib/utils";
@@ -705,11 +705,11 @@ export const booking = router({
         schedule: {
           select: {
             day: true,
+            startsAt: true,
             Package: {
               select: {
                 title: true,
                 duration: true,
-                fromTime: true,
               },
             },
           },
@@ -755,7 +755,7 @@ export const booking = router({
         babyCount: booking.numOfBaby,
         childCount: booking.numOfChildren,
         BookingDate: format(
-          RemoveTimeStampFromDate(booking.createdAt),
+          istDayKeyOf(booking.createdAt),
           "dd-MM-yyyy",
         ),
         email: booking.user.email,
@@ -797,7 +797,7 @@ export const booking = router({
         date: booking.schedule?.day
           ? format(booking.schedule.day, "dd-MM-yyyy")
           : "--",
-        boardingTime: booking.schedule.Package?.fromTime ?? "",
+        boardingTime: formatIstTime(booking.schedule.startsAt ?? null),
         bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
         contact: booking.user.email,
       }),
@@ -855,20 +855,13 @@ export const booking = router({
 
     const data = await getScheduleWithBookingCount({ limit, cursor });
 
-    try {
-      data.sort((a, b) => {
-        let Atime = splitTimeColon(a.fromTime ?? a.Package?.fromTime ?? "");
-        let Btime = splitTimeColon(b.fromTime ?? b.Package?.fromTime ?? "");
-
-        if (!Btime || !Atime) return 0;
-
-        let ADate = combineDateWithSplitedTime(a.day, Atime);
-        let BDate = combineDateWithSplitedTime(b.day, Btime);
-        return ADate.getTime() - BDate.getTime();
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    // Chronological by actual departure. This replaces a copy of the
+    // string-parsing sort that used to live here — it swallowed its own errors
+    // in a try/catch, so a single unparseable time silently left the whole page
+    // in the wrong order with nothing logged to the user.
+    data.sort(
+      (a, b) => (a.startsAt?.getTime() ?? 0) - (b.startsAt?.getTime() ?? 0),
+    );
     let nextCursor: typeof cursor | undefined = undefined;
 
     let scheduleBookingData = data.map((item) => ({

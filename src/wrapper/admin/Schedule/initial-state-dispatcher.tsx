@@ -1,3 +1,4 @@
+import { calendarDateToDayKey } from "@/lib/datetime";
 import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
 import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 import { getOrganizedPackages } from "@/db/data/dto/package";
@@ -17,8 +18,8 @@ export default async function InitialStateDispatcher({
   children: ReactNode;
 }) {
   const currentDate = new Date(Date.now());
-  const date = RemoveTimeStampFromDate(
-    new Date(getUTCDate(RemoveTimeStampFromDate(currentDate))),
+  const date = calendarDateToDayKey(
+    new Date(getUTCDate(calendarDateToDayKey(currentDate))),
   );
   const [packages, data, schedules] = await Promise.all([
     getOrganizedPackages(),

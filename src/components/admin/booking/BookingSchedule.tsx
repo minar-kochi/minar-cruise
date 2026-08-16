@@ -1,4 +1,6 @@
 "use client";
+import { formatIstRange } from "@/lib/datetime";
+import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 
 import { trpc } from "@/app/_trpc/client";
 import TableLoadingAnimation from "@/components/custom/skeltons/table-loading-animation";
@@ -14,7 +16,6 @@ import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { VIEW_BEFORE_PX } from "@/constants/config";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setScheduleForBooking } from "@/lib/features/schedule/ScheduleSlice";
-import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -57,7 +58,14 @@ export default function BookingSchedule() {
   });
 
   useEffect(() => {
-    dispatch(setScheduleForBooking(bookingSchedules?.pages));
+    dispatch(
+      setScheduleForBooking(
+        bookingSchedules?.pages.map((page) => ({
+          ...page,
+          response: page.response.map(convertScheduleDataDateToDateString),
+        })),
+      ),
+    );
   }, [bookingSchedules?.pages, dispatch]);
 
   const sortedScheduleArray = Object.entries(SchedulesWithBookingData).sort(
@@ -99,17 +107,7 @@ export default function BookingSchedule() {
                 {schedules.map((schedule, index) => {
                   const formattedDate = format(schedule.day, "dd-MMM-yy");
                   const formattedDay = format(schedule.day, "cccc");
-                  const { fromTime, toTime } =
-                    selectFromTimeAndToTimeFromScheduleOrPackages({
-                      Packages: {
-                        packageFromTime: schedule.Package?.fromTime ?? "",
-                        packageToTime: schedule.Package?.toTime ?? "",
-                      },
-                      schedule: {
-                        scheduleFromTime: schedule.fromTime,
-                        scheduleToTime: schedule.toTime,
-                      },
-                    });
+                  const timeSlot = formatIstRange(schedule.startsAt, schedule.endsAt);
                   return (
                     <TableRow
                       key={`${date}-${schedule.id}-${index}`}
@@ -130,7 +128,7 @@ export default function BookingSchedule() {
                         {index === 0 && formattedDay}
                       </TableCell>
                       <TableCell className=" max-sm:hidden">
-                        {fromTime} - {toTime}
+                        {timeSlot}
                       </TableCell>
                       <TableCell className=" max-lg:p-1">
                         <p className="">{schedule.Package?.title}</p>

@@ -1,4 +1,5 @@
 "use client";
+import { formatIstMinutes } from "@/lib/datetime";
 import { TGetPackageCardDetails } from "@/db/data/dto/package";
 import Autoplay from "embla-carousel-autoplay";
 import React from "react";
@@ -50,8 +51,8 @@ const PackageCarousel = ({ data, className }: PackageCarouselProps) => {
               className="pl-2 md:pl-4 basis-[90%] sm:basis-[55%] md:basis-[40%] lg:basis-[35%] "
             >
               <PackageCard
-                fromTime={item.fromTime}
-                toTime={item.toTime}
+                startMinutesIst={item.startMinutesIst ?? 0}
+                duration={item.duration}
                 PackageId={item.id}
                 packageCategory={item.packageCategory}
                 slug={item.slug}

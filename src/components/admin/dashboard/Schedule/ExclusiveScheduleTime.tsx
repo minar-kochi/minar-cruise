@@ -1,146 +1,62 @@
-import { Label } from "@/components/ui/label";
-import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
-import { IsIdExclusive } from "@/lib/features/Package/selector";
-import {
-  currentScheduleTimer,
-  DefaultMergedSchedule,
-} from "@/lib/features/schedule/selector";
-import { TkeyDbTime, TScheduleSelector, TTimeCycle } from "@/Types/type";
-import React, { useEffect, useState } from "react";
-import HourSelector from "./HourSelector";
-import MinuteSelector from "./minuteSelector";
-import TimeCycleSelector from "./TimeCycleSelector";
-import { isTimeCycleValid, mergeTimeCycle, splitTimeColon } from "@/lib/utils";
-import { setUpdatableScheduleTime } from "@/lib/features/schedule/ScheduleSlice";
+"use client";
 
-export type TTimeSelector = {
-  onChange: (
-    event: TkeyDbTime,
-    param: Partial<TTimeCycle>,
-    target: keyof TTimeCycle,
-  ) => void;
-  eventType: TkeyDbTime;
-};
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
+import { setUpdatableScheduleTime } from "@/lib/features/schedule/ScheduleSlice";
+import { currentScheduleTimer } from "@/lib/features/schedule/selector";
+import { TScheduleSelector } from "@/Types/type";
+import { istMinutesToInput, istMinutesFromInput } from "@/lib/datetime";
+
+/**
+ * Departure and return for a CUSTOM / EXCLUSIVE schedule.
+ *
+ * This replaces three coupled dropdowns (hour × minute × AM/PM) whose combined
+ * value was string-joined into `"4:30:PM"`, dispatched to redux, and re-split on
+ * the way back out. That format then had to be parsed everywhere it was read,
+ * and its unpadded-hour variant was rejected by one of the two validators — so
+ * a legal time could render as a bare " - ".
+ *
+ * A native `<input type="time">` gives a 24-hour `"HH:MM"` value, which converts
+ * to minutes-from-midnight with no ambiguity and no meridiem to lose. The store
+ * holds the minutes; IST is applied when the instant is resolved at write time.
+ */
 export default function ExclusiveScheduleTime({ type }: TScheduleSelector) {
   const dispatch = useAppDispatch();
-  const defaultSelect = useAppSelector((state) =>
-    DefaultMergedSchedule(state, type),
-  );
-  const defaultSelectTimer = useAppSelector((state) =>
-    currentScheduleTimer(state, type),
-  );
+  const timer = useAppSelector((state) => currentScheduleTimer(state, type));
 
-  const [fromTime, setFromTime] = useState<TTimeCycle>({
-    hours: defaultSelectTimer?.value.fromTime.hours ?? "",
-    min: defaultSelectTimer?.value.fromTime.min ?? "",
-    Cycle: defaultSelectTimer?.value.fromTime.Cycle ?? "AM",
-  });
-  const [toTime, setToTime] = useState<TTimeCycle>({
-    hours: defaultSelectTimer?.value.toTime.hours ?? "",
-    min: defaultSelectTimer?.value.toTime.min ?? "",
-    Cycle: defaultSelectTimer?.value.toTime.Cycle ?? "AM",
-  });
-
-  useEffect(() => {
-    if (isTimeCycleValid(fromTime)) {
-      let parsedTime = mergeTimeCycle(fromTime);
-      if (parsedTime) {
-        dispatch(
-          setUpdatableScheduleTime({
-            eventType: "fromTime",
-            time: parsedTime,
-            type,
-          }),
-        );
-      }
-    }
-  }, [fromTime, type, dispatch]);
-
-  useEffect(() => {
-    if (isTimeCycleValid(toTime)) {
-      let parsedTime = mergeTimeCycle(toTime);
-      if (parsedTime) {
-        dispatch(
-          setUpdatableScheduleTime({
-            eventType: "toTime",
-            time: parsedTime,
-            type,
-          }),
-        );
-      }
-    }
-  }, [toTime, type, dispatch]);
-
-  function handleTimeChange(
-    event: TkeyDbTime,
-    param: Partial<TTimeCycle>,
-    target: keyof TTimeCycle,
-  ) {
-    if (event === "fromTime") {
-      setFromTime((prev) => {
-        return {
-          ...prev,
-          [target]: param[target],
-        };
-      });
-    }
-    if (event === "toTime") {
-      setToTime((prev) => {
-        return {
-          ...prev,
-          [target]: param[target],
-        };
-      });
-    }
-  }
-
-  const isExclusive = useAppSelector((state) =>
-    IsIdExclusive(state, defaultSelect.packageId, type),
-  );
-
-  if (!isExclusive) return null;
+  const onChange = (field: "startMinutes" | "endMinutes", value: string) => {
+    const minutes = istMinutesFromInput(value);
+    // An empty or partially-typed input yields null; store it as-is rather than
+    // coercing to 0, which would silently mean midnight.
+    dispatch(setUpdatableScheduleTime({ type, field, minutes } as never));
+  };
 
   return (
-    <div className="">
-      <div className="indent-1">
-        <Label htmlFor="from-date-id">From:</Label>
-        <div className="flex w-full  gap-x-4">
-          <HourSelector
-            type={type}
-            eventType="fromTime"
-            onChange={handleTimeChange}
-          />
-          <MinuteSelector
-            type={type}
-            eventType="fromTime"
-            onChange={handleTimeChange}
-          />
-          <TimeCycleSelector
-            type={type}
-            eventType="fromTime"
-            onChange={handleTimeChange}
-          />
-        </div>
+    <div className="flex gap-4">
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`${type}-departs`}>Departs (IST)</Label>
+        <Input
+          id={`${type}-departs`}
+          type="time"
+          value={
+            timer?.startMinutes != null
+              ? istMinutesToInput(timer.startMinutes)
+              : ""
+          }
+          onChange={(e) => onChange("startMinutes", e.target.value)}
+        />
       </div>
-      <div className="indent-1">
-        <Label htmlFor="from-date-id">To:</Label>
-        <div className="flex w-full  gap-x-4">
-          <HourSelector
-            type={type}
-            eventType="toTime"
-            onChange={handleTimeChange}
-          />
-          <MinuteSelector
-            type={type}
-            eventType="toTime"
-            onChange={handleTimeChange}
-          />
-          <TimeCycleSelector
-            type={type}
-            eventType="toTime"
-            onChange={handleTimeChange}
-          />
-        </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`${type}-returns`}>Returns (IST)</Label>
+        <Input
+          id={`${type}-returns`}
+          type="time"
+          value={
+            timer?.endMinutes != null ? istMinutesToInput(timer.endMinutes) : ""
+          }
+          onChange={(e) => onChange("endMinutes", e.target.value)}
+        />
       </div>
     </div>
   );

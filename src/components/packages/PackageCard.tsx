@@ -1,3 +1,4 @@
+import { formatIstMinutes } from "@/lib/datetime";
 import Image from "next/image";
 
 import { Baby, Check, Clock, MapPin, UserRound } from "lucide-react";
@@ -20,8 +21,10 @@ interface IPackageCard {
   amenities: TAmenitiesGetPackageCardDetails;
   packageCategory: PACKAGE_CATEGORY;
   slug: string;
-  fromTime: string;
-  toTime: string;
+  /** Departure, minutes from IST midnight. */
+  startMinutesIst: number;
+  /** Sailing length in minutes; the return time is start + duration. */
+  duration: number;
 }
 const PackageCard = ({
   adultPrice,
@@ -34,7 +37,8 @@ const PackageCard = ({
   amenities,
   PackageId,
   packageCategory,
-  fromTime,
+  startMinutesIst,
+  duration,
 }: IPackageCard) => {
   return (
     <Card
@@ -63,12 +67,11 @@ const PackageCard = ({
           <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
 
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            {fromTime && (
-              <div className="flex items-center gap-1">
-                <Clock size={16} />
-                <span>{fromTime}</span>
-              </div>
-            )}
+            <span className="flex items-center gap-1">
+              <Clock size={14} />
+              {formatIstMinutes(startMinutesIst)} –{" "}
+              {formatIstMinutes(startMinutesIst + duration)}
+            </span>
           </div>
         </div>
 

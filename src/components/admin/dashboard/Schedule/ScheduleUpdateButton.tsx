@@ -1,3 +1,4 @@
+import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 import { RefreshCw } from "lucide-react";
 import React, { useState } from "react";
 import {
@@ -17,7 +18,6 @@ import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
 import {
   cn,
-  RemoveTimeStampFromDate,
   sleep,
   splitTimeColon,
 } from "@/lib/utils";
@@ -54,10 +54,9 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
         await InvalidateScheduleInfinity(undefined, {
           type: "all",
         });
-        await invalidate({
-          ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
-        });
-        dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
+        const keyed = convertScheduleDataDateToDateString(data);
+        await invalidate({ ScheduleDate: keyed.day });
+        dispatch(setSyncDatabaseUpdatesScheduleCreation(keyed, type));
       },
       onError(error, variables, context) {
         toast.dismiss();

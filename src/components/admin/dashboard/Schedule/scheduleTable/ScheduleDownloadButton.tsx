@@ -1,4 +1,5 @@
 "use client";
+import { calendarDateToDayKey, istToday } from "@/lib/datetime";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn, RemoveTimeStampFromDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import React from "react";
 import { addDays, format } from "date-fns";
 import { trpc } from "@/app/_trpc/client";
@@ -37,8 +38,8 @@ export default function ScheduleDownloadButton({
   type,
 }: IScheduleDownloadButton) {
   const [date, setDate] = React.useState<TDateRange>({
-    from: RemoveTimeStampFromDate(new Date(Date.now())),
-    to: RemoveTimeStampFromDate(addDays(new Date(Date.now()), 10)),
+    from: istToday(),
+    to: calendarDateToDayKey(addDays(new Date(Date.now()), 10)),
   });
 
   return (
@@ -66,18 +67,18 @@ export default function ScheduleDownloadButton({
               setDate((prev) => {
                 let to =
                   selectedDate?.to &&
-                  prev.to === RemoveTimeStampFromDate(selectedDate?.to)
+                  prev.to === calendarDateToDayKey(selectedDate?.to)
                     ? prev.to
                     : selectedDate?.to
-                      ? RemoveTimeStampFromDate(selectedDate?.to)
+                      ? calendarDateToDayKey(selectedDate?.to)
                       : prev.to;
 
                 let from =
                   selectedDate?.from &&
-                  prev.from === RemoveTimeStampFromDate(selectedDate?.from)
+                  prev.from === calendarDateToDayKey(selectedDate?.from)
                     ? prev.from
                     : selectedDate?.from
-                      ? RemoveTimeStampFromDate(selectedDate?.from)
+                      ? calendarDateToDayKey(selectedDate?.from)
                       : prev.from;
 
                 return {
@@ -136,19 +137,19 @@ export default function ScheduleDownloadButton({
                       setDate((prev) => {
                         let to =
                           selectedDate?.to &&
-                          prev.to === RemoveTimeStampFromDate(selectedDate?.to)
+                          prev.to === calendarDateToDayKey(selectedDate?.to)
                             ? prev.to
                             : selectedDate?.to
-                              ? RemoveTimeStampFromDate(selectedDate?.to)
+                              ? calendarDateToDayKey(selectedDate?.to)
                               : prev.to;
 
                         let from =
                           selectedDate?.from &&
                           prev.from ===
-                            RemoveTimeStampFromDate(selectedDate?.from)
+                            calendarDateToDayKey(selectedDate?.from)
                             ? prev.from
                             : selectedDate?.from
-                              ? RemoveTimeStampFromDate(selectedDate?.from)
+                              ? calendarDateToDayKey(selectedDate?.from)
                               : prev.from;
 
                         return {

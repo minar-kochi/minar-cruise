@@ -61,8 +61,6 @@ export async function getPackageByIdWithStatusAndCount(id: string) {
       select: {
         id: true,
         packageCategory: true,
-        fromTime: true,
-        toTime: true,
         // Needed by callers that resolve a schedule's startsAt/endsAt at write
         // time (deriveScheduleInstants). Selecting them here rather than at each
         // call site keeps the "what does a writer need to know about a package"
@@ -102,8 +100,7 @@ export async function getPackageDetails(slug: string) {
         description: true,
         amenitiesId: true,
         duration: true,
-        fromTime: true,
-        toTime: true,
+        startMinutesIst: true,
         childPrice: true,
         amenities: { select: visibleAmenityItemsSelect },
       },
@@ -137,8 +134,7 @@ export async function getPackageById({ slug }: { slug: string }) {
         description: true,
         amenitiesId: true,
         duration: true,
-        fromTime: true,
-        toTime: true,
+        startMinutesIst: true,
         childPrice: true,
         amenities: { select: publicAmenitiesSelect },
         food: true,
@@ -198,8 +194,7 @@ export async function getPackageSearchItems() {
         amenities: { select: publicAmenitiesSelect },
         description: true,
         duration: true,
-        fromTime: true,
-        toTime: true,
+        startMinutesIst: true,
         packageCategory: true,
         ...packageBookingRuleSelect,
         packageImage: {
@@ -256,6 +251,8 @@ export type PackageSelect = {
   duration: number;
   slug: string;
   packageCategory: $Enums.PACKAGE_CATEGORY;
+  /** Departure as minutes from IST midnight; null until backfilled. */
+  startMinutesIst: number | null;
 };
 
 export const getOrganizedPackages = unstable_cache(
@@ -269,6 +266,11 @@ export const getOrganizedPackages = unstable_cache(
           id: true,
           packageCategory: true,
           duration: true,
+          startMinutesIst: true,
+          // The booking countdown derives the departure instant per selected
+          // date from this. It previously read `fromTime`, which this select
+          // never included — so the badge silently had no departure to count
+          // down to.
         },
       });
       if (!data.length) {
@@ -360,9 +362,10 @@ export async function getPackageCardDetails() {
         childPrice: true,
         title: true,
         packageCategory: true,
-        fromTime: true,
-        toTime: true,
         slug: true,
+        // The card shows the sailing window; both are needed to render it.
+        startMinutesIst: true,
+        duration: true,
         amenities: { select: visibleAmenityItemsSelect },
         packageImage: {
           take: 1,
@@ -624,7 +627,6 @@ export async function getPackageTimeAndDuration(id: string) {
       select: {
         title: true,
         duration: true,
-        fromTime: true,
         // The order.paid webhook creates a Schedule and must resolve its
         // startsAt/endsAt in the same transaction — a paid sailing with no
         // departure instant would be invisible to every instant-based query.

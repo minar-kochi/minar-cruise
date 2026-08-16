@@ -1,3 +1,4 @@
+import { dayKeyOfDateColumn } from "@/lib/datetime";
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
 import {
   GroupedSchedulePackageData,
@@ -14,7 +15,6 @@ import {
 import { TkeyDbTime, TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
 
 export type TScheduleUtilsState = {
@@ -182,7 +182,8 @@ const scheduleSlice = createSlice({
         data: TScheduleDataDayReplaceString,
         type: TKeyOrganizedScheduleData,
       ) {
-        const date = RemoveTimeStampFromDate(new Date(data.day));
+        // `data.day` is already an IstDayKey — the store is keyed by IST day.
+        const date = data.day;
 
         return {
           payload: {
@@ -218,7 +219,8 @@ const scheduleSlice = createSlice({
         data: TScheduleDataDayReplaceString,
         type: TKeyOrganizedScheduleData,
       ) {
-        const date = RemoveTimeStampFromDate(new Date(data.day));
+        // `data.day` is already an IstDayKey — the store is keyed by IST day.
+        const date = data.day;
         return {
           payload: {
             updatingDate: date,
@@ -251,7 +253,8 @@ const scheduleSlice = createSlice({
         data: TScheduleDataDayReplaceString,
         type: TKeyOrganizedScheduleData,
       ) {
-        const date = RemoveTimeStampFromDate(new Date(data.day));
+        // `data.day` is already an IstDayKey — the store is keyed by IST day.
+        const date = data.day;
         return {
           payload: {
             updatingDate: date,

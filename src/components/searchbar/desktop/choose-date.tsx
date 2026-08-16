@@ -1,4 +1,5 @@
 "use client";
+import { calendarDateToDayKey, istToday } from "@/lib/datetime";
 
 import {
   Popover,
@@ -15,7 +16,6 @@ import {
 import {
   cn,
   parseDateFormatYYYMMDDToNumber,
-  RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import { setDate } from "@/lib/features/client/packageClientSlice";
 import { TSplitedFormatedDate } from "@/Types/type";
@@ -36,7 +36,7 @@ export function ChooseDates({ className }: { className?: string }) {
 
   const pickedDate: TSplitedFormatedDate =
     parseDateFormatYYYMMDDToNumber(
-      date ?? RemoveTimeStampFromDate(new Date()),
+      date ?? istToday(),
     ) ?? defaultDate;
 
   const dispatch = useClientDispatch();
@@ -82,7 +82,7 @@ export function ChooseDates({ className }: { className?: string }) {
     if (!isDisabled(newDate.getMonth(), newDate.getFullYear())) {
       setMonth(newDate.getMonth());
       setYear(newDate.getFullYear());
-      let NewDateConverted = RemoveTimeStampFromDate(newDate);
+      let NewDateConverted = calendarDateToDayKey(newDate);
       dispatch(setDate(NewDateConverted));
     }
   };
@@ -92,7 +92,7 @@ export function ChooseDates({ className }: { className?: string }) {
     if (!isDisabled(newDate.getMonth(), newDate.getFullYear())) {
       setMonth(newDate.getMonth());
       setYear(newDate.getFullYear());
-      let NewDateConverted = RemoveTimeStampFromDate(newDate);
+      let NewDateConverted = calendarDateToDayKey(newDate);
       dispatch(setDate(NewDateConverted));
     }
   };
@@ -101,7 +101,7 @@ export function ChooseDates({ className }: { className?: string }) {
     const newDate = new Date(year, month, 1);
     if (!isDisabled(newDate.getMonth(), newDate.getFullYear())) {
       setMonth(month);
-      let NewDateConverted = RemoveTimeStampFromDate(newDate);
+      let NewDateConverted = calendarDateToDayKey(newDate);
       dispatch(setDate(NewDateConverted));
     }
   };

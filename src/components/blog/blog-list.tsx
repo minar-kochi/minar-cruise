@@ -1,7 +1,7 @@
+import { istDayKeyOf } from "@/lib/datetime";
 import BlogCard from "@/components/blog/BlogCard";
 import { TGetBlogWithPagination } from "@/db/data/dto/blog";
 import BlogPagination from "./blog-pagination";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 
 interface IBlogListProps {
   data: TGetBlogWithPagination;
@@ -17,7 +17,7 @@ export default function BlogList({ data }: IBlogListProps) {
             desc={blog.shortDes}
             imgUrl={blog.image?.url ?? "/fallback-image.jpg"}
             link={`/blog/${blog.blogSlug}`}
-            date={RemoveTimeStampFromDate(blog.createdAt)}
+            date={istDayKeyOf(blog.createdAt)}
             author={blog.author}
           />
         ))}

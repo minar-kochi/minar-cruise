@@ -78,6 +78,11 @@ export const bookingLink = router({
       return {
         token: link.token,
         scheduleDay: link.scheduleDay,
+        // The departure frozen at generation time. The checkout page renders
+        // this, not the live package, so an admin editing the package cannot
+        // change what an already-sent link says.
+        scheduleStartsAt: link.scheduleStartsAt,
+        scheduleEndsAt: link.scheduleEndsAt,
         paymentType: link.paymentType,
         advancePercent: link.advancePercent,
         adultPricePaise: link.adultPricePaise,
@@ -94,8 +99,6 @@ export const bookingLink = router({
           description: link.Package.description,
           packageType: link.Package.packageType,
           duration: link.Package.duration,
-          fromTime: link.schedule?.fromTime ?? link.Package.fromTime,
-          toTime: link.schedule?.toTime ?? link.Package.toTime,
           amenities:
             link.Package.amenities?.items.map((item) => item.label) ?? [],
           imageUrl: link.Package.packageImage[0]?.image.url ?? null,

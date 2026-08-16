@@ -1,3 +1,4 @@
+import { calendarDateToDayKey, dayKeyOfDateColumn, istToday } from "@/lib/datetime";
 // "use client";
 // import { useState } from "react";
 // import { Button } from "../ui/button";
@@ -30,7 +31,7 @@
 // }: IUserBookingDateSelector) {
 //   const [date, setDate] = useState<Date>(new Date(Date.now()));
 //   const [month, setMonth] = useState<string>(
-//     RemoveTimeStampFromDate(new Date(Date.now())),
+//     istToday(),
 //   );
 //   const [isNextSlide, setIsNextSlide] = useState(false);
 //   const [selectedScheduleId, setSelectedScheduleId] = useState<{
@@ -84,8 +85,8 @@
 //               if (!data || !data.schedules) return;
 //               let scheduleIndex = data?.schedules.findIndex(
 //                 (fv) =>
-//                   RemoveTimeStampFromDate(new Date(fv.day)) ===
-//                   RemoveTimeStampFromDate(date),
+//                   dayKeyOfDateColumn(fv.day) ===
+//                   calendarDateToDayKey(date),
 //               );
 //               let schedule =
 //                 scheduleIndex !== -1 ? data.schedules[scheduleIndex] : null;
@@ -99,7 +100,7 @@
 //               });
 //             }}
 //             onMonthChange={(month) => {
-//               setMonth(RemoveTimeStampFromDate(month));
+//               setMonth(calendarDateToDayKey(month));
 //             }}
 //           />
 //         </>

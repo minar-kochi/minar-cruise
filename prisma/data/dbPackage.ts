@@ -23,9 +23,7 @@ export const packages: packagesPartialId = [
     slug: "breakfast-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clj9r7rku0000356cql29f673",
-    fromTime: "09:00:AM",
     startMinutesIst: 540, // 09:00:AM IST
-    toTime: "11:00:AM",
     packageCategory: "BREAKFAST",
     /**
      * Was `MIN_BREAKFAST_BOOKING_HOUR`. The galley shops and preps the evening
@@ -47,9 +45,7 @@ export const packages: packagesPartialId = [
     slug: "lunch-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clk3m9p2q0000472xzt81h294",
-    fromTime: "12:00:PM",
     startMinutesIst: 720, // 12:00:PM IST
-    toTime: "02:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "LUNCH",
   },
@@ -65,9 +61,7 @@ export const packages: packagesPartialId = [
     slug: "sunset-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clr5t6w8x0000639yvn47j516",
-    fromTime: "05:30:PM",
     startMinutesIst: 1050, // 05:30:PM IST
-    toTime: "07:30:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "SUNSET",
     /** Was `MIN_SUNSET_BOOKING_HOUR`. Tea and snacks only — an hour is enough. */
@@ -92,9 +86,7 @@ export const packages: packagesPartialId = [
     slug: "dinner-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clz7f2h4j0000815uqb93k728",
-    fromTime: "08:00:PM",
     startMinutesIst: 1200, // 08:00:PM IST
-    toTime: "10:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "DINNER",
   },
@@ -110,9 +102,7 @@ export const packages: packagesPartialId = [
     slug: "sunset-with-dinner-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "cly9g5k7m0000192wpd25l940",
-    fromTime: "05:30:PM",
     startMinutesIst: 1050, // 05:30:PM IST
-    toTime: "08:30:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "DINNER",
   },
@@ -128,9 +118,7 @@ export const packages: packagesPartialId = [
     slug: "special-4-hour-lunch-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clx1h8n9p0000374vsc47m162",
-    fromTime: "11:00:AM",
     startMinutesIst: 660, // 11:00:AM IST
-    toTime: "03:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "LUNCH",
   },
@@ -146,9 +134,7 @@ export const packages: packagesPartialId = [
     slug: "special-4-hour-dinner-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clw3j1q2s0000558trf69n384",
-    fromTime: "05:00:PM",
     startMinutesIst: 1020, // 05:00:PM IST
-    toTime: "09:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "DINNER",
   },
@@ -164,9 +150,7 @@ export const packages: packagesPartialId = [
     slug: "premium-cruise",
     foodMenuId: "clj9r7rku0000356cql29f674",
     amenitiesId: "clu5k4t6v0000736sqh81p506",
-    fromTime: "05:00:PM",
     startMinutesIst: 1020, // 05:00:PM IST
-    toTime: "09:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "EXCLUSIVE",
     /**
@@ -196,9 +180,7 @@ export const packages: packagesPartialId = [
      * bullets silently rewrote the other's.
      */
     amenitiesId: "clv2m8p4r0000847twe52k739",
-    fromTime: "05:00:PM",
     startMinutesIst: 1020, // 05:00:PM IST
-    toTime: "09:00:PM",
     updatedAt: new Date(Date.now()),
     packageCategory: "CUSTOM",
     /** Enquiry only — same reasoning as Exclusive above. */

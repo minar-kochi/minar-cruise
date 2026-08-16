@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { ChangeType, DeepReplaceType } from "@/db/types/TBookingSchedule";
+import { ChangeType } from "@/db/types/TBookingSchedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { duration } from "moment";
 
@@ -160,11 +160,7 @@ export type TGetUserBookingDetailsExcludedNull = Exclude<
   null
 >;
 
-export type TGetUserBookingDetails = DeepReplaceType<
-  TGetUserBookingDetailsExcludedNull,
-  Date,
-  string
-> | null;
+export type TGetUserBookingDetails = TGetUserBookingDetailsExcludedNull | null;
 
 export type TRawGetUserBookingDetails = Awaited<
   ReturnType<typeof getUserBookingDetails>
@@ -182,13 +178,14 @@ export async function getUserBookingDetails(BookingId: string) {
       schedule: {
         select: {
           day: true,
+          startsAt: true,
+          endsAt: true,
           Package: {
             select: {
               adultPrice: true,
               childPrice: true,
               duration: true,
-              fromTime: true,
-              toTime: true,
+              startMinutesIst: true,
               packageCategory: true,
               packageType: true,
             },

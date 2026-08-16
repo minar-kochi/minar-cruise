@@ -1,5 +1,5 @@
+import { dayKeyOfDateColumn, formatDayKey, formatIstDate, formatIstRange } from "@/lib/datetime";
 import { TGetSchedulesByDateRangeExcludingNull } from "@/db/data/dto/schedule/schedule";
-import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { format } from "date-fns";
 import ExcelJS from "exceljs";
 import {
@@ -14,12 +14,14 @@ import {
 } from "./excelSheetUtils";
 import { trpc } from "@/app/_trpc/client";
 
-export type TScheduleWithoutBookingCount = (Omit<
-  TGetSchedulesByDateRangeExcludingNull[number],
-  "day"
-> & {
-  day: string;
-})[];
+/**
+ * Exactly the query result. `day` used to be overridden to `string` here
+ * because tRPC serialised Dates without superjson; it arrives as a real Date
+ * now, so the override is gone and the sheet formats it through
+ * `formatIstDate` like every other date in the app.
+ */
+export type TScheduleWithoutBookingCount =
+  TGetSchedulesByDateRangeExcludingNull;
 
 type TCreateExcelTable = {
   TableName: string;
@@ -81,24 +83,13 @@ export async function createExcelSheetWithoutBookingCount({
 
   // TABLE BODY -------------------------------------------------------------------
   Schedules.map((schedule, i) => {
-    const { Package, day, schedulePackage, scheduleStatus, fromTime, toTime } =
+    const { Package, day, schedulePackage, scheduleStatus, startsAt, endsAt } =
       schedule;
     const rowIndex = i + TableDataStartingIndex;
-    const dateStr = format(day, "dd/ MM /yyyy");
-    const dayStr = format(day, "EEEE");
+    const dateStr = formatIstDate(day, "dateSlash");
+    const dayStr = formatDayKey(dayKeyOfDateColumn(day), "dateFull").split(" ")[0];
 
-    const data = selectFromTimeAndToTimeFromScheduleOrPackages({
-      Packages: {
-        packageFromTime: Package?.fromTime ?? "",
-        packageToTime: Package?.toTime ?? "",
-      },
-      schedule: {
-        scheduleFromTime: fromTime,
-        scheduleToTime: toTime,
-      },
-    });
-
-    const fromToTime = data.fromTime + " - " + data.toTime;
+    const fromToTime = formatIstRange(startsAt, endsAt);
 
     table.addRow({
       num: i + 1,

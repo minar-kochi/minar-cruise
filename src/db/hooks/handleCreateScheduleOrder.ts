@@ -1,3 +1,4 @@
+import { istDayKeyOf } from "@/lib/datetime";
 // import { getDescription, getEvents } from "@/lib/helpers/razorpay/utils";
 // import {
 //   TOrderEvent,
@@ -26,8 +27,7 @@
 // import EmailSendBookingConfirmation from "@/components/services/EmailService";
 // import { getSendAdminCreateNotificationMessage } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 // import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
-// import { RemoveTimeStampFromDate } from "@/lib/utils";
-// import { format } from "date-fns";
+// // import { format } from "date-fns";
 
 // export async function handleCreateScheduleOrder({
 //   events,
@@ -197,7 +197,7 @@
 //             Name: name,
 //             adultCount: adultCount,
 //             babyCount: babyCount,
-//             BookingDate: format(RemoveTimeStampFromDate(booking.createdAt), 'dd-MM-yyyy'),
+//             BookingDate: format(istDayKeyOf(booking.createdAt), 'dd-MM-yyyy'),
 //             childCount,
 //             email: email,
 //             phone: paymentEntity.contact ?? "",

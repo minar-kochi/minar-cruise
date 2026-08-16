@@ -64,8 +64,6 @@ export default function PackageDetailsForm({
       adultPrice: formatPrice(data.adultPrice),
       childPrice: formatPrice(data.childPrice),
       duration: data.duration,
-      fromTime: data.fromTime,
-      toTime: data.toTime,
     });
   }, [data, reset]);
 

@@ -6,7 +6,7 @@ import { getTaxConfig } from "@/lib/helpers/getTaxConfig";
 import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
 import { resolvePackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { getNotes } from "@/lib/razorpay/getNotes";
-import { checkBookingTimeConstraint } from "@/lib/utils";
+import { isWithinBookingWindow, istInstant, parseIstDayKey } from "@/lib/datetime";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { createId } from "@paralleldrive/cuid2";
 import { $Enums } from "@prisma/client";
@@ -108,10 +108,30 @@ export async function CreateBookingForCreateSchedule({
       message: `We can only seat ${bookingRule.maxBoatSeat} guests, please reduce the number of seats`,
     });
   }
-  const bookingRequestCameBeforeTimeConstraint = checkBookingTimeConstraint({
-    selectedDate: selectedScheduleDate,
-    startFrom: packageIdExists.fromTime,
-    rule: bookingRule,
+  /**
+   * The lead-time gate. This is the create-schedule path, so there is no
+   * Schedule row yet — the departure is derived from the package's IST
+   * time-of-day for the date the customer picked, by the same helper the
+   * schedule itself will be written with, so the instant checked here is the
+   * instant that ends up stored.
+   */
+  const selectedDay = parseIstDayKey(selectedScheduleDate);
+  const departsAt =
+    selectedDay && packageIdExists.startMinutesIst !== null
+      ? istInstant(selectedDay, packageIdExists.startMinutesIst)
+      : null;
+
+  if (!departsAt) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message:
+        "Could not determine the departure time for that date, please pick a different date or package",
+    });
+  }
+
+  const bookingRequestCameBeforeTimeConstraint = isWithinBookingWindow({
+    departsAt,
+    minLeadTimeHours: bookingRule.minLeadTimeHours,
   });
 
   if (!bookingRequestCameBeforeTimeConstraint) {

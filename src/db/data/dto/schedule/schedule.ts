@@ -1,6 +1,7 @@
+import { dayKeyOfDateColumn } from "@/lib/datetime";
 import { db } from "@/db";
 import { TScheduleBooking } from "@/db/types/TBookingSchedule";
-import { isProd, RemoveTimeStampFromDate } from "@/lib/utils";
+import { isProd } from "@/lib/utils";
 import { TScheduleCreateSchema } from "@/lib/validators/ScheduleValidtor";
 import {
   isStatusBreakfast,
@@ -34,15 +35,14 @@ export async function getScheduleWithBookingCount({
     select: {
       id: true,
       day: true,
-      fromTime: true,
-      toTime: true,
+      startsAt: true,
+      endsAt: true,
       schedulePackage: true,
       scheduleStatus: true,
       Package: {
         select: {
           title: true,
-          fromTime: true,
-          toTime: true,
+          startMinutesIst: true,
         },
       },
       Booking: {
@@ -121,15 +121,14 @@ export async function getSchedulesByDateRange(FromDate: Date, ToDate: Date) {
       },
       select: {
         day: true,
+        startsAt: true,
+        endsAt: true,
         schedulePackage: true,
         scheduleStatus: true,
-        fromTime: true,
-        toTime: true,
         Package: {
           select: {
             title: true,
-            fromTime: true,
-            toTime: true,
+            startMinutesIst: true,
           },
         },
       },
@@ -226,15 +225,14 @@ export async function getSchedulesByDateRangeWithBookingCount(
     select: {
       // id: true,
       day: true,
-      fromTime: true,
+      startsAt: true,
+      endsAt: true,
       // schedulePackage: true,
       // scheduleStatus: true,
-      toTime: true,
       Package: {
         select: {
           title: true,
-          fromTime: true,
-          toTime: true,
+          startMinutesIst: true,
         },
       },
       Booking: {
@@ -394,10 +392,10 @@ export const getManySchedulesAndTotalBookingCount = async () => {
       select: {
         id: true,
         day: true,
-        fromTime: true,
+        startsAt: true,
+        endsAt: true,
         schedulePackage: true,
         scheduleStatus: true,
-        toTime: true,
         Package: {
           select: {
             title: true,
@@ -452,34 +450,34 @@ export const getupComingScheduleDates = async () => {
     for (const item of data) {
       if (isStatusLunch(item.schedulePackage)) {
         scheduledDate.lunch.push({
-          date: RemoveTimeStampFromDate(item.day),
+          date: dayKeyOfDateColumn(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusSunset(item.schedulePackage)) {
         scheduledDate.sunset.push({
-          date: RemoveTimeStampFromDate(item.day),
+          date: dayKeyOfDateColumn(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusDinner(item.schedulePackage)) {
         scheduledDate.dinner.push({
-          date: RemoveTimeStampFromDate(item.day),
+          date: dayKeyOfDateColumn(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       if (isStatusBreakfast(item.schedulePackage)) {
         scheduledDate.breakfast.push({
-          date: RemoveTimeStampFromDate(item.day),
+          date: dayKeyOfDateColumn(item.day),
           status: item.scheduleStatus,
         });
         continue;
       }
       scheduledDate.custom.push({
-        date: RemoveTimeStampFromDate(item.day),
+        date: dayKeyOfDateColumn(item.day),
         status: item.scheduleStatus,
       });
     }
@@ -540,8 +538,8 @@ export const getAllSchedules = async () => {
       select: {
         id: true,
         day: true,
-        toTime: true,
-        fromTime: true,
+        startsAt: true,
+        endsAt: true,
         schedulePackage: true,
         scheduleStatus: true,
         Package: {
@@ -607,12 +605,11 @@ export const getSchedulesAndBookingByDate = async () => {
     },
     select: {
       day: true,
-      toTime: true,
+      startsAt: true,
+      endsAt: true,
       schedulePackage: true,
       scheduleStatus: true,
       id: true,
-
-      fromTime: true,
       Package: {
         select: {
           id: true,
@@ -674,6 +671,8 @@ export async function getBookingsByScheduleId(id: string) {
           select: {
             schedulePackage: true,
             day: true,
+            startsAt: true,
+            endsAt: true,
           },
         },
         payment: {
@@ -770,15 +769,14 @@ export async function getRecentBookings({
       schedule: {
         select: {
           id: true,
-          fromTime: true,
-          toTime: true,
+          startsAt: true,
+          endsAt: true,
           packageId: true,
           day: true,
           Package: {
             select: {
               title: true,
-              fromTime: true,
-              toTime: true,
+              startMinutesIst: true,
             },
           },
         },

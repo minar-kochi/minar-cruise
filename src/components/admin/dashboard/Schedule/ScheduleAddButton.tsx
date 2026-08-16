@@ -1,3 +1,4 @@
+import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 import { trpc } from "@/app/_trpc/client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import {
 import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
 import {
   cn,
-  RemoveTimeStampFromDate,
   sleep,
   splitTimeColon,
 } from "@/lib/utils";
@@ -60,10 +60,9 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
           await InvalidateBookingScheduleInfinity(undefined, {
             type: "all",
           });
-          await invalidate({
-            ScheduleDate: RemoveTimeStampFromDate(new Date(data.day)),
-          });
-          dispatch(setSyncDatabaseUpdatesScheduleCreation(data, type));
+          const keyed = convertScheduleDataDateToDateString(data);
+          await invalidate({ ScheduleDate: keyed.day });
+          dispatch(setSyncDatabaseUpdatesScheduleCreation(keyed, type));
         }
       },
       onError(error, variables, context) {

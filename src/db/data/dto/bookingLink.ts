@@ -4,7 +4,6 @@ import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
 import { computeBookingLinkQuote } from "@/lib/helpers/bookingLink/quote";
 import { getBookingConfig } from "@/lib/helpers/config/getBookingConfig";
 import { publicAmenitiesSelect } from "./amenities";
-import { DeepReplaceType } from "@/db/types/TBookingSchedule";
 import { $Enums, Prisma } from "@prisma/client";
 
 /**
@@ -18,8 +17,7 @@ const linkPackageSelect = {
   packageType: true,
   packageCategory: true,
   duration: true,
-  fromTime: true,
-  toTime: true,
+  startMinutesIst: true,
   slug: true,
   amenities: { select: publicAmenitiesSelect },
   packageImage: {
@@ -46,8 +44,8 @@ export async function getBookingLinkByToken(token: string) {
             id: true,
             day: true,
             scheduleStatus: true,
-            fromTime: true,
-            toTime: true,
+            startsAt: true,
+            endsAt: true,
           },
         },
       },
@@ -122,15 +120,10 @@ export type TSelectableScheduleRaw = Awaited<
 >["schedules"][number];
 
 /**
- * What a client component actually receives. This tRPC instance has no
- * superjson transformer configured (see `src/server/trpc.ts`), so Dates arrive
- * over the wire as ISO strings — the client type has to say so.
+ * What a client component receives. Identical to the server type: superjson
+ * revives Dates as real Date objects, so no string substitution is needed.
  */
-export type TSelectableSchedule = DeepReplaceType<
-  TSelectableScheduleRaw,
-  Date,
-  string
->;
+export type TSelectableSchedule = TSelectableScheduleRaw;
 
 /**
  * Upcoming schedules an admin can issue a booking link against — the same list
@@ -159,12 +152,12 @@ export async function getSelectableSchedulesForLink({
       packageId: { not: null },
       Package: { packageCategory: { notIn: ["CUSTOM", "EXCLUSIVE"] } },
     },
-    orderBy: [{ day: "asc" }, { fromTime: "asc" }],
+    orderBy: [{ day: "asc" }, { startsAt: "asc" }],
     select: {
       id: true,
       day: true,
-      fromTime: true,
-      toTime: true,
+      startsAt: true,
+      endsAt: true,
       schedulePackage: true,
       scheduleStatus: true,
       Package: {
@@ -176,8 +169,7 @@ export async function getSelectableSchedulesForLink({
           adultPrice: true,
           childPrice: true,
           duration: true,
-          fromTime: true,
-          toTime: true,
+          startMinutesIst: true,
         },
       },
       Booking: { select: { totalBooking: true } },
@@ -235,6 +227,8 @@ export async function listBookingLinks({
       token: true,
       status: true,
       scheduleDay: true,
+  scheduleStartsAt: true,
+  scheduleEndsAt: true,
       paymentType: true,
       advancePercent: true,
       quotedTotalPaise: true,

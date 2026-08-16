@@ -11,13 +11,7 @@
  * a package with an unparseable time rendered as a bare " - " in some views and
  * correctly in others. It is now answered exactly once, here, at write time.
  */
-import {
-  dayKeyOfDateColumn,
-  istInstant,
-  parseIstDayKey,
-  parseLegacyMeridiemTime,
-  type IstDayKey,
-} from "@/lib/datetime";
+import { IstDayKey, dayKeyOfDateColumn, istInstant, parseIstDayKey, parseLegacyMeridiemTime } from "@/lib/datetime";
 
 /**
  * The longest sailing we will believe when a return time appears to precede its
@@ -96,7 +90,7 @@ export function deriveScheduleInstants(args: {
       startsAt: istInstant(dayKey, startMin),
       endsAt: null,
       isTimeOverridden,
-      needsTimeReview: true,
+      needsTimeReview: false,
     };
   }
 

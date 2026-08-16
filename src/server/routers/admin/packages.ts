@@ -1,9 +1,5 @@
 import { db } from "@/db";
-import {
-  dayKeyToDateColumn,
-  istToday,
-  parseLegacyMeridiemTime,
-} from "@/lib/datetime";
+import { dayKeyToDateColumn, istToday, parseLegacyMeridiemTime } from "@/lib/datetime";
 import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import { getBookingConfigUncached } from "@/lib/helpers/config/getBookingConfig";
 import { getPackageAllImage } from "@/db/data/dto/package";
@@ -179,8 +175,6 @@ export const packages = router({
           adultPrice: true,
           childPrice: true,
           duration: true,
-          fromTime: true,
-          toTime: true,
           slug: true,
           isVisible: true,
           minLeadTimeHours: true,
@@ -269,7 +263,6 @@ export const packages = router({
               data: {
                 startsAt: instants.startsAt,
                 endsAt: instants.endsAt,
-                needsTimeReview: instants.needsTimeReview,
               },
             });
           }

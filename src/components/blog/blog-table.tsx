@@ -57,13 +57,11 @@ export default function BlogTable({
         initialData: {
           pages: [
             {
-              blogs: (initialData?.blogs ?? []).map((blog) => ({
-                ...blog,
-                createdAt:
-                  blog.createdAt instanceof Date
-                    ? blog.createdAt.toISOString()
-                    : blog.createdAt,
-              })),
+              // superjson revives Dates on both sides of this boundary now, so
+              // the server-rendered initialData and the client query results are
+              // the same shape. The instanceof/toISOString normalisation this
+              // replaced existed only because they used to differ.
+              blogs: initialData?.blogs ?? [],
               nextCursor: initialData?.nextCursor ?? undefined,
             },
           ],

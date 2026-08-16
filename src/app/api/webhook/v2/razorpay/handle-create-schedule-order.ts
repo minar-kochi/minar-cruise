@@ -1,3 +1,4 @@
+import { formatIstTime, istDayKeyOf } from "@/lib/datetime";
 import { $Enums, Events, Schedule } from "@prisma/client";
 import { OrderPaidEventPayload } from "./razer-pay-order-paid.types";
 import { TRazorPayEventsCreateSchedule } from "@/Types/razorpay/type";
@@ -16,7 +17,6 @@ import EmailSendBookingConfirmation, {
 import { format } from "date-fns";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
-import { RemoveTimeStampFromDate } from "@/lib/utils";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import { MAX_EVENT_RETRY_WEBHOOK_COUNT } from "@/constants/config";
 
@@ -228,7 +228,7 @@ export async function handleCreateScheduleOrder({
             adultCount: adultCount,
             babyCount: babyCount,
             BookingDate: format(
-              RemoveTimeStampFromDate(booking.createdAt),
+              istDayKeyOf(booking.createdAt),
               "dd-MM-yyyy",
             ),
             childCount,
@@ -263,7 +263,7 @@ export async function handleCreateScheduleOrder({
             BookingId: booking.id,
             customerName: name,
             date: format(date, "dd-MM-yyyy"),
-            boardingTime: packageDetail?.fromTime ?? "",
+            boardingTime: formatIstTime(schedule.startsAt),
             bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
             contact: notes.email,
           }),

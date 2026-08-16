@@ -1,8 +1,18 @@
 import CruiseTicket from "@/components/admin/dashboard/ticket/cruise-ticket";
 import { TGetUserBookingDetails } from "@/db/data/dto/booking";
 
+/**
+ * A fixed sample booking for previewing the printed ticket layout.
+ *
+ * The instants are real Dates now. They used to be "12/04/25" strings, which
+ * type-checked only because the tRPC types wrongly claimed `string` for every
+ * Date; the preview was rendering values the real page could never receive.
+ */
+const SAMPLE_BOOKED_AT = new Date("2025-04-12T04:30:00.000Z"); // 10:00 IST
+const SAMPLE_SAILING_DAY = new Date("2025-04-12T00:00:00.000Z"); // @db.Date
+
 const sampleTicketData: TGetUserBookingDetails = {
-  createdAt: "12/04/25",
+  createdAt: SAMPLE_BOOKED_AT,
   id: "21323332154",
   numOfAdults: 2,
   numOfBaby: 2,
@@ -10,7 +20,7 @@ const sampleTicketData: TGetUserBookingDetails = {
   payment: {
     id: "556846846",
     advancePaid: 5200,
-    createdAt: "12/04/25",
+    createdAt: SAMPLE_BOOKED_AT,
     discount: 0,
     modeOfPayment: "GPAY",
     totalAmount: 5200,
@@ -19,21 +29,22 @@ const sampleTicketData: TGetUserBookingDetails = {
     gstAmount: 248,
     gstin: "32BSTPK7128K2Z8",
     sacCode: "998555",
-    updatedAt: "12/04/25",
+    updatedAt: SAMPLE_BOOKED_AT,
   },
   schedule: {
-    day: "12/04/25",
+    day: SAMPLE_SAILING_DAY,
+    startsAt: SAMPLE_BOOKED_AT,
+    endsAt: SAMPLE_BOOKED_AT,
     Package: {
       adultPrice: 720,
       childPrice: 480,
       duration: 2,
-      fromTime: "",
       packageCategory: "BREAKFAST",
       packageType: "Breakfast",
-      toTime: "",
+      startMinutesIst: 540,
     },
   },
-  updatedAt: "12/04/25",
+  updatedAt: SAMPLE_BOOKED_AT,
   user: {
     contact: "98532646423",
     email: "aslu@gmail.com",

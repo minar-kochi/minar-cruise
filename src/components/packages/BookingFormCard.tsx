@@ -1,10 +1,11 @@
 "use client";
+import { calendarDateToDayKey } from "@/lib/datetime";
 
 import { trpc } from "@/app/_trpc/client";
 import { TGetPackageById } from "@/db/data/dto/package";
 import { phoneNumberParser } from "@/lib/helpers/CommonBuisnessHelpers";
 import { ParseScheduleConflicError } from "@/lib/TRPCErrorTransformer/utils";
-import { absoluteUrl, cn, RemoveTimeStampFromDate } from "@/lib/utils";
+import { absoluteUrl, cn } from "@/lib/utils";
 import {
   onlineBookingFormValidator,
   TOnlineBookingFormValidator,
@@ -66,7 +67,7 @@ const BookingFormCard = ({
       numOfBaby: 0,
       packageId: packageId,
       scheduleId: selectedSchedule?.scheduleId ?? "",
-      selectedScheduleDate: RemoveTimeStampFromDate(selectedDate),
+      selectedScheduleDate: calendarDateToDayKey(selectedDate),
       packageCategory: packageCategory,
     },
   });
@@ -89,7 +90,7 @@ const BookingFormCard = ({
           amount: res?.order?.amount,
           order_id: res?.order.id,
           callback_url: absoluteUrl(
-            `/success?email="${res.email}"&time="${formData?.fromTime}"`,
+            `/success?email="${res.email}"`,
           ),
 
           prefill: {

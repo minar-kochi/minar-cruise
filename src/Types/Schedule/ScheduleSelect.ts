@@ -1,3 +1,4 @@
+import type { IstDayKey } from "@/lib/datetime";
 import { PackageSelect } from "@/db/data/dto/package";
 import { TScheduleDataDayReplaceString } from "../type";
 import { Dispatch, SetStateAction } from "react";
@@ -77,30 +78,40 @@ export type TUpdatedDateSchedulePackageId = {
     packageId?: string | null;
     fromTime?: string | null;
     toTime?: string | null;
+    startsAt?: Date | null;
+    endsAt?: Date | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.BREAKFAST;
   };
   lunch: {
     fromTime?: string | null;
     toTime?: string | null;
     packageId?: string | null;
+    startsAt?: Date | null;
+    endsAt?: Date | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
   };
   sunset: {
     fromTime?: string | null;
     toTime?: string | null;
     packageId?: string | null;
+    startsAt?: Date | null;
+    endsAt?: Date | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.SUNSET;
   };
   dinner: {
     fromTime?: string | null;
     toTime?: string | null;
     packageId?: string | null;
+    startsAt?: Date | null;
+    endsAt?: Date | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.DINNER;
   };
   custom: {
     fromTime?: string | null;
     toTime?: string | null;
     packageId?: string | null;
+    startsAt?: Date | null;
+    endsAt?: Date | null;
     scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
   };
 };
@@ -129,7 +140,14 @@ export type TScheduleWithBookingCountWithId = {
 export type TSchedulesData = {
   id: string;
   packageId: string | null;
-  day: Date | string;
+  /**
+   * A real Date. This was `Date | string` because tRPC serialised Dates to
+   * strings without superjson, so the same field arrived as either type
+   * depending on whether it came from the server or the wire — and every
+   * consumer had to handle both. superjson revives it as a Date on both sides
+   * now, so the union is gone.
+   */
+  day: Date;
   schedulePackage: $Enums.SCHEDULED_TIME;
   scheduleStatus: $Enums.SCHEDULE_STATUS;
 };
@@ -138,16 +156,16 @@ export type ScheduleGrouped = {
   [key: string]: TSchedulesData[];
 };
 
+/** Admin store shape — keyed by IST day, like everything else in that store. */
 export type TSchedulePackageData = {
   id: string;
   Package: {
-    fromTime: string;
-    toTime: string;
     title: string;
+    startMinutesIst: number | null;
   } | null;
-  day: string;
-  fromTime: string | null;
-  toTime: string | null;
+  day: IstDayKey;
+  startsAt: Date | null;
+  endsAt: Date | null;
   packageId: string | null;
   schedulePackage: $Enums.SCHEDULED_TIME;
   scheduleStatus: $Enums.SCHEDULE_STATUS;
@@ -173,15 +191,14 @@ export type InfinitySchedulesWithBookingCount = {
 
 export type TScheduleWithBookingCount = {
   id: string;
-  day: string;
-  fromTime: string | null;
-  toTime: string | null;
+  day: IstDayKey;
+  startsAt: Date | null;
+  endsAt: Date | null;
   schedulePackage: $Enums.SCHEDULED_TIME;
   scheduleStatus: $Enums.SCHEDULE_STATUS;
   Booking: number;
   Package: {
     title: string;
-    fromTime: string;
-    toTime: string;
+    startMinutesIst: number | null;
   } | null;
 };

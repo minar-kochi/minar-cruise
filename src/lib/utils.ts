@@ -1,3 +1,12 @@
+import {
+  calendarDateToDayKey,
+  compareDayKeys,
+  dayKeyOfDateColumn,
+  istInstant,
+  istToday,
+  isWithinBookingWindow,
+  type IstDayKey,
+} from "@/lib/datetime";
 // import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
 import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
 import { $Enums } from "@prisma/client";
@@ -255,197 +264,49 @@ export function getISTDateAndTimeFromZ(date: Date) {
   });
 }
 
+/**
+ * react-day-picker `disabled` predicate for the public booking calendar.
+ *
+ * Rewritten onto day keys and instants. It previously did
+ * `new Date(d.toLocaleString("en-US", {timeZone:"Asia/Kolkata"}))` on both
+ * sides — formatting to an IST string then re-parsing it as browser-local time,
+ * three timezone hops relying on implementation-defined parsing — and compared
+ * the results. The comparison happened to survive that because both sides were
+ * shifted equally, but the greyed-out days were still off by one for anyone
+ * west of UTC, because the available/blocked day arrays were formatted with a
+ * host-local helper while the picker's date was not.
+ */
 export function filterDateFromCalender({
-  dateArray,
   date,
-  startFrom,
+  dateArray,
   AvailableDate,
+  startMinutesIst,
   rule,
 }: {
-  AvailableDate?: string[];
-  startFrom: string;
   date: Date;
+  dateArray: { day: Date }[] | undefined;
+  AvailableDate: IstDayKey[] | undefined;
+  /** The package's departure, minutes from IST midnight. */
+  startMinutesIst: number;
   rule: TPackageBookingRule;
-  dateArray:
-    | {
-        day: Date;
-      }[]
-    | undefined;
 }) {
-  if (!dateArray) {
-    return false;
-  }
+  const dayKey = calendarDateToDayKey(date);
 
-  // Check if the date exists in the dateArray
-  let fi = dateArray.findIndex(
-    (fv) => RemoveTimeStampFromDate(fv.day) === RemoveTimeStampFromDate(date),
-  );
-
-  if (fi !== -1) {
-    return true;
-  }
-  // Get current date in Indian Standard Time (date only, no time)
-  let currDate = new Date(
-    new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata",
-    }),
-  );
-  // Reset to start of day to avoid time comparison issues
-  currDate.setHours(0, 0, 0, 0);
-
-  // Convert the input date to IST for comparison (date only, no time)
-  let dateInIST = new Date(
-    date.toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata",
-    }),
-  );
-  // Reset to start of day to avoid time comparison issues
-  dateInIST.setHours(0, 0, 0, 0);
-
-  // Only disable if the date is strictly before today
-  if (dateInIST < currDate) {
+  // Explicitly blocked by an admin.
+  if (dateArray?.some((fv) => dayKeyOfDateColumn(fv.day) === dayKey)) {
     return true;
   }
 
-  const isAvailableForNewBooking = checkBookingTimeConstraint({
-    selectedDate: RemoveTimeStampFromDate(date),
-    startFrom: startFrom,
-    rule,
+  // Strictly before today in IST — never the host's today.
+  if (compareDayKeys(dayKey, istToday()) < 0) return true;
+
+  // Past this package's cut-off for that date.
+  return !isWithinBookingWindow({
+    departsAt: istInstant(dayKey, startMinutesIst),
+    minLeadTimeHours: rule.minLeadTimeHours,
   });
-
-  if (!isAvailableForNewBooking) return true;
-
-  return false;
 }
 
-/**
- * The two instants that bound a package's booking window for one date:
- * when the ship leaves, and when we stop selling seats for it.
- *
- * This is THE definition of "departure − lead time". The badge, the calendar and
- * the server all resolve through here, so they cannot drift apart —
- * `checkBookingTimeConstraint` below is written in terms of it, and
- * `calculateBookingLinkExpiry` clamps to the same `closesAt`.
- *
- * Parsing goes through `convertYYYMMDDStringAndTimeStringToUTCDate`, which
- * splits on colons rather than matching a Luxon format string. That matters:
- * `PackageContentValidator`'s `timeString` allows an unpadded hour (`0?[1-9]`),
- * so `"4:30:PM"` is a legal stored value, and a format built on Luxon's strict
- * two-digit `hh` token rejects it. Anything that reads `fromTime` must use this
- * parser or it will silently produce an Invalid Date for half the packages.
- *
- * Returns both instants rather than just the cutoff so callers can tell
- * "booking closed" from "already sailed" without parsing the time twice.
- * Returns null when the date/time can't be parsed — callers must treat that as
- * "no window", never as a number.
- */
-export function getBookingWindow({
-  selectedDate,
-  startFrom,
-  rule,
-}: {
-  /** YYYY-MM-DD */
-  selectedDate: string;
-  /** `Package.fromTime`, e.g. "4:30:PM" or "04:30:PM" */
-  startFrom: string;
-  rule: Pick<TPackageBookingRule, "minLeadTimeHours">;
-}): { departureAt: Date; closesAt: Date } | null {
-  const departure = convertYYYMMDDStringAndTimeStringToUTCDate(
-    selectedDate,
-    startFrom,
-  );
-  if (!departure || !departure.LuxObj.isValid) {
-    return null;
-  }
-
-  const departureAt = departure.parsedDate;
-  // Rounded because minLeadTimeHours is a Float: 0.5 and 1.25 are legal, and
-  // `0.1 * 3_600_000` is not an integer number of milliseconds.
-  const leadMs = Math.round(rule.minLeadTimeHours * 60 * 60 * 1000);
-
-  return {
-    departureAt,
-    closesAt: new Date(departureAt.getTime() - leadMs),
-  };
-}
-
-/**
- * Returns true if the departure is still far enough away to accept a booking.
- *
- * Lead time ONLY. `rule.isBookableOnline` is deliberately not consulted here:
- * that gate belongs to the public booking flow (`user.createRazorPayIntent`),
- * and admin-issued booking links must keep working for a package that has been
- * switched to enquiry-only — the admin has already agreed the sale by phone.
- * Folding it in here would apply it to every caller indiscriminately.
- *
- * The rule is threaded in rather than read from module scope on purpose: this
- * runs in client components (the calendar and the countdown badge), so reading
- * constants here would bake the cutoffs into the client bundle at build time and
- * an admin edit could never reach the browser without a redeploy. The rule is
- * resolved per package on the server and rides along with the package data.
- */
-export function checkBookingTimeConstraint({
-  startFrom,
-  selectedDate,
-  rule,
-}: {
-  startFrom: string;
-  selectedDate: string;
-  rule: TPackageBookingRule;
-}) {
-  const window = getBookingWindow({ selectedDate, startFrom, rule });
-
-  if (!window) {
-    return false;
-  }
-
-  return window.closesAt.getTime() > Date.now();
-}
-
-export function convert12HourTo24Hour({
-  hours: hour,
-  min,
-  Cycle,
-}: TTimeCycle): { hour: number; minute: number } {
-  let hourInt = parseInt(hour);
-  let minInt = parseInt(min);
-
-  if (Cycle === "AM" && hourInt === 12) {
-    hourInt = 0; // Convert 12:00 AM to 00:00
-  } else if (Cycle === "PM" && hourInt !== 12) {
-    hourInt += 12; // Convert PM hour to 24-hour format, except for 12:00 PM
-  }
-
-  return { hour: hourInt, minute: minInt };
-}
-
-export function convertYYYMMDDStringAndTimeStringToUTCDate(
-  dates: string,
-  time: string,
-) {
-  try {
-    const DateCycle = parseDateFormatYYYMMDDToNumber(dates);
-
-    const timeCycle = splitTimeColon(time);
-    if (!timeCycle || !DateCycle) {
-      return null;
-    }
-    const TwentyFourHourFormat = convert12HourTo24Hour(timeCycle);
-    let zo = DateTime.fromObject(
-      {
-        ...DateCycle,
-        ...TwentyFourHourFormat,
-      },
-      { zone: "Asia/Kolkata" },
-    );
-    return {
-      LuxObj: zo,
-      parsedDate: zo.toJSDate(),
-    };
-  } catch (error) {
-    return null;
-  }
-}
 
 export function flattenObject(obj: any, prefix = ""): Record<string, string> {
   if (obj === null || typeof obj === "undefined") {

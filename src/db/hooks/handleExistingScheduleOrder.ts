@@ -1,3 +1,4 @@
+import { istDayKeyOf } from "@/lib/datetime";
 // import {
 //   TOrderEvent,
 //   TRazorPayEventsExistingSchedule,
@@ -20,8 +21,7 @@
 // import { sendConfirmationEmail } from "@/lib/helpers/resend";
 // import EmailSendBookingConfirmation from "@/components/services/EmailService";
 // import { TGetPackageTimeAndDuration } from "../data/dto/package";
-// import { RemoveTimeStampFromDate } from "@/lib/utils";
-// import { sendAdminBookingUpdateNotification } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
+// // import { sendAdminBookingUpdateNotification } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 // import { format } from "date-fns";
 // import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 
@@ -199,7 +199,7 @@
 //           adultCount: adultCount,
 //           babyCount: babyCount,
 //           BookingDate: format(
-//             RemoveTimeStampFromDate(booking.createdAt),
+//             istDayKeyOf(booking.createdAt),
 //             "dd-MM-yyyy",
 //           ),
 //           childCount,

@@ -1,5 +1,5 @@
 import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
-import { getBookingWindow } from "@/lib/utils";
+import { getBookingWindow } from "@/lib/datetime";
 import { $Enums } from "@prisma/client";
 
 /**
@@ -12,21 +12,20 @@ import { $Enums } from "@prisma/client";
  * `schedule.existing` orders have no lead-time gate at all today, so without
  * this a link could be paid ten minutes before the boat leaves.
  *
- * Falls back to the plain TTL when the departure time cannot be parsed, so a
- * malformed `fromTime` degrades to "expires normally" rather than "expired the
- * moment it was created".
+ * Takes the departure as an instant rather than a (date, "6:30:AM") pair. The
+ * previous version parsed that string here and fell back to the unclamped TTL
+ * when parsing failed — which meant an unpadded or malformed `fromTime`
+ * silently disabled the clamp and let a link stay payable up to departure. A
+ * `Date` cannot fail to parse, so that failure mode no longer exists.
  */
 export function resolveBookingLinkExpiry({
-  scheduleDate,
-  departureTime,
+  departsAt,
   expiryHours,
   rule,
   now = new Date(),
 }: {
-  /** YYYY-MM-DD */
-  scheduleDate: string;
-  /** Package.fromTime — colon-delimited meridiem, e.g. "6:30:AM" */
-  departureTime: string;
+  /** The sailing's departure instant — `Schedule.startsAt`. */
+  departsAt: Date;
   expiryHours: number;
   /** The package's own resolved cut-off. */
   rule: TPackageBookingRule;
@@ -34,15 +33,13 @@ export function resolveBookingLinkExpiry({
 }): { expiresAt: Date; clampedToDeparture: boolean } {
   const ttlExpiry = new Date(now.getTime() + expiryHours * 60 * 60 * 1000);
 
-  const window = getBookingWindow({
-    selectedDate: scheduleDate,
-    startFrom: departureTime,
-    rule,
+  const { closesAt } = getBookingWindow({
+    departsAt,
+    minLeadTimeHours: rule.minLeadTimeHours,
   });
-  if (!window) return { expiresAt: ttlExpiry, clampedToDeparture: false };
 
-  if (window.closesAt < ttlExpiry) {
-    return { expiresAt: window.closesAt, clampedToDeparture: true };
+  if (closesAt < ttlExpiry) {
+    return { expiresAt: closesAt, clampedToDeparture: true };
   }
   return { expiresAt: ttlExpiry, clampedToDeparture: false };
 }

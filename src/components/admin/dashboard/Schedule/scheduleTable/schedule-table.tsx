@@ -1,4 +1,6 @@
 "use client";
+import { formatIstRange } from "@/lib/datetime";
+import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 
 import { trpc } from "@/app/_trpc/client";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -12,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setAllScheduleByDate } from "@/lib/features/schedule/ScheduleSlice";
-import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
@@ -39,7 +40,16 @@ export default function ScheduleTable() {
     );
 
   useEffect(() => {
-    dispatch(setAllScheduleByDate(data?.pages));
+    // The store is keyed by IST day; the wire delivers real Dates. Normalise here,
+    // at the single point where server data enters the store.
+    dispatch(
+      setAllScheduleByDate(
+        data?.pages.map((page) => ({
+          ...page,
+          schedules: page.schedules.map(convertScheduleDataDateToDateString),
+        })),
+      ),
+    );
   }, [dispatch, data?.pages]);
 
   const sortedEntries = Object.entries(groupedScheduleData).sort(
@@ -90,17 +100,7 @@ export default function ScheduleTable() {
               <React.Fragment key={date}>
                 {schedules.map((schedule, index) => {
                   const isBlocked = schedule.scheduleStatus === "BLOCKED";
-                  const { fromTime, toTime } =
-                    selectFromTimeAndToTimeFromScheduleOrPackages({
-                      Packages: {
-                        packageFromTime: schedule.Package?.fromTime ?? "",
-                        packageToTime: schedule.Package?.toTime ?? "",
-                      },
-                      schedule: {
-                        scheduleFromTime: schedule.fromTime,
-                        scheduleToTime: schedule.toTime,
-                      },
-                    });
+                  const timeSlot = formatIstRange(schedule.startsAt, schedule.endsAt);
                   return (
                     <TableRow
                       key={`${date}-${schedule.id}-${index}`}
@@ -145,7 +145,7 @@ export default function ScheduleTable() {
                       >
                         <div className="flex items-center space-x-2">
                           <span className="whitespace-nowrap">
-                            {fromTime} - {toTime}
+                            {timeSlot}
                           </span>
                         </div>
                       </TableCell>

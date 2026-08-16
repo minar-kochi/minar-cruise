@@ -1,3 +1,4 @@
+import { dayKeyOfDateColumn, dayKeyToDateColumn, istToday } from "@/lib/datetime";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
 import { defaultEmptyTrigger } from "@/constants/data/timer";
 import { db } from "@/db";
@@ -11,7 +12,6 @@ import {
   isValidMergeTimeCycle,
   mergeTimeCycle,
   parseDateFormatYYYMMDDToNumber,
-  RemoveTimeStampFromDate,
   splitTimeColon,
 } from "@/lib/utils";
 import {
@@ -156,56 +156,53 @@ export const schedule = router({
       const data = await db.schedule.findMany({
         select: {
           day: true,
-          fromTime: true,
+          startsAt: true,
+          endsAt: true,
           id: true,
           packageId: true,
           schedulePackage: true,
           scheduleStatus: true,
-          toTime: true,
           Package: {
             select: {
               title: true,
-              fromTime: true,
-              toTime: true,
+              startMinutesIst: true,
             },
           },
         },
         where: {
+          // "Upcoming" against the IST day, not the server's instant. Comparing
+          // a @db.Date column to `new Date(Date.now())` meant that between
+          // 18:30 and 24:00 UTC the query had already rolled past today in
+          // India and hid the current day's sailings for 5.5 hours a night.
           day: {
-            gte: new Date(Date.now()),
+            gte: dayKeyToDateColumn(istToday()),
           },
         },
         cursor: cursor ? { id: cursor } : undefined,
         take: limit + 1,
+        // Was `[{day}, {fromTime}]`, which sorted the time LEXICOGRAPHICALLY
+        // over "09:00:AM" / "4:30:PM" strings — so 4:30 PM came before 9:00 AM.
+        // `startsAt` is an instant, so this is a real chronological ordering,
+        // and it is index-backed by @@index([scheduleStatus, startsAt]).
         orderBy: [
           {
             day: "asc",
           },
           {
-            fromTime: "asc",
+            startsAt: "asc",
           },
         ],
-        // distinct: ["day", "fromTime"]
       });
       let nextCursor: typeof cursor | undefined = undefined;
       if (data.length > limit) {
         const nextItem = data.pop();
         nextCursor = nextItem?.id;
       }
-      try {
-        data.sort((a, b) => {
-          let Atime = splitTimeColon(a.fromTime ?? a.Package?.fromTime ?? "");
-          let Btime = splitTimeColon(b.fromTime ?? b.Package?.fromTime ?? "");
-
-          if (!Btime || !Atime) return 0;
-
-          let ADate = combineDateWithSplitedTime(a.day, Atime);
-          let BDate = combineDateWithSplitedTime(b.day, Btime);
-          return ADate.getTime() - BDate.getTime();
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      // The in-memory re-sort that used to live here is gone. It re-parsed the
+      // legacy time strings to fix the lexicographic ordering above, but ran
+      // AFTER cursor pagination — so it only ever reordered within a page,
+      // leaving the overall sequence wrong across page boundaries. Ordering
+      // correctly in the query fixes it at the source.
       return {
         schedules: data,
         nextCursor,
@@ -336,12 +333,9 @@ export const schedule = router({
           data: {
             day: SafelyParsedDate,
             packageId,
-            fromTime: fromTime ? fromTimeObj : null,
-            toTime: toTime ? toTimeObjParsed : null,
             startsAt: instants.startsAt,
             endsAt: instants.endsAt,
             isTimeOverridden: instants.isTimeOverridden,
-            needsTimeReview: instants.needsTimeReview,
             schedulePackage: ScheduleTime,
             scheduleStatus: scheduleStatus,
           },
@@ -470,12 +464,9 @@ export const schedule = router({
           },
           data: {
             packageId: isPackageFound.id,
-            fromTime: fromTimeParsed ? fromTimeObj : null,
-            toTime: toTimeParsed ? toTimeObjParsed : null,
             startsAt: instants.startsAt,
             endsAt: instants.endsAt,
             isTimeOverridden: instants.isTimeOverridden,
-            needsTimeReview: instants.needsTimeReview,
             scheduleStatus,
           },
         });
@@ -538,11 +529,11 @@ export const schedule = router({
 
       // DATE FORMATTING
       const blockedDayArr = blockedSchedulesDetails.map((item) =>
-        RemoveTimeStampFromDate(item.day),
+        dayKeyOfDateColumn(item.day),
       );
 
       const availableDayArr = availableScheduleDetails.map((item) =>
-        RemoveTimeStampFromDate(item.day),
+        dayKeyOfDateColumn(item.day),
       );
 
       return {

@@ -22,8 +22,8 @@ model TaxConfiguration {
   gstRate   Float
   sacCode   String
   gstin     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 // Singleton: site-wide branding, default SEO and contact details, editable from
@@ -38,8 +38,8 @@ model SiteConfig {
   ogImage         String
   bookingNumbers  String[]
   contactEmail    String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now()) @updatedAt
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 // One row per toggleable public page or nav entry. `key` is a stable slug the
@@ -48,8 +48,8 @@ model SiteSectionVisibility {
   key       String   @id
   label     String
   isVisible Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 // Singleton: boat-wide booking limits editable from the admin dashboard.
@@ -60,8 +60,8 @@ model BookingConfig {
   maxBoatSeat               Int      @default(150)
   defaultMinLeadTimeHours   Float    @default(2)
   defaultMinNewBookingCount Int      @default(30)
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @default(now()) @updatedAt
+  createdAt                 DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt                 DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 // add description
@@ -78,8 +78,8 @@ model Payments {
   discount      Int
   modeOfPayment String
   Booking       Booking[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Booking {
@@ -96,8 +96,8 @@ model Booking {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   scheduleId String
   schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
@@ -146,12 +146,8 @@ model BookingLink {
   /// time, so an admin editing a package's departure silently moves every
   /// outstanding link, including ones already sent to customers.
   ///
-  /// Nullable only until the backfill runs; NOT NULL from 004_contract.sql.
-  /// Production has no BookingLink table yet, so there is nothing to migrate
-  /// there — but dev/staging carry test links (one of them PAID and attached to
-  /// a Booking), and those are worth backfilling rather than deleting.
-  scheduleStartsAt DateTime? @db.Timestamptz(3)
-  scheduleEndsAt   DateTime? @db.Timestamptz(3)
+  scheduleStartsAt DateTime @db.Timestamptz(3)
+  scheduleEndsAt   DateTime @db.Timestamptz(3)
 
   // Hint only. The schedule is re-resolved at pay time, since one may be
   // created between generation and payment.
@@ -189,14 +185,14 @@ model BookingLink {
   // ---- written by the order.paid webhook ---------------------------------
   bookingId String?   @unique
   booking   Booking?  @relation(fields: [bookingId], references: [id], onDelete: SetNull)
-  paidAt    DateTime?
+  paidAt    DateTime? @db.Timestamptz(3)
 
-  expiresAt         DateTime
+  expiresAt         DateTime @db.Timestamptz(3)
   allowBelowMinimum Boolean  @default(true)
   createdBy         String? // session.user.id — there is no Admin table, so no FK
   adminNote         String?  @db.Text()
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @default(now()) @updatedAt
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([status])
   @@index([packageId])
@@ -271,25 +267,14 @@ model Schedule {
   /// old fromTime/toTime override. Informational, for the admin UI only.
   isTimeOverridden Boolean @default(false)
 
-  /// Set by the backfill when the legacy time pair could not be interpreted.
-  /// A human resolves these before the contract phase; dropped there.
-  needsTimeReview Boolean @default(false)
-
-  /// @deprecated Legacy override strings ("4:30:PM"), null meaning "inherit the
-  /// package". Dual-written during the migration, dropped in 004_contract.sql.
-  /// Read `startsAt`/`endsAt` instead — the inherit-or-override question is now
-  /// resolved once at write time rather than at every read.
-  fromTime String?
-  toTime   String?
-
   packageId       String?
   schedulePackage SCHEDULED_TIME
   scheduleStatus  SCHEDULE_STATUS
   Package         Package?        @relation(fields: [packageId], references: [id])
   Booking         Booking[]
   BookingLink     BookingLink[]
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @default(now()) @updatedAt
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @default(now()) @updatedAt @db.Timestamptz(3)
 
   /// Nothing at the DB level previously stopped two rows sharing a (day, slot),
   /// which is why resolveScheduleForPackageDate has to disambiguate at pay
@@ -320,8 +305,8 @@ model AmenityItem {
   label       String
   order       Int       @default(0)
   isVisible   Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([amenitiesId, order])
 }
@@ -365,13 +350,7 @@ model Package {
   /// three-colon 12-hour format that had to be re-parsed at every read and had
   /// no DB-level format guarantee.
   ///
-  /// Nullable only until the backfill runs; NOT NULL from 004_contract.sql.
-  startMinutesIst Int?
-
-  /// @deprecated Legacy "09:00:AM" strings. Dual-written during the migration,
-  /// dropped in 004_contract.sql. Read `startMinutesIst` instead.
-  fromTime        String
-  toTime          String
+  startMinutesIst Int
   amenities       Amenities        @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
   food            FoodMenu         @relation(fields: [foodMenuId], references: [id], onDelete: Cascade)
   packageCategory PACKAGE_CATEGORY
@@ -401,8 +380,8 @@ model Package {
   packageImage     PackageImage[]
   PackageSeo       PackageSeo[]
   BookingLink      BookingLink[]
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @default(now()) @updatedAt
+  createdAt        DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([slug, id])
   @@index([packageCategory]) // For filtering by category
@@ -429,9 +408,9 @@ model Events {
   description           String?
   FailedCount           Int
   status                PROCESSING_STATUS
-  lastProcessingAttempt DateTime          @default(now())
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @default(now()) @updatedAt
+  lastProcessingAttempt DateTime          @default(now()) @db.Timestamptz(3)
+  createdAt             DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime          @default(now()) @updatedAt @db.Timestamptz(3)
   payload               Json?
   metadata              Json?
 
@@ -452,8 +431,8 @@ model Image {
   ImageUse     IMAGE_USE[]    @default([COMMON])
   packageImage PackageImage[]
   Blog         Blog[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now()) @updatedAt
+  createdAt    DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([fileKey]) // For file-based lookups
   @@index([ImageUse]) // For filtering by usage type
@@ -476,8 +455,8 @@ model Blog {
   banner     String?
   blogStatus BlogStatus
   BlogSeo    BlogSeo[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @default(now()) @updatedAt
+  createdAt  DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime   @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([blogSlug])
   @@index([blogStatus])
@@ -512,8 +491,8 @@ model Seo {
   metaRobots     String
   PackageSeo     PackageSeo[]
   BlogSeo        BlogSeo[]
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @default(now()) @updatedAt
+  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model PackageSeo {
@@ -522,8 +501,8 @@ model PackageSeo {
   seo       Seo      @relation(fields: [seoId], references: [id])
   packageId String
   package   Package  @relation(fields: [packageId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model BlogSeo {
@@ -532,6 +511,6 @@ model BlogSeo {
   seo       Seo      @relation(fields: [seoId], references: [id])
   blogId    String
   blog      Blog     @relation(fields: [blogId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }

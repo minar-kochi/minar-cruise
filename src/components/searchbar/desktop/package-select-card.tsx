@@ -1,3 +1,4 @@
+import { formatIstMinutes } from "@/lib/datetime";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TGetPackageSearchItems } from "@/db/data/dto/package";
 import { useAppSelector } from "@/hooks/adminStore/reducer";
@@ -40,8 +41,9 @@ export default function PackageSelectCard({ item }: TPackageSelectCard) {
             {item.title}
           </h4>
           <p className="text-sm text-primary">
-            {formatTiming(item.fromTime)} <span className="text-black">~</span>{" "}
-            {formatTiming(item.toTime)}
+            {formatIstMinutes(item.startMinutesIst ?? 0)}{" "}
+            <span className="text-black">~</span>{" "}
+            {formatIstMinutes((item.startMinutesIst ?? 0) + item.duration)}
           </p>
           <div className="mt-2 text-sm md:bg-primary/10 flex w-max md:px-2 py-1.5 rounded-md">
             <p className="text-primary gap-2 flex items-center justify-center ">

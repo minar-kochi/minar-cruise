@@ -1,4 +1,6 @@
 "use client";
+import { calendarDateToDayKey } from "@/lib/datetime";
+import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import {
@@ -6,7 +8,7 @@ import {
   setDate,
   setPopOverDateToggle,
 } from "@/lib/features/schedule/ScheduleSlice";
-import { cn, getPrevTimeStamp, RemoveTimeStampFromDate } from "@/lib/utils";
+import { cn, getPrevTimeStamp } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { PopOverDatePicker } from "./PopOverScheduleDate";
 import { CustomDayContentWithScheduleIndicator } from "./CustomScheduleDateContent";
@@ -40,14 +42,18 @@ export default function ScheduleDatePicker({
             return;
           }
           dispatch(setPopOverDateToggle(false));
-          let DateStringFormated = RemoveTimeStampFromDate(selectedDate);
+          let DateStringFormated = calendarDateToDayKey(selectedDate);
           try {
             if (selectedDate) {
               dispatch(setDate(DateStringFormated));
               const data = await fetch({
                 ScheduleDate: DateStringFormated,
               });
-              dispatch(setCurrentScheduleDate(data));
+              dispatch(
+                setCurrentScheduleDate(
+                  (data ?? []).map(convertScheduleDataDateToDateString),
+                ),
+              );
             }
           } catch (error) {
             console.log(error);

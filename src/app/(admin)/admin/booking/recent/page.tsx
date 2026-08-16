@@ -1,4 +1,5 @@
 "use client";
+import { formatIstRange } from "@/lib/datetime";
 import { trpc } from "@/app/_trpc/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VIEW_BEFORE_PX } from "@/constants/config";
-import { selectFromTimeAndToTimeFromScheduleOrPackages } from "@/lib/helpers/CommonBuisnessHelpers";
 import { TRPCError } from "@trpc/server";
 import { format } from "date-fns";
 import {
@@ -99,18 +99,12 @@ const MobileBookingCard = ({
   const totalCount =
     booking.numOfAdults + booking.numOfChildren + booking.numOfBaby;
 
-  const { fromTime, toTime } = selectFromTimeAndToTimeFromScheduleOrPackages({
-    Packages: {
-      packageFromTime: booking.schedule.Package?.fromTime ?? "",
-      packageToTime: booking.schedule.Package?.toTime ?? "",
-    },
-    schedule: {
-      scheduleFromTime: booking.schedule.fromTime,
-      scheduleToTime: booking.schedule.toTime,
-    },
-  });
-
-  const timeSlot = `${fromTime} - ${toTime}`;
+  // One instant pair, formatted once. The inherit-or-override question is
+  // answered at write time now, so there is nothing to resolve here.
+  const timeSlot = formatIstRange(
+    booking.schedule.startsAt,
+    booking.schedule.endsAt,
+  );
 
   return (
     <Card className="mb-4 hover:shadow-md transition-shadow">
@@ -465,21 +459,10 @@ export default function RecentBookingsPage() {
                           booking.numOfChildren +
                           booking.numOfBaby;
 
-                        const { fromTime, toTime } =
-                          selectFromTimeAndToTimeFromScheduleOrPackages({
-                            Packages: {
-                              packageFromTime:
-                                booking.schedule.Package?.fromTime ?? "",
-                              packageToTime:
-                                booking.schedule.Package?.toTime ?? "",
-                            },
-                            schedule: {
-                              scheduleFromTime: booking.schedule.fromTime,
-                              scheduleToTime: booking.schedule.toTime,
-                            },
-                          });
-
-                        const timeSlot = `${fromTime} - ${toTime}`;
+                        const timeSlot = formatIstRange(
+                          booking.schedule.startsAt,
+                          booking.schedule.endsAt,
+                        );
 
                         return (
                           <TableRow

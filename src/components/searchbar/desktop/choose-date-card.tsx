@@ -1,3 +1,4 @@
+import { calendarDateToDayKey, istToday } from "@/lib/datetime";
 import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAppSelector } from "@/hooks/adminStore/reducer";
@@ -8,7 +9,6 @@ import {
 import {
   cn,
   parseDateFormatYYYMMDDToNumber,
-  RemoveTimeStampFromDate,
 } from "@/lib/utils";
 import { setDate } from "@/lib/features/client/packageClientSlice";
 import { TSplitedFormatedDate } from "@/Types/type";
@@ -26,7 +26,7 @@ export default function ChooseDateCard() {
 
   const pickedDate: TSplitedFormatedDate =
     parseDateFormatYYYMMDDToNumber(
-      date ?? RemoveTimeStampFromDate(new Date()),
+      date ?? istToday(),
     ) ?? defaultDate;
 
   const dispatch = useClientDispatch();
@@ -72,7 +72,7 @@ export default function ChooseDateCard() {
     if (!isDisabled(newDate.getMonth(), newDate.getFullYear())) {
       setMonth(newDate.getMonth());
       setYear(newDate.getFullYear());
-      let NewDateConverted = RemoveTimeStampFromDate(newDate);
+      let NewDateConverted = calendarDateToDayKey(newDate);
       dispatch(setDate(NewDateConverted));
     }
   };
@@ -82,7 +82,7 @@ export default function ChooseDateCard() {
     if (!isDisabled(newDate.getMonth(), newDate.getFullYear())) {
       setMonth(newDate.getMonth());
       setYear(newDate.getFullYear());
-      let NewDateConverted = RemoveTimeStampFromDate(newDate);
+      let NewDateConverted = calendarDateToDayKey(newDate);
       dispatch(setDate(NewDateConverted));
     }
   };
@@ -91,7 +91,7 @@ export default function ChooseDateCard() {
     const newDate = new Date(year, month, 1);
     if (!isDisabled(newDate.getMonth(), newDate.getFullYear())) {
       setMonth(month);
-      let NewDateConverted = RemoveTimeStampFromDate(newDate);
+      let NewDateConverted = calendarDateToDayKey(newDate);
       dispatch(setDate(NewDateConverted));
     }
   };

@@ -112,13 +112,9 @@ export function SelectScheduleDialog({
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3.5 w-3.5" />
-                              {schedule.fromTime ??
-                                schedule.Package?.fromTime ??
-                                "--"}{" "}
+                              {" "}
                               &ndash;{" "}
-                              {schedule.toTime ??
-                                schedule.Package?.toTime ??
-                                "--"}
+                              
                             </span>
                           </p>
                         </div>

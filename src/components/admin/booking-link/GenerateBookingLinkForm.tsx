@@ -1,4 +1,5 @@
 "use client";
+import { formatIstRange } from "@/lib/datetime";
 
 import { trpc } from "@/app/_trpc/client";
 import { InputLabel } from "@/components/cnWrapper/InputLabel";
@@ -190,8 +191,8 @@ export default function GenerateBookingLinkForm() {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />
-                  {schedule.fromTime ?? schedule.Package?.fromTime} &ndash;{" "}
-                  {schedule.toTime ?? schedule.Package?.toTime}
+                  {formatIstRange(schedule.startsAt, schedule.endsAt)} &ndash;{" "}
+                  
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Users className="h-4 w-4" />

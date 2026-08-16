@@ -57,6 +57,24 @@ export type IstDayKey = string & { readonly __brand: "IstDayKey" };
  */
 export type IstMinutes = number & { readonly __brand: "IstMinutes" };
 
+/**
+ * Thrown when a `Date` that should always be valid is not.
+ *
+ * The day-key functions below take `Date` values that come from Prisma columns,
+ * a date picker, or the clock — never from user text. An invalid one is a
+ * programming error, so they throw rather than returning null: a nullable
+ * return would force a `?? ""` or a non-null assertion at ~130 call sites, and
+ * the overwhelmingly likely response to each would be to silence it. String
+ * input, which genuinely can be malformed, goes through `parseIstDayKey` and
+ * still returns null.
+ */
+export class InvalidDateError extends Error {
+  constructor(fn: string, value: Date) {
+    super(`${fn} received an invalid Date (${String(value)})`);
+    this.name = "InvalidDateError";
+  }
+}
+
 const DAY_KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /** The legacy stored time format: `H:MM:AM` — note the third segment is
@@ -102,9 +120,10 @@ export function istToday(now: Date = new Date()): IstDayKey {
  * The IST calendar day a real instant falls on. Use for `createdAt`, `paidAt`,
  * `expiresAt`, `startsAt` — anything that is a moment in time.
  */
-export function istDayKeyOf(instant: Date): IstDayKey | null {
+export function istDayKeyOf(instant: Date): IstDayKey {
   const dt = DateTime.fromJSDate(instant, { zone: IST_ZONE });
-  return dt.isValid ? (dt.toFormat("yyyy-MM-dd") as IstDayKey) : null;
+  if (!dt.isValid) throw new InvalidDateError("istDayKeyOf", instant);
+  return dt.toFormat("yyyy-MM-dd") as IstDayKey;
 }
 
 /**
@@ -115,8 +134,10 @@ export function istDayKeyOf(instant: Date): IstDayKey | null {
  * day that was stored. Passing it through a timezone conversion would be
  * treating a day as an instant — the exact confusion this module removes.
  */
-export function dayKeyOfDateColumn(d: Date): IstDayKey | null {
-  if (Number.isNaN(d.getTime())) return null;
+export function dayKeyOfDateColumn(d: Date): IstDayKey {
+  if (Number.isNaN(d.getTime())) {
+    throw new InvalidDateError("dayKeyOfDateColumn", d);
+  }
   return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(
     d.getUTCDate(),
   )}` as IstDayKey;
@@ -140,8 +161,10 @@ export function dayKeyToCalendarDate(key: IstDayKey): Date {
 }
 
 /** Inverse of the above: what the user actually clicked becomes a day key. */
-export function calendarDateToDayKey(d: Date): IstDayKey | null {
-  if (Number.isNaN(d.getTime())) return null;
+export function calendarDateToDayKey(d: Date): IstDayKey {
+  if (Number.isNaN(d.getTime())) {
+    throw new InvalidDateError("calendarDateToDayKey", d);
+  }
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(
     d.getDate(),
   )}` as IstDayKey;
@@ -151,6 +174,30 @@ export function calendarDateToDayKey(d: Date): IstDayKey | null {
  *  date ordering, which is why day comparisons need no Date objects at all. */
 export function compareDayKeys(a: IstDayKey, b: IstDayKey): -1 | 0 | 1 {
   return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/**
+ * Month bounds as day keys.
+ *
+ * These replace `calendarDateToDayKey(startOfMonth(dayKeyString))`, which fed
+ * a `YYYY-MM-DD` STRING into date-fns — parsed as UTC midnight, shifted to the
+ * host zone, then reformatted in local time. Three representations for one
+ * calendar operation. Month arithmetic on a day key needs no Date at all.
+ */
+export function startOfMonthKey(key: IstDayKey): IstDayKey {
+  return `${key.slice(0, 7)}-01` as IstDayKey;
+}
+
+export function endOfMonthKey(key: IstDayKey): IstDayKey {
+  return DateTime.fromISO(key, { zone: IST_ZONE })
+    .endOf("month")
+    .toFormat("yyyy-MM-dd") as IstDayKey;
+}
+
+export function addMonthsToKey(key: IstDayKey, months: number): IstDayKey {
+  return DateTime.fromISO(key, { zone: IST_ZONE })
+    .plus({ months })
+    .toFormat("yyyy-MM-dd") as IstDayKey;
 }
 
 export function addDaysToKey(key: IstDayKey, days: number): IstDayKey {
@@ -188,6 +235,17 @@ export function parseLegacyMeridiemTime(
   // 12:00 AM -> 0, 12:00 PM -> 720.
   const hour24 = (hour12 % 12) + (isPm ? 12 : 0);
   return (hour24 * 60 + minute) as IstMinutes;
+}
+
+/**
+ * Minutes from IST midnight for a real instant — the inverse of `istInstant`
+ * for same-day values. Used by the admin form to show a stored departure in a
+ * `<input type="time">`.
+ */
+export function istMinutesOfInstant(instant: Date): IstMinutes {
+  const dt = DateTime.fromJSDate(instant, { zone: IST_ZONE });
+  if (!dt.isValid) throw new InvalidDateError("istMinutesOfInstant", instant);
+  return (dt.hour * 60 + dt.minute) as IstMinutes;
 }
 
 /** `540` -> `"9:00 AM"`. Values past midnight wrap for display; use

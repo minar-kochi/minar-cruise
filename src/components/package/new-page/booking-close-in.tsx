@@ -1,7 +1,8 @@
+import { calendarDateToDayKey, dayKeyOfDateColumn, getBookingWindow, istInstant, parseIstDayKey } from "@/lib/datetime";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
 import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
-import { cn, getBookingWindow, RemoveTimeStampFromDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   differenceInDays,
   differenceInHours,
@@ -70,14 +71,16 @@ export const BookingCloseIn = ({
    * "Blocked" badge on every calendar load.
    */
   const isDisabledDateFound =
-    (disabled?.findIndex((fv) => RemoveTimeStampFromDate(fv.day) === date) ??
+    (disabled?.findIndex((fv) => dayKeyOfDateColumn(fv.day) === date) ??
       -1) !== -1;
 
   const packageTime = useClientSelector((state) =>
     getPackageById(state, packageId),
   );
 
-  const fromTime = packageTime?.fromTime ?? "";
+  // The package's departure as IST minutes-from-midnight; the instant is derived
+  // per selected date below.
+  const startMinutesIst = packageTime?.startMinutesIst ?? null;
 
   const minLeadTimeHours = bookingRule.minLeadTimeHours;
 
@@ -94,17 +97,20 @@ export const BookingCloseIn = ({
    * regression fixed in 2af0c93.
    */
   const bookingWindow = useMemo(() => {
-    if (!fromTime) return null;
-    const unformattedDate =
-      typeof date !== "string"
-        ? RemoveTimeStampFromDate(new Date(date ?? Date.now()))
-        : date;
+    // The countdown is for a date the customer has selected but which may have
+    // no Schedule row yet, so the departure is derived from the package's IST
+    // time-of-day — the same value the schedule would be written with.
+    if (startMinutesIst === null || startMinutesIst === undefined) return null;
+    const dayKey =
+      typeof date === "string"
+        ? parseIstDayKey(date)
+        : calendarDateToDayKey(new Date(date ?? Date.now()));
+    if (!dayKey) return null;
     return getBookingWindow({
-      selectedDate: unformattedDate,
-      startFrom: fromTime,
-      rule: { minLeadTimeHours },
+      departsAt: istInstant(dayKey, startMinutesIst),
+      minLeadTimeHours,
     });
-  }, [date, fromTime, minLeadTimeHours]);
+  }, [date, startMinutesIst, minLeadTimeHours]);
 
   const calculateTimeLeft = useCallback((): TimeLeft => {
     if (!bookingWindow) {

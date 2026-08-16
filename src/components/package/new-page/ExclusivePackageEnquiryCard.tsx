@@ -1,11 +1,12 @@
 "use client";
+import { calendarDateToDayKey, istToday } from "@/lib/datetime";
 
 import { PopOverDatePicker } from "@/components/admin/dashboard/Schedule/PopOverScheduleDate";
 import ScheduleDatePicker from "@/components/admin/dashboard/Schedule/ScheduleDatePicker";
 import { InputLabel } from "@/components/cnWrapper/InputLabel";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import { cn, RemoveTimeStampFromDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   exclusivePackageValidator,
   TExclusivePackageValidator,
@@ -50,7 +51,7 @@ export default function ExclusivePackageEnquiryCard({
     watch,
   } = useForm<TExclusivePackageValidator>({
     defaultValues: {
-      selectedDate: RemoveTimeStampFromDate(new Date(Date.now())),
+      selectedDate: istToday(),
     },
     resolver: zodResolver(exclusivePackageValidator),
   });
@@ -115,7 +116,7 @@ export default function ExclusivePackageEnquiryCard({
               selected={new Date(watch("selectedDate"))}
               onSelect={(date) => {
                 if (!date) return;
-                let Selected = RemoveTimeStampFromDate(date);
+                let Selected = calendarDateToDayKey(date);
                 setDate(date);
                 setValue("selectedDate", Selected);
               }}
@@ -129,7 +130,7 @@ export default function ExclusivePackageEnquiryCard({
             selected={new Date(watch("selectedDate"))}
             onSelect={(date) => {
               if (!date) return;
-              let Selected = RemoveTimeStampFromDate(date);
+              let Selected = calendarDateToDayKey(date);
               setDate(date);
               setValue("selectedDate", Selected);
             }}
