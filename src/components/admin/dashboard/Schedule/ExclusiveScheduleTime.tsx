@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setUpdatableScheduleTime } from "@/lib/features/schedule/ScheduleSlice";
-import { currentScheduleTimer } from "@/lib/features/schedule/selector";
+import { scheduleTimeDraft } from "@/lib/features/schedule/selector";
 import { TScheduleSelector } from "@/Types/type";
 import { istMinutesToInput, istMinutesFromInput } from "@/lib/datetime";
 
@@ -23,13 +23,13 @@ import { istMinutesToInput, istMinutesFromInput } from "@/lib/datetime";
  */
 export default function ExclusiveScheduleTime({ type }: TScheduleSelector) {
   const dispatch = useAppDispatch();
-  const timer = useAppSelector((state) => currentScheduleTimer(state, type));
+  const timer = useAppSelector((state) => scheduleTimeDraft(state, type));
 
   const onChange = (field: "startMinutes" | "endMinutes", value: string) => {
     const minutes = istMinutesFromInput(value);
     // An empty or partially-typed input yields null; store it as-is rather than
     // coercing to 0, which would silently mean midnight.
-    dispatch(setUpdatableScheduleTime({ type, field, minutes } as never));
+    dispatch(setUpdatableScheduleTime({ type, field, minutes }));
   };
 
   return (
@@ -40,7 +40,7 @@ export default function ExclusiveScheduleTime({ type }: TScheduleSelector) {
           id={`${type}-departs`}
           type="time"
           value={
-            timer?.startMinutes != null
+            timer.startMinutes != null
               ? istMinutesToInput(timer.startMinutes)
               : ""
           }
@@ -53,7 +53,7 @@ export default function ExclusiveScheduleTime({ type }: TScheduleSelector) {
           id={`${type}-returns`}
           type="time"
           value={
-            timer?.endMinutes != null ? istMinutesToInput(timer.endMinutes) : ""
+            timer.endMinutes != null ? istMinutesToInput(timer.endMinutes) : ""
           }
           onChange={(e) => onChange("endMinutes", e.target.value)}
         />

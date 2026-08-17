@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { ChangeType } from "@/db/types/TBookingSchedule";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
-import { duration } from "moment";
 
 export async function getAllBookingDataFromToday() {
   try {

@@ -1,5 +1,10 @@
 "use client";
-import { istToday } from "@/lib/datetime";
+import {
+  formatDayKey,
+  istToday,
+  parseIstDayKey,
+  type IstDayKey,
+} from "@/lib/datetime";
 
 import { trpc } from "@/app/_trpc/client";
 import PackageScheduleDialogs from "@/components/packages/PackageScheduleDialogs";
@@ -27,7 +32,6 @@ import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
 import { TRPCClientError } from "@trpc/client";
-import { format } from "date-fns";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
@@ -42,7 +46,7 @@ type TPackageForm = {
   adultPrice: number;
   childPrice: number;
   type?: "modal" | undefined;
-  defaultDate?: string;
+  defaultDate?: IstDayKey;
   /**
    * This package's resolved booking rule, read on the server and threaded down.
    * The form resolver is built from it so the party-size minimum and the boat
@@ -149,7 +153,13 @@ export default function PackageFormN({
           amount: res?.order?.amount,
           order_id: res?.order.id,
           callback_url: absoluteUrl(
-            `/success?b_id=${res.bookingId}&email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate") ?? ""), "iii dd-MM-yyyy") ?? ""}`,
+            `/success?b_id=${res.bookingId}&email=${res.email}&time=${(() => {
+              // date-fns `format` THREW on an empty field, which aborted
+              // checkout outright. `formatDayKey` returns "—" instead, and an
+              // em-dash must never reach a callback URL — so guard explicitly.
+              const day = parseIstDayKey(getValues("selectedScheduleDate"));
+              return day ? formatDayKey(day, "dateWeekday") : "";
+            })()}`,
           ),
           prefill: {
             name: notes.name ?? undefined,
@@ -269,7 +279,7 @@ export default function PackageFormN({
             },
           )}
         >
-          <div>{format(date ?? Date.now(), "iii dd/MM/yyyy")}</div>
+          <div>{formatDayKey(date ?? istToday(), "dateWeekday")}</div>
         </div>
         <BookingFormCalender
           setFormDateValue={setFormDateValue}

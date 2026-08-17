@@ -9,7 +9,6 @@ import {
 import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { isSunset } from "@/lib/validators/Package";
 import { $Enums } from "@prisma/client";
-import { isSameDay } from "date-fns";
 import { DayContentProps, DayProps } from "react-day-picker";
 
 interface IClientCalenderScheduleDay {
@@ -54,10 +53,7 @@ export default function ClientCalenderScheduleDay({
 
   const idxOfAvailableDate = AvailableDate
     ? AvailableDate.findIndex((item) =>
-        isSameDay(
-          calendarDateToDayKey(new Date(item)),
-          calendarDateToDayKey(date),
-        ),
+        item === calendarDateToDayKey(date),
       )
     : -1;
 
@@ -72,10 +68,7 @@ export default function ClientCalenderScheduleDay({
 
   let isBlocked = blockedDate
     ? blockedDate.findIndex((item) =>
-        isSameDay(
-          calendarDateToDayKey(new Date(item)),
-          calendarDateToDayKey(date),
-        ),
+        item === calendarDateToDayKey(date),
       )
     : -1;
 

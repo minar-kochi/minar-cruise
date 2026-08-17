@@ -4,7 +4,6 @@ import {
   TGetSchedulesByDateRangeWithBookingCount,
 } from "@/db/data/dto/schedule/schedule";
 import { $Enums } from "@prisma/client";
-import { format } from "date-fns";
 import ExcelJS from "exceljs";
 
 /** Exactly the query result — see the note in createExcelSheetWithoutBookingCount. */

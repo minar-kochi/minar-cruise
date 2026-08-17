@@ -4,6 +4,7 @@ import {
   setDate,
   setInitialOrganizedScheduleDates,
 } from "@/lib/features/schedule/ScheduleSlice";
+import { type IstDayKey } from "@/lib/datetime";
 import { AppStore, makeStore } from "@/lib/store/adminStore";
 import { useRef } from "react";
 import { Provider } from "react-redux";
@@ -23,7 +24,7 @@ export default function StoreProvider({
 }: {
   Packages: Exclude<TExcludedOrganizedPackageData, null>;
   children: React.ReactNode;
-  initialDate: string;
+  initialDate: IstDayKey;
   initialSchedule: TScheduleDataDayReplaceString[] | null;
   upComingSchedules: TExcludedOrganizedUpComingSchedule;
 }) {

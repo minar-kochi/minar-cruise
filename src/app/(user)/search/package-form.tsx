@@ -1,4 +1,3 @@
-import { dayKeyOfDateColumn } from "@/lib/datetime";
 import { trpc } from "@/app/_trpc/client";
 import BookingFormCard from "@/components/package/new-page/BookingFormCard";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,11 @@ import {
 import { TSchedulesData } from "@/Types/Schedule/ScheduleSelect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TRPCClientError } from "@trpc/client";
-import { format } from "date-fns";
+import {
+  dayKeyOfDateColumn,
+  formatDayKey,
+  parseIstDayKey,
+} from "@/lib/datetime";
 import React from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
@@ -82,7 +85,13 @@ export default function QuickPackageForm({
           amount: res?.order?.amount,
           order_id: res?.order.id,
           callback_url: absoluteUrl(
-            `/success?email=${res.email}&time=${format(new Date(getValues("selectedScheduleDate") ?? ""), "iii dd-MM-yyyy") ?? ""}`,
+            `/success?email=${res.email}&time=${(() => {
+              // date-fns `format` THREW on an empty field, which aborted
+              // checkout outright. `formatDayKey` returns "—" instead, and an
+              // em-dash must never reach a callback URL — so guard explicitly.
+              const day = parseIstDayKey(getValues("selectedScheduleDate"));
+              return day ? formatDayKey(day, "dateWeekday") : "";
+            })()}`,
           ),
           prefill: {
             name: notes.name ?? undefined,
@@ -192,7 +201,7 @@ export default function QuickPackageForm({
           <DialogTitle>Book your Cruise Now</DialogTitle>
           <DialogDescription className="font-semibold text-black">
             Confirm package <span className="text-primary">{item.title}</span>{" "}
-            on {format(new Date(schedules.day), "EEEE dd,yyyy")}
+            on {formatDayKey(dayKeyOfDateColumn(schedules.day), "dateFull")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>

@@ -12,7 +12,7 @@ import { getNotes } from "@/lib/razorpay/getNotes";
 import { TOnlineBookingFormValidator } from "@/lib/validators/onlineBookingValidator";
 import { Schedule } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn, formatDayKey } from "@/lib/datetime";
 
 /**
  * Supplied only by admin-generated booking links. When present, the fare comes
@@ -57,7 +57,7 @@ export async function CreateBookingForExistingSchedule({
    * is also UTC. Going through the local-time helpers here would make this assert
    * depend on the server's timezone.
    */
-  const resolvedDay = schedule.day.toISOString().split("T")[0];
+  const resolvedDay = dayKeyOfDateColumn(schedule.day);
   if (resolvedDay !== selectedScheduleDate) {
     console.error(
       `[booking] schedule/date mismatch: schedule ${schedule.id} is ${resolvedDay}, customer selected ${selectedScheduleDate}`,
@@ -158,7 +158,7 @@ export async function CreateBookingForExistingSchedule({
     packageId: packageIdExists.id,
     scheduleId: schedule.id,
     packageTitle: packageIdExists.title,
-    scheduledDate: format(schedule.day, "dd-MM-yyyy"),
+    scheduledDate: formatDayKey(dayKeyOfDateColumn(schedule.day), "date"),
     bookingId,
     ...booking,
     ...extraNotes,

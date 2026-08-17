@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 import ExcelJS from "exceljs";
 import { TGetBookingsByScheduleId } from "@/db/data/dto/schedule/schedule";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn, formatDayKey } from "@/lib/datetime";
 import toast from "react-hot-toast";
 
 interface IDownloadTable {
@@ -202,7 +202,7 @@ export default function DownloadBookingButton({ tableData }: IDownloadTable) {
 
     // TITLE ROW-------------------------------------------------------------------
     const ScheduleDate = tableData[0].schedule.day;
-    const title = `Schedule Details - ${format(ScheduleDate, "dd/MM/yyy")}`; // Format: DD/MM/YYYY
+    const title = `Schedule Details - ${formatDayKey(dayKeyOfDateColumn(ScheduleDate), "dateSlash")}`; // Format: DD/MM/YYYY
     BookingTable.insertRow(1, [title]); // Add title row
 
     const titleRow = BookingTable.getRow(1);

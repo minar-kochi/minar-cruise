@@ -1,5 +1,11 @@
 "use client";
-import { calendarDateToDayKey, istToday } from "@/lib/datetime";
+import {
+  addDaysToKey,
+  calendarDateToDayKey,
+  formatDayKey,
+  istToday,
+  type IstDayKey,
+} from "@/lib/datetime";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { addDays, format } from "date-fns";
 import { trpc } from "@/app/_trpc/client";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -30,8 +35,8 @@ interface IScheduleDownloadButton {
 }
 
 export type TDateRange = {
-  from: string;
-  to: string;
+  from: IstDayKey;
+  to: IstDayKey;
 };
 export default function ScheduleDownloadButton({
   className,
@@ -39,7 +44,7 @@ export default function ScheduleDownloadButton({
 }: IScheduleDownloadButton) {
   const [date, setDate] = React.useState<TDateRange>({
     from: istToday(),
-    to: calendarDateToDayKey(addDays(new Date(Date.now()), 10)),
+    to: addDaysToKey(istToday(), 10),
   });
 
   return (
@@ -113,11 +118,11 @@ export default function ScheduleDownloadButton({
                     {date?.from ? (
                       date?.to ? (
                         <>
-                          {format(date.from, "LLL dd, y")} -{" "}
-                          {format(date.to, "LLL dd, y")}
+                          {formatDayKey(date.from, "monthDayYear")} -{" "}
+                          {formatDayKey(date.to, "monthDayYear")}
                         </>
                       ) : (
-                        format(date.from, "LLL dd, y")
+                        formatDayKey(date.from, "monthDayYear")
                       )
                     ) : (
                       <span>Pick a date</span>

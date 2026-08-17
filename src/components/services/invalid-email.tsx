@@ -1,3 +1,4 @@
+import { formatIstDateTime } from "@/lib/datetime";
 import { $Enums } from "@prisma/client";
 import {
   Body,
@@ -226,7 +227,7 @@ export default function InvalidScheduleEmail({
               This is an automated system alert from Minar Website Booking
               System.
               <br />
-              Generated on {new Date().toLocaleString()}
+              Generated on {formatIstDateTime(new Date())}
             </Text>
           </Container>
         </Body>

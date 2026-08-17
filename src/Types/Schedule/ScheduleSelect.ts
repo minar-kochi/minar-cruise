@@ -73,47 +73,33 @@ export type TKeyOrganizedScheduleData = keyof TOrganizedScheduleData;
 export type TIsScheduleChange = {
   [K in TKeyOrganizedScheduleData]: boolean;
 };
+/**
+ * What the admin has changed locally but has not saved yet.
+ *
+ * Three states per field, and all three are needed: `undefined` means untouched
+ * (inherit the saved schedule, or the package's default when creating), `null`
+ * means the admin cleared the input, and a number is an explicit override.
+ *
+ * This used to carry BOTH the legacy `fromTime`/`toTime` strings AND a
+ * never-written `startsAt`/`endsAt` pair of Dates. Holding two representations
+ * of the same fact is what let the dirty-check compare a field that nothing in
+ * the app ever wrote, leaving the Update button permanently enabled.
+ */
+type TScheduleDraft<K extends $Enums.SCHEDULED_TIME> = {
+  packageId?: string | null;
+  /** Departure, minutes from IST midnight. */
+  startMinutes?: number | null;
+  /** Return, minutes from IST midnight. */
+  endMinutes?: number | null;
+  scheduleTime: K;
+};
+
 export type TUpdatedDateSchedulePackageId = {
-  breakfast: {
-    packageId?: string | null;
-    fromTime?: string | null;
-    toTime?: string | null;
-    startsAt?: Date | null;
-    endsAt?: Date | null;
-    scheduleTime: typeof $Enums.SCHEDULED_TIME.BREAKFAST;
-  };
-  lunch: {
-    fromTime?: string | null;
-    toTime?: string | null;
-    packageId?: string | null;
-    startsAt?: Date | null;
-    endsAt?: Date | null;
-    scheduleTime: typeof $Enums.SCHEDULED_TIME.LUNCH;
-  };
-  sunset: {
-    fromTime?: string | null;
-    toTime?: string | null;
-    packageId?: string | null;
-    startsAt?: Date | null;
-    endsAt?: Date | null;
-    scheduleTime: typeof $Enums.SCHEDULED_TIME.SUNSET;
-  };
-  dinner: {
-    fromTime?: string | null;
-    toTime?: string | null;
-    packageId?: string | null;
-    startsAt?: Date | null;
-    endsAt?: Date | null;
-    scheduleTime: typeof $Enums.SCHEDULED_TIME.DINNER;
-  };
-  custom: {
-    fromTime?: string | null;
-    toTime?: string | null;
-    packageId?: string | null;
-    startsAt?: Date | null;
-    endsAt?: Date | null;
-    scheduleTime: typeof $Enums.SCHEDULED_TIME.CUSTOM;
-  };
+  breakfast: TScheduleDraft<typeof $Enums.SCHEDULED_TIME.BREAKFAST>;
+  lunch: TScheduleDraft<typeof $Enums.SCHEDULED_TIME.LUNCH>;
+  sunset: TScheduleDraft<typeof $Enums.SCHEDULED_TIME.SUNSET>;
+  dinner: TScheduleDraft<typeof $Enums.SCHEDULED_TIME.DINNER>;
+  custom: TScheduleDraft<typeof $Enums.SCHEDULED_TIME.CUSTOM>;
 };
 export type TRawOrganizedupComingSchedule = typeof getupComingScheduleDates;
 

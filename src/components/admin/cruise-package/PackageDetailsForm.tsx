@@ -17,10 +17,11 @@ import {
   PackageDetailsValidator,
   TPackageDetailsValidator,
 } from "@/lib/validators/PackageContentValidator";
+import { istMinutesFromInput, istMinutesToInput } from "@/lib/datetime";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import { FieldError, FieldErrors, useForm } from "react-hook-form";
+import { Controller, FieldError, FieldErrors, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function PackageDetailsForm({
@@ -34,6 +35,7 @@ export default function PackageDetailsForm({
   });
 
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -48,13 +50,17 @@ export default function PackageDetailsForm({
       adultPrice: 0,
       childPrice: 0,
       duration: 120,
-      fromTime: "",
-      toTime: "",
+      startMinutesIst: 540,
     },
   });
 
   useEffect(() => {
     if (!data) return;
+    // Every field the validator requires must appear here: `reset(values)`
+    // REPLACES form state rather than merging, so a field omitted becomes
+    // `undefined` and fails validation with no visible cause. The old
+    // fromTime/toTime pair was omitted exactly this way, which made the screen
+    // unsubmittable.
     reset({
       id: data.id,
       title: data.title,
@@ -64,6 +70,7 @@ export default function PackageDetailsForm({
       adultPrice: formatPrice(data.adultPrice),
       childPrice: formatPrice(data.childPrice),
       duration: data.duration,
+      startMinutesIst: data.startMinutesIst,
     });
   }, [data, reset]);
 
@@ -182,38 +189,40 @@ export default function PackageDetailsForm({
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label htmlFor="fromTime">Departs</Label>
-              <Input
-                id="fromTime"
-                placeholder="6:30:AM"
-                className="mt-1.5"
-                {...register("fromTime")}
+              <Label htmlFor="startMinutesIst">Departs (IST)</Label>
+              {/*
+               * A native time input, so there is no format to get wrong. This
+               * replaced a free-text box whose "6:30:AM" had to match a regex
+               * exactly, and whose sibling "Returns" field was validated and
+               * then discarded by the router — `duration` below is, and always
+               * was, the sole source of the return time.
+               */}
+              <Controller
+                control={control}
+                name="startMinutesIst"
+                render={({ field }) => (
+                  <Input
+                    id="startMinutesIst"
+                    type="time"
+                    className="mt-1.5"
+                    value={
+                      field.value == null ? "" : istMinutesToInput(field.value)
+                    }
+                    onChange={(e) =>
+                      field.onChange(istMinutesFromInput(e.target.value))
+                    }
+                    onBlur={field.onBlur}
+                  />
+                )}
               />
               <p
                 className={cn("mt-1 min-h-4 text-sm text-red-500", {
-                  hidden: !errors.fromTime,
+                  hidden: !errors.startMinutesIst,
                 })}
               >
-                {errors.fromTime?.message}
-              </p>
-            </div>
-
-            <div>
-              <Label htmlFor="toTime">Returns</Label>
-              <Input
-                id="toTime"
-                placeholder="8:30:AM"
-                className="mt-1.5"
-                {...register("toTime")}
-              />
-              <p
-                className={cn("mt-1 min-h-4 text-sm text-red-500", {
-                  hidden: !errors.toTime,
-                })}
-              >
-                {errors.toTime?.message}
+                {errors.startMinutesIst?.message}
               </p>
             </div>
 

@@ -9,6 +9,7 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { TGetPackageById } from "@/db/data/dto/package";
 import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
+import { type IstDayKey } from "@/lib/datetime";
 import { cn } from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { CheckCircle2 } from "lucide-react";
@@ -30,7 +31,7 @@ export default function PackageAmmenties({
    * PackageForm against the same shared store, so leaving it unseeded meant its
    * calendar showed the URL's date while its form held today.
    */
-  defaultDate?: string;
+  defaultDate?: IstDayKey;
 }) {
   return (
     <div>

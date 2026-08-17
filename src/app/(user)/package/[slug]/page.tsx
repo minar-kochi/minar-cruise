@@ -12,11 +12,8 @@ import { db } from "@/db";
 
 import { getPackageById } from "@/db/data/dto/package";
 import { constructMetadata } from "@/lib/helpers/constructMetadata";
-import {
-  cn,
-  flattenObject,
-  parseSafeFormatYYYYMMDDToNumber,
-} from "@/lib/utils";
+import { parseIstDayKey } from "@/lib/datetime";
+import { cn, flattenObject } from "@/lib/utils";
 import { isPackageStatusExclusive } from "@/lib/validators/Package";
 import { Baby, Clock, User } from "lucide-react";
 import { Metadata } from "next";
@@ -122,9 +119,11 @@ export default async function PackagePage({
   params: { slug },
   searchParams,
 }: IPackagePage) {
-  let parsedDate = parseSafeFormatYYYYMMDDToNumber(
-    searchParams?.selectedDate ?? "",
-  );
+  // `parseSafeFormatYYYYMMDDToNumber` only checked the SHAPE — three
+  // dash-separated numbers — so "2026-02-30" reached the booking form as a real
+  // default. `parseIstDayKey` rejects dates that do not exist, and returns the
+  // branded type the store and form now require.
+  const parsedDate = parseIstDayKey(searchParams?.selectedDate);
 
   const data = await getPackageById({ slug });
 
@@ -169,7 +168,7 @@ export default async function PackagePage({
              */}
             {data.bookingRule.isBookableOnline ? (
               <PackageForm
-                defaultDate={parsedDate?.date ?? undefined}
+                defaultDate={parsedDate ?? undefined}
                 adultPrice={data.adultPrice}
                 childPrice={data.childPrice}
                 packageId={data.id}
@@ -184,7 +183,7 @@ export default async function PackagePage({
           <div className="2md:col-span-2 2md:row-start-2 2md:col-start-1">
             <PackageAmmenties
               data={data}
-              defaultDate={parsedDate?.date ?? undefined}
+              defaultDate={parsedDate ?? undefined}
               bookingRule={data.bookingRule}
             />
           </div>

@@ -1,18 +1,18 @@
-import { dayKeyOfDateColumn, dayKeyToDateColumn, istToday } from "@/lib/datetime";
+import {
+  dayKeyOfDateColumn,
+  dayKeyToDateColumn,
+  istDayKeySchema,
+  istToday,
+} from "@/lib/datetime";
 import { INFINITE_QUERY_LIMIT } from "@/constants/config";
-import { defaultEmptyTrigger } from "@/constants/data/timer";
 import { db } from "@/db";
 import { getPackageByIdWithStatusAndCount } from "@/db/data/dto/package";
 import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import {
-  combineDateWithSplitedTime,
   getDateRangeArray,
   isDateValid,
   isProd,
-  isValidMergeTimeCycle,
-  mergeTimeCycle,
   parseDateFormatYYYMMDDToNumber,
-  splitTimeColon,
 } from "@/lib/utils";
 import {
   EnumScheduleTime,
@@ -38,7 +38,6 @@ import {
   getSchedulesByDateRange,
   getSchedulesByDateRangeWithBookingCount,
 } from "@/db/data/dto/schedule/schedule";
-import { isSameDay, toDate } from "date-fns";
 import { scheduleDateRangeValidator } from "@/lib/validators/scheduleDownloadValidator";
 import { $Enums } from "@prisma/client";
 import {
@@ -220,7 +219,13 @@ export const schedule = router({
   ).mutation(
     async ({
       ctx,
-      input: { packageId, ScheduleDate, ScheduleTime, ScheduleDateTime },
+      input: {
+        packageId,
+        ScheduleDate,
+        ScheduleTime,
+        overrideStartMinutes,
+        overrideEndMinutes,
+      },
     }) => {
       /**
        * Check to do before creating a schedule.
@@ -229,27 +234,13 @@ export const schedule = router({
        *  - Schedule's can be Block be too, PackageId should be null and status should send a Blocked one.
        *  -
        */
-
-      //________________Validate Input Starts _____________
-      /** */
       try {
-        const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
-
-        if (!date) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Date Format is not valid YYYY-MM-DD",
-          });
-        }
-
-        const validatedDate = isDateValid(date);
-
-        if (!validatedDate) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Requested date is invalid",
-          });
-        }
+        // `ScheduleDate` is an IstDayKey: istDayKeySchema already rejected
+        // anything that is not a real YYYY-MM-DD, which is what the
+        // parseDateFormatYYYMMDDToNumber + isDateValid prologue used to do by
+        // hand. `dayKeyToDateColumn` is what a @db.Date wants — UTC midnight —
+        // rather than `new Date(str)`, which only happens to agree.
+        const day = dayKeyToDateColumn(ScheduleDate);
 
         const isPackageFound =
           await getPackageByIdWithStatusAndCount(packageId);
@@ -261,32 +252,19 @@ export const schedule = router({
           });
         }
 
-        //________________Validate Input ends _____________
-        // Test out the date that is received (UTC format.)
-        let SafelyParsedDate = new Date(ScheduleDate);
-
-        let fromTimeObj =
-          mergeTimeCycle(ScheduleDateTime?.fromTime ?? defaultEmptyTrigger) ??
-          null;
-
-        let toTimeObjParsed =
-          mergeTimeCycle(ScheduleDateTime?.toTime ?? defaultEmptyTrigger) ??
-          null;
-
-        let toTime = isValidMergeTimeCycle(toTimeObjParsed ?? "");
-        let fromTime = isValidMergeTimeCycle(fromTimeObj ?? "");
-
-        if (isStatusCustom(ScheduleTime) && (!toTime || !fromTime)) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Time is Required for ${ScheduleTime} Packages.`,
-          });
-        }
+        // One numeric check, where there used to be two that tested different
+        // variables: the CUSTOM gate read booleans from moment's strict
+        // `hh:mm:A`, the category gate read the raw strings. Since that strict
+        // parse rejected the unpadded "4:30:PM" the other parser accepted, an
+        // afternoon time passed one gate and failed the other.
+        const needsExplicitTime =
+          isStatusCustom(ScheduleTime) ||
+          isPackageStatusExclusive(isPackageFound.packageCategory) ||
+          isPackageStatusCustom(isPackageFound.packageCategory);
 
         if (
-          (isPackageStatusExclusive(isPackageFound.packageCategory) ||
-            isPackageStatusCustom(isPackageFound.packageCategory)) &&
-          (!toTime || !fromTime)
+          needsExplicitTime &&
+          (overrideStartMinutes == null || overrideEndMinutes == null)
         ) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -301,7 +279,7 @@ export const schedule = router({
                 schedulePackage: ScheduleTime,
               },
               {
-                day: SafelyParsedDate,
+                day,
               },
             ],
           },
@@ -322,16 +300,16 @@ export const schedule = router({
         // webhook and the migration backfill use, so a schedule created from
         // the dashboard is indistinguishable from one created at payment time.
         const instants = deriveScheduleInstants({
-          day: SafelyParsedDate,
+          day: ScheduleDate,
           packageStartMinutesIst: isPackageFound.startMinutesIst,
           packageDurationMinutes: isPackageFound.duration,
-          overrideFrom: fromTime ? fromTimeObj : null,
-          overrideTo: toTime ? toTimeObjParsed : null,
+          overrideStartMinutes,
+          overrideEndMinutes,
         });
 
         const createdSchedule = await db.schedule.create({
           data: {
-            day: SafelyParsedDate,
+            day,
             packageId,
             startsAt: instants.startsAt,
             endsAt: instants.endsAt,
@@ -359,51 +337,21 @@ export const schedule = router({
   ),
   updateSchedule: ScheduleMutation.input(
     UpdatedDateScheduleSchema.extend({
-      date: z.string(),
+      date: istDayKeySchema,
     }),
   ).mutation(
     async ({
       ctx,
-      input: { date: ScheduleDate, packageId, scheduleTime, ...input },
+      input: {
+        date: ScheduleDate,
+        packageId,
+        scheduleTime,
+        overrideStartMinutes,
+        overrideEndMinutes,
+      },
     }) => {
       try {
-        let { fromTime, toTime } = input;
-
-        const date = parseDateFormatYYYMMDDToNumber(ScheduleDate);
-
-        if (!date) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Date Format is not valid YYYY-MM-DD",
-          });
-        }
-
-        const validatedDate = isDateValid(date);
-
-        if (!validatedDate) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Requested date is invalid",
-          });
-        }
-
-        let SafelyParsedDate = new Date(ScheduleDate);
-
-        let fromTimeObj =
-          mergeTimeCycle(fromTime ?? defaultEmptyTrigger) ?? null;
-
-        let toTimeObjParsed =
-          mergeTimeCycle(toTime ?? defaultEmptyTrigger) ?? null;
-
-        let toTimeParsed = isValidMergeTimeCycle(toTimeObjParsed ?? "");
-        let fromTimeParsed = isValidMergeTimeCycle(fromTimeObj ?? "");
-
-        if (isStatusCustom(scheduleTime) && (!toTime || !fromTime)) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Time is Required for ${scheduleTime} Packages.`,
-          });
-        }
+        const day = dayKeyToDateColumn(ScheduleDate);
 
         const isPackageFound =
           await getPackageByIdWithStatusAndCount(packageId);
@@ -414,10 +362,16 @@ export const schedule = router({
             message: "Selected Package is not found on our database.",
           });
         }
+
+        // Same single numeric gate as createNewSchedule — see the note there.
+        const needsExplicitTime =
+          isStatusCustom(scheduleTime) ||
+          isPackageStatusExclusive(isPackageFound.packageCategory) ||
+          isPackageStatusCustom(isPackageFound.packageCategory);
+
         if (
-          (isPackageStatusExclusive(isPackageFound.packageCategory) ||
-            isPackageStatusCustom(isPackageFound.packageCategory)) &&
-          (!toTime || !fromTime)
+          needsExplicitTime &&
+          (overrideStartMinutes == null || overrideEndMinutes == null)
         ) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -431,7 +385,7 @@ export const schedule = router({
                 schedulePackage: scheduleTime,
               },
               {
-                day: SafelyParsedDate,
+                day,
               },
             ],
           },
@@ -454,8 +408,8 @@ export const schedule = router({
           day: Schedule.day,
           packageStartMinutesIst: isPackageFound.startMinutesIst,
           packageDurationMinutes: isPackageFound.duration,
-          overrideFrom: fromTimeParsed ? fromTimeObj : null,
-          overrideTo: toTimeParsed ? toTimeObjParsed : null,
+          overrideStartMinutes,
+          overrideEndMinutes,
         });
 
         const data = await db.schedule.update({

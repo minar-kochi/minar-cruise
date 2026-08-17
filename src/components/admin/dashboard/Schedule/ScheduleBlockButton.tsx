@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { format } from "date-fns";
+import { formatDayKey } from "@/lib/datetime";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
@@ -76,7 +76,7 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
         <DialogHeader>
           <DialogTitle>Block Schedule</DialogTitle>
           <DialogDescription>
-            Are you sure to Block Schedule at {format(date, "dd-MM-yyyy")}{" "}
+            Are you sure to Block Schedule at {formatDayKey(date, "date")}{" "}
             {type}
           </DialogDescription>
         </DialogHeader>
@@ -93,7 +93,7 @@ export default function ScheduleBlockButton({ type }: TScheduleSelector) {
             onClick={handleBlockButton}
             variant={"destructive"}
           >
-            Block {type} at {format(date, "dd/MM")}{" "}
+            Block {type} at {formatDayKey(date, "dayMonth")}{" "}
           </Button>
         </div>
       </DialogContent>

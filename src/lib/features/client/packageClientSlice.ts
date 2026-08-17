@@ -5,6 +5,7 @@ import {
   ScheduleGrouped,
   TSchedulesData,
 } from "@/Types/Schedule/ScheduleSelect";
+import { dayKeyOfDateColumn, type IstDayKey } from "@/lib/datetime";
 import { $Enums } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -20,7 +21,7 @@ type TScheduleResults = Record<string, TSchedulesData[]>;
 export type TPackageState = {
   packages: TGetPackageSearchItems | null;
   selectedPackages: TGetPackageSearchItems;
-  date: string | null;
+  date: IstDayKey | null;
   resultedSchedules: ScheduleGrouped;
 };
 
@@ -33,7 +34,7 @@ const packageClientSlice = createSlice({
     resultedSchedules: {},
   } as TPackageState,
   reducers: {
-    setDate(state, action: PayloadAction<string>) {
+    setDate(state, action: PayloadAction<IstDayKey>) {
       state.date = action.payload;
     },
     setInitialSelectedPackage(
@@ -87,7 +88,10 @@ const packageClientSlice = createSlice({
         });
 
         const groupedSchedules = uniqueSchedules.reduce((acc, schedule) => {
-          const dateKey = new Date(schedule.day).toISOString().split("T")[0];
+          // `TSchedulesData.day` is a Prisma @db.Date, i.e. UTC midnight — read
+          // its UTC fields. The old `new Date(day).toISOString().split("T")[0]`
+          // happened to agree only because it also read UTC.
+          const dateKey = dayKeyOfDateColumn(schedule.day);
           (acc[dateKey] = acc[dateKey] || []).push(schedule);
           return acc;
         }, {} as ScheduleGrouped);

@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import type { TSelectableSchedule } from "@/db/data/dto/bookingLink";
 import { cn, formatPrice } from "@/lib/utils";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn, formatDayKey } from "@/lib/datetime";
 import { CalendarRange, Check, Clock, Users } from "lucide-react";
 import { useState } from "react";
 
@@ -108,7 +108,7 @@ export function SelectScheduleDialog({
                           <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <CalendarRange className="h-3.5 w-3.5" />
-                              {format(new Date(schedule.day), "EEE dd MMM yyyy")}
+                              {formatDayKey(dayKeyOfDateColumn(schedule.day), "dateLongWeekday")}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3.5 w-3.5" />

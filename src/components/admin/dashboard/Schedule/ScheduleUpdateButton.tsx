@@ -10,19 +10,20 @@ import {
   DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { format } from "date-fns";
+import { formatDayKey, parseIstDayKey } from "@/lib/datetime";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
+import { SelectPackageById } from "@/lib/features/Package/selector";
+import { ShouldPackageBeAvailableForPublicToSchedule } from "@/lib/validators/Package";
 import { trpc } from "@/app/_trpc/client";
 import toast from "react-hot-toast";
-import {
-  cn,
-  sleep,
-  splitTimeColon,
-} from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
-import { isScheduleInputsChanged } from "@/lib/features/schedule/selector";
+import {
+  isScheduleInputsChanged,
+  scheduleTimeDraft,
+} from "@/lib/features/schedule/selector";
 export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
   const [isOpen, setIsOpen] = useState(false);
   const date = useAppSelector((state) => state.schedule.date);
@@ -34,6 +35,14 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
   const isScheduleChanged = useAppSelector((state) =>
     isScheduleInputsChanged(state, type),
   );
+  const timer = useAppSelector((state) => scheduleTimeDraft(state, type));
+  const PackageDetails = useAppSelector((state) =>
+    SelectPackageById(
+      state,
+      updatedScheduleDatas[type]?.packageId ?? undefined,
+      type,
+    ),
+  );
   const { invalidate } = trpc.useUtils().admin.schedule.getSchedulesByDateOrNow;
 
   const { invalidate: InvalidateScheduleInfinity } =
@@ -44,7 +53,7 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
     trpc.admin.schedule.updateSchedule.useMutation({
       async onMutate(variables) {
         toast.loading(
-          `Updating Schedule at ${format(variables.date, "do 'of' LLL")}`,
+          `Updating Schedule at ${formatDayKey(parseIstDayKey(variables.date), "dayOrdinalMonth")}`,
           { duration: 3000 },
         );
         setIsOpen(false);
@@ -86,12 +95,29 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
       return;
     }
 
+    // Send an override ONLY when there is genuinely one to send.
+    //
+    // The time inputs render for every package type, so `timer` is populated
+    // even when the admin never touched them — it falls back to the saved
+    // schedule, then to the package's own departure. Passing that back as an
+    // override would mark every ordinary update `isTimeOverridden`, and would
+    // pin the schedule to a time it should keep inheriting.
+    //
+    // A draft means the admin typed something. EXCLUSIVE/CUSTOM packages always
+    // need explicit times, so those resend the saved value rather than null.
+    const needsExplicitTime =
+      !!PackageDetails?.packageCategory &&
+      !ShouldPackageBeAvailableForPublicToSchedule(
+        PackageDetails.packageCategory,
+      );
+    const sendOverride = needsExplicitTime || timer.source === "draft";
+
     updateSchedule({
       date,
       scheduleTime: updatedScheduleData.scheduleTime,
       packageId: updatedScheduleData.packageId,
-      fromTime: splitTimeColon(updatedScheduleData.fromTime ?? "") ?? undefined,
-      toTime: splitTimeColon(updatedScheduleData.toTime ?? "") ?? undefined,
+      overrideStartMinutes: sendOverride ? timer.startMinutes : null,
+      overrideEndMinutes: sendOverride ? timer.endMinutes : null,
     });
   }
   return (
@@ -115,11 +141,8 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
         <DialogHeader>
           <DialogTitle>Change Schedule</DialogTitle>
           <DialogDescription>
-            {/*
-             * @TODO [Neil]  => getScheduleTitle go this function and fill in to recive and replace below text / ReactNode according to the function description.
-             */}
             Please make sure that you have already changed all the bookings at{" "}
-            <span className="text-green-500">{format(date, "dd-MM-yyyy")}</span>{" "}
+            <span className="text-green-500">{formatDayKey(date, "date")}</span>{" "}
             incase of you are changing packages.
           </DialogDescription>
         </DialogHeader>
@@ -157,7 +180,7 @@ export default function ScheduleUpdateButton({ type }: TScheduleSelector) {
               onClick={() => handleScheduleUpdate()}
               variant={"destructive"}
             >
-              Change Booking at {format(date, "dd/MM")}{" "}
+              Change Booking at {formatDayKey(date, "dayMonth")}{" "}
             </Button>
           </div>
         </div>

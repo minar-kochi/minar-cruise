@@ -1,5 +1,5 @@
 "use client";
-import { formatIstRange } from "@/lib/datetime";
+import { formatDayKey, formatIstRange, parseIstDayKey } from "@/lib/datetime";
 import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
 
 import { trpc } from "@/app/_trpc/client";
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setAllScheduleByDate } from "@/lib/features/schedule/ScheduleSlice";
-import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
@@ -56,8 +55,9 @@ export default function ScheduleTable() {
     ([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime(),
   );
 
+  // `Object.entries` erases the key type, so re-validate rather than cast.
   const getDayName = (dateStr: string) => {
-    return format(new Date(dateStr), "EEEE");
+    return formatDayKey(parseIstDayKey(dateStr), "weekday");
   };
 
   const { ref, inView } = useInView({
@@ -121,7 +121,7 @@ export default function ScheduleTable() {
                       >
                         {index === 0 && (
                           <div className="font-medium ">
-                            {format(new Date(date), "dd/MM/yyyy")}
+                            {formatDayKey(parseIstDayKey(date), "dateSlash")}
                           </div>
                         )}
                       </TableCell>

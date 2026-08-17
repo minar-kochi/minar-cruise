@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { addDays, format } from "date-fns";
+import {
+  addDaysToKey,
+  calendarDateToDayKey,
+  dayKeyToCalendarDate,
+  formatDayKey,
+  istToday,
+} from "@/lib/datetime";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -23,7 +29,7 @@ export function PopOverDateRangePicker({
 }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(Date.now()),
-    to: addDays(new Date(Date.now()), 30),
+    to: dayKeyToCalendarDate(addDaysToKey(istToday(), 30)),
   });
 
   return (
@@ -42,11 +48,11 @@ export function PopOverDateRangePicker({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {formatDayKey(calendarDateToDayKey(date.from), "monthDayYear")} -{" "}
+                  {formatDayKey(calendarDateToDayKey(date.to), "monthDayYear")}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                formatDayKey(calendarDateToDayKey(date.from), "monthDayYear")
               )
             ) : (
               <span>Pick a date</span>

@@ -15,7 +15,7 @@ import {
   setInitialSelectedPackage,
   setSearchedPackages,
 } from "@/lib/features/client/packageClientSlice";
-import { format } from "date-fns";
+import { formatDayKey, parseIstDayKey } from "@/lib/datetime";
 import React, { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { date } from "zod";
@@ -175,7 +175,7 @@ export default function SearchPageWrapper({
                 className=" rounded-lg px-1 py-1 xxs:p-2  lg:p-4"
               >
                 <h3 className="text-xl font-medium mb-2">
-                  {format(new Date(key), "MMMM do, EEEE")}
+                  {formatDayKey(parseIstDayKey(key), "monthOrdinalWeekday")}
                 </h3>
                 <div className="grid sm:grid-cols-2 md:flex gap-2   md:flex-col lg:px-6">
                   {data &&

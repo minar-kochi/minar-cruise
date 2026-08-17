@@ -1,4 +1,9 @@
-import { formatIstTime, istDayKeyOf } from "@/lib/datetime";
+import {
+  dayKeyOfDateColumn,
+  formatDayKey,
+  formatIstDate,
+  formatIstTime,
+} from "@/lib/datetime";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
 import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
@@ -21,9 +26,7 @@ import {
 } from "@/db/data/dto/schedule/schedule";
 import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import {
-  combineDateWithSplitedTime,
   sleep,
-  splitTimeColon,
 } from "@/lib/utils";
 import { updateScheduleIdOfBooking } from "@/lib/validators/Booking";
 import {
@@ -32,7 +35,6 @@ import {
 } from "@/lib/validators/offlineBookingValidator";
 import { AdminProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -754,16 +756,13 @@ export const booking = router({
         adultCount: booking.numOfAdults,
         babyCount: booking.numOfBaby,
         childCount: booking.numOfChildren,
-        BookingDate: format(
-          istDayKeyOf(booking.createdAt),
-          "dd-MM-yyyy",
-        ),
+        BookingDate: formatIstDate(booking.createdAt, "date"),
         email: booking.user.email,
         phone: booking.user.contact ?? "",
         BookingId: booking.id,
         packageTitle: bookedPackage?.title ?? "",
         scheduleDate: booking.schedule?.day
-          ? format(booking.schedule?.day, "dd-MM-yyyy")
+          ? formatDayKey(dayKeyOfDateColumn(booking.schedule.day), "date")
           : "--",
         totalAmount: payment.totalAmount,
         gstAmount: payment.gstAmount,
@@ -795,10 +794,10 @@ export const booking = router({
         BookingId: booking.id,
         customerName: booking.user.name,
         date: booking.schedule?.day
-          ? format(booking.schedule.day, "dd-MM-yyyy")
+          ? formatDayKey(dayKeyOfDateColumn(booking.schedule.day), "date")
           : "--",
         boardingTime: formatIstTime(booking.schedule.startsAt ?? null),
-        bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
+        bookingDate: formatIstDate(booking.createdAt, "date"),
         contact: booking.user.email,
       }),
     });

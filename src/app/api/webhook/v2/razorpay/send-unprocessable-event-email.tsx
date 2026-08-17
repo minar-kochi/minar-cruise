@@ -1,3 +1,4 @@
+import { formatIstDateTime } from "@/lib/datetime";
 import { cn } from "@/lib/utils";
 import {
   Body,
@@ -89,7 +90,7 @@ export function sendUnprocessableEventEmail({
                 <strong>Razorpay Event ID:</strong> {razerPayEventId}
               </Text>
               <Text className="text-[14px] leading-[20px] m-0">
-                <strong>Timestamp:</strong> {new Date().toLocaleString()}
+                <strong>Timestamp:</strong> {formatIstDateTime(new Date())}
               </Text>
             </Section>
 

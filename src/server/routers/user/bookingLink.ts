@@ -15,7 +15,7 @@ import {
 } from "@/lib/validators/bookingLink";
 import { publicProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn } from "@/lib/datetime";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
 import { CreateBookingForExistingSchedule } from "./userBookingExistingScheduleTRPC";
 
@@ -156,10 +156,12 @@ export const bookingLink = router({
        * have been created, edited or deleted since the link was generated,
        * whether by an admin or by another customer's schedule.create order.
        */
+      // `dayKeyOfDateColumn`, not a formatter: this value selects the sailing
+      // the customer pays for. See the note in admin/bookingLink.ts.
       const resolved = await resolveScheduleForPackageDate({
         packageId: link.packageId,
         scheduleId: link.scheduleId ?? undefined,
-        selectedScheduleDate: format(link.scheduleDay, "yyyy-MM-dd"),
+        selectedScheduleDate: dayKeyOfDateColumn(link.scheduleDay),
         // The sale was agreed when the link was issued. Hiding the package
         // afterwards removes it from the public site; it must not strand a
         // customer holding a link that has not expired yet.
@@ -175,7 +177,7 @@ export const bookingLink = router({
         numOfBaby: input.numOfBaby,
         packageId: link.packageId,
         packageCategory: resolved.packageIdExists.packageCategory,
-        selectedScheduleDate: format(link.scheduleDay, "yyyy-MM-dd"),
+        selectedScheduleDate: dayKeyOfDateColumn(link.scheduleDay),
         scheduleId: resolved.schedule?.id,
         token: input.recaptchaToken ?? null,
       };

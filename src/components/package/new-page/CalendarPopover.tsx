@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { calendarDateToDayKey, formatDayKey } from "@/lib/datetime";
 import { CalendarIcon } from "lucide-react";
 
 interface ICalendarPopover {
@@ -27,7 +27,7 @@ export default function CalendarPopover({ children, date }: ICalendarPopover) {
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {/* <CalendarRange className="mr-2 h-4 w-4" /> */}
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? formatDayKey(calendarDateToDayKey(new Date(date)), "dateOrdinal") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent

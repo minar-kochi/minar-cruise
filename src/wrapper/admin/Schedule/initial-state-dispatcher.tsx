@@ -1,4 +1,4 @@
-import { calendarDateToDayKey } from "@/lib/datetime";
+import { istToday } from "@/lib/datetime";
 import RouterRefreshButton from "@/components/admin/booking/RouterRefresh";
 import OpenScheduleButton from "@/components/admin/dashboard/Schedule/OpenScheduleButton";
 import { getOrganizedPackages } from "@/db/data/dto/package";
@@ -8,7 +8,6 @@ import {
   TgetupComingScheduleDates,
 } from "@/db/data/dto/schedule/schedule";
 import { convertScheduleDataDateToDateString } from "@/lib/helpers/organizedData";
-import { getUTCDate, RemoveTimeStampFromDate, sleep } from "@/lib/utils";
 import StoreProvider from "@/providers/adminStore/StoreProvider";
 import React, { ReactNode } from "react";
 
@@ -17,10 +16,11 @@ export default async function InitialStateDispatcher({
 }: {
   children: ReactNode;
 }) {
-  const currentDate = new Date(Date.now());
-  const date = calendarDateToDayKey(
-    new Date(getUTCDate(calendarDateToDayKey(currentDate))),
-  );
+  // Today in IST. This was four representation hops —
+  // `calendarDateToDayKey(new Date(getUTCDate(calendarDateToDayKey(now))))` —
+  // that cancel out only when the host runs UTC. It is an SSR path, so the
+  // wrong day would be baked into the admin shell.
+  const date = istToday();
   const [packages, data, schedules] = await Promise.all([
     getOrganizedPackages(),
     getupComingScheduleDates(),

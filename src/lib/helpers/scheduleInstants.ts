@@ -11,7 +11,12 @@
  * a package with an unparseable time rendered as a bare " - " in some views and
  * correctly in others. It is now answered exactly once, here, at write time.
  */
-import { IstDayKey, dayKeyOfDateColumn, istInstant, parseIstDayKey, parseLegacyMeridiemTime } from "@/lib/datetime";
+import {
+  IstDayKey,
+  dayKeyOfDateColumn,
+  istInstant,
+  parseIstDayKey,
+} from "@/lib/datetime";
 
 /**
  * The longest sailing we will believe when a return time appears to precede its
@@ -47,11 +52,36 @@ function toDayKey(day: Date | IstDayKey | string): IstDayKey | null {
 }
 
 /**
+ * A time-of-day override, or null if there isn't a usable one.
+ *
+ * MUST NOT use `||`: 0 is midnight, a perfectly legal departure, and also
+ * falsy. The old `"4:30:PM"` string format could not express midnight at all,
+ * so this is a state that only became reachable when the wire format became
+ * numeric — and it would fail silently by inheriting the package's time.
+ *
+ * Out-of-range and non-integer values are treated as absent rather than
+ * throwing, preserving the old behaviour where an unparseable override string
+ * fell back to the package.
+ */
+function asMinuteOfDay(value: number | null | undefined): number | null {
+  return typeof value === "number" &&
+    Number.isInteger(value) &&
+    value >= 0 &&
+    value < 1440
+    ? value
+    : null;
+}
+
+/**
  * Resolves the instants for one schedule.
  *
- * `overrideFrom`/`overrideTo` are the legacy `"4:30:PM"` strings, which remain
- * the wire format for the admin time widget until it is replaced. Pass null to
- * inherit the package's departure — the normal case for AVAILABLE schedules.
+ * The overrides are minutes from IST midnight — what a `<input type="time">`
+ * produces. Pass null to inherit the package's departure, which is the normal
+ * case for AVAILABLE schedules.
+ *
+ * Callers holding the legacy `"4:30:PM"` strings parse at their own boundary
+ * with `parseLegacyMeridiemTime`. Exactly one does: the migration backfill,
+ * which reads columns the committed schema no longer declares.
  *
  * Returns TIMELESS when there is neither an override nor a package to inherit
  * from, which is what a BLOCKED row looks like.
@@ -62,21 +92,21 @@ export function deriveScheduleInstants(args: {
   packageStartMinutesIst?: number | null;
   /** `Package.duration` in minutes; null when the schedule has no package. */
   packageDurationMinutes?: number | null;
-  /** Legacy `Schedule.fromTime` override, e.g. "4:30:PM". */
-  overrideFrom?: string | null;
-  /** Legacy `Schedule.toTime` override. */
-  overrideTo?: string | null;
+  /** Explicit departure, minutes from IST midnight. Null inherits the package. */
+  overrideStartMinutes?: number | null;
+  /** Explicit return, minutes from IST midnight. Null derives from `duration`. */
+  overrideEndMinutes?: number | null;
 }): ScheduleInstants {
   const dayKey = toDayKey(args.day);
   if (!dayKey) return TIMELESS;
 
-  const overrideStart = parseLegacyMeridiemTime(args.overrideFrom);
+  const overrideStart = asMinuteOfDay(args.overrideStartMinutes);
   const startMin = overrideStart ?? args.packageStartMinutesIst ?? null;
 
   // No override and no package: a BLOCKED marker. It has no sailing.
   if (startMin === null) return TIMELESS;
 
-  const overrideEnd = parseLegacyMeridiemTime(args.overrideTo);
+  const overrideEnd = asMinuteOfDay(args.overrideEndMinutes);
   const rawEnd =
     overrideEnd ??
     (args.packageDurationMinutes != null

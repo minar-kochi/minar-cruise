@@ -1,3 +1,4 @@
+import { formatIstDateTime } from "@/lib/datetime";
 import {
   Body,
   Container,
@@ -99,7 +100,7 @@ export function scheduleConflictEmailTemplate({
                 anomaly
               </Text>
               <Text className="text-[14px] leading-[20px] m-0">
-                <strong>Detection Time:</strong> {new Date().toLocaleString()}
+                <strong>Detection Time:</strong> {formatIstDateTime(new Date())}
               </Text>
             </Section>
 

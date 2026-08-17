@@ -1,10 +1,8 @@
 import { Baby, Clock, Hourglass, HourglassIcon, UserRound } from "lucide-react";
-import moment from "moment";
 import Bounded from "../elements/Bounded";
 import { db } from "@/db";
 import { Package, PackageImage, Image, Amenities } from "@prisma/client";
 import { cn, isProd } from "@/lib/utils";
-import { format } from "date-fns";
 import { ReactNode } from "react";
 import { TGetPackageById } from "@/db/data/dto/package";
 

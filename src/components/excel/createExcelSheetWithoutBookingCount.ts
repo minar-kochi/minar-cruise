@@ -1,6 +1,11 @@
-import { dayKeyOfDateColumn, formatDayKey, formatIstDate, formatIstRange } from "@/lib/datetime";
+import {
+  dayKeyOfDateColumn,
+  formatDayKey,
+  formatIstDate,
+  formatIstRange,
+  istToday,
+} from "@/lib/datetime";
 import { TGetSchedulesByDateRangeExcludingNull } from "@/db/data/dto/schedule/schedule";
-import { format } from "date-fns";
 import ExcelJS from "exceljs";
 import {
   A4ExcelPageSetup,
@@ -56,7 +61,7 @@ export async function createExcelSheetWithoutBookingCount({
   } = ScheduleSheetConfig;
 
   // TITLE ROW-------------------------------------------------------------------
-  const title = `Schedule Details List - ${format(new Date(Date.now()), "dd/MM/yyy")}`; // Format: DD/MM/YYYY
+  const title = `Schedule Details List - ${formatDayKey(istToday(), "dateSlash")}`; // Format: DD/MM/YYYY
   table.insertRow(TitleRowIndex, [title]); // Add title row
 
   const titleRow = table.getRow(TitleRowIndex);

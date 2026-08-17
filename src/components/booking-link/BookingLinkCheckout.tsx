@@ -16,7 +16,7 @@ import type { AppRouter } from "@/server/routers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TRPCClientError } from "@trpc/client";
 import type { inferRouterOutputs } from "@trpc/server";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn, formatDayKey } from "@/lib/datetime";
 import {
   CalendarRange,
   Clock,
@@ -178,7 +178,7 @@ export function BookingLinkCheckout({
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
               <span className="flex items-center gap-1.5">
                 <CalendarRange className="h-4 w-4 text-muted-foreground" />
-                {format(new Date(link.scheduleDay), "EEEE dd MMM yyyy")}
+                {formatDayKey(dayKeyOfDateColumn(link.scheduleDay), "dateFull")}
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4 text-muted-foreground" />

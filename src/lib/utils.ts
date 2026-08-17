@@ -2,28 +2,20 @@ import {
   calendarDateToDayKey,
   compareDayKeys,
   dayKeyOfDateColumn,
+  dayKeyRange,
+  dayKeyToDateColumn,
   istInstant,
   istToday,
+  isSameMonthKey,
   isWithinBookingWindow,
+  minutesSince,
+  parseIstDayKey,
   type IstDayKey,
 } from "@/lib/datetime";
-// import { TTimeCycle } from "@/components/admin/dashboard/Schedule/ExclusiveScheduleTime";
-import { TMeridianCycle, TSplitedFormatedDate, TTimeCycle } from "@/Types/type";
+import { TSplitedFormatedDate } from "@/Types/type";
 import { $Enums } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
-import {
-  addDays,
-  differenceInMinutes,
-  formatISO,
-  isBefore,
-  isEqual,
-  isSameMonth,
-  startOfDay,
-  isSameDay as isSameDayFromDateFns,
-} from "date-fns";
-import moment from "moment";
 import { twMerge } from "tailwind-merge";
-import { DateTime } from "luxon";
 import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 
 export function cn(...inputs: ClassValue[]) {
@@ -64,29 +56,6 @@ export function isSameDay(date: Date, fromDate: Date) {
     date.getMonth() === fromDate.getMonth() &&
     date.getFullYear() === fromDate.getFullYear()
   );
-}
-export function isSameDayString(date: string, fromDate: string) {
-  return date === fromDate;
-}
-export function convertLocalDateToUTC(date: Date | string) {
-  if (!date) {
-    return date;
-  }
-  let formatedDate;
-  let ParsedInputDate;
-  ParsedInputDate = new Date(date);
-  formatedDate = new Date(
-    Date.UTC(
-      ParsedInputDate.getFullYear(),
-      ParsedInputDate.getMonth(),
-      ParsedInputDate.getDate(),
-    ),
-  );
-  return formatISO(formatedDate);
-}
-/** Convert Date Object to YYYY-MM-DD format */
-export function RemoveTimeStampFromDate(date: Date): string {
-  return formatISO(date).split("T")[0];
 }
 
 export function ParseStringToNumber(x: string) {
@@ -140,8 +109,19 @@ export function parseSafeFormatYYYYMMDDToNumber(
   }
 }
 
+/**
+ * Is this year/month/day triple a real calendar date?
+ *
+ * Was `moment([year, month - 1, day]).isValid()` — the last real moment usage
+ * in the app. Routed through `parseIstDayKey` instead so there is one date
+ * validator rather than two that could disagree (and so that Feb 30 is rejected
+ * by the same code path that rejects it everywhere else).
+ */
 export function isDateValid(date: TSplitedFormatedDate) {
-  return moment([date.year, date.month - 1, date.day]).isValid();
+  const key = `${String(date.year).padStart(4, "0")}-${String(
+    date.month,
+  ).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+  return parseIstDayKey(key) !== null;
 }
 
 export const sleep = (ms: number) => {
@@ -149,6 +129,15 @@ export const sleep = (ms: number) => {
   return new Promise((r) => setTimeout(r, ms));
 };
 
+/**
+ * Every @db.Date value from `fromDate` to `toDate`, inclusive.
+ *
+ * Was a date-fns loop doing LOCAL-field arithmetic on UTC-midnight Dates, which
+ * can drift a day under a DST-observing host zone — and its output feeds
+ * `createMany`, so a drift writes rows on the wrong days. Now it walks day keys
+ * and converts back at the end, and `dayKeyRange` caps the span (the old loop
+ * was unbounded).
+ */
 export function getDateRangeArray({
   fromDate,
   toDate,
@@ -156,80 +145,21 @@ export function getDateRangeArray({
   fromDate: Date;
   toDate: Date;
 }) {
-  const dates = [];
-
-  // Ensure we're working with the start of each day
-  const startDate = fromDate;
-  const endDate = toDate;
-
-  // Initialize current date as the start date
-  let currentDate = startDate;
-
-  // Keep adding dates until we reach or pass the end date
-  while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
-    dates.push(new Date(currentDate));
-    currentDate = addDays(currentDate, 1);
-  }
-
-  return dates;
+  return dayKeyRange(
+    dayKeyOfDateColumn(fromDate),
+    dayKeyOfDateColumn(toDate),
+  ).map(dayKeyToDateColumn);
 }
 
-export const getUTCDate = (dateStr: string): number => {
-  const date = new Date(dateStr);
-  return Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    date.getUTCHours(),
-    date.getUTCMinutes(),
-    date.getUTCSeconds(),
-    date.getUTCMilliseconds(),
-  );
-};
-
-export function isTimeCycleMeridianValid(cycle: string): TMeridianCycle | null {
-  if (cycle !== "AM" && cycle !== "PM") return null;
-  return cycle;
-}
-
-export function splitTimeColon(value: string): TTimeCycle | null {
-  if (!value) return null;
-  const splited = value.split(":");
-  if (splited.length !== 3) return null;
-  let hours = splited[0];
-  let min = splited[1];
-  let Cycle = isTimeCycleMeridianValid(splited[2]);
-  if (!Cycle || !hours || !min) return null;
-  return {
-    Cycle,
-    hours,
-    min,
-  };
-}
-export function isTimeCycleValid(value: TTimeCycle): boolean {
-  if (!value.Cycle || !value.hours.length || !value.min.length) return false;
-
-  if (!isTimeCycleMeridianValid(value.Cycle)) return false;
-
-  return true;
-}
-export function mergeTimeCycle(value: TTimeCycle): string | null {
-  const { hours, min, Cycle } = value;
-  return `${hours}:${min}:${Cycle}`;
-}
-
-export const isValidMergeTimeCycle = (timeString: string) => {
-  return moment(timeString, "hh:mm:A", true).isValid();
-};
-export const mergedTime = (timeString: string) => {
-  return moment(timeString, "hh:mm:A", true);
-};
 /**
  *
  * @param clientDate send in YYYYMMDD format
  */
 export const isCurrentMonthSameAsRequestedMonth = (clientDate: string) => {
-  return isSameMonth(clientDate, new Date(Date.now()));
+  const day = parseIstDayKey(clientDate);
+  // Was date-fns `isSameMonth(clientDateString, new Date())`, which parsed the
+  // string as UTC midnight and compared it against the HOST's month.
+  return day !== null && isSameMonthKey(day, istToday());
 };
 
 export function CapitalizeFirstLetterOfWord(value: string) {
@@ -238,31 +168,6 @@ export function CapitalizeFirstLetterOfWord(value: string) {
   return `${value.charAt(0).toLocaleUpperCase()}${value.slice(1)}`;
 }
 
-export function combineDateWithSplitedTime(date: Date, time: TTimeCycle) {
-  let meridian = time.Cycle;
-  let hours = parseInt(time.hours);
-  let minutes = parseInt(time.min);
-  if (meridian === "PM" && hours !== 12) {
-    hours += 12;
-  } else if (meridian === "AM" && hours === 12) {
-    hours = 0;
-  }
-  const newDate = new Date(date);
-  newDate.setMinutes(minutes);
-  newDate.setHours(hours);
-  newDate.setSeconds(0);
-  return newDate;
-}
-export function getISTDateFromZ(date: Date) {
-  return date.toLocaleDateString(undefined, {
-    timeZone: "Asia/Kolkata",
-  });
-}
-export function getISTDateAndTimeFromZ(date: Date) {
-  return date.toLocaleString(undefined, {
-    timeZone: "Asia/Kolkata",
-  });
-}
 
 /**
  * react-day-picker `disabled` predicate for the public booking calendar.
@@ -391,7 +296,7 @@ export function isOlderThan(
   minutesAgo: number,
 ): boolean {
   const date = new Date(dateString);
-  return differenceInMinutes(new Date(), date) > minutesAgo;
+  return minutesSince(date) > minutesAgo;
 }
 
 /**

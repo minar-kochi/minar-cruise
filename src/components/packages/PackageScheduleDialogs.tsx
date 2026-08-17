@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { format } from "date-fns";
+import { calendarDateToDayKey, formatDayKey } from "@/lib/datetime";
 import { Button, buttonVariants } from "../ui/button";
 import { ScheduleConflictError } from "@/Types/Schedule/ScheduleConflictError";
 import Link from "next/link";
@@ -36,7 +36,7 @@ export default function PackageScheduleDialogs({
           <DialogDescription>
             There is an another package scheduled at{" "}
             <span className="text-black font-medium">
-              {format(selectedDate, "EEEE dd/MM/yyyy")}
+              {formatDayKey(calendarDateToDayKey(selectedDate), "dateFull")}
             </span>
             , Please select another date, or you can book the scheduled package{" "}
             {ScheduleError ? (

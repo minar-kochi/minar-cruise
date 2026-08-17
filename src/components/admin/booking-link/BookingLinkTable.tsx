@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { cn, formatPrice } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn, formatDayKey } from "@/lib/datetime";
 import { Ban, Copy, ExternalLink, Link2, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -154,7 +154,7 @@ export default function BookingLinkTable() {
                       {row.Package?.title ?? "—"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {format(new Date(row.scheduleDay), "EEE dd MMM yyyy")}
+                      {formatDayKey(dayKeyOfDateColumn(row.scheduleDay), "dateLongWeekday")}
                     </p>
                     {/* Stands in for the columns hidden at this width. */}
                     <p className="text-xs text-muted-foreground sm:hidden">

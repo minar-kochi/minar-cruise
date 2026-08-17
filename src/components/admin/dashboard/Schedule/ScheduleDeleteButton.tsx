@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { format } from "date-fns";
+import { formatDayKey } from "@/lib/datetime";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { TScheduleSelector } from "@/Types/type";
@@ -84,7 +84,7 @@ export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
           <DialogTitle className="text-red-600">Delete Schedule</DialogTitle>
           <DialogDescription className="">
             Are you sure to Delete {type} Schedule at{" "}
-            {format(date, "dd-MM-yyyy")}
+            {formatDayKey(date, "date")}
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-1">
@@ -100,7 +100,7 @@ export default function ScheduleDeleteButton({ type }: TScheduleSelector) {
             onClick={handleDeleteButton}
             variant={"destructive"}
           >
-            Delete {type} at {format(date, "dd/MM")}{" "}
+            Delete {type} at {formatDayKey(date, "dayMonth")}{" "}
           </Button>
         </div>
       </DialogContent>

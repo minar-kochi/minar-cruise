@@ -1,4 +1,4 @@
-import { dayKeyOfDateColumn } from "@/lib/datetime";
+import { dayKeyOfDateColumn, type IstDayKey } from "@/lib/datetime";
 import { organizeScheduleData } from "@/lib/helpers/organizedData";
 import {
   GroupedSchedulePackageData,
@@ -12,7 +12,7 @@ import {
   InfinitySchedulePackageData,
   GroupedScheduleWithBookingCount,
 } from "@/Types/Schedule/ScheduleSelect";
-import { TkeyDbTime, TScheduleDataDayReplaceString } from "@/Types/type";
+import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
 import { $Enums } from "@prisma/client";
@@ -27,8 +27,12 @@ export type TScheduleUtilsState = {
 export type TScheduleState = {
   /**
    * Date that is selected and currentDateSchedule is synced with.
+   *
+   * Branded so `tsc` finds any raw string reaching it. An ISO instant and an
+   * IST day key are both `string` to the compiler, and mixing them is the
+   * original bug this migration exists to remove.
    */
-  date: string;
+  date: IstDayKey;
   /**
    * upComing Schedules that are formatted in YYYY-MM-DD[]
    */
@@ -75,7 +79,9 @@ const scheduleSlice = createSlice({
 
         const formattedScheduleArray = uniqueSchedules?.reduce(
           (acc, schedule) => {
-            const dateKey = new Date(schedule.day).toISOString().split("T")[0];
+            // `schedule.day` is already an IstDayKey. The old expression round-tripped
+          // it through a Date and back, which is a no-op only under TZ=UTC.
+          const dateKey = schedule.day;
             (acc[dateKey] = acc[dateKey] || [])?.push(schedule);
             return acc;
           },
@@ -108,7 +114,9 @@ const scheduleSlice = createSlice({
         });
 
         const groupedSchedules = uniqueSchedules.reduce((acc, schedule) => {
-          const dateKey = new Date(schedule.day).toISOString().split("T")[0];
+          // `schedule.day` is already an IstDayKey. The old expression round-tripped
+          // it through a Date and back, which is a no-op only under TZ=UTC.
+          const dateKey = schedule.day;
           (acc[dateKey] = acc[dateKey] || [])?.push(schedule);
           return acc;
         }, {} as GroupedSchedulePackageData);
@@ -122,7 +130,7 @@ const scheduleSlice = createSlice({
      * @param state TSchedule
      * @param action string {YYYY-MM-DD} format string
      */
-    setDate(state, action: PayloadAction<string>) {
+    setDate(state, action: PayloadAction<IstDayKey>) {
       state.date = action.payload;
     },
     /**
@@ -304,25 +312,29 @@ const scheduleSlice = createSlice({
     ) {
       const { payload } = action;
       state.updatedDateSchedule[payload.type].packageId = payload.packageId;
-      state.updatedDateSchedule[payload.type].fromTime = undefined;
-      state.updatedDateSchedule[payload.type].toTime = undefined;
+      // Picking a different package drops any manual time the admin had set,
+      // so the new package's own departure applies.
+      state.updatedDateSchedule[payload.type].startMinutes = undefined;
+      state.updatedDateSchedule[payload.type].endMinutes = undefined;
     },
     /**
-     * Set the Schedule Hour for specific time (fromTime / toTime)
-     * @param state
-     * @param action
+     * Set the departure or return for a schedule, as minutes from IST midnight.
+     *
+     * The payload used to be `{ time: string, eventType: "fromTime" | "toTime" }`
+     * while the only dispatcher sent `{ field, minutes }` — a mismatch hidden by
+     * an `as never` at the call site, so this wrote `undefined` to a key
+     * literally named "undefined" and the admin's time never reached the store.
      */
     setUpdatableScheduleTime(
       state,
       action: PayloadAction<{
         type: TKeyOrganizedScheduleData;
-        time: string;
-        eventType: TkeyDbTime;
-        packageId?: string;
+        field: "startMinutes" | "endMinutes";
+        minutes: number | null;
       }>,
     ) {
       const {
-        payload: { time, type, eventType },
+        payload: { type, field, minutes },
       } = action;
       if (
         !state.updatedDateSchedule[type].packageId &&
@@ -331,7 +343,7 @@ const scheduleSlice = createSlice({
         state.updatedDateSchedule[type].packageId =
           state.currentDateSchedule[type]?.packageId;
       }
-      state.updatedDateSchedule[type][eventType] = time;
+      state.updatedDateSchedule[type][field] = minutes;
     },
 
     /**

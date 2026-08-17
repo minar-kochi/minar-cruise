@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { dayKeyToDateColumn, istToday, parseLegacyMeridiemTime } from "@/lib/datetime";
+import { dayKeyToDateColumn, istToday } from "@/lib/datetime";
 import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import { getBookingConfigUncached } from "@/lib/helpers/config/getBookingConfig";
 import { getPackageAllImage } from "@/db/data/dto/package";
@@ -175,6 +175,7 @@ export const packages = router({
           adultPrice: true,
           childPrice: true,
           duration: true,
+          startMinutesIst: true,
           slug: true,
           isVisible: true,
           minLeadTimeHours: true,
@@ -209,25 +210,22 @@ export const packages = router({
 
   updatePackageDetails: AdminProcedure.input(PackageDetailsValidator).mutation(
     async ({ input }) => {
-      const { id, adultPrice, childPrice, ...rest } = input;
+      const { id, adultPrice, childPrice, startMinutesIst, ...rest } = input;
       try {
-        const startMinutesIst = parseLegacyMeridiemTime(rest.fromTime);
-        if (startMinutesIst === null) {
-          // The zod validator already enforces the format, so this is a
-          // programming error rather than user input — but a package whose
-          // departure cannot be parsed would produce schedules with no
-          // instants, so it must not reach the database.
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Departure time "${rest.fromTime}" could not be parsed.`,
-          });
-        }
-
         await db.$transaction(async (tx) => {
           await tx.package.update({
             where: { id },
+            // Written out field by field rather than spread. TypeScript does
+            // NOT apply excess-property checking to spread properties, so
+            // `data: { ...rest }` silently carried `fromTime`/`toTime` here
+            // long after those columns were dropped — Prisma rejected it at
+            // runtime with `Unknown argument 'fromTime'` and the type-checker
+            // never saw it. An explicit literal is checked.
             data: {
-              ...rest,
+              title: rest.title,
+              description: rest.description,
+              packageType: rest.packageType,
+              duration: rest.duration,
               startMinutesIst,
               // The form works in rupees; the column is paise.
               adultPrice: Math.round(adultPrice * 100),

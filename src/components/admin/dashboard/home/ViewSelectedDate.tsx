@@ -1,13 +1,13 @@
 "use client";
 import { useAppSelector } from "@/hooks/adminStore/reducer";
-import { format } from "date-fns";
+import { formatDayKey } from "@/lib/datetime";
 import React from "react";
 
 export default function ViewSelectedDate() {
   const date = useAppSelector((state) => state.schedule.date);
   return (
     <div>
-      <p>{format(date, "iii/dd MMM")}</p>
+      <p>{formatDayKey(date, "dateLongWeekday")}</p>
     </div>
   );
 }

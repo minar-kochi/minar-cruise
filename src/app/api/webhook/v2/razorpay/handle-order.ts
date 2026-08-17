@@ -8,7 +8,7 @@ import { getPackageTimeAndDuration } from "@/db/data/dto/package";
 import { findCorrespondingScheduleTimeFromPackageCategory } from "@/lib/Data/manipulators/ScheduleManipulators";
 import { getNotes } from "@/lib/razorpay/getNotes";
 import { Events } from "@prisma/client";
-import { format } from "date-fns";
+import { formatDayKey, parseIstDayKey } from "@/lib/datetime";
 import { handleCreateScheduleOrder } from "./handle-create-schedule-order";
 import { handleExistingScheduleOrder } from "./handle-existing-schedule-order";
 import { RazorpayWebhookEvent } from "./razer-pay.types";
@@ -47,7 +47,7 @@ export async function handleOrderPaid({ event, payload }: THandleOrderPaid) {
               payload: {
                 scheduleTime: ScheduleTime,
                 packageTitle: packageDetail?.title ?? "",
-                date: format(new Date(date), "iii dd-MM-yyyy"),
+                date: formatDayKey(parseIstDayKey(date), "dateWeekday"),
                 adultCount: `${rest?.adultCount}`,
                 babyCount: `${rest?.babyCount}`,
                 childCount: `${rest?.childCount}`,
@@ -103,7 +103,7 @@ export async function handleOrderPaid({ event, payload }: THandleOrderPaid) {
               payload: {
                 scheduleTime: ScheduleTime,
                 packageTitle: packageDetail?.title ?? "N/A",
-                date: format(new Date(date), "iii dd-MM-yyyy"),
+                date: formatDayKey(parseIstDayKey(date), "dateWeekday"),
                 adultCount: `${rest?.adultCount}`,
                 babyCount: `${rest?.babyCount}`,
                 childCount: `${rest?.childCount}`,

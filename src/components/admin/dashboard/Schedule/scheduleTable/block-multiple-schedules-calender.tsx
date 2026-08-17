@@ -1,17 +1,17 @@
 "use client";
-import { calendarDateToDayKey, istToday } from "@/lib/datetime";
+import {
+  addDaysToKey,
+  addMonthsToKey,
+  calendarDateToDayKey,
+  endOfMonthKey,
+  istToday,
+  startOfMonthKey,
+} from "@/lib/datetime";
 
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import {
-  addDays,
-  addMonths,
-  endOfMonth,
-  isSameDay,
-  startOfMonth,
-} from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -23,17 +23,15 @@ export default function BlockMultipleSchedulesCalender() {
     to: string;
   }>({
     from: istToday(),
-    to: calendarDateToDayKey(addDays(new Date(Date.now()), 10)),
+    to: addDaysToKey(istToday(), 10),
   });
 
   const [visibleMonths, setVisibleMonths] = useState<{
     startMonth: string;
     endMonth: string;
   }>({
-    startMonth: calendarDateToDayKey(startOfMonth(new Date(Date.now()))),
-    endMonth: calendarDateToDayKey(
-      endOfMonth(addMonths(new Date(Date.now()), 1)),
-    ),
+    startMonth: startOfMonthKey(istToday()),
+    endMonth: endOfMonthKey(addMonthsToKey(istToday(), 1)),
   });
 
   // trpc Infinite query logic
@@ -50,7 +48,7 @@ export default function BlockMultipleSchedulesCalender() {
   async function handleMonthChange(month: Date) {
     setVisibleMonths({
       startMonth: calendarDateToDayKey(month),
-      endMonth: calendarDateToDayKey(endOfMonth(addMonths(month, 1))),
+      endMonth: endOfMonthKey(addMonthsToKey(calendarDateToDayKey(month), 1)),
     });
 
     fetch({
@@ -155,11 +153,11 @@ export default function BlockMultipleSchedulesCalender() {
         components={{
           DayContent(props) {
             const isBlocked = ScheduleDays?.blockedDates.some((day: string) =>
-              isSameDay(calendarDateToDayKey(props.date), new Date(day)),
+              day === calendarDateToDayKey(props.date),
             );
             const isAvailable = ScheduleDays?.availableDates.some(
               (day: string) =>
-                isSameDay(calendarDateToDayKey(props.date), new Date(day)),
+                day === calendarDateToDayKey(props.date),
             );
             return (
               <span

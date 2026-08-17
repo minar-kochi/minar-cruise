@@ -1,12 +1,10 @@
 import { istMinutesOfInstant } from "@/lib/datetime";
 import { RootState } from "@/lib/store/adminStore";
-import { splitTimeColon } from "@/lib/utils";
 import { TKeyOrganizedScheduleData } from "@/Types/Schedule/ScheduleSelect";
-import { TScheduleDataDayReplaceString, TTimeCycle } from "@/Types/type";
+import { TScheduleDataDayReplaceString } from "@/Types/type";
 import { createSelector } from "@reduxjs/toolkit";
 import { Packages } from "../Package/selector";
 import { TKeyOrganized } from "@/components/admin/dashboard/Schedule/ScheduleSelector";
-import { duration } from "moment";
 import { NUMBER_MATCH } from "@/lib/helpers/regex";
 import { getPackageTitleWithTimeIfNotExists } from "@/lib/Data/manipulators/PackageManipulators";
 
@@ -58,19 +56,6 @@ export const scheduleIdAndPackageTitleSelector = createSelector(
   },
 );
 
-export const UpdatedSchedule = createSelector(
-  [Schedule, (item, type: TKeyOrganizedScheduleData) => type],
-  ({ currentDateSchedule, updatedDateSchedule }, type): boolean => {
-    let currentState = updatedDateSchedule && updatedDateSchedule[type];
-
-    let dbState = currentDateSchedule && currentDateSchedule[type];
-
-    if (currentState?.packageId !== dbState?.id) return false;
-
-    return true;
-  },
-);
-
 export const DefaultMergedSchedule = createSelector(
   [Schedule, (_, type: TKeyOrganizedScheduleData) => type],
   (
@@ -96,47 +81,105 @@ export const DefaultMergedSchedule = createSelector(
 );
 
 /**
- * The departure/return a CUSTOM or EXCLUSIVE schedule should show in the admin
- * form, as minutes from IST midnight.
+ * The single answer to "what should the time inputs show, and has it changed?"
  *
- * Derived from the stored instants. This used to read two `"4:30:PM"` strings
- * and re-split them into {hours, min, Cycle} to drive three dropdowns; the
- * strings no longer exist, and a single time input needs only the minute count.
+ * There used to be three selectors here — `currentScheduleTimer`,
+ * `DefaultMergedScheduleTimer` and `UpdatedSchedule` — disagreeing about which
+ * slice of state was authoritative. The one wired to the inputs read
+ * `currentDateSchedule`, i.e. the saved DB row, so the controlled input
+ * re-rendered the stored value on every keystroke and could never change.
+ *
+ * `startMinutes`/`endMinutes` are what the input renders, resolved by
+ * precedence: the admin's draft, then the saved schedule's instants, then the
+ * selected package's default.
+ *
+ * `dbStartMinutes`/`dbEndMinutes` are what is actually saved, kept separate on
+ * purpose. The dirty check must compare the draft against the DB, not against
+ * what is rendered — otherwise prefilling a brand-new schedule from its package
+ * would immediately read as "changed".
  */
 export type TScheduleTimer = {
-  changed: boolean;
   startMinutes: number | null;
   endMinutes: number | null;
-} | null;
+  dbStartMinutes: number | null;
+  dbEndMinutes: number | null;
+  source: "draft" | "schedule" | "package" | "none";
+};
 
-function timerFromInstants(
-  startsAt: Date | null | undefined,
-  endsAt: Date | null | undefined,
-): TScheduleTimer {
-  if (!startsAt) return null;
-  return {
-    startMinutes: istMinutesOfInstant(startsAt),
-    endMinutes: endsAt ? istMinutesOfInstant(endsAt) : null,
-    changed: false,
-  };
-}
+export const scheduleTimeDraft = createSelector(
+  [
+    Schedule,
+    Packages,
+    (_: RootState, type: TKeyOrganizedScheduleData) => type,
+  ],
+  ({ currentDateSchedule, updatedDateSchedule }, packages, type): TScheduleTimer => {
+    const saved = currentDateSchedule[type];
+    const draft = updatedDateSchedule[type];
 
-export const currentScheduleTimer = createSelector(
-  [CurrentSchedule, (_, type: TKeyOrganizedScheduleData) => type],
-  (currentDateSchedule, type): TScheduleTimer =>
-    timerFromInstants(
-      currentDateSchedule[type]?.startsAt,
-      currentDateSchedule[type]?.endsAt,
-    ),
-);
+    const dbStartMinutes = saved?.startsAt
+      ? istMinutesOfInstant(saved.startsAt)
+      : null;
+    const dbEndMinutes = saved?.endsAt
+      ? istMinutesOfInstant(saved.endsAt)
+      : null;
 
-export const DefaultMergedScheduleTimer = createSelector(
-  [Schedule, (_, type: TKeyOrganizedScheduleData) => type],
-  ({ currentDateSchedule }, type): TScheduleTimer =>
-    timerFromInstants(
-      currentDateSchedule[type]?.startsAt,
-      currentDateSchedule[type]?.endsAt,
-    ),
+    // The package the admin currently has selected, which may differ from the
+    // one on the saved row.
+    const selectedPackageId = draft?.packageId ?? saved?.packageId ?? null;
+    const pkg = selectedPackageId
+      ? [
+          ...packages.breakfast,
+          ...packages.lunch,
+          ...packages.sunset,
+          ...packages.dinner,
+          ...packages.custom,
+        ].find((p) => p.id === selectedPackageId) ?? null
+      : null;
+
+    const pkgStart = pkg?.startMinutesIst ?? null;
+    const pkgEnd =
+      pkgStart != null && pkg?.duration != null ? pkgStart + pkg.duration : null;
+
+    // `!== undefined` rather than a truthiness test: 0 is midnight, and null is
+    // the admin deliberately clearing the field. Both must beat the fallbacks.
+    if (draft?.startMinutes !== undefined || draft?.endMinutes !== undefined) {
+      return {
+        startMinutes: draft.startMinutes ?? null,
+        endMinutes: draft.endMinutes ?? null,
+        dbStartMinutes,
+        dbEndMinutes,
+        source: "draft",
+      };
+    }
+
+    if (dbStartMinutes !== null) {
+      return {
+        startMinutes: dbStartMinutes,
+        endMinutes: dbEndMinutes,
+        dbStartMinutes,
+        dbEndMinutes,
+        source: "schedule",
+      };
+    }
+
+    if (pkgStart !== null) {
+      return {
+        startMinutes: pkgStart,
+        endMinutes: pkgEnd,
+        dbStartMinutes,
+        dbEndMinutes,
+        source: "package",
+      };
+    }
+
+    return {
+      startMinutes: null,
+      endMinutes: null,
+      dbStartMinutes,
+      dbEndMinutes,
+      source: "none",
+    };
+  },
 );
 
 export type TIsScheduleInputsChanged = {
@@ -148,9 +191,14 @@ export type TIsScheduleInputsChanged = {
   isAnyChanged: Boolean;
 };
 export const isScheduleInputsChanged = createSelector(
-  [Schedule, (_, type: TKeyOrganized) => type],
+  [
+    Schedule,
+    scheduleTimeDraft,
+    (_: RootState, type: TKeyOrganized) => type,
+  ],
   (
     { currentDateSchedule, updatedDateSchedule },
+    timer,
     type,
   ): TIsScheduleInputsChanged => {
     let Changed = {
@@ -163,23 +211,26 @@ export const isScheduleInputsChanged = createSelector(
     };
     // if package id is changed.
     if (
+      updatedDateSchedule[type]?.packageId !== undefined &&
       currentDateSchedule[type]?.packageId !==
-      updatedDateSchedule[type]?.packageId
+        updatedDateSchedule[type]?.packageId
     ) {
       Changed.packageId = true;
     }
-    // Dirty-check the sailing times by comparing the instants directly.
-    // This compared two "4:30:PM" strings before; instants compare by value
-    // with getTime() and cannot differ only by formatting.
-    const currentStart = currentDateSchedule[type]?.startsAt ?? null;
-    const updatedStart = updatedDateSchedule[type]?.startsAt ?? null;
-    const currentEnd = currentDateSchedule[type]?.endsAt ?? null;
-    const updatedEnd = updatedDateSchedule[type]?.endsAt ?? null;
 
-    if (currentStart?.getTime() !== updatedStart?.getTime()) {
-      Changed.isTimeChanged = true;
-    }
-    if (currentEnd?.getTime() !== updatedEnd?.getTime()) {
+    // Dirty-check the times by comparing the admin's draft against what is
+    // saved. This used to read `updatedDateSchedule[type].startsAt` — a field
+    // nothing in the app ever wrote — so for any schedule with a departure it
+    // compared a real instant against undefined, reported "changed" forever,
+    // and left the Update button permanently enabled.
+    //
+    // Only a real draft counts. A value merely prefilled from the schedule or
+    // its package is not an edit.
+    if (
+      timer.source === "draft" &&
+      (timer.startMinutes !== timer.dbStartMinutes ||
+        timer.endMinutes !== timer.dbEndMinutes)
+    ) {
       Changed.isTimeChanged = true;
     }
 

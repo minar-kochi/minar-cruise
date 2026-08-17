@@ -1,4 +1,11 @@
-import { dayKeyToDateColumn, endOfMonthKey, istToday, parseIstDayKey, startOfMonthKey } from "@/lib/datetime";
+import {
+  dayKeyToDateColumn,
+  endOfMonthKey,
+  formatDayKey,
+  istToday,
+  parseIstDayKey,
+  startOfMonthKey,
+} from "@/lib/datetime";
 import ExclusiveBookingEmailToAdmin from "@/components/services/sendExclusiveBooking";
 import { db } from "@/db";
 import { ErrorLogger } from "@/lib/helpers/PrismaErrorHandler";
@@ -16,7 +23,6 @@ import { publicProcedure, router } from "@/server/trpc";
 import { $Enums, PrismaClient, SCHEDULED_TIME } from "@prisma/client";
 import { render } from "@react-email/components";
 import { TRPCError } from "@trpc/server";
-import { endOfMonth, format, startOfMonth } from "date-fns";
 import { z } from "zod";
 import { bookingLink } from "./bookingLink";
 import { CreateBookingForCreateSchedule } from "./userBookingCreateScheduleTRPC";
@@ -329,9 +335,9 @@ export const user = router({
         const emailCom = await render(
           ExclusiveBookingEmailToAdmin({
             ...input,
-            selectedDate: format(
-              new Date(input.selectedDate),
-              "iii dd-MMM-yyyy",
+            selectedDate: formatDayKey(
+              parseIstDayKey(input.selectedDate),
+              "dateLongWeekday",
             ),
           }),
         );

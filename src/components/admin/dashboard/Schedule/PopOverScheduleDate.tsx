@@ -2,7 +2,7 @@
 
 import * as React from "react";
 // import { CalendarIcon } from "@radix-ui/react-icons"
-import { format } from "date-fns";
+import { formatDayKey, type IstDayKey } from "@/lib/datetime";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ export function PopOverDatePicker({
   date,
 }: {
   calenderProps: CalendarProps;
-  date?: string;
+  date?: IstDayKey;
 }) {
   const { isPopOverDateOpened } = useAppSelector((state) => state.schedule);
   const dispatch = useAppDispatch();
@@ -38,7 +38,7 @@ export function PopOverDatePicker({
         >
           {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
           <CalendarRange className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? formatDayKey(date, "dateOrdinal") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="center">

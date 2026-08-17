@@ -3,12 +3,7 @@ import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { getPackageById } from "@/lib/features/client/packageClientSelectors";
 import { TPackageBookingRule } from "@/lib/config/bookingConfig.types";
 import { cn } from "@/lib/utils";
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInSeconds,
-} from "date-fns";
+import { countdownTo } from "@/lib/datetime";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type TBookingCloseIn = {
@@ -129,12 +124,15 @@ export const BookingCloseIn = ({
       return { ...ZERO_COUNTERS, phase: "closed" };
     }
 
+    // One subtraction, components derived from it. Four separate
+    // differenceIn* calls could each observe a different `now`.
+    const remaining = countdownTo(closesAt, now);
     return {
-      days: differenceInDays(closesAt, now),
-      hours: differenceInHours(closesAt, now) % 24,
-      minutes: differenceInMinutes(closesAt, now) % 60,
-      seconds: differenceInSeconds(closesAt, now) % 60,
-      totalMinutes: differenceInMinutes(closesAt, now),
+      days: remaining.days,
+      hours: remaining.hours,
+      minutes: remaining.minutes,
+      seconds: remaining.seconds,
+      totalMinutes: remaining.totalMinutes,
       phase: "open",
     };
   }, [bookingWindow]);

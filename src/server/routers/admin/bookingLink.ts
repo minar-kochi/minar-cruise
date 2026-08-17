@@ -15,7 +15,7 @@ import { generateBookingLinkSchema } from "@/lib/validators/bookingLink";
 import { AdminProcedure, router } from "@/server/trpc";
 import { $Enums } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn } from "@/lib/datetime";
 import { z } from "zod";
 
 /** Blank optional inputs arrive as "" from the form; store null instead. */
@@ -59,7 +59,11 @@ export const bookingLink = router({
         });
       }
 
-      const scheduleDate = format(schedule.day, "yyyy-MM-dd");
+      // NOT a display string — this is the day key that decides which sailing
+      // the link resolves to. date-fns `format` read the LOCAL fields of a
+      // @db.Date that hydrates as UTC midnight, so west of UTC it produced the
+      // PREVIOUS day and the link resolved to the wrong schedule.
+      const scheduleDate = dayKeyOfDateColumn(schedule.day);
 
       /**
        * Run the same resolution the customer will hit at pay time, so a link

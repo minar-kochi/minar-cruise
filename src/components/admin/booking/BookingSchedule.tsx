@@ -16,7 +16,7 @@ import { MAX_BOAT_SEAT } from "@/constants/config/business";
 import { VIEW_BEFORE_PX } from "@/constants/config";
 import { useAppDispatch, useAppSelector } from "@/hooks/adminStore/reducer";
 import { setScheduleForBooking } from "@/lib/features/schedule/ScheduleSlice";
-import { format } from "date-fns";
+import { formatDayKey } from "@/lib/datetime";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
@@ -105,8 +105,8 @@ export default function BookingSchedule() {
             sortedScheduleArray.map(([date, schedules], groupIndex) => (
               <React.Fragment key={`${groupIndex}`}>
                 {schedules.map((schedule, index) => {
-                  const formattedDate = format(schedule.day, "dd-MMM-yy");
-                  const formattedDay = format(schedule.day, "cccc");
+                  const formattedDate = formatDayKey(schedule.day, "dateMedium");
+                  const formattedDay = formatDayKey(schedule.day, "weekday");
                   const timeSlot = formatIstRange(schedule.startsAt, schedule.endsAt);
                   return (
                     <TableRow

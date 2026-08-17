@@ -206,6 +206,58 @@ export function addDaysToKey(key: IstDayKey, days: number): IstDayKey {
     .toFormat("yyyy-MM-dd") as IstDayKey;
 }
 
+/**
+ * Same calendar month?
+ *
+ * Replaces `isCurrentMonthSameAsRequestedMonth`, which fed a `YYYY-MM-DD` string
+ * into date-fns `isSameMonth` — parsed as UTC midnight, then compared against
+ * the HOST's month. A plain prefix compare needs no Date and no zone.
+ */
+export function isSameMonthKey(a: IstDayKey, b: IstDayKey): boolean {
+  return a.slice(0, 7) === b.slice(0, 7);
+}
+
+/**
+ * Month number, 1..12 — Luxon's convention, NOT date-fns' 0-based `getMonth`.
+ *
+ * Named `…OfKey` rather than `getMonth` so that the off-by-one is impossible to
+ * introduce by muscle memory at a call site that used to read `getMonth(...)`.
+ */
+export function monthOfKey(key: IstDayKey): number {
+  return Number(key.slice(5, 7));
+}
+
+/**
+ * Every day from `from` to `to`, inclusive.
+ *
+ * Replaces `getDateRangeArray`, which did date-fns local-field arithmetic on
+ * UTC-midnight `Date`s and could drift a day under a DST-observing host zone.
+ *
+ * Bounded, because the old version was not: its output fed `createMany`, so a
+ * fat-fingered range wrote rows per day with nothing to stop it. Returns an
+ * empty array when `to` precedes `from` rather than looping forever.
+ */
+export function dayKeyRange(
+  from: IstDayKey,
+  to: IstDayKey,
+  opts: { maxDays?: number } = {},
+): IstDayKey[] {
+  const { maxDays = 366 } = opts;
+  if (compareDayKeys(from, to) > 0) return [];
+  const out: IstDayKey[] = [];
+  let cursor = from;
+  while (compareDayKeys(cursor, to) <= 0) {
+    if (out.length >= maxDays) {
+      throw new RangeError(
+        `dayKeyRange: ${from}..${to} exceeds ${maxDays} days`,
+      );
+    }
+    out.push(cursor);
+    cursor = addDaysToKey(cursor, 1);
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------------------
 // Time of day
 // ---------------------------------------------------------------------------
@@ -215,13 +267,34 @@ export function istMinutes(value: number): IstMinutes {
 }
 
 /**
+ * A time of day an admin typed, for tRPC inputs and zod form schemas.
+ *
+ * Deliberately narrower than `IstMinutes` itself, which may exceed 1439 to mean
+ * "next IST day" for a sailing that crosses midnight. A `<input type="time">`
+ * cannot produce such a value, so accepting one here would only ever mean a bug.
+ *
+ * Note 0 (midnight) is legal and falsy — every consumer must use `??`, not `||`.
+ */
+export const istMinutesSchema = z
+  .number()
+  .int({ message: "Time must be a whole number of minutes" })
+  .min(0, { message: "Time cannot be negative" })
+  .max(MINUTES_PER_DAY - 1, { message: "Time must be within a single day" })
+  .transform((v) => v as IstMinutes);
+
+/**
  * Parses the legacy `"09:00:AM"` / `"4:30:PM"` format into minutes.
  *
- * Used ONLY by the backfill and by any remaining legacy read path; deleted once
- * the string columns are dropped. Mirrors the old `splitTimeColon` +
- * `convert12HourTo24Hour` pair, including the unpadded hour that
- * `PackageContentValidator` permits and that moment's strict `hh:mm:A` rejected
- * — the rejection that rendered those slots as a bare " - ".
+ * THE ONLY CALLER IS `prisma/scripts/backfill-schedule-instants.ts`. Nothing in
+ * the app speaks this format any more: the columns are dropped from the schema,
+ * the admin forms send minutes from a `<input type="time">`, and
+ * `deriveScheduleInstants` takes numbers. The backfill still needs it because
+ * it reads, via `$queryRaw`, the pre-migration columns of a database that has
+ * not been migrated yet. Delete this once production has run the chain.
+ *
+ * The unpadded hour is deliberate: it is what the old validator permitted and
+ * what moment's strict `hh:mm:A` rejected — the disagreement that rendered
+ * legal times as a bare " - ".
  */
 export function parseLegacyMeridiemTime(
   value: string | null | undefined,
@@ -316,6 +389,34 @@ export function resolveSailingInstants(args: {
 // Displaying: UTC instant -> IST string
 // ---------------------------------------------------------------------------
 
+/**
+ * Luxon has no ordinal token, and date-fns' `do` ("16th") is used at three call
+ * sites. Luxon passes single-quoted runs through verbatim, so a pattern can
+ * carry `'{do}'` and have it substituted once the rest has rendered.
+ *
+ * Kept as a sentinel rather than pre-rendering the ordinal into the pattern so
+ * that `IST_PATTERNS` stays a table of plain strings that can be read, diffed
+ * and asserted without evaluating anything.
+ */
+const ORDINAL_SENTINEL = "{do}";
+
+/** Pinned to "en" deliberately — NOT the host locale. Every string this module
+ *  produces must be identical on every machine. */
+const ORDINAL_PLURALS = new Intl.PluralRules("en", { type: "ordinal" });
+
+const ORDINAL_SUFFIX: Record<string, string> = {
+  one: "st",
+  two: "nd",
+  few: "rd",
+  other: "th",
+};
+
+/** `3` -> `"3rd"`. Via `Intl.PluralRules` because 11th/12th/13th are the cases
+ *  a naive `n % 10` gets wrong. */
+function ordinalDay(day: number): string {
+  return `${day}${ORDINAL_SUFFIX[ORDINAL_PLURALS.select(day)] ?? "th"}`;
+}
+
 export const IST_PATTERNS = {
   /** 9:00 AM */
   time: "h:mm a",
@@ -323,12 +424,32 @@ export const IST_PATTERNS = {
   date: "dd-MM-yyyy",
   /** 16/08/2026 */
   dateSlash: "dd/MM/yyyy",
+  /** 16/08 */
+  dayMonth: "dd/MM",
   /** Sun 16-08-2026 */
   dateWeekday: "ccc dd-MM-yyyy",
   /** 16 Aug 2026 */
   dateLong: "d LLL yyyy",
+  /** Sun 16 Aug 2026 */
+  dateLongWeekday: "ccc d LLL yyyy",
   /** Sunday 16 August 2026 */
   dateFull: "cccc d LLLL yyyy",
+  /** Aug 16, 2026 */
+  monthDayYear: "LLL dd, y",
+  /** 16-Aug-26 */
+  dateMedium: "dd-LLL-yy",
+  /** August 16th, 2026 */
+  dateOrdinal: "LLLL '{do}', yyyy",
+  /** 16th of Aug */
+  dayOrdinalMonth: "'{do}' 'of' LLL",
+  /** August 16th, Sunday */
+  monthOrdinalWeekday: "LLLL '{do}', cccc",
+  /** Sunday */
+  weekday: "cccc",
+  /** August */
+  month: "LLLL",
+  /** Aug 2026 */
+  monthYear: "LLL yyyy",
 } as const;
 
 export type IstPattern = keyof typeof IST_PATTERNS;
@@ -339,15 +460,29 @@ function inIst(instant: Date | null | undefined): DateTime | null {
   return dt.isValid ? dt : null;
 }
 
+/**
+ * The only place a pattern is ever applied. Everything that renders a date goes
+ * through here, so the ordinal substitution cannot be forgotten at one call
+ * site and the set of legal patterns stays closed.
+ */
+function applyPattern(dt: DateTime, pattern: IstPattern): string {
+  const out = dt.toFormat(IST_PATTERNS[pattern]);
+  return out.includes(ORDINAL_SENTINEL)
+    ? out.split(ORDINAL_SENTINEL).join(ordinalDay(dt.day))
+    : out;
+}
+
 export function formatIstTime(instant: Date | null | undefined): string {
-  return inIst(instant)?.toFormat(IST_PATTERNS.time) ?? EMPTY_DISPLAY;
+  const dt = inIst(instant);
+  return dt ? applyPattern(dt, "time") : EMPTY_DISPLAY;
 }
 
 export function formatIstDate(
   instant: Date | null | undefined,
   pattern: IstPattern = "date",
 ): string {
-  return inIst(instant)?.toFormat(IST_PATTERNS[pattern]) ?? EMPTY_DISPLAY;
+  const dt = inIst(instant);
+  return dt ? applyPattern(dt, pattern) : EMPTY_DISPLAY;
 }
 
 /**
@@ -357,7 +492,7 @@ export function formatIstDate(
 export function formatIstDateTime(instant: Date | null | undefined): string {
   const dt = inIst(instant);
   return dt
-    ? `${dt.toFormat(IST_PATTERNS.dateLong)}, ${dt.toFormat(IST_PATTERNS.time)} IST`
+    ? `${applyPattern(dt, "dateLong")}, ${applyPattern(dt, "time")} IST`
     : EMPTY_DISPLAY;
 }
 
@@ -368,7 +503,7 @@ export function formatDayKey(
 ): string {
   if (!key) return EMPTY_DISPLAY;
   const dt = DateTime.fromISO(key, { zone: IST_ZONE });
-  return dt.isValid ? dt.toFormat(IST_PATTERNS[pattern]) : EMPTY_DISPLAY;
+  return dt.isValid ? applyPattern(dt, pattern) : EMPTY_DISPLAY;
 }
 
 /**
@@ -418,6 +553,47 @@ export function getBookingWindow(args: {
     departureAt: departsAt,
     closesAt: new Date(departsAt.getTime() - leadMs),
   };
+}
+
+/**
+ * How long until `target`, broken into display components.
+ *
+ * Replaces four separate date-fns `differenceIn*` calls in the booking
+ * countdown, which each re-read the clock, so the four fields could describe
+ * four different instants. One `now`, one subtraction, components derived from
+ * it — they cannot disagree.
+ *
+ * Clamped at zero: a passed deadline is "0", never a negative countdown.
+ */
+export function countdownTo(
+  target: Date,
+  now: Date = new Date(),
+): {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  totalSeconds: number;
+  totalMinutes: number;
+} {
+  const totalSeconds = Math.max(
+    0,
+    Math.floor((target.getTime() - now.getTime()) / 1000),
+  );
+  return {
+    days: Math.floor(totalSeconds / 86_400),
+    hours: Math.floor((totalSeconds % 86_400) / 3600),
+    minutes: Math.floor((totalSeconds % 3600) / 60),
+    seconds: totalSeconds % 60,
+    totalSeconds,
+    totalMinutes: Math.floor(totalSeconds / 60),
+  };
+}
+
+/** Whole minutes elapsed since `instant`. Negative if it is in the future.
+ *  Replaces date-fns `differenceInMinutes`. */
+export function minutesSince(instant: Date, now: Date = new Date()): number {
+  return Math.trunc((now.getTime() - instant.getTime()) / 60_000);
 }
 
 /** True while the departure is still far enough away to accept a booking. */

@@ -21,7 +21,6 @@ import {
 
 import { exit } from "node:process";
 import { ClearDb } from "./functions/utils";
-import moment from "moment";
 import { seoSeedData } from "./data/dbSeo";
 import { dbPackageSeo } from "./data/dbPackageSeo";
 

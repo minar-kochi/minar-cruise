@@ -17,7 +17,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { TGetBlogsListDTO } from "@/db/data/dto/blog";
 import { EllipsisVertical, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { format } from "date-fns";
+import { formatIstDate } from "@/lib/datetime";
 import Link from "next/link";
 import { cn, truncateText } from "@/lib/utils";
 import { BLOG_INFINITE_QUERY_LIMIT, VIEW_BEFORE_PX } from "@/constants/config";
@@ -205,7 +205,7 @@ export default function BlogTable({
 
                     {/* DATE */}
                     <TableCell className="max-lg:hidden text-center text-sm">
-                      {format(createdAt, "dd/MM/yyyy")}
+                      {formatIstDate(createdAt, "dateSlash")}
                     </TableCell>
 
                     {/* ACTIONS */}

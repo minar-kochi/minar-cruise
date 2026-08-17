@@ -1,14 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, User } from "lucide-react";
-import { format } from "date-fns";
+import { formatDayKey, type IstDayKey } from "@/lib/datetime";
 
 interface BlogCardType {
   imgUrl: string;
   title: string;
   desc: string;
   link: string;
-  date: string;
+  date: IstDayKey;
   author: string;
 }
 
@@ -44,7 +44,7 @@ export default function BlogCard({
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-xs text-gray-500">
-            {format(date, "MMM yyyy")}
+            {formatDayKey(date, "monthYear")}
           </span>
           {/* <span className="text-xs text-gray-500">5 min read</span> */}
         </div>

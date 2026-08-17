@@ -54,10 +54,3 @@ export type TScheduleDataDayReplaceString = Omit<Schedule, "day"> & {
 export type TScheduleSelector = {
   type: TKeyOrganized;
 };
-export type TMeridianCycle = "AM" | "PM";
-export type TTimeCycle = {
-  hours: string;
-  min: string;
-  Cycle: TMeridianCycle;
-};
-export type TkeyDbTime = "fromTime" | "toTime";

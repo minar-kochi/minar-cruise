@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TGetBookingsByScheduleId } from "@/db/data/dto/schedule/schedule";
-import { format } from "date-fns";
+import { formatIstDate } from "@/lib/datetime";
 import { EllipsisVertical } from "lucide-react";
 
 export default async function BookingTable({
@@ -68,7 +68,7 @@ export default async function BookingTable({
       <TableBody>
         {bookings && bookings.length > 0
           ? bookings.map((booking, i) => {
-              const formattedDate = format(booking.createdAt, "dd/MM/yyyy");
+              const formattedDate = formatIstDate(booking.createdAt, "dateSlash");
               return (
                 <TableRow
                   key={`aa-${booking.id}-view-booking-table-row-${i}`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { format } from "date-fns";
+import { calendarDateToDayKey, formatDayKey } from "@/lib/datetime";
 import { CalculatorIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -19,7 +19,7 @@ export default function BookingFormDatePicker() {
             className="bg-muted hover:bg-black hover:text-white text-black justify-start gap-3 w-full "
           >
             <CalculatorIcon size={20} />
-            {date ? format(date, "PPP") : <p>Select a date</p>}
+            {date ? formatDayKey(calendarDateToDayKey(new Date(date)), "dateOrdinal") : <p>Select a date</p>}
           </Button>
         </PopoverTrigger>
         <PopoverContent>

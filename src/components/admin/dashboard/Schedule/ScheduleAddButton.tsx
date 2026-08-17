@@ -11,14 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { setSyncDatabaseUpdatesScheduleCreation } from "@/lib/features/schedule/ScheduleSlice";
-import {
-  cn,
-  sleep,
-  splitTimeColon,
-} from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { formatIstMinutes } from "@/lib/datetime";
+import { scheduleTimeDraft } from "@/lib/features/schedule/selector";
 import { isStatusCustom } from "@/lib/validators/Schedules";
 import { TScheduleSelector } from "@/Types/type";
-import { format } from "date-fns";
+import { formatDayKey, parseIstDayKey } from "@/lib/datetime";
 import { Check } from "lucide-react";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -35,6 +33,7 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
   const PackageDetails = useAppSelector((state) =>
     SelectPackageById(state, updatedDateSchedule[type].packageId, type),
   );
+  const timer = useAppSelector((state) => scheduleTimeDraft(state, type));
   const { invalidate: InvalidateBookingScheduleInfinity } =
     trpc.useUtils().admin.booking.bookingScheduleInfinity;
   const { invalidate: InvalidateScheduleInfinity } =
@@ -45,7 +44,7 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
     trpc.admin.schedule.createNewSchedule.useMutation({
       async onMutate(variables) {
         toast.loading(
-          `Confirming Schedule at ${format(variables.ScheduleDate, "do 'of' LLL")}`,
+          `Confirming Schedule at ${formatDayKey(parseIstDayKey(variables.ScheduleDate), "dayOrdinalMonth")}`,
           { duration: 3000 },
         );
         setIsOpen(false);
@@ -93,38 +92,32 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
         );
       }
 
-      if (!updatedDateSchedule[type]?.packageId) {
+      const needsExplicitTime =
+        PackageDetails?.packageCategory &&
+        !ShouldPackageBeAvailableForPublicToSchedule(
+          PackageDetails.packageCategory,
+        );
+
+      // `== null` not falsiness: 0 is midnight, a legal departure.
+      if (
+        needsExplicitTime &&
+        (timer.startMinutes == null || timer.endMinutes == null)
+      ) {
         return toast.error(
-          `Could not Found the package for ${type}. Please try again.`,
+          `Please Select a 'from' and 'To' for ${type} Schedule and  try again.`,
         );
       }
 
-      if (
-        PackageDetails?.packageCategory &&
-        !ShouldPackageBeAvailableForPublicToSchedule(
-          PackageDetails?.packageCategory,
-        )
-      ) {
-        if (
-          !updatedDateSchedule[type].fromTime ||
-          !updatedDateSchedule[type].toTime
-        ) {
-          return toast.error(
-            `Please Select a 'from' and 'To' for ${type} Schedule and  try again.`,
-          );
-        }
-      }
+      const sendOverride = needsExplicitTime || timer.source === "draft";
+
       createNewSchedule({
         packageId: updatedDateSchedule[type].packageId,
         ScheduleDate: date,
         ScheduleTime: updatedDateSchedule[type].scheduleTime,
-        ScheduleDateTime: {
-          fromTime:
-            splitTimeColon(updatedDateSchedule[type].fromTime ?? "") ??
-            undefined,
-          toTime:
-            splitTimeColon(updatedDateSchedule[type].toTime ?? "") ?? undefined,
-        },
+        // See ScheduleUpdateButton: only a real draft, or a category that
+        // requires explicit times, counts as an override.
+        overrideStartMinutes: sendOverride ? timer.startMinutes : null,
+        overrideEndMinutes: sendOverride ? timer.endMinutes : null,
       });
     } catch (error) {
       console.log(error);
@@ -158,24 +151,22 @@ export default function ScheduleAddButton({ type }: TScheduleSelector) {
             </span>{" "}
             schedule for{" "}
             <span className="inline-block bg-muted text-primary  rounded-full font-medium px-2">
-              {format(date, "dd-MM-yyyy")}
+              {formatDayKey(date, "date")}
             </span>
-            {true ? (
+            {timer.startMinutes != null ? (
               <>
                 {" "}
                 from
                 <span className="inline-block bg-muted text-primary  rounded-full font-medium px-2 mx-0.5">
                   {" "}
-                  {updatedDateSchedule[type].fromTime
-                    ? `${updatedDateSchedule[type].fromTime}`
-                    : null}
+                  {formatIstMinutes(timer.startMinutes)}
                 </span>{" "}
                 to
                 <span className="inline-block bg-muted text-primary  rounded-full font-medium px-2 mx-0.5">
                   {" "}
-                  {updatedDateSchedule[type].toTime
-                    ? `${updatedDateSchedule[type].toTime}`
-                    : null}
+                  {timer.endMinutes != null
+                    ? formatIstMinutes(timer.endMinutes)
+                    : "—"}
                 </span>
               </>
             ) : null}{" "}

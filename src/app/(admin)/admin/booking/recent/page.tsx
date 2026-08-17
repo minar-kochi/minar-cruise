@@ -22,7 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VIEW_BEFORE_PX } from "@/constants/config";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn, formatDayKey, formatIstDate } from "@/lib/datetime";
 import {
   EllipsisVertical,
   Eye,
@@ -92,10 +92,7 @@ const MobileBookingCard = ({
   onResendEmail,
   onViewBooking,
 }: any) => {
-  const formattedDate = format(
-    new Date(booking.createdAt ?? Date.now()),
-    "dd/MM/yyyy",
-  );
+  const formattedDate = formatIstDate(booking.createdAt ?? new Date(), "dateSlash");
   const totalCount =
     booking.numOfAdults + booking.numOfChildren + booking.numOfBaby;
 
@@ -450,9 +447,9 @@ export default function RecentBookingsPage() {
                   <TableBody>
                     {bookings.pages.map((page, pageNum) =>
                       page.response.map((booking, index) => {
-                        const formattedDate = format(
-                          new Date(booking.createdAt ?? Date.now()),
-                          "dd/MM/yyyy",
+                        const formattedDate = formatIstDate(
+                          booking.createdAt ?? new Date(),
+                          "dateSlash",
                         );
                         const totalCount =
                           booking.numOfAdults +
@@ -498,9 +495,11 @@ export default function RecentBookingsPage() {
                                 variant="secondary"
                                 className="font-mono text-xs"
                               >
-                                {format(
-                                  new Date(booking.schedule.day ?? Date.now()),
-                                  "dd/MM/yyyy",
+                                {formatDayKey(
+                                  dayKeyOfDateColumn(
+                                    booking.schedule.day ?? new Date(),
+                                  ),
+                                  "dateSlash",
                                 )}
                               </Badge>
                             </TableCell>

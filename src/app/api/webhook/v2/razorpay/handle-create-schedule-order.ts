@@ -1,4 +1,9 @@
-import { formatIstTime, istDayKeyOf } from "@/lib/datetime";
+import {
+  formatDayKey,
+  formatIstDate,
+  formatIstTime,
+  parseIstDayKey,
+} from "@/lib/datetime";
 import { $Enums, Events, Schedule } from "@prisma/client";
 import { OrderPaidEventPayload } from "./razer-pay-order-paid.types";
 import { TRazorPayEventsCreateSchedule } from "@/Types/razorpay/type";
@@ -14,7 +19,6 @@ import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
 } from "@/components/services/email/EmailService";
-import { format } from "date-fns";
 import { executeTransactionWithRetry } from "./retry-utility";
 import { deriveScheduleInstants } from "@/lib/helpers/scheduleInstants";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
@@ -100,7 +104,14 @@ export async function handleCreateScheduleOrder({
 
     // Derived outside the transaction: it is pure, and the tx is kept free of
     // anything that could fail for a reason unrelated to the write.
-    const scheduleInstants = deriveScheduleInstants({
+    //
+    // Destructured rather than spread whole. `deriveScheduleInstants` also
+    // returns `needsTimeReview`, which 004_contract.sql dropped from the table
+    // and schema.prisma no longer declares — spreading the result into
+    // `schedule.create` therefore makes Prisma reject the whole write with
+    // "Unknown argument". TypeScript does not catch it because excess-property
+    // checking does not apply to a spread.
+    const { startsAt, endsAt, isTimeOverridden } = deriveScheduleInstants({
       day: new Date(date),
       packageStartMinutesIst: packageDetail?.startMinutesIst ?? null,
       packageDurationMinutes: packageDetail?.duration ?? null,
@@ -120,7 +131,9 @@ export async function handleCreateScheduleOrder({
                 // is never left without an instant; a NULL startsAt would hide
                 // it from every instant-based query while the customer holds a
                 // ticket for it.
-                ...scheduleInstants,
+                startsAt,
+                endsAt,
+                isTimeOverridden,
               },
             });
 
@@ -227,16 +240,13 @@ export async function handleCreateScheduleOrder({
             Name: name,
             adultCount: adultCount,
             babyCount: babyCount,
-            BookingDate: format(
-              istDayKeyOf(booking.createdAt),
-              "dd-MM-yyyy",
-            ),
+            BookingDate: formatIstDate(booking.createdAt, "date"),
             childCount,
             email: email,
             phone: paymentEntity.contact ?? "",
             BookingId: booking.id,
             packageTitle: packageDetail?.title ?? "",
-            scheduleDate: format(date, "dd-MM-yyyy"),
+            scheduleDate: formatDayKey(parseIstDayKey(date), "date"),
             totalAmount: totalAmountRupees,
             gstAmount: emailGst.gstAmount,
             amountPaid: emailAmountPaid,
@@ -262,9 +272,9 @@ export async function handleCreateScheduleOrder({
             infant: babyCount,
             BookingId: booking.id,
             customerName: name,
-            date: format(date, "dd-MM-yyyy"),
+            date: formatDayKey(parseIstDayKey(date), "date"),
             boardingTime: formatIstTime(schedule.startsAt),
-            bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
+            bookingDate: formatIstDate(booking.createdAt, "date"),
             contact: notes.email,
           }),
         }),
@@ -288,7 +298,7 @@ export async function handleCreateScheduleOrder({
             email,
             name,
             contact: payload?.payment?.entity?.contact,
-            date: date ? format(new Date(date), "dd-MM-yyyy") : "",
+            date: date ? formatDayKey(parseIstDayKey(date), "date") : "",
             eventId: event.id,
             packageTitle: packageDetail?.title ?? "",
             RazerPayEventId: event.eventId,

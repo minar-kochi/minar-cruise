@@ -1,20 +1,5 @@
+import { istMinutesSchema } from "@/lib/datetime";
 import { z } from "zod";
-
-/**
- * Times are stored as colon-separated "h:mm:AM" strings — note the third
- * segment is delimited by a colon, not a space — and parsed by `splitTimeColon`,
- * which is why this is a format check rather than a `z.date()`. A malformed
- * value here silently breaks the booking cutoff, since
- * `convertYYYMMDDStringAndTimeStringToUTCDate` returns null and every date
- * reads as unbookable.
- *
- * The unpadded hour (`0?[1-9]`) is intentional and load-bearing: anything
- * reading `fromTime` must go through `getBookingWindow` / `splitTimeColon`, not
- * a Luxon format string with the strict two-digit `hh` token.
- */
-const timeString = z.string().regex(/^(0?[1-9]|1[0-2]):[0-5][0-9]:(AM|PM)$/, {
-  message: "Time must look like 6:30:AM",
-});
 
 export const PackageDetailsValidator = z.object({
   id: z.string().cuid(),
@@ -48,8 +33,15 @@ export const PackageDetailsValidator = z.object({
     .int({ message: "Duration must be a whole number" })
     .min(15, { message: "Duration must be at least 15 minutes" })
     .max(1440, { message: "Duration cannot exceed 24 hours (1440 minutes)" }),
-  fromTime: timeString,
-  toTime: timeString,
+  /**
+   * Departure as minutes from IST midnight, straight from a `<input type="time">`.
+   *
+   * Replaces a `fromTime`/`toTime` pair of `"6:30:AM"` strings. There is no
+   * `toTime` any more because there never really was one: the router discarded
+   * it and derived the return from `duration`, so an admin could type a return
+   * time that contradicted the duration and silently have it ignored.
+   */
+  startMinutesIst: istMinutesSchema,
 });
 
 export const AmenityItemValidator = z.object({

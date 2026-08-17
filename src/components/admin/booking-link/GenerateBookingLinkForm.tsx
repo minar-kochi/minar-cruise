@@ -13,7 +13,7 @@ import {
 } from "@/lib/validators/bookingLink";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TRPCClientError } from "@trpc/client";
-import { format } from "date-fns";
+import { dayKeyOfDateColumn, formatDayKey, formatIstDateTime } from "@/lib/datetime";
 import {
   CalendarRange,
   Clock,
@@ -88,9 +88,9 @@ export default function GenerateBookingLinkForm() {
           url: res.url,
           packageTitle: schedule?.Package?.title ?? "your cruise",
           cruiseDate: schedule
-            ? format(new Date(schedule.day), "EEE dd MMM yyyy")
+            ? formatDayKey(dayKeyOfDateColumn(schedule.day), "dateLongWeekday")
             : "",
-          expiresAt: format(new Date(res.link.expiresAt), "dd MMM yyyy, h:mm a"),
+          expiresAt: formatIstDateTime(res.link.expiresAt),
           clampedToDeparture: res.clampedToDeparture,
           prefillPhone: res.link.prefillPhone,
           prefillEmail: res.link.prefillEmail,
@@ -187,7 +187,7 @@ export default function GenerateBookingLinkForm() {
               <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <CalendarRange className="h-4 w-4" />
-                  {format(new Date(schedule.day), "EEE dd MMM yyyy")}
+                  {formatDayKey(dayKeyOfDateColumn(schedule.day), "dateLongWeekday")}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />

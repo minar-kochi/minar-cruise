@@ -16,7 +16,6 @@ import {
   Tailwind,
 } from "@react-email/components";
 
-import { format } from "date-fns";
 import * as React from "react";
 
 interface BookingConfirmationEmailForAdmin {

@@ -1,4 +1,9 @@
-import { formatIstTime, istDayKeyOf } from "@/lib/datetime";
+import {
+  dayKeyOfDateColumn,
+  formatDayKey,
+  formatIstDate,
+  formatIstTime,
+} from "@/lib/datetime";
 import { TRazorPayEventsExistingSchedule } from "@/Types/razorpay/type";
 import { OrderPaidEventPayload } from "./razer-pay-order-paid.types";
 import { $Enums, Events } from "@prisma/client";
@@ -12,7 +17,6 @@ import { sendConfirmationEmail } from "@/lib/helpers/resend";
 import EmailSendBookingConfirmation, {
   BookingConfirmationEmailForUser,
 } from "@/components/services/email/EmailService";
-import { format } from "date-fns";
 import { sendAdminBookingUpdateNotification } from "@/lib/helpers/WhatsappmessageTemplate/sucess";
 import { SendMessageViaWhatsapp } from "@/lib/helpers/whatsapp";
 import { BookingConfirmationEmailForAdmin } from "@/components/services/BookingConfirmationEmailForAdmin";
@@ -195,9 +199,9 @@ export async function handleExistingScheduleOrder({
             balanceDue: emailBalanceDue,
             BookingId: booking.id,
             customerName: name,
-            date: schedule?.day ? format(schedule.day, "dd-MM-yyyy") : "--",
+            date: schedule?.day ? formatDayKey(dayKeyOfDateColumn(schedule.day), "date") : "--",
             boardingTime: formatIstTime(schedule?.startsAt ?? null),
-            bookingDate: format(booking.createdAt, "dd-MM-yyyy"),
+            bookingDate: formatIstDate(booking.createdAt, "date"),
             contact: notes.email,
           }),
         }),
@@ -212,17 +216,14 @@ export async function handleExistingScheduleOrder({
             Name: name,
             adultCount: adultCount,
             babyCount: babyCount,
-            BookingDate: format(
-              istDayKeyOf(booking.createdAt),
-              "dd-MM-yyyy",
-            ),
+            BookingDate: formatIstDate(booking.createdAt, "date"),
             childCount,
             email: email,
             phone: paymentEntity.contact ?? "",
             BookingId: booking.id,
             packageTitle: packageDetail?.title ?? "",
             scheduleDate: schedule?.day
-              ? format(schedule.day, "dd-MM-yyyy")
+              ? formatDayKey(dayKeyOfDateColumn(schedule.day), "date")
               : "--",
             totalAmount: totalAmountRupees,
             gstAmount: emailGst.gstAmount,
@@ -252,7 +253,9 @@ export async function handleExistingScheduleOrder({
             email,
             name,
             contact: payload?.payment?.entity?.contact,
-            date: scheduleDate ? format(scheduleDate, "dd-MM-yyyy") : "",
+            date: scheduleDate
+              ? formatDayKey(dayKeyOfDateColumn(scheduleDate), "date")
+              : "",
             eventId: event.id,
             packageTitle: packageDetail?.title ?? "",
             RazerPayEventId: event.eventId,

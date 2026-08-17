@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/drawer";
 import { useClientSelector } from "@/hooks/clientStore/clientReducers";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { formatDayKey, istToday } from "@/lib/datetime";
 import ChooseDateCard from "./desktop/choose-date-card";
 import PackageSelectCard from "./desktop/package-select-card";
 import { SearchButtonShad, SearchPageButton } from "./SearchButton";
@@ -36,7 +36,7 @@ export default function SearchMobileBar({ className }: { className?: string }) {
           <p className="text-sm text-left font-medium md:text-sm line-clamp-1 text-muted-foreground pl-8 w-full">
             {selected.length
               ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected`
-              : // ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
+              : // ? `${selected.length === SEARCH_BAR_MAX_PACKAGES ? "All" : selected.length} Package selected to filter in ${formatDayKey(selectedDate ?? istToday(), "month")}`
                 "Filter package & date"}
           </p>
         </div>
@@ -47,8 +47,8 @@ export default function SearchMobileBar({ className }: { className?: string }) {
           <DrawerTitle className="sr-only">Welcome to search bar</DrawerTitle>
           <DrawerDescription className="text-center text-base font-medium">
             {!selected.length
-              ? `Search and Filter your cruise in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`
-              : `You have selected ${selected.length} packages to filter in ${format(new Date(selectedDate ?? Date.now()), "MMMM")}`}
+              ? `Search and Filter your cruise in ${formatDayKey(selectedDate ?? istToday(), "month")}`
+              : `You have selected ${selected.length} packages to filter in ${formatDayKey(selectedDate ?? istToday(), "month")}`}
           </DrawerDescription>
         </DrawerHeader>
         <ChooseDateCard />

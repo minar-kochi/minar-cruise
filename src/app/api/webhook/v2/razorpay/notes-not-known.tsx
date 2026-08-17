@@ -1,3 +1,4 @@
+import { formatIstDateTime } from "@/lib/datetime";
 import {
   Body,
   Container,
@@ -20,9 +21,12 @@ export function ContaminatedNotesEmailTemplate({
   paymentEntity,
 }: UNKNOWN_NOTES_EVENT) {
   const paymentAmount = (paymentEntity.amount / 100).toFixed(2); // Convert paise to rupees
-  const paymentDate = new Date(
-    paymentEntity.created_at * 1000,
-  ).toLocaleString();
+  // Reconciled against Razorpay's own dashboard during an incident, so it must
+  // carry a zone. Argless toLocaleString() rendered in the SERVER's locale and
+  // timezone with no marker at all.
+  const paymentDate = formatIstDateTime(
+    new Date(paymentEntity.created_at * 1000),
+  );
 
   return (
     <Html>
@@ -76,7 +80,7 @@ export function ContaminatedNotesEmailTemplate({
                 <strong>Failed Attempts:</strong> {eventFailedCount}
               </Text>
               <Text className="text-[14px] leading-[20px] m-0">
-                <strong>Alert Time:</strong> {new Date().toLocaleString()}
+                <strong>Alert Time:</strong> {formatIstDateTime(new Date())}
               </Text>
             </Section>
 

@@ -1,5 +1,9 @@
 "use client";
-import { calendarDateToDayKey, istToday } from "@/lib/datetime";
+import {
+  calendarDateToDayKey,
+  formatDayKey,
+  istToday,
+} from "@/lib/datetime";
 
 import {
   Popover,
@@ -20,7 +24,6 @@ import {
 import { setDate } from "@/lib/features/client/packageClientSlice";
 import { TSplitedFormatedDate } from "@/Types/type";
 import ChooseDateCard from "./choose-date-card";
-import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 let date = "2025-02-01";
 export function ChooseDates({ className }: { className?: string }) {
@@ -117,7 +120,7 @@ export function ChooseDates({ className }: { className?: string }) {
         <div className="">
           <h4 className="text-left text-sm hidden md:block font-bold">Date</h4>
           <div className="md:text-sm text-muted-foreground font-semibold">
-            {date ? <p>{format(date, "dd/MM/yyyy")}</p> : <p>Choose a Date</p>}
+            {date ? <p>{formatDayKey(date, "dateSlash")}</p> : <p>Choose a Date</p>}
           </div>
         </div>
         {/* <div className="absolute h-10 w-[1px] top-auto bottom-auto right-0 bg-muted-foreground" /> */}

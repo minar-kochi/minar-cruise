@@ -153,17 +153,24 @@ async function main() {
       ? packages.find((p) => p.id === s.packageId) ?? null
       : null;
 
+    // This script is the ONLY remaining reader of the legacy three-colon
+    // format, because it is the only thing that still sees the pre-migration
+    // columns. So it parses here, at its own boundary, and hands the shared
+    // rule the same minutes the admin UI would.
+    const overrideStartMinutes = parseLegacyMeridiemTime(s.fromTime);
+    const overrideEndMinutes = parseLegacyMeridiemTime(s.toTime);
+
     // Exactly the rule the application uses at write time — same function, so
     // migrated rows and rows created after the migration cannot disagree.
     const instants = deriveScheduleInstants({
       day: s.day,
       packageStartMinutesIst: s.packageId ? pkgStart.get(s.packageId) ?? null : null,
       packageDurationMinutes: pkg?.duration ?? null,
-      overrideFrom: s.fromTime,
-      overrideTo: s.toTime,
+      overrideStartMinutes,
+      overrideEndMinutes,
     });
 
-    const hasOverride = parseLegacyMeridiemTime(s.fromTime) !== null;
+    const hasOverride = overrideStartMinutes !== null;
     const klass: Resolution["klass"] =
       instants.startsAt === null ? "timeless" : hasOverride ? "override" : "inherited";
 
@@ -175,8 +182,9 @@ async function main() {
 
     let note: string | undefined;
     if (instants.needsTimeReview) {
-      const startMin = parseLegacyMeridiemTime(s.fromTime) ?? pkgStart.get(s.packageId ?? "") ?? 0;
-      const rawEnd = parseLegacyMeridiemTime(s.toTime);
+      const startMin =
+        overrideStartMinutes ?? pkgStart.get(s.packageId ?? "") ?? 0;
+      const rawEnd = overrideEndMinutes;
       note =
         rawEnd === null
           ? "no end time derivable"

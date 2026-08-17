@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { format } from "date-fns";
+import { formatDayKey, parseIstDayKey } from "@/lib/datetime";
 import { toBlob } from "html-to-image";
 import { CheckIcon, DownloadIcon, LinkIcon } from "lucide-react";
 
@@ -117,7 +117,7 @@ const CruiseTicket = ({ data }: CruiseTicketProps) => {
 
   const customerName = data?.user?.name || "Guest";
   const departureDate = ticket.departureDate
-    ? format(new Date(ticket.departureDate), "dd MMM yyyy")
+    ? formatDayKey(parseIstDayKey(ticket.departureDate), "dateLong")
     : "—";
   const departureTime = ticket.departureTime || "—";
   const passengerSummary = formatPassengers(ticket.passengers);

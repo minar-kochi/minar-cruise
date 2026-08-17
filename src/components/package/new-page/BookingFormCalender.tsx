@@ -43,7 +43,8 @@ type TBookingFormCalender = {
  * `new Date("2026-08-20")` parses as UTC midnight, which renders as the 19th for
  * anyone west of UTC — so the day the calendar highlights, and the month it
  * opens on, could disagree with the string the form is about to submit. These
- * strings are produced by `RemoveTimeStampFromDate`, which formats in local time,
+ * strings were produced by the since-deleted `RemoveTimeStampFromDate`, which
+ * formatted in local time,
  * so parsing them back in local time is what makes the round-trip exact.
  */
 function parseLocalDate(value: string): Date | null {
